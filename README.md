@@ -11,4 +11,4 @@
   - [Android SDK](https://developer.android.com/studio)
 - Database - Accessed only by Server
   - [PostgreSQL](https://www.postgresql.org/)
-  - [View diagram](https://dbdiagram.io/d/659bed9dac844320ae74edc5)
+  - View schema (TODO)
