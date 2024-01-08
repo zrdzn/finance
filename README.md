@@ -11,4 +11,4 @@
   - [Android SDK](https://developer.android.com/studio)
 - Database - Accessed only by Server
   - [PostgreSQL](https://www.postgresql.org/)
-  - View schema (TODO)
+  - [View schema](https://github.com/zrdzn/finance/tree/main/finance-backend/src/main/resources/database)
