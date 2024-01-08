@@ -9,6 +9,8 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.math.BigDecimal
 
+typealias PriceId = Int
+
 @Entity("Price")
 @Table("prices")
 data class Price(
