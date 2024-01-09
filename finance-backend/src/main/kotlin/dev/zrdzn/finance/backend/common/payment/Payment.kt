@@ -1,5 +1,7 @@
 package dev.zrdzn.finance.backend.common.payment
 
+import dev.zrdzn.finance.backend.api.payment.PaymentMethod
+import dev.zrdzn.finance.backend.common.customer.CustomerId
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

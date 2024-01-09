@@ -6,7 +6,7 @@ import dev.zrdzn.finance.backend.api.authentication.AuthenticationResponse
 class AuthenticationFacade {
 
     fun authenticate(authenticationLoginRequest: AuthenticationLoginRequest): AuthenticationResponse {
-
+        TODO()
     }
 
 }
