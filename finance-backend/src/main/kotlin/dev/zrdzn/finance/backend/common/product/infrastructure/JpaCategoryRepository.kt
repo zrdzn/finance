@@ -7,4 +7,4 @@ import org.springframework.data.repository.Repository
 import org.springframework.stereotype.Component
 
 @Component
-interface JpaCategoryRepository : CategoryRepository, Repository<CategoryId, Category>
+interface JpaCategoryRepository : CategoryRepository, Repository<Category, CategoryId>

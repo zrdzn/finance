@@ -7,4 +7,4 @@ import org.springframework.data.repository.Repository
 import org.springframework.stereotype.Component
 
 @Component
-interface JpaProductRepository : ProductRepository, Repository<ProductId, Product>
+interface JpaProductRepository : ProductRepository, Repository<Product, ProductId>

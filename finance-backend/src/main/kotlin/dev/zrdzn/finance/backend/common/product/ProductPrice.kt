@@ -1,5 +1,6 @@
 package dev.zrdzn.finance.backend.common.product
 
+import dev.zrdzn.finance.backend.common.price.PriceId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -9,17 +10,17 @@ import jakarta.persistence.Table
 
 typealias ProductPriceId = Int
 
-@Entity("ProductPrice")
-@Table("product_prices")
+@Entity(name = "ProductPrice")
+@Table(name = "product_prices")
 data class ProductPrice(
     @Id
-    @Column("id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: ProductPriceId?,
 
-    @Column("product_id")
+    @Column(name = "product_id")
     val productId: ProductId,
 
-    @Column("price_id")
+    @Column(name = "price_id")
     val priceId: PriceId,
 )

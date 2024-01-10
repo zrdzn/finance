@@ -1,27 +1,33 @@
 package dev.zrdzn.finance.backend.common.price
 
 import dev.zrdzn.finance.backend.api.price.PriceCurrency
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.math.BigDecimal
+import org.hibernate.annotations.Type
 
 typealias PriceId = Int
 
-@Entity("Price")
-@Table("prices")
+@Entity(name = "Price")
+@Table(name = "prices")
 data class Price(
     @Id
-    @Column("id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: PriceId?,
 
-    @Column("unit_amount")
+    @Column(name = "unit_amount")
     val unitAmount: BigDecimal,
 
-    @Column("currency")
-    val currency: PriceCurrency,
+    @Column(columnDefinition = "price_currency")
+    @Enumerated(EnumType.STRING)
+    @Type(PostgreSQLEnumType::class)
+    val priceCurrency: PriceCurrency,
 )

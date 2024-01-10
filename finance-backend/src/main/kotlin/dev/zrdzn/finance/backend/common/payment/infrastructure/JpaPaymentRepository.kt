@@ -7,4 +7,4 @@ import org.springframework.data.repository.Repository
 import org.springframework.stereotype.Component
 
 @Component
-interface JpaPaymentRepository : PaymentRepository, Repository<PaymentId, Payment>
+interface JpaPaymentRepository : PaymentRepository, Repository<Payment, PaymentId>

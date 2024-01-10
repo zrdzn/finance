@@ -1,5 +1,6 @@
 package dev.zrdzn.finance.backend.common.payment
 
+import dev.zrdzn.finance.backend.common.price.PriceId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue

@@ -30,8 +30,8 @@ data class Payment(
     @Column(name = "payed_at")
     val payedAt: Instant,
 
-    @Column(name = "method")
+    @Column(columnDefinition = "payment_method")
     @Enumerated(EnumType.STRING)
     @Type(PostgreSQLEnumType::class)
-    val method: PaymentMethod,
+    val paymentMethod: PaymentMethod,
 )

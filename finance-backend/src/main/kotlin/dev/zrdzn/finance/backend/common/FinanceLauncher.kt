@@ -1,4 +1,4 @@
-package dev.zrdzn.finance.backend
+package dev.zrdzn.finance.backend.common
 
 import org.springframework.boot.runApplication
 

@@ -7,4 +7,4 @@ import org.springframework.data.repository.Repository
 import org.springframework.stereotype.Component
 
 @Component
-interface JpaPaymentPriceRepository : PaymentPriceRepository, Repository<PaymentPriceId, PaymentPrice>
+interface JpaPaymentPriceRepository : PaymentPriceRepository, Repository<PaymentPrice, PaymentPriceId>

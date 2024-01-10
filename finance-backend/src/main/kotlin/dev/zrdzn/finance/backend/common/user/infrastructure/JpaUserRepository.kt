@@ -7,4 +7,4 @@ import org.springframework.data.repository.Repository
 import org.springframework.stereotype.Component
 
 @Component
-interface JpaUserRepository : UserRepository, Repository<UserId, User>
+interface JpaUserRepository : UserRepository, Repository<User, UserId>

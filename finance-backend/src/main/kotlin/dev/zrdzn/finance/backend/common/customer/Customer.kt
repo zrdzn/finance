@@ -10,14 +10,14 @@ import jakarta.persistence.Table
 
 typealias CustomerId = Int
 
-@Entity("Customer")
-@Table("customers")
+@Entity(name = "Customer")
+@Table(name = "customers")
 data class Customer(
     @Id
-    @Column("id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: CustomerId?,
 
-    @Column("user_id")
+    @Column(name = "user_id")
     val userId: UserId
 )
