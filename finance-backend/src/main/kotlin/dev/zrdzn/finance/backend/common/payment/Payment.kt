@@ -34,4 +34,7 @@ data class Payment(
     @Enumerated(EnumType.STRING)
     @Type(PostgreSQLEnumType::class)
     val paymentMethod: PaymentMethod,
+
+    @Column(name = "description")
+    val description: String?
 )

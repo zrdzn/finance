@@ -33,6 +33,10 @@ dependencies {
 
     implementation("org.postgresql:postgresql:42.6.0")
 
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+
+    implementation("com.auth0:java-jwt:4.4.0")
+
     runtimeOnly("org.jetbrains.kotlin:kotlin-reflect:1.2.41")
 }
 

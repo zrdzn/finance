@@ -1,10 +1,13 @@
 package dev.zrdzn.finance.backend.common.authentication.infrastructure
 
 import dev.zrdzn.finance.backend.api.authentication.AuthenticationLoginRequest
-import dev.zrdzn.finance.backend.api.authentication.AuthenticationResponse
 import dev.zrdzn.finance.backend.api.user.UserCreateRequest
 import dev.zrdzn.finance.backend.common.authentication.AuthenticationFacade
+import dev.zrdzn.finance.backend.common.authentication.token.TOKEN_COOKIE_NAME
 import dev.zrdzn.finance.backend.common.user.UserFacade
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -19,8 +22,9 @@ class AuthenticationController(
 
     @PostMapping("/register")
     fun register(
-        @RequestBody userCreateRequest: UserCreateRequest
-    ): AuthenticationResponse =
+        @RequestBody userCreateRequest: UserCreateRequest,
+        response: HttpServletResponse
+    ): ResponseEntity<Unit> =
         userFacade
             .createUser(userCreateRequest)
             .let {
@@ -31,5 +35,12 @@ class AuthenticationController(
                     )
                 )
             }
+            .also {
+                val cookie = Cookie(TOKEN_COOKIE_NAME, it.value)
+                cookie.secure = true
+                cookie.isHttpOnly = true
+                response.addCookie(cookie)
+            }
+            .let { ResponseEntity.ok().build() }
 
 }

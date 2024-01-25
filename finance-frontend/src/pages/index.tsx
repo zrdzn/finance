@@ -4,13 +4,11 @@ import Head from 'next/head';
 import {
   Button,
   Flex,
-  Input, InputGroup, InputLeftElement, Select,
+  Input, InputGroup, InputLeftElement,
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Td,
-  Text,
   Th,
   Thead,
   Tr
@@ -18,9 +16,25 @@ import {
 import {useTheme} from "@/hooks/theme";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDown, faTrash} from "@fortawesome/free-solid-svg-icons";
+import {ChangeEvent, useState} from "react";
+import {useApi} from "@/hooks/apiClient";
+
+interface PaymentCreateRequest {
+  amount: number;
+  description: string;
+  paymentMethod: string;
+}
 
 export default function Dashboard(): ReactJSXElement {
   const theme = useTheme();
+  const api = useApi();
+  const [paymentCreateRequest, setPaymentCreateRequest] = useState<PaymentCreateRequest>({
+
+  });
+
+  const handlePaymentCreateFields = (event: ChangeEvent<HTMLInputElement>) => {
+    setCredentials({ ...credentials, [event.target.name]: event.target.value });
+  };
 
   return (
     <Layout>
@@ -45,7 +59,8 @@ export default function Dashboard(): ReactJSXElement {
               </InputLeftElement>
               <Input height={'full'}
                      placeholder='Enter amount'
-                     borderRadius={0} />
+                     borderRadius={0}
+                     onChange={} />
             </InputGroup>
             <Button backgroundColor={theme.primaryColor}
                     height={'full'}

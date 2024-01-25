@@ -8,5 +8,4 @@ create table "product_prices"
     constraint "pk_product_prices" primary key ("id"),
     constraint "fk_product_prices_products" foreign key ("product_id") references "products" ("id"),
     constraint "fk_product_prices_prices" foreign key ("price_id") references "prices" ("id")
-
 );
