@@ -16,25 +16,35 @@ import {
 import {useTheme} from "@/hooks/theme";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDown, faTrash} from "@fortawesome/free-solid-svg-icons";
-import {ChangeEvent, useState} from "react";
+import React, {ChangeEvent, MouseEventHandler, useState} from "react";
 import {useApi} from "@/hooks/apiClient";
 
 interface PaymentCreateRequest {
-  amount: number;
-  description: string;
+  customerId: number;
   paymentMethod: string;
+  description: string;
+  price: number;
+  currency: string;
 }
 
 export default function Dashboard(): ReactJSXElement {
   const theme = useTheme();
   const api = useApi();
-  const [paymentCreateRequest, setPaymentCreateRequest] = useState<PaymentCreateRequest>({
-
-  });
+  /*const [paymentCreateRequest, setPaymentCreateRequest] = useState<PaymentCreateRequest>({
+    customerId: customer.id,
+    paymentMethod: preferredPaymentMethod,
+    description: 'Test payment',
+    price: 0,
+    currency: defaultCurrence
+  });*/
 
   const handlePaymentCreateFields = (event: ChangeEvent<HTMLInputElement>) => {
-    setCredentials({ ...credentials, [event.target.name]: event.target.value });
+    //setPaymentCreateRequest({ ...paymentCreateRequest, [event.target.name]: event.target.value });
   };
+
+  const handlePaymentCreate = (event: React.MouseEvent<HTMLButtonElement>) => {
+
+  }
 
   return (
     <Layout>
@@ -60,11 +70,12 @@ export default function Dashboard(): ReactJSXElement {
               <Input height={'full'}
                      placeholder='Enter amount'
                      borderRadius={0}
-                     onChange={} />
+                     onChange={handlePaymentCreateFields} />
             </InputGroup>
             <Button backgroundColor={theme.primaryColor}
                     height={'full'}
-                    borderRadius={0}>
+                    borderRadius={0}
+                    onClick={handlePaymentCreate}>
               Add payment
             </Button>
           </Flex>

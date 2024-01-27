@@ -1,6 +1,7 @@
 package dev.zrdzn.finance.backend.common.authentication
 
 import dev.zrdzn.finance.backend.api.authentication.AuthenticationCredentialsInvalidException
+import dev.zrdzn.finance.backend.api.authentication.AuthenticationDetailsResponse
 import dev.zrdzn.finance.backend.api.authentication.AuthenticationLoginRequest
 import dev.zrdzn.finance.backend.api.authentication.token.AccessTokenCreateRequest
 import dev.zrdzn.finance.backend.api.authentication.token.AccessTokenResponse
@@ -10,6 +11,7 @@ import dev.zrdzn.finance.backend.api.user.UserWithPasswordResponse
 import dev.zrdzn.finance.backend.common.authentication.token.TokenFacade
 import dev.zrdzn.finance.backend.common.authentication.token.TokenId
 import dev.zrdzn.finance.backend.common.user.UserFacade
+import dev.zrdzn.finance.backend.common.user.UserId
 import org.springframework.security.crypto.password.PasswordEncoder
 
 class AuthenticationFacade(
@@ -24,10 +26,9 @@ class AuthenticationFacade(
             ?.let { (user, refreshTokenId) -> createAccessToken(user, refreshTokenId) }
             ?: throw AuthenticationCredentialsInvalidException(authenticationLoginRequest.email)
 
-    private fun getValidatedUser(authenticationLoginRequest: AuthenticationLoginRequest): UserWithPasswordResponse? =
-        userFacade
-            .getUserWithPasswordByEmail(authenticationLoginRequest.email)
-            ?.takeIf { passwordEncoder.matches(authenticationLoginRequest.password, it.password) }
+    fun getAuthenticationDetailsByUserId(userId: UserId): AuthenticationDetailsResponse? =
+        userFacade.getUserById(userId)
+            ?.let { AuthenticationDetailsResponse(it.username) }
 
     private fun createRefreshToken(userId: Int): RefreshTokenCreateResponse =
         tokenFacade.createRefreshToken(RefreshTokenCreateRequest(userId))
@@ -42,5 +43,10 @@ class AuthenticationFacade(
                 )
             )
             .let { tokenFacade.getAccessTokenDetails(it.value) }
+
+    private fun getValidatedUser(authenticationLoginRequest: AuthenticationLoginRequest): UserWithPasswordResponse? =
+        userFacade
+            .getUserWithPasswordByEmail(authenticationLoginRequest.email)
+            ?.takeIf { passwordEncoder.matches(authenticationLoginRequest.password, it.password) }
 
 }
