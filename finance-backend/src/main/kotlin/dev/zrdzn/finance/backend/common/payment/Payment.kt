@@ -2,17 +2,15 @@ package dev.zrdzn.finance.backend.common.payment
 
 import dev.zrdzn.finance.backend.api.payment.PaymentMethod
 import dev.zrdzn.finance.backend.common.customer.CustomerId
-import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.time.Instant
-import org.hibernate.annotations.Type
+import org.hibernate.annotations.JdbcType
+import org.hibernate.dialect.PostgreSQLEnumJdbcType
 
 typealias PaymentId = Int
 
@@ -31,8 +29,7 @@ data class Payment(
     val payedAt: Instant,
 
     @Column(columnDefinition = "payment_method")
-    @Enumerated(EnumType.STRING)
-    @Type(PostgreSQLEnumType::class)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
     val paymentMethod: PaymentMethod,
 
     @Column(name = "description")

@@ -3,11 +3,13 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.1.1"
-    id("io.spring.dependency-management") version "1.1.0"
+    id("org.springframework.boot") version "3.2.3"
+    id("io.spring.dependency-management") version "1.1.4"
     id("org.jetbrains.kotlin.plugin.noarg") version "2.0.0-Beta1"
     kotlin("jvm") version "1.9.21"
     kotlin("plugin.spring") version "1.9.21"
+    kotlin("plugin.allopen") version "1.9.22"
+    kotlin("plugin.jpa") version "1.9.21"
 }
 
 group = "dev.zrdzn.finance"
@@ -27,9 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.security:spring-security-crypto")
 
-    implementation("org.liquibase:liquibase-core:4.25.0")
-
-    implementation("io.hypersistence:hypersistence-utils-hibernate-62:3.5.0")
+    implementation("org.liquibase:liquibase-core:4.26.0")
 
     implementation("org.postgresql:postgresql:42.6.0")
 
@@ -88,4 +88,10 @@ tasks.register("integrationTest", Test::class) {
 
 tasks.named("test").configure {
     dependsOn("integrationTest")
+}
+
+allOpen {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.Embeddable")
+    annotation("jakarta.persistence.MappedSuperclass")
 }
