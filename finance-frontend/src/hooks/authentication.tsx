@@ -17,7 +17,7 @@ const DefaultAuthenticationContext = createContext<AuthenticationContext>({
   logout: () => {},
 });
 
-export const AuthenticationProvider = (children: React.ReactNode) => {
+export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const api = useApi();
   const [authenticationDetails, setAuthenticationDetails] = useState<AuthenticationDetails | null>({
     username: undefined,
