@@ -5,13 +5,12 @@ import {
   Box,
   Card,
   CardBody, CardHeader,
-  Flex, Heading, Link,
+  Flex, Heading,
   Stack, StackDivider,
   Text,
 } from "@chakra-ui/react";
 import {useTheme} from "@/hooks/theme";
 import React from "react";
-import {AddPaymentButton} from "@/components/AddPaymentButton"
 
 export default function Dashboard(): ReactJSXElement {
   const theme = useTheme();
@@ -19,15 +18,14 @@ export default function Dashboard(): ReactJSXElement {
   return (
     <Layout>
       <Head>
-        <title>Finance - Overview</title>
+        <title>Finance - History</title>
       </Head>
       <Flex justifyContent={'center'}>
         <Flex direction={'column'} width={'full'} justifyContent={'center'}>
           <Card margin={2}>
             <CardHeader backgroundColor={theme.secondaryColor}>
               <Flex justifyContent={'space-between'}>
-                <Heading size='md'>Last transactions</Heading>
-                <AddPaymentButton />
+                <Heading size='md'>History of all transactions</Heading>
               </Flex>
             </CardHeader>
             <CardBody>
@@ -105,17 +103,6 @@ export default function Dashboard(): ReactJSXElement {
                           letterSpacing={0.5}>
                       CASH
                     </Text>
-                  </Flex>
-                </Box>
-                <Box>
-                  <Flex justifyContent={'space-between'}>
-                    <Box />
-                    <Link color={'dimgray'}
-                          fontSize={'sm'}
-                          href={'history'}
-                          letterSpacing={0.5}>
-                      View All
-                    </Link>
                   </Flex>
                 </Box>
               </Stack>
