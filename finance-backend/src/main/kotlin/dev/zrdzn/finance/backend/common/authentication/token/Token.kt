@@ -3,14 +3,12 @@ package dev.zrdzn.finance.backend.common.authentication.token
 import dev.zrdzn.finance.backend.common.user.UserId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.validation.constraints.Size
 import java.time.Instant
 
-typealias TokenId = Int
+typealias TokenId = String
 
 const val TOKEN_COOKIE_NAME = "token"
 
@@ -18,13 +16,9 @@ const val TOKEN_COOKIE_NAME = "token"
 @Table(name = "authentication_tokens")
 data class Token(
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: TokenId?,
-
-    @Column(name = "value")
+    @Column(name = "token_id")
     @Size(max = 40)
-    val value: String,
+    val tokenId: TokenId,
 
     @Column(name = "user_id")
     val userId: UserId,

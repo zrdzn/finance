@@ -6,7 +6,6 @@ import java.time.Instant
 
 data class RefreshTokenResponse(
     val id: TokenId,
-    val value: String,
     val userId: UserId,
     val expiresAt: Instant
 )

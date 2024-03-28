@@ -2,7 +2,6 @@ package dev.zrdzn.finance.backend.common.authentication.token
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.nimbusds.oauth2.sdk.TokenResponse
 import dev.zrdzn.finance.backend.api.authentication.token.AccessTokenCreateRequest
 import dev.zrdzn.finance.backend.api.authentication.token.AccessTokenCreateResponse
 import dev.zrdzn.finance.backend.api.authentication.token.AccessTokenResponse
@@ -24,29 +23,22 @@ class TokenFacade(
         tokenRepository
             .save(
                 Token(
-                    id = null,
-                    value = createRandomToken(),
+                    tokenId = createRandomToken(),
                     userId = refreshTokenCreateRequest.userId,
                     expiresAt = Instant.now().plus(14, ChronoUnit.DAYS)
                 )
             )
             .let {
                 RefreshTokenCreateResponse(
-                    id = it.id!!,
-                    value = it.value
+                    id = it.tokenId
                 )
             }
 
-    fun getRefreshTokenById(tokenId: TokenId): RefreshTokenResponse? =
+    fun removeRefreshToken(tokenId: TokenId) =
         tokenRepository
             .findById(tokenId)
             ?.let {
-                RefreshTokenResponse(
-                    id = it.id!!,
-                    value = it.value,
-                    userId = it.userId,
-                    expiresAt = it.expiresAt
-                )
+                tokenRepository.deleteById(it.tokenId)
             }
 
     fun createAccessToken(accessTokenCreateRequest: AccessTokenCreateRequest): AccessTokenCreateResponse =
@@ -57,10 +49,21 @@ class TokenFacade(
                     .withClaim("refreshTokenId", accessTokenCreateRequest.refreshTokenId)
                     .withSubject(accessTokenCreateRequest.email)
                     .withIssuedAt(Date.from(it))
-                    .withExpiresAt(Date.from(it.plus(6, ChronoUnit.HOURS)))
+                    .withExpiresAt(Date.from(it.plus(2, ChronoUnit.MINUTES)))
                     .sign(algorithm)
             }
             .let { AccessTokenCreateResponse(it) }
+
+    fun getRefreshTokenById(tokenId: TokenId): RefreshTokenResponse? =
+        tokenRepository
+            .findById(tokenId)
+            ?.let {
+                RefreshTokenResponse(
+                    id = it.tokenId,
+                    userId = it.userId,
+                    expiresAt = it.expiresAt
+                )
+            }
 
     fun getAccessTokenDetails(accessToken: String): AccessTokenResponse =
         JWT.require(algorithm)
@@ -70,7 +73,7 @@ class TokenFacade(
                 AccessTokenResponse(
                     value = accessToken,
                     userId = it.getClaim("userId").asInt(),
-                    refreshTokenId = it.getClaim("refreshTokenId").asInt(),
+                    refreshTokenId = it.getClaim("refreshTokenId").asString(),
                     email = it.subject,
                     expiresAt = it.expiresAtAsInstant
                 )

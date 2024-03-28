@@ -4,5 +4,4 @@ import dev.zrdzn.finance.backend.common.authentication.token.TokenId
 
 data class RefreshTokenCreateResponse(
     val id: TokenId,
-    val value: String,
 )
