@@ -11,6 +11,17 @@ class UserSpecification : ApplicationTestRunner() {
     @Autowired
     protected lateinit var userFacade: UserFacade
 
+    protected fun createUserCreateRequest(
+        email: String = "test@goo.com",
+        username: String = "test",
+        password: String = "test"
+    ): UserCreateRequest =
+        UserCreateRequest(
+            email = email,
+            username = username,
+            password = password
+        )
+
     protected fun createUser(
         email: String = "test@goo.com",
         username: String = "test",

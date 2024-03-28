@@ -14,10 +14,10 @@ class PaymentControllerTest : PaymentSpecification() {
 
     @Test
     fun `should create payment`() {
-        val user = createUser()
+        val token = createUserAndAuthenticate()
 
         val paymentCreateRequest = PaymentCreateRequest(
-            userId = user.userId,
+            userId = token.userId,
             paymentMethod = PaymentMethod.CARD,
             description = "Test payment",
             price = BigDecimal("100.00"),
@@ -26,6 +26,7 @@ class PaymentControllerTest : PaymentSpecification() {
 
         given()
             .contentType("application/json")
+            .header("Authorization", "Bearer ${token.value}")
             .body(paymentCreateRequest)
             .`when`()
             .post("/api/payment/create")
