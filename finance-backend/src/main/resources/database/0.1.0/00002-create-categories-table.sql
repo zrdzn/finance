@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset finance:3
+--changeset finance:2
 create table "categories"
 (
     "id"       serial,

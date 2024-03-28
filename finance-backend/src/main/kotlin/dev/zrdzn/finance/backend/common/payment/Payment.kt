@@ -1,7 +1,7 @@
 package dev.zrdzn.finance.backend.common.payment
 
 import dev.zrdzn.finance.backend.api.payment.PaymentMethod
-import dev.zrdzn.finance.backend.common.customer.CustomerId
+import dev.zrdzn.finance.backend.common.user.UserId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -22,8 +22,8 @@ data class Payment(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: PaymentId?,
 
-    @Column(name = "customer_id")
-    val customerId: CustomerId,
+    @Column(name = "user_id")
+    val userId: UserId,
 
     @Column(name = "payed_at")
     val payedAt: Instant,
