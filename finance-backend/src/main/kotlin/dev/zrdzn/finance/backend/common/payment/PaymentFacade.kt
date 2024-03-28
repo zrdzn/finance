@@ -11,7 +11,7 @@ class PaymentFacade(private val paymentRepository: PaymentRepository) {
             .save(
                 Payment(
                     id = null,
-                    userId = paymentCreateRequest.customerId,
+                    userId = paymentCreateRequest.userId,
                     payedAt = Instant.now(),
                     paymentMethod = paymentCreateRequest.paymentMethod,
                     description = paymentCreateRequest.description
