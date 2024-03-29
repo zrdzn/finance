@@ -11,11 +11,20 @@ class AuthenticationSpecification : UserSpecification() {
     @Autowired
     protected lateinit var authenticationFacade: AuthenticationFacade
 
+    fun createAuthenticationLoginRequest(
+        email: String = "",
+        password: String = ""
+    ): AuthenticationLoginRequest =
+        AuthenticationLoginRequest(
+            email = email,
+            password = password
+        )
+
     fun createUserAndAuthenticate(userCreateRequest: UserCreateRequest = createUserCreateRequest()): AccessTokenResponse =
         userFacade.createUser(userCreateRequest)
             .let {
                 authenticationFacade.authenticate(
-                    AuthenticationLoginRequest(
+                    createAuthenticationLoginRequest(
                         email = userCreateRequest.email,
                         password = userCreateRequest.password
                     )
