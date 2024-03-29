@@ -29,7 +29,7 @@ class PaymentControllerTest : PaymentSpecification() {
             .header("Authorization", "Bearer ${token.value}")
             .body(paymentCreateRequest)
             .`when`()
-            .post("/api/payment/create")
+            .post("/payment/create")
             .then()
             .statusCode(HttpStatus.OK.value())
             .body("id", notNullValue())

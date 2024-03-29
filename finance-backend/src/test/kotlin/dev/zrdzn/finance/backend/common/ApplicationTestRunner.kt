@@ -23,7 +23,7 @@ class ApplicationTestRunner {
 
     @BeforeEach
     fun beforeEach(): Unit {
-        RestAssured.baseURI = "http://localhost:$port"
+        RestAssured.baseURI = "http://localhost:$port/api"
     }
 
     companion object {
