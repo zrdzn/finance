@@ -28,7 +28,12 @@ class AuthenticationFacade(
 
     fun getAuthenticationDetailsByUserId(userId: UserId): AuthenticationDetailsResponse? =
         userFacade.getUserById(userId)
-            ?.let { AuthenticationDetailsResponse(it.username) }
+            ?.let {
+                AuthenticationDetailsResponse(
+                    email = it.email,
+                    username = it.username
+                )
+            }
 
     private fun createRefreshToken(userId: Int): RefreshTokenCreateResponse =
         tokenFacade.createRefreshToken(RefreshTokenCreateRequest(userId))
