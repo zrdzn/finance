@@ -72,6 +72,8 @@ class AuthenticationFilter(
 
             val context = SecurityContextHolder.createEmptyContext()
             context.authentication = authenticationToken
+
+            SecurityContextHolder.setContext(context)
         }
 
         filterChain.doFilter(request, response)
