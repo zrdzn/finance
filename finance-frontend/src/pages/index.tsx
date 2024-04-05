@@ -25,7 +25,8 @@ export default function Dashboard(): ReactJSXElement {
         <Flex direction={'column'} width={'full'} justifyContent={'center'}>
           <Card margin={2}>
             <CardHeader backgroundColor={theme.secondaryColor}>
-              <Flex justifyContent={'space-between'}>
+              <Flex alignItems={'center'}
+                    justifyContent={'space-between'}>
                 <Heading size='md'>Last transactions</Heading>
                 <AddPaymentButton />
               </Flex>

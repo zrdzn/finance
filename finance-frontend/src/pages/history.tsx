@@ -12,7 +12,7 @@ import {
 import {useTheme} from "@/hooks/theme";
 import React from "react";
 
-export default function Dashboard(): ReactJSXElement {
+export default function History(): ReactJSXElement {
   const theme = useTheme();
 
   return (

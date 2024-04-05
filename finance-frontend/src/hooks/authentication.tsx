@@ -2,16 +2,19 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import {useApi} from "@/hooks/apiClient"
 
 interface AuthenticationDetails {
+  email: string | undefined;
   username: string | undefined;
 }
 
 interface AuthenticationContext {
+  email: string | undefined;
   username: string | undefined;
   login: (email: string, password: string) => void;
   logout: () => void;
 }
 
 const DefaultAuthenticationContext = createContext<AuthenticationContext>({
+  email: undefined,
   username: undefined,
   login: () => {},
   logout: () => {},
@@ -20,6 +23,7 @@ const DefaultAuthenticationContext = createContext<AuthenticationContext>({
 export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const api = useApi();
   const [authenticationDetails, setAuthenticationDetails] = useState<AuthenticationDetails | null>({
+    email: undefined,
     username: undefined,
   });
 
@@ -40,7 +44,12 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
   };
 
   return (
-    <DefaultAuthenticationContext.Provider value={{ username: authenticationDetails?.username, login, logout }}>
+    <DefaultAuthenticationContext.Provider value={{
+      email: authenticationDetails?.email,
+      username: authenticationDetails?.username,
+      login,
+      logout
+    }}>
       {children}
     </DefaultAuthenticationContext.Provider>
   );

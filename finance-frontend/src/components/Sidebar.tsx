@@ -13,7 +13,7 @@ import {ReactJSXElement} from "@emotion/react/types/jsx-namespace"
 import {useTheme} from "@/hooks/theme"
 import {useRouter} from "next/router"
 import React from "react"
-import {FaBars, FaBolt, FaBook, FaUser} from "react-icons/fa"
+import {FaBars, FaBook, FaUser, FaUserPlus} from "react-icons/fa"
 import {FaCalendarDays, FaGears, FaHouse, FaX} from "react-icons/fa6"
 
 const SidebarLogo = (): ReactJSXElement => {
@@ -31,9 +31,6 @@ const SidebarLogo = (): ReactJSXElement => {
 const BaseView = (): ReactJSXElement => {
   const {isOpen, onOpen, onClose} = useDisclosure();
   const theme = useTheme();
-  const router = useRouter();
-
-  const serverPublicId = router.query.serverPublicId
 
   return (
     <>
@@ -101,7 +98,7 @@ const BaseView = (): ReactJSXElement => {
               <Divider borderColor={theme.secondaryColor} />
               <Flex width={'full'}
                     marginY={3}>
-                <Link href={`/server/${serverPublicId}/electricity`}
+                <Link href={`/history`}
                       style={{width: "inherit"}}>
                   <Button backgroundColor={theme.backgroundColor}
                           onClick={onClose}
@@ -122,7 +119,7 @@ const BaseView = (): ReactJSXElement => {
               <Divider borderColor={theme.secondaryColor} />
               <Flex width={'full'}
                     marginY={3}>
-                <Link href={`/server/${serverPublicId}/general`}
+                <Link href={`/`}
                       style={{width: "inherit"}}>
                   <Button backgroundColor={theme.backgroundColor}
                           onClick={onClose}
@@ -143,7 +140,7 @@ const BaseView = (): ReactJSXElement => {
               <Divider borderColor={theme.secondaryColor} />
               <Flex width={'full'}
                     marginY={3}>
-                <Link href={`/server/${serverPublicId}/electricity`}
+                <Link href={`/`}
                       style={{width: "inherit"}}>
                   <Button backgroundColor={theme.backgroundColor}
                           onClick={onClose}
@@ -164,7 +161,7 @@ const BaseView = (): ReactJSXElement => {
               <Divider borderColor={theme.secondaryColor} />
               <Flex width={'full'}
                     marginY={3}>
-                <Link href={`/server/${serverPublicId}/production`}
+                <Link href={`/`}
                       style={{width: "inherit"}}>
                   <Button backgroundColor={theme.backgroundColor}
                           onClick={onClose}
@@ -177,6 +174,26 @@ const BaseView = (): ReactJSXElement => {
                       </Flex>
                       <Flex>
                         Settings
+                      </Flex>
+                    </Flex>
+                  </Button>
+                </Link>
+              </Flex>
+              <Flex width={'full'}
+                    marginY={3}>
+                <Link href={`/register`}
+                      style={{width: "inherit"}}>
+                  <Button backgroundColor={theme.backgroundColor}
+                          onClick={onClose}
+                          width={'full'}>
+                    <Flex alignItems={'center'}
+                          width={'full'}
+                          columnGap={2}>
+                      <Flex>
+                        <FaUserPlus />
+                      </Flex>
+                      <Flex>
+                        Sign up
                       </Flex>
                     </Flex>
                   </Button>
