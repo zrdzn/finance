@@ -4,6 +4,7 @@ import dev.zrdzn.finance.backend.api.payment.PaymentCreateRequest
 import dev.zrdzn.finance.backend.api.payment.PaymentCreateResponse
 import dev.zrdzn.finance.backend.api.payment.PaymentMethod
 import dev.zrdzn.finance.backend.api.price.PriceCurrency
+import dev.zrdzn.finance.backend.common.authentication.token.TOKEN_COOKIE_NAME
 import io.restassured.RestAssured.given
 import java.math.BigDecimal
 import org.hamcrest.Matchers.notNullValue
@@ -26,7 +27,7 @@ class PaymentControllerTest : PaymentSpecification() {
 
         given()
             .contentType("application/json")
-            .header("Authorization", "Bearer ${token.value}")
+            .cookie(TOKEN_COOKIE_NAME, token.value)
             .body(paymentCreateRequest)
             .`when`()
             .post("/payment/create")

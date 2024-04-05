@@ -47,7 +47,7 @@ class AuthenticationControllerTest : AuthenticationSpecification() {
 
         given()
             .contentType("application/json")
-            .header("Authorization", "Bearer ${token.value}")
+            .cookie(TOKEN_COOKIE_NAME, token.value)
             .`when`()
             .get("/authentication/details")
             .then()
