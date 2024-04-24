@@ -6,7 +6,7 @@ import dev.zrdzn.finance.backend.api.user.UserResponse
 import dev.zrdzn.finance.backend.api.user.UserWithPasswordResponse
 import org.springframework.security.crypto.password.PasswordEncoder
 
-class UserFacade(
+class UserService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder
 ) {

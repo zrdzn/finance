@@ -4,12 +4,10 @@ import dev.zrdzn.finance.backend.api.authentication.AuthenticationLoginRequest
 import dev.zrdzn.finance.backend.api.authentication.token.AccessTokenResponse
 import dev.zrdzn.finance.backend.api.user.UserCreateRequest
 import dev.zrdzn.finance.backend.common.user.UserSpecification
-import org.springframework.beans.factory.annotation.Autowired
 
-class AuthenticationSpecification : UserSpecification() {
+open class AuthenticationSpecification : UserSpecification() {
 
-    @Autowired
-    protected lateinit var authenticationFacade: AuthenticationFacade
+    protected val authenticationService: AuthenticationService get() = application.getBean(AuthenticationService::class.java)
 
     fun createAuthenticationLoginRequest(
         email: String = "",
@@ -21,9 +19,9 @@ class AuthenticationSpecification : UserSpecification() {
         )
 
     fun createUserAndAuthenticate(userCreateRequest: UserCreateRequest = createUserCreateRequest()): AccessTokenResponse =
-        userFacade.createUser(userCreateRequest)
+        userService.createUser(userCreateRequest)
             .let {
-                authenticationFacade.authenticate(
+                authenticationService.authenticate(
                     createAuthenticationLoginRequest(
                         email = userCreateRequest.email,
                         password = userCreateRequest.password

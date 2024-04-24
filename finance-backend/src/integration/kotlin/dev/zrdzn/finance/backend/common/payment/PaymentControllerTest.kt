@@ -5,9 +5,10 @@ import dev.zrdzn.finance.backend.api.payment.PaymentCreateResponse
 import dev.zrdzn.finance.backend.api.payment.PaymentMethod
 import dev.zrdzn.finance.backend.api.price.PriceCurrency
 import dev.zrdzn.finance.backend.common.authentication.token.TOKEN_COOKIE_NAME
-import io.restassured.RestAssured.given
 import java.math.BigDecimal
-import org.hamcrest.Matchers.notNullValue
+import kong.unirest.core.Unirest
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 
@@ -15,6 +16,7 @@ class PaymentControllerTest : PaymentSpecification() {
 
     @Test
     fun `should create payment`() {
+        // given
         val token = createUserAndAuthenticate()
 
         val paymentCreateRequest = PaymentCreateRequest(
@@ -25,15 +27,16 @@ class PaymentControllerTest : PaymentSpecification() {
             currency = PriceCurrency.PLN
         )
 
-        given()
+        // when
+        val paymentCreateResponse = Unirest.post("/payment/create")
             .contentType("application/json")
             .cookie(TOKEN_COOKIE_NAME, token.value)
             .body(paymentCreateRequest)
-            .`when`()
-            .post("/payment/create")
-            .then()
-            .statusCode(HttpStatus.OK.value())
-            .body("id", notNullValue())
+            .asObject(PaymentCreateResponse::class.java)
+
+        // then
+        assertEquals(HttpStatus.OK.value(), paymentCreateResponse.status)
+        assertNotNull(paymentCreateResponse.body)
     }
 
 }

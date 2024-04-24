@@ -2,10 +2,11 @@ package dev.zrdzn.finance.backend.common.authentication.infrastructure
 
 import dev.zrdzn.finance.backend.api.authentication.AuthenticationDetailsResponse
 import dev.zrdzn.finance.backend.api.authentication.AuthenticationLoginRequest
+import dev.zrdzn.finance.backend.api.authentication.token.AccessTokenResponse
 import dev.zrdzn.finance.backend.api.user.UserCreateRequest
-import dev.zrdzn.finance.backend.common.authentication.AuthenticationFacade
+import dev.zrdzn.finance.backend.common.authentication.AuthenticationService
 import dev.zrdzn.finance.backend.common.authentication.token.TOKEN_COOKIE_NAME
-import dev.zrdzn.finance.backend.common.user.UserFacade
+import dev.zrdzn.finance.backend.common.user.UserService
 import dev.zrdzn.finance.backend.common.user.UserId
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
@@ -20,19 +21,19 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/authentication")
 class AuthenticationController(
-    private val userFacade: UserFacade,
-    private val authenticationFacade: AuthenticationFacade
+    private val userService: UserService,
+    private val authenticationService: AuthenticationService
 ) {
 
     @PostMapping("/register")
     fun register(
         @RequestBody userCreateRequest: UserCreateRequest,
         response: HttpServletResponse
-    ): ResponseEntity<Unit> =
-        userFacade
+    ): ResponseEntity<AccessTokenResponse> =
+        userService
             .createUser(userCreateRequest)
             .let {
-                authenticationFacade.authenticate(
+                authenticationService.authenticate(
                     AuthenticationLoginRequest(
                         email = userCreateRequest.email,
                         password = userCreateRequest.password
@@ -40,20 +41,20 @@ class AuthenticationController(
                 )
             }
             .also { addAuthenticationCookie(response, it.value) }
-            .let { ResponseEntity.ok().build() }
+            .let { ResponseEntity.ok(it) }
 
     @PostMapping("/login")
     fun login(
         @RequestBody authenticationLoginRequest: AuthenticationLoginRequest,
         response: HttpServletResponse
-    ): ResponseEntity<Unit> =
-        authenticationFacade.authenticate(authenticationLoginRequest)
+    ): ResponseEntity<AccessTokenResponse> =
+        authenticationService.authenticate(authenticationLoginRequest)
             .also { addAuthenticationCookie(response, it.value) }
-            .let { ResponseEntity.ok().build() }
+            .let { ResponseEntity.ok(it) }
 
     @GetMapping("/details")
     fun getDetails(@AuthenticationPrincipal userId: UserId): ResponseEntity<AuthenticationDetailsResponse> =
-        authenticationFacade.getAuthenticationDetailsByUserId(userId)
+        authenticationService.getAuthenticationDetailsByUserId(userId)
             ?.let { ResponseEntity.ok(it) }
             ?: ResponseEntity.notFound().build()
 

@@ -1,4 +1,4 @@
-package dev.zrdzn.finance.backend.common
+package dev.zrdzn.finance.backend.common.application
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

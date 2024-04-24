@@ -1,4 +1,4 @@
-package dev.zrdzn.finance.backend.common
+package dev.zrdzn.finance.backend.common.application
 
 import dev.zrdzn.finance.backend.common.authentication.infrastructure.AuthenticationFilter
 import dev.zrdzn.finance.backend.common.authentication.token.TokenFacade

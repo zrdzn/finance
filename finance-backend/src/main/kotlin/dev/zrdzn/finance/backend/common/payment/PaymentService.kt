@@ -4,7 +4,7 @@ import dev.zrdzn.finance.backend.api.payment.PaymentCreateRequest
 import dev.zrdzn.finance.backend.api.payment.PaymentCreateResponse
 import java.time.Instant
 
-class PaymentFacade(private val paymentRepository: PaymentRepository) {
+class PaymentService(private val paymentRepository: PaymentRepository) {
 
     fun createPayment(paymentCreateRequest: PaymentCreateRequest): PaymentCreateResponse =
         paymentRepository

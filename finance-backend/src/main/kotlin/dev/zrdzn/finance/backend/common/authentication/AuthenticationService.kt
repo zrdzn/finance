@@ -10,12 +10,12 @@ import dev.zrdzn.finance.backend.api.authentication.token.RefreshTokenCreateResp
 import dev.zrdzn.finance.backend.api.user.UserWithPasswordResponse
 import dev.zrdzn.finance.backend.common.authentication.token.TokenFacade
 import dev.zrdzn.finance.backend.common.authentication.token.TokenId
-import dev.zrdzn.finance.backend.common.user.UserFacade
+import dev.zrdzn.finance.backend.common.user.UserService
 import dev.zrdzn.finance.backend.common.user.UserId
 import org.springframework.security.crypto.password.PasswordEncoder
 
-class AuthenticationFacade(
-    private val userFacade: UserFacade,
+class AuthenticationService(
+    private val userService: UserService,
     private val tokenFacade: TokenFacade,
     private val passwordEncoder: PasswordEncoder
 ) {
@@ -27,7 +27,7 @@ class AuthenticationFacade(
             ?: throw AuthenticationCredentialsInvalidException(authenticationLoginRequest.email)
 
     fun getAuthenticationDetailsByUserId(userId: UserId): AuthenticationDetailsResponse? =
-        userFacade.getUserById(userId)
+        userService.getUserById(userId)
             ?.let {
                 AuthenticationDetailsResponse(
                     email = it.email,
@@ -50,7 +50,7 @@ class AuthenticationFacade(
             .let { tokenFacade.getAccessTokenDetails(it.value) }
 
     private fun getValidatedUser(authenticationLoginRequest: AuthenticationLoginRequest): UserWithPasswordResponse? =
-        userFacade
+        userService
             .getUserWithPasswordByEmail(authenticationLoginRequest.email)
             ?.takeIf { passwordEncoder.matches(authenticationLoginRequest.password, it.password) }
 

@@ -1,6 +1,6 @@
 package dev.zrdzn.finance.backend.common.user.application
 
-import dev.zrdzn.finance.backend.common.user.UserFacade
+import dev.zrdzn.finance.backend.common.user.UserService
 import dev.zrdzn.finance.backend.common.user.UserRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,7 +13,7 @@ class UserApplicationConfiguration(
 ) {
 
     @Bean
-    fun userFacade(): UserFacade = UserFacade(
+    fun userFacade(): UserService = UserService(
         userRepository = userRepository,
         passwordEncoder = passwordEncoder
     )

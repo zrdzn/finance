@@ -3,13 +3,14 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.2.3"
+    id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.4"
     id("org.jetbrains.kotlin.plugin.noarg") version "2.0.0-Beta1"
-    kotlin("jvm") version "1.9.21"
-    kotlin("plugin.spring") version "1.9.21"
-    kotlin("plugin.allopen") version "1.9.22"
-    kotlin("plugin.jpa") version "1.9.21"
+    id("com.coditory.integration-test") version "1.4.5"
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.spring") version "1.9.23"
+    kotlin("plugin.allopen") version "1.9.23"
+    kotlin("plugin.jpa") version "1.9.23"
 }
 
 group = "dev.zrdzn.finance"
@@ -45,9 +46,13 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
-    testImplementation("org.testcontainers:junit-jupiter:1.19.3")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql:1.19.3")
-    testImplementation("io.rest-assured:rest-assured:5.4.0")
+    testImplementation("com.konghq:unirest-java-core:4.2.4")
+    testImplementation("com.konghq:unirest-objectmapper-jackson:4.2.4")
 }
 
 java {
@@ -61,13 +66,6 @@ tasks.withType<KotlinCompile> {
         freeCompilerArgs += "-Xjsr305=strict"
         jvmTarget = "17"
         javaParameters = true
-    }
-}
-
-sourceSets {
-    create("integration") {
-        kotlin.srcDir("src/integration/kotlin")
-        resources.srcDir("src/integration/resources")
     }
 }
 
@@ -89,15 +87,6 @@ tasks.withType<Test> {
     }
 
     maxParallelForks = 1
-}
-
-tasks.register("integrationTest", Test::class) {
-    testClassesDirs = sourceSets["integration"].output.classesDirs
-    classpath = sourceSets["integration"].runtimeClasspath
-}
-
-tasks.named("test").configure {
-    dependsOn("integrationTest")
 }
 
 allOpen {
