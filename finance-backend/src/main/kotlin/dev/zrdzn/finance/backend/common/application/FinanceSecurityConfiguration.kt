@@ -1,7 +1,9 @@
 package dev.zrdzn.finance.backend.common.application
 
 import dev.zrdzn.finance.backend.common.authentication.infrastructure.AuthenticationFilter
-import dev.zrdzn.finance.backend.common.authentication.token.TokenFacade
+import dev.zrdzn.finance.backend.common.authentication.token.TokenService
+import dev.zrdzn.finance.backend.common.user.UserService
+import java.time.Clock
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
@@ -16,7 +18,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableWebSecurity
 @Configuration
 class FinanceSecurityConfiguration(
-    private val tokenFacade: TokenFacade
+    private val tokenService: TokenService,
+    private val userService: UserService,
+    private val clock: Clock
 ) {
 
     @Bean
@@ -40,16 +44,17 @@ class FinanceSecurityConfiguration(
                         registerCorsConfiguration(
                             "/**",
                             CorsConfiguration().apply {
-                                allowedOrigins = listOf("*")
+                                allowedOrigins = listOf("http://localhost:3000")
                                 allowedMethods = listOf("*")
                                 allowedHeaders = listOf("*")
+                                allowCredentials = true
                             }
                         )
                     }
                 )
             }
             .addFilterBefore(
-                AuthenticationFilter(tokenFacade),
+                AuthenticationFilter(tokenService, userService, clock),
                 UsernamePasswordAuthenticationFilter::class.java
             )
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }

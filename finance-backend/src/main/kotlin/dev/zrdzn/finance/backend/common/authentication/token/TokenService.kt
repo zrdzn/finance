@@ -8,11 +8,12 @@ import dev.zrdzn.finance.backend.api.authentication.token.AccessTokenResponse
 import dev.zrdzn.finance.backend.api.authentication.token.RefreshTokenCreateRequest
 import dev.zrdzn.finance.backend.api.authentication.token.RefreshTokenCreateResponse
 import dev.zrdzn.finance.backend.api.authentication.token.RefreshTokenResponse
+import dev.zrdzn.finance.backend.api.authentication.token.TokenSignatureMismatchException
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
 
-class TokenFacade(
+class TokenService(
     private val tokenRepository: TokenRepository
 ) {
 
@@ -65,18 +66,25 @@ class TokenFacade(
                 )
             }
 
-    fun getAccessTokenDetails(accessToken: String): AccessTokenResponse =
-        JWT.require(algorithm)
-            .build()
-            .verify(accessToken)
-            .let {
-                AccessTokenResponse(
-                    value = accessToken,
-                    userId = it.getClaim("userId").asInt(),
-                    refreshTokenId = it.getClaim("refreshTokenId").asString(),
-                    email = it.subject,
-                    expiresAt = it.expiresAtAsInstant
-                )
-            }
+    fun getAccessTokenDetails(accessToken: String): AccessTokenResponse {
+        val token = JWT.decode(accessToken)
+        if (algorithm.name != token.algorithm) {
+            throw TokenSignatureMismatchException(accessToken)
+        }
+
+        try {
+            algorithm.verify(token)
+        } catch (exception: Exception) {
+            throw TokenSignatureMismatchException(accessToken, exception)
+        }
+
+        return AccessTokenResponse(
+            value = accessToken,
+            userId = token.getClaim("userId").asInt(),
+            refreshTokenId = token.getClaim("refreshTokenId").asString(),
+            email = token.subject,
+            expiresAt = token.expiresAtAsInstant
+        )
+    }
 
 }

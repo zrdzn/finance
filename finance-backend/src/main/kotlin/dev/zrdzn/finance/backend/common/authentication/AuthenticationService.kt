@@ -8,7 +8,7 @@ import dev.zrdzn.finance.backend.api.authentication.token.AccessTokenResponse
 import dev.zrdzn.finance.backend.api.authentication.token.RefreshTokenCreateRequest
 import dev.zrdzn.finance.backend.api.authentication.token.RefreshTokenCreateResponse
 import dev.zrdzn.finance.backend.api.user.UserWithPasswordResponse
-import dev.zrdzn.finance.backend.common.authentication.token.TokenFacade
+import dev.zrdzn.finance.backend.common.authentication.token.TokenService
 import dev.zrdzn.finance.backend.common.authentication.token.TokenId
 import dev.zrdzn.finance.backend.common.user.UserService
 import dev.zrdzn.finance.backend.common.user.UserId
@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 
 class AuthenticationService(
     private val userService: UserService,
-    private val tokenFacade: TokenFacade,
+    private val tokenService: TokenService,
     private val passwordEncoder: PasswordEncoder
 ) {
 
@@ -36,10 +36,10 @@ class AuthenticationService(
             }
 
     private fun createRefreshToken(userId: Int): RefreshTokenCreateResponse =
-        tokenFacade.createRefreshToken(RefreshTokenCreateRequest(userId))
+        tokenService.createRefreshToken(RefreshTokenCreateRequest(userId))
 
     private fun createAccessToken(userWithPasswordResponse: UserWithPasswordResponse, refreshTokenId: TokenId): AccessTokenResponse =
-        tokenFacade
+        tokenService
             .createAccessToken(
                 AccessTokenCreateRequest(
                     userId = userWithPasswordResponse.id,
@@ -47,7 +47,7 @@ class AuthenticationService(
                     email = userWithPasswordResponse.email
                 )
             )
-            .let { tokenFacade.getAccessTokenDetails(it.value) }
+            .let { tokenService.getAccessTokenDetails(it.value) }
 
     private fun getValidatedUser(authenticationLoginRequest: AuthenticationLoginRequest): UserWithPasswordResponse? =
         userService

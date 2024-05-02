@@ -2,6 +2,7 @@ package dev.zrdzn.finance.backend.common.authentication.infrastructure
 
 import dev.zrdzn.finance.backend.api.authentication.AuthenticationDetailsResponse
 import dev.zrdzn.finance.backend.api.authentication.AuthenticationLoginRequest
+import dev.zrdzn.finance.backend.api.authentication.AuthenticationRegisterResponse
 import dev.zrdzn.finance.backend.api.authentication.token.AccessTokenResponse
 import dev.zrdzn.finance.backend.api.user.UserCreateRequest
 import dev.zrdzn.finance.backend.common.authentication.AuthenticationService
@@ -29,18 +30,10 @@ class AuthenticationController(
     fun register(
         @RequestBody userCreateRequest: UserCreateRequest,
         response: HttpServletResponse
-    ): ResponseEntity<AccessTokenResponse> =
+    ): ResponseEntity<AuthenticationRegisterResponse> =
         userService
             .createUser(userCreateRequest)
-            .let {
-                authenticationService.authenticate(
-                    AuthenticationLoginRequest(
-                        email = userCreateRequest.email,
-                        password = userCreateRequest.password
-                    )
-                )
-            }
-            .also { addAuthenticationCookie(response, it.value) }
+            .let { AuthenticationRegisterResponse(it.userId) }
             .let { ResponseEntity.ok(it) }
 
     @PostMapping("/login")

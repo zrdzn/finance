@@ -11,10 +11,10 @@ import {
 } from "@chakra-ui/react";
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace"
 import {useTheme} from "@/hooks/theme"
-import {useRouter} from "next/router"
 import React from "react"
-import {FaBars, FaBook, FaUser, FaUserPlus} from "react-icons/fa"
+import {FaBars, FaBook, FaSignInAlt, FaUser, FaUserPlus} from "react-icons/fa"
 import {FaCalendarDays, FaGears, FaHouse, FaX} from "react-icons/fa6"
+import {useAuthentication} from "@/hooks/authentication"
 
 const SidebarLogo = (): ReactJSXElement => {
   return (
@@ -29,6 +29,7 @@ const SidebarLogo = (): ReactJSXElement => {
 }
 
 const BaseView = (): ReactJSXElement => {
+  const { authenticationDetails } = useAuthentication()
   const {isOpen, onOpen, onClose} = useDisclosure();
   const theme = useTheme();
 
@@ -179,26 +180,74 @@ const BaseView = (): ReactJSXElement => {
                   </Button>
                 </Link>
               </Flex>
-              <Flex width={'full'}
-                    marginY={3}>
-                <Link href={`/register`}
-                      style={{width: "inherit"}}>
-                  <Button backgroundColor={theme.backgroundColor}
-                          onClick={onClose}
-                          width={'full'}>
-                    <Flex alignItems={'center'}
-                          width={'full'}
-                          columnGap={2}>
-                      <Flex>
-                        <FaUserPlus />
-                      </Flex>
-                      <Flex>
-                        Sign up
-                      </Flex>
-                    </Flex>
-                  </Button>
-                </Link>
-              </Flex>
+              {
+                authenticationDetails &&
+                  <Flex width={'full'}
+                        marginY={3}>
+                      <Link href={`/register`}
+                            style={{width: "inherit"}}>
+                          <Button backgroundColor={theme.backgroundColor}
+                                  onClick={onClose}
+                                  width={'full'}>
+                              <Flex alignItems={'center'}
+                                    width={'full'}
+                                    columnGap={2}>
+                                  <Flex>
+                                      <FaUserPlus />
+                                  </Flex>
+                                  <Flex>
+                                    {authenticationDetails.username}
+                                  </Flex>
+                              </Flex>
+                          </Button>
+                      </Link>
+                  </Flex>
+              }
+              {
+                authenticationDetails === undefined &&
+                <>
+                  <Flex width={'full'}
+                        marginY={3}>
+                      <Link href={`/register`}
+                            style={{width: "inherit"}}>
+                          <Button backgroundColor={theme.backgroundColor}
+                                  onClick={onClose}
+                                  width={'full'}>
+                              <Flex alignItems={'center'}
+                                    width={'full'}
+                                    columnGap={2}>
+                                  <Flex>
+                                      <FaUserPlus />
+                                  </Flex>
+                                  <Flex>
+                                      Sign up
+                                  </Flex>
+                              </Flex>
+                          </Button>
+                      </Link>
+                  </Flex>
+                  <Flex width={'full'}
+                        marginY={3}>
+                      <Link href={`/login`}
+                            style={{width: "inherit"}}>
+                          <Button backgroundColor={theme.backgroundColor}
+                                  onClick={onClose}
+                                  width={'full'}>
+                              <Flex alignItems={'center'}
+                                    width={'full'}
+                                    columnGap={2}>
+                                  <Flex>
+                                      <FaSignInAlt />
+                                  </Flex>
+                                  <Flex>
+                                      Sign in
+                                  </Flex>
+                              </Flex>
+                          </Button>
+                      </Link>
+                  </Flex>
+                </>
+              }
             </Flex>
           </DrawerBody>
         </DrawerContent>

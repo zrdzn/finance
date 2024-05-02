@@ -5,10 +5,11 @@ import {
   Button, Card, CardBody, CardHeader, Flex,
   FormControl, FormLabel, Heading, Input, Stack
 } from "@chakra-ui/react";
-import React, {ChangeEvent, useState} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import {useApi} from "@/hooks/apiClient"
 import {useRouter} from "next/router"
 import {useTheme} from "@/hooks/theme"
+import {useAuthentication} from "@/hooks/authentication"
 
 interface RegistrationForm {
   email: string;
@@ -18,6 +19,7 @@ interface RegistrationForm {
 }
 
 export default function Register(): ReactJSXElement {
+  const { authenticationDetails, login } = useAuthentication()
   const api = useApi()
   const router = useRouter()
   const theme = useTheme()
@@ -27,6 +29,16 @@ export default function Register(): ReactJSXElement {
     password: '',
     confirmPassword: ''
   })
+
+  useEffect(() => {
+    if (authenticationDetails !== undefined) {
+      router.push("/")
+    }
+  }, [authenticationDetails, router]);
+
+  if (authenticationDetails) {
+    return <></>
+  }
 
   const handleRegistrationFormUpdate = (event: ChangeEvent<HTMLInputElement>) => {
     setRegistrationForm({ ...registrationForm, [event.target.name]: event.target.value });
@@ -46,7 +58,9 @@ export default function Register(): ReactJSXElement {
       username: registrationForm.username,
       password: registrationForm.password
     })
-      .then(() => router.push("/"))
+      .then(() => login(registrationForm.email, registrationForm.password)
+        .then(() => router.push("/"))
+      )
       .catch(error => console.error(error))
   }
 
