@@ -26,6 +26,8 @@ class AuthenticationService(
             ?.let { (user, refreshTokenId) -> createAccessToken(user, refreshTokenId) }
             ?: throw AuthenticationCredentialsInvalidException(authenticationLoginRequest.email)
 
+    fun logout(accessToken: String) = tokenService.removeRefreshToken(tokenService.getAccessTokenDetails(accessToken).refreshTokenId)
+
     fun getAuthenticationDetailsByUserId(userId: UserId): AuthenticationDetailsResponse? =
         userService.getUserById(userId)
             ?.let {

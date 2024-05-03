@@ -9,11 +9,13 @@ interface AuthenticationDetails {
 interface AuthenticationContext {
   authenticationDetails: AuthenticationDetails | undefined;
   login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>
 }
 
 const DefaultAuthenticationContext = createContext<AuthenticationContext>({
   authenticationDetails: undefined,
-  login: () => Promise.resolve()
+  login: () => Promise.resolve(),
+  logout: () => Promise.resolve()
 });
 
 export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -21,14 +23,15 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
   const [authenticationDetails, setAuthenticationDetails] = useState<AuthenticationDetails | undefined>(undefined);
 
   useEffect(() => {
-    updateAuthenticationDetails()
+    if (authenticationDetails === undefined) {
+      updateAuthenticationDetails()
+    }
   });
 
   const updateAuthenticationDetails = () => {
     api.get("/authentication/details")
       .then(response => setAuthenticationDetails(response.data))
       .catch(error => {
-        console.log("blabla")
         setAuthenticationDetails(undefined)
         console.error(error)
       })
@@ -39,13 +42,21 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
       email: email,
       password: password
     })
+      .then(() => updateAuthenticationDetails())
       .catch(error => console.error(error))
   };
+
+  const logout = async (): Promise<void> => {
+    api.post("/authentication/logout")
+      .then(() => setAuthenticationDetails(undefined))
+      .catch(error => console.error(error))
+  }
 
   return (
     <DefaultAuthenticationContext.Provider value={{
       authenticationDetails: authenticationDetails,
-      login: login
+      login: login,
+      logout: logout
     }}>
       {children}
     </DefaultAuthenticationContext.Provider>

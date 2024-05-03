@@ -10,6 +10,7 @@ import dev.zrdzn.finance.backend.common.authentication.token.TOKEN_COOKIE_NAME
 import dev.zrdzn.finance.backend.common.user.UserService
 import dev.zrdzn.finance.backend.common.user.UserId
 import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -45,6 +46,16 @@ class AuthenticationController(
             .also { addAuthenticationCookie(response, it.value) }
             .let { ResponseEntity.ok(it) }
 
+    @PostMapping("/logout")
+    fun logout(
+        @AuthenticationPrincipal userId: UserId,
+        request: HttpServletRequest,
+        response: HttpServletResponse
+    ) =
+        request.cookies.firstOrNull { it.name == TOKEN_COOKIE_NAME }
+            ?.let { authenticationService.logout(it.value) }
+            ?.also { invalidateAuthenticationCookie(response) }
+
     @GetMapping("/details")
     fun getDetails(@AuthenticationPrincipal userId: UserId): ResponseEntity<AuthenticationDetailsResponse> =
         authenticationService.getAuthenticationDetailsByUserId(userId)
@@ -55,6 +66,14 @@ class AuthenticationController(
         val cookie = Cookie(TOKEN_COOKIE_NAME, token)
         cookie.secure = true
         cookie.isHttpOnly = true
+        response.addCookie(cookie)
+    }
+
+    private fun invalidateAuthenticationCookie(response: HttpServletResponse) {
+        val cookie = Cookie(TOKEN_COOKIE_NAME, "")
+        cookie.secure = true
+        cookie.isHttpOnly = true
+        cookie.maxAge = 0
         response.addCookie(cookie)
     }
 
