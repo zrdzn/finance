@@ -7,7 +7,11 @@ import {
 } from "@chakra-ui/react"
 import React from "react"
 
-export const AddPaymentPriceButton = () => {
+interface AddPaymentPriceButtonProperties {
+  handlePrice: (price: number) => void
+}
+
+export const AddPaymentPriceButton = ({ handlePrice }: AddPaymentPriceButtonProperties) => {
   const format = (value: string) => `$` + value
   const parse = (value: string) => value.replace(/^\$/, '')
 
@@ -15,7 +19,10 @@ export const AddPaymentPriceButton = () => {
 
   return (
     <NumberInput
-      onChange={(valueString) => setValue(parse(valueString))}
+      onChange={(valueString) => {
+        setValue(parse(valueString))
+        handlePrice(parseFloat(value))
+      }}
       value={format(value)}
       min={0}
     >

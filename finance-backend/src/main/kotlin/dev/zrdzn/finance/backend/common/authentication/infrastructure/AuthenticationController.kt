@@ -31,27 +31,25 @@ class AuthenticationController(
     fun register(
         @RequestBody userCreateRequest: UserCreateRequest,
         response: HttpServletResponse
-    ): ResponseEntity<AuthenticationRegisterResponse> =
+    ): AuthenticationRegisterResponse =
         userService
             .createUser(userCreateRequest)
             .let { AuthenticationRegisterResponse(it.userId) }
-            .let { ResponseEntity.ok(it) }
 
     @PostMapping("/login")
     fun login(
         @RequestBody authenticationLoginRequest: AuthenticationLoginRequest,
         response: HttpServletResponse
-    ): ResponseEntity<AccessTokenResponse> =
+    ): AccessTokenResponse =
         authenticationService.authenticate(authenticationLoginRequest)
             .also { addAuthenticationCookie(response, it.value) }
-            .let { ResponseEntity.ok(it) }
 
     @PostMapping("/logout")
     fun logout(
         @AuthenticationPrincipal userId: UserId,
         request: HttpServletRequest,
         response: HttpServletResponse
-    ) =
+    ): Unit? =
         request.cookies.firstOrNull { it.name == TOKEN_COOKIE_NAME }
             ?.let { authenticationService.logout(it.value) }
             ?.also { invalidateAuthenticationCookie(response) }
@@ -64,13 +62,15 @@ class AuthenticationController(
 
     private fun addAuthenticationCookie(response: HttpServletResponse, token: String) {
         val cookie = Cookie(TOKEN_COOKIE_NAME, token)
+        cookie.path = "/"
         cookie.secure = true
         cookie.isHttpOnly = true
         response.addCookie(cookie)
     }
 
     private fun invalidateAuthenticationCookie(response: HttpServletResponse) {
-        val cookie = Cookie(TOKEN_COOKIE_NAME, "")
+        val cookie = Cookie(TOKEN_COOKIE_NAME, null)
+        cookie.path = "/"
         cookie.secure = true
         cookie.isHttpOnly = true
         cookie.maxAge = 0

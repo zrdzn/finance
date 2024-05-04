@@ -3,7 +3,6 @@ package dev.zrdzn.finance.backend.common.authentication.infrastructure
 import dev.zrdzn.finance.backend.api.authentication.token.AccessTokenCreateRequest
 import dev.zrdzn.finance.backend.common.authentication.token.TOKEN_COOKIE_NAME
 import dev.zrdzn.finance.backend.common.authentication.token.TokenService
-import dev.zrdzn.finance.backend.common.user.UserService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
@@ -17,7 +16,6 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 class AuthenticationFilter(
     private val tokenService: TokenService,
-    private val userService: UserService,
     private val clock: Clock
 ) : OncePerRequestFilter() {
 

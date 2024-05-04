@@ -20,7 +20,6 @@ class PaymentControllerTest : PaymentSpecification() {
         val token = createUserAndAuthenticate()
 
         val paymentCreateRequest = PaymentCreateRequest(
-            userId = token.userId,
             paymentMethod = PaymentMethod.CARD,
             description = "Test payment",
             price = BigDecimal("100.00"),

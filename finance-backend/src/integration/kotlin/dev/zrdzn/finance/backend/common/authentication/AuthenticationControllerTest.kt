@@ -1,6 +1,7 @@
 package dev.zrdzn.finance.backend.common.authentication
 
 import dev.zrdzn.finance.backend.api.authentication.AuthenticationDetailsResponse
+import dev.zrdzn.finance.backend.api.authentication.AuthenticationRegisterResponse
 import dev.zrdzn.finance.backend.api.authentication.token.AccessTokenResponse
 import dev.zrdzn.finance.backend.common.authentication.token.TOKEN_COOKIE_NAME
 import kong.unirest.core.Unirest
@@ -20,13 +21,11 @@ class AuthenticationControllerTest : AuthenticationSpecification() {
         val authenticationRegisterResponse = Unirest.post("/authentication/register")
             .contentType("application/json")
             .body(userCreateRequest)
-            .asObject(AccessTokenResponse::class.java)
+            .asObject(AuthenticationRegisterResponse::class.java)
 
         // then
         assertEquals(HttpStatus.OK.value(), authenticationRegisterResponse.status)
         assertNotNull(authenticationRegisterResponse.body)
-        assertNotNull(authenticationRegisterResponse.cookies.firstOrNull { it.name == TOKEN_COOKIE_NAME })
-        assertEquals(userCreateRequest.email, authenticationRegisterResponse.body.email)
     }
 
     @Test

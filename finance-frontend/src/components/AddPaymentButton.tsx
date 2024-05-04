@@ -7,39 +7,72 @@ import {
   ModalBody,
   ModalCloseButton, useDisclosure, Button, FormControl, FormLabel, Input,
 } from '@chakra-ui/react'
-import React, {useRef, useState} from "react"
+import React, {ChangeEvent, useRef, useState} from "react"
 import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/theme"
 import {AddPaymentPriceButton} from "@/components/AddPaymentPriceInput"
-import Select from "react-select"
-import {PropsValue} from "react-select"
+import Select, {SingleValue} from "react-select"
+import {useApi} from "@/hooks/apiClient"
 
-interface PaymentCreateRequest {
-  customerId: number;
+interface PaymentCreateForm {
   paymentMethod: string;
-  description: string;
+  description: string | null;
   price: number;
   currency: string;
 }
 
 export const AddPaymentButton = () => {
   const theme = useTheme()
+  const api = useApi()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PropsValue<{
-      value: string;
-      label: string;
-  }>>({
-    value: 'blik',
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<SingleValue<{value: string, label: string}>>({
+    value: 'BLIK',
     label: 'BLIK'
+  })
+  const [paymentCreateForm, setPaymentCreateForm] = useState<PaymentCreateForm>({
+    paymentMethod: selectedPaymentMethod?.value ?? '',
+    description: null,
+    price: 0,
+    currency: 'PLN'
   })
   const initialRef = useRef(null)
   const finalRef = useRef(null)
 
   const options = [
-    { value: 'blik', label: 'BLIK' },
-    { value: 'card', label: 'Card' },
-    { value: 'cash', label: 'Cash' }
+    { value: 'BLIK', label: 'BLIK' },
+    { value: 'CARD', label: 'Card' },
+    { value: 'CASH', label: 'Cash' }
   ]
+
+  const handlePaymentMethodChange = (newValue: SingleValue<{value: string, label: string}>) => {
+    if (!newValue) {
+      return
+    }
+
+    setSelectedPaymentMethod(newValue)
+    setPaymentCreateForm((previous) => ({ ...previous, paymentMethod: newValue.value }))
+  }
+
+  const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setPaymentCreateForm((previous) => ({ ...previous, description: event.target.value }));
+  }
+
+  const handlePriceChange = (price: number) => {
+    setPaymentCreateForm((previous) => ({ ...previous, price: price }));
+  }
+
+  const handlePaymentCreate = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+
+    api.post("/payment/create", {
+      paymentMethod: paymentCreateForm.paymentMethod,
+      description: paymentCreateForm.description,
+      price: paymentCreateForm.price,
+      currency: paymentCreateForm.currency
+    })
+      .then(() => onClose())
+      .catch(error => console.error(error))
+  }
 
   return (
     <>
@@ -62,12 +95,14 @@ export const AddPaymentButton = () => {
           <ModalBody pb={6}>
             <FormControl>
               <FormLabel>Description</FormLabel>
-              <Input ref={initialRef} placeholder='What did you pay for?' />
+              <Input onChange={handleDescriptionChange}
+                     ref={initialRef}
+                     placeholder='What did you pay for?' />
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Payment method</FormLabel>
-              <Select onChange={setSelectedPaymentMethod}
+              <Select onChange={handlePaymentMethodChange}
                       defaultValue={selectedPaymentMethod}
                       required
                       options={options} />
@@ -75,12 +110,14 @@ export const AddPaymentButton = () => {
 
             <FormControl mt={4}>
               <FormLabel>Price</FormLabel>
-              <AddPaymentPriceButton />
+              <AddPaymentPriceButton handlePrice={handlePriceChange} />
             </FormControl>
           </ModalBody>
 
           <ModalFooter>
-            <Button backgroundColor={theme.primaryColor} mr={3}>
+            <Button onClick={handlePaymentCreate}
+                    backgroundColor={theme.primaryColor}
+                    mr={3}>
               Add
             </Button>
             <Button onClick={onClose}>Cancel</Button>

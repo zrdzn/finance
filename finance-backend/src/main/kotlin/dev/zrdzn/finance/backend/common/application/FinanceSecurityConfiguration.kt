@@ -45,8 +45,15 @@ class FinanceSecurityConfiguration(
                             "/**",
                             CorsConfiguration().apply {
                                 allowedOrigins = listOf("http://localhost:3000")
-                                allowedMethods = listOf("*")
-                                allowedHeaders = listOf("*")
+                                allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS")
+                                allowedHeaders = listOf(
+                                    "Content-Type",
+                                    "Accept",
+                                    "Authorization",
+                                    "Origin",
+                                    "Access-Control-Request-Method",
+                                    "Access-Control-Request-Headers"
+                                )
                                 allowCredentials = true
                             }
                         )
@@ -54,7 +61,7 @@ class FinanceSecurityConfiguration(
                 )
             }
             .addFilterBefore(
-                AuthenticationFilter(tokenService, userService, clock),
+                AuthenticationFilter(tokenService, clock),
                 UsernamePasswordAuthenticationFilter::class.java
             )
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
