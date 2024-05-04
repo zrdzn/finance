@@ -1,8 +1,8 @@
-package dev.zrdzn.finance.backend.common.authentication.token
+package dev.zrdzn.finance.backend.common.shared
 
-fun createRandomToken(): String {
+fun createRandomToken(length: Int): String {
     val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
-    return (30..30)
+    return (0..length)
         .map { allowedChars.random() }
         .joinToString("")
 }

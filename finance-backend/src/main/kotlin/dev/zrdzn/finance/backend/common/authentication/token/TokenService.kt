@@ -9,12 +9,15 @@ import dev.zrdzn.finance.backend.api.authentication.token.RefreshTokenCreateRequ
 import dev.zrdzn.finance.backend.api.authentication.token.RefreshTokenCreateResponse
 import dev.zrdzn.finance.backend.api.authentication.token.RefreshTokenResponse
 import dev.zrdzn.finance.backend.api.authentication.token.TokenSignatureMismatchException
+import dev.zrdzn.finance.backend.common.shared.createRandomToken
+import java.time.Clock
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
 
 class TokenService(
-    private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository,
+    private val clock: Clock
 ) {
 
     // TODO add actual secret
@@ -24,9 +27,9 @@ class TokenService(
         tokenRepository
             .save(
                 Token(
-                    tokenId = createRandomToken(),
+                    tokenId = createRandomToken(30),
                     userId = refreshTokenCreateRequest.userId,
-                    expiresAt = Instant.now().plus(14, ChronoUnit.DAYS)
+                    expiresAt = Instant.now(clock).plus(14, ChronoUnit.DAYS)
                 )
             )
             .let {
