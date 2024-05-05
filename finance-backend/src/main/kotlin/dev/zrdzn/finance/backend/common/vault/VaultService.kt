@@ -45,9 +45,8 @@ class VaultService(
                 .toSet()
         )
 
-    fun getVaultByPublicId(userId: UserId, publicId: VaultPublicId): VaultResponse? {
+    fun getVaultByPublicId(publicId: VaultPublicId): VaultResponse? {
         return vaultRepository.findByPublicId(publicId)
-            ?.takeIf { it.ownerId == userId }
             ?.let {
                 VaultResponse(
                     id = it.id!!,

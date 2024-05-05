@@ -5,7 +5,7 @@ import {
   Stack,
   Heading,
   Divider,
-  CardFooter, ButtonGroup, Text, Flex,
+  CardFooter, Text,
 } from '@chakra-ui/react'
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/theme"

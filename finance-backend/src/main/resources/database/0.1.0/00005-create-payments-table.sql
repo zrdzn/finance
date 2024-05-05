@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset finance:6
+--changeset finance:5
 create table "payments"
 (
     "id"             serial,
@@ -8,6 +8,8 @@ create table "payments"
     "payed_at"       timestamp not null,
     "payment_method" payment_method not null,
     "description"    text,
+    "total"          numeric(10, 2) not null,
+    "price_currency"       price_currency not null,
     constraint "pk_payments" primary key ("id"),
     constraint "fk_payments_users" foreign key ("user_id") references "users" ("id"),
     constraint "fk_payments_vaults" foreign key ("vault_id") references "vaults" ("id")

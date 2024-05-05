@@ -16,6 +16,11 @@ import {FaBars, FaBook, FaSignInAlt, FaUser, FaUserPlus} from "react-icons/fa"
 import {FaCalendarDays, FaGears, FaHouse, FaX} from "react-icons/fa6"
 import {useAuthentication} from "@/hooks/authentication"
 import {useRouter} from "next/router"
+import {VaultResponse} from "@/components/api"
+
+interface VaultSidebarProperties {
+  vault: VaultResponse
+}
 
 const SidebarLogo = (): ReactJSXElement => {
   return (
@@ -29,7 +34,7 @@ const SidebarLogo = (): ReactJSXElement => {
   )
 }
 
-const BaseView = (): ReactJSXElement => {
+const BaseView = ({ vault }: VaultSidebarProperties): ReactJSXElement => {
   const { authenticationDetails, logout } = useAuthentication()
   const {isOpen, onOpen, onClose} = useDisclosure();
   const theme = useTheme();
@@ -87,7 +92,7 @@ const BaseView = (): ReactJSXElement => {
                   mt={5}>
               <Flex width={'full'}
                     marginY={3}>
-                <Link href={`/`}
+                <Link href={`/vault/${vault.publicId}`}
                       style={{width: "inherit"}}>
                   <Button backgroundColor={theme.backgroundColor}
                           onClick={onClose}
@@ -108,7 +113,7 @@ const BaseView = (): ReactJSXElement => {
               <Divider borderColor={theme.secondaryColor} />
               <Flex width={'full'}
                     marginY={3}>
-                <Link href={`/history`}
+                <Link href={`/vault/${vault.publicId}/history`}
                       style={{width: "inherit"}}>
                   <Button backgroundColor={theme.backgroundColor}
                           onClick={onClose}
@@ -129,7 +134,7 @@ const BaseView = (): ReactJSXElement => {
               <Divider borderColor={theme.secondaryColor} />
               <Flex width={'full'}
                     marginY={3}>
-                <Link href={`/`}
+                <Link href={`/vault/${vault.publicId}/schedules`}
                       style={{width: "inherit"}}>
                   <Button backgroundColor={theme.backgroundColor}
                           onClick={onClose}
@@ -150,7 +155,7 @@ const BaseView = (): ReactJSXElement => {
               <Divider borderColor={theme.secondaryColor} />
               <Flex width={'full'}
                     marginY={3}>
-                <Link href={`/`}
+                <Link href={`/vault/${vault.publicId}/users`}
                       style={{width: "inherit"}}>
                   <Button backgroundColor={theme.backgroundColor}
                           onClick={onClose}
@@ -171,7 +176,7 @@ const BaseView = (): ReactJSXElement => {
               <Divider borderColor={theme.secondaryColor} />
               <Flex width={'full'}
                     marginY={3}>
-                <Link href={`/`}
+                <Link href={`/vault/${vault.publicId}/settings`}
                       style={{width: "inherit"}}>
                   <Button backgroundColor={theme.backgroundColor}
                           onClick={onClose}
@@ -226,14 +231,14 @@ const BaseView = (): ReactJSXElement => {
   );
 };
 
-export const Sidebar = (): ReactJSXElement => {
+export const VaultSidebar = ({ vault }: VaultSidebarProperties): ReactJSXElement => {
   const theme = useTheme();
 
   return (
     <>
       <Flex backgroundColor={theme.primaryColor}
             color={theme.textColor}>
-        <BaseView/>
+        <BaseView vault={vault} />
       </Flex>
     </>
   );

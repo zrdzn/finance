@@ -1,6 +1,7 @@
 package dev.zrdzn.finance.backend.common.payment
 
 import dev.zrdzn.finance.backend.api.payment.PaymentMethod
+import dev.zrdzn.finance.backend.api.price.PriceCurrency
 import dev.zrdzn.finance.backend.common.user.UserId
 import dev.zrdzn.finance.backend.common.vault.VaultId
 import jakarta.persistence.Column
@@ -9,6 +10,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import java.math.BigDecimal
 import java.time.Instant
 import org.hibernate.annotations.JdbcType
 import org.hibernate.dialect.PostgreSQLEnumJdbcType
@@ -37,5 +39,12 @@ data class Payment(
     val paymentMethod: PaymentMethod,
 
     @Column(name = "description")
-    val description: String?
+    val description: String?,
+
+    @Column(name = "total")
+    val total: BigDecimal,
+
+    @Column(name = "price_currency", columnDefinition = "price_currency")
+    @JdbcType(PostgreSQLEnumJdbcType::class)
+    val currency: PriceCurrency,
 )

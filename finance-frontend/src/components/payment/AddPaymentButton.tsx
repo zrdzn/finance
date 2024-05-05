@@ -13,15 +13,13 @@ import {useTheme} from "@/hooks/theme"
 import {AddPaymentPriceButton} from "@/components/payment/AddPaymentPriceInput"
 import Select, {SingleValue} from "react-select"
 import {useApi} from "@/hooks/apiClient"
+import {PaymentCreateRequest} from "@/components/api"
 
-interface PaymentCreateForm {
-  paymentMethod: string;
-  description: string | null;
-  price: number;
-  currency: string;
+interface AddPaymentButtonProperties {
+  vaultId: number
 }
 
-export const AddPaymentButton = () => {
+export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
   const theme = useTheme()
   const api = useApi()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -29,7 +27,8 @@ export const AddPaymentButton = () => {
     value: 'BLIK',
     label: 'BLIK'
   })
-  const [paymentCreateForm, setPaymentCreateForm] = useState<PaymentCreateForm>({
+  const [paymentCreateForm, setPaymentCreateForm] = useState<PaymentCreateRequest>({
+    vaultId: 0,
     paymentMethod: selectedPaymentMethod?.value ?? '',
     description: null,
     price: 0,
@@ -65,6 +64,7 @@ export const AddPaymentButton = () => {
     event.preventDefault()
 
     api.post("/payment/create", {
+      vaultId: vaultId,
       paymentMethod: paymentCreateForm.paymentMethod,
       description: paymentCreateForm.description,
       price: paymentCreateForm.price,

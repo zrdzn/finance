@@ -43,7 +43,7 @@ class VaultController(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable publicId: VaultPublicId
     ): ResponseEntity<VaultResponse> =
-        vaultService.getVaultByPublicId(userId, publicId)
+        vaultService.getVaultByPublicId(publicId)
             ?.let { ResponseEntity.ok(it) }
             ?: ResponseEntity.notFound().build()
 

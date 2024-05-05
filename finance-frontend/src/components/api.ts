@@ -16,3 +16,21 @@ export interface VaultResponse {
   ownerId: number
   name: string
 }
+
+// payments
+export interface PaymentResponse {
+  id: number
+  payedAt: string
+  paymentMethod: string
+  description: string | null
+  total: number
+  currency: string
+}
+
+export interface PaymentCreateRequest {
+  vaultId: number
+  paymentMethod: string
+  description: string | null
+  price: number
+  currency: string
+}

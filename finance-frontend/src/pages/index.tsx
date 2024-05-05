@@ -52,12 +52,11 @@ export default function Main(): ReactJSXElement {
             direction={'column'}
             mt={6}>
         {
-          vaults.length === 0 && <Heading size={'sm'}>There are no vaults associated with your account</Heading>
+          vaults.length === 0 && <Heading size={'lg'}>No vaults found</Heading>
         }
         {
-          vaults && vaults.map((vault) =>
+          vaults && <Heading size={'lg'}>Browse your vaults</Heading> && vaults.map((vault) =>
               <>
-                <Heading size={'lg'}>Browse your vaults</Heading>
                 <VaultCard key={vault.id} publicId={vault.publicId} ownerId={vault.ownerId} name={vault.name} />
               </>
           )
