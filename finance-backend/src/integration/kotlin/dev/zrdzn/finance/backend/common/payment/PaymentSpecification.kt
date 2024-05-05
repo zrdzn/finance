@@ -1,8 +1,8 @@
 package dev.zrdzn.finance.backend.common.payment
 
-import dev.zrdzn.finance.backend.common.authentication.AuthenticationSpecification
+import dev.zrdzn.finance.backend.common.vault.VaultSpecification
 
-open class PaymentSpecification : AuthenticationSpecification() {
+open class PaymentSpecification : VaultSpecification() {
 
     protected val paymentService: PaymentService get() = application.getBean(PaymentService::class.java)
 

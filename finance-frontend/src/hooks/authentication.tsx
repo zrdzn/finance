@@ -7,7 +7,7 @@ interface AuthenticationDetails {
 }
 
 interface AuthenticationContext {
-  authenticationDetails: AuthenticationDetails | undefined;
+  authenticationDetails: AuthenticationDetails | null | undefined;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>
 }
@@ -20,7 +20,7 @@ const DefaultAuthenticationContext = createContext<AuthenticationContext>({
 
 export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const api = useApi();
-  const [authenticationDetails, setAuthenticationDetails] = useState<AuthenticationDetails | undefined>(undefined);
+  const [authenticationDetails, setAuthenticationDetails] = useState<AuthenticationDetails | null | undefined>(undefined);
 
   useEffect(() => {
     if (authenticationDetails === undefined) {
@@ -32,7 +32,7 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
     api.get("/authentication/details")
       .then(response => setAuthenticationDetails(response.data))
       .catch(error => {
-        setAuthenticationDetails(undefined)
+        setAuthenticationDetails(null)
         console.error(error)
       })
   }
@@ -48,7 +48,7 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
 
   const logout = async (): Promise<void> => {
     api.post("/authentication/logout")
-      .then(() => setAuthenticationDetails(undefined))
+      .then(() => setAuthenticationDetails(null))
       .catch(error => console.error(error))
   }
 

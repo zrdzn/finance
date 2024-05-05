@@ -18,8 +18,10 @@ class PaymentControllerTest : PaymentSpecification() {
     fun `should create payment`() {
         // given
         val token = createUserAndAuthenticate()
+        val vault = createVault(token.userId)
 
         val paymentCreateRequest = PaymentCreateRequest(
+            vaultId = vault.id,
             paymentMethod = PaymentMethod.CARD,
             description = "Test payment",
             price = BigDecimal("100.00"),

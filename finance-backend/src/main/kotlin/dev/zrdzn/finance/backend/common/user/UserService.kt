@@ -4,6 +4,7 @@ import dev.zrdzn.finance.backend.api.user.UserCreateRequest
 import dev.zrdzn.finance.backend.api.user.UserCreateResponse
 import dev.zrdzn.finance.backend.api.user.UserResponse
 import dev.zrdzn.finance.backend.api.user.UserWithPasswordResponse
+import dev.zrdzn.finance.backend.api.user.UsernameResponse
 import org.springframework.security.crypto.password.PasswordEncoder
 
 class UserService(
@@ -32,6 +33,9 @@ class UserService(
                     username = it.username
                 )
             }
+
+    fun getUsernameByUserId(id: UserId): UsernameResponse? =
+        getUserById(id)?.let { UsernameResponse(it.username) }
 
     fun getUserWithPasswordByEmail(email: String): UserWithPasswordResponse? =
         userRepository

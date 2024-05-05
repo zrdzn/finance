@@ -10,7 +10,7 @@ import {
 import React, {ChangeEvent, useRef, useState} from "react"
 import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/theme"
-import {AddPaymentPriceButton} from "@/components/AddPaymentPriceInput"
+import {AddPaymentPriceButton} from "@/components/payment/AddPaymentPriceInput"
 import Select, {SingleValue} from "react-select"
 import {useApi} from "@/hooks/apiClient"
 

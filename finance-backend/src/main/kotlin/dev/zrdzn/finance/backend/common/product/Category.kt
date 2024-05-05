@@ -1,5 +1,6 @@
 package dev.zrdzn.finance.backend.common.product
 
+import dev.zrdzn.finance.backend.common.vault.VaultId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -21,4 +22,7 @@ data class Category(
     @Column(name = "name")
     @Size(max = 100)
     val name: String,
+
+    @Column(name = "vault_id")
+    val vaultId: VaultId,
 )

@@ -218,52 +218,6 @@ const BaseView = (): ReactJSXElement => {
                     </Menu>
                   </Flex>
               }
-              {
-                authenticationDetails === undefined &&
-                <>
-                  <Flex width={'full'}
-                        marginY={3}>
-                      <Link href={`/register`}
-                            style={{width: "inherit"}}>
-                          <Button backgroundColor={theme.backgroundColor}
-                                  onClick={onClose}
-                                  width={'full'}>
-                              <Flex alignItems={'center'}
-                                    width={'full'}
-                                    columnGap={2}>
-                                  <Flex>
-                                      <FaUserPlus />
-                                  </Flex>
-                                  <Flex>
-                                      Sign up
-                                  </Flex>
-                              </Flex>
-                          </Button>
-                      </Link>
-                  </Flex>
-                    <Divider borderColor={theme.secondaryColor} />
-                  <Flex width={'full'}
-                        marginY={3}>
-                      <Link href={`/login`}
-                            style={{width: "inherit"}}>
-                          <Button backgroundColor={theme.backgroundColor}
-                                  onClick={onClose}
-                                  width={'full'}>
-                              <Flex alignItems={'center'}
-                                    width={'full'}
-                                    columnGap={2}>
-                                  <Flex>
-                                      <FaSignInAlt />
-                                  </Flex>
-                                  <Flex>
-                                      Sign in
-                                  </Flex>
-                              </Flex>
-                          </Button>
-                      </Link>
-                  </Flex>
-                </>
-              }
             </Flex>
           </DrawerBody>
         </DrawerContent>

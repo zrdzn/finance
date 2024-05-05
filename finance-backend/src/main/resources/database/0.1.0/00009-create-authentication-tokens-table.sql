@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset finance:8
+--changeset finance:9
 create table "authentication_tokens"
 (
     "token_id"    varchar(40) not null,

@@ -25,6 +25,7 @@ class PaymentController(
         paymentService
             .createPayment(
                 userId = userId,
+                vaultId = paymentCreateRequest.vaultId,
                 paymentMethod = paymentCreateRequest.paymentMethod,
                 description = paymentCreateRequest.description,
                 price = Price(

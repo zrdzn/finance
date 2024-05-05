@@ -31,7 +31,7 @@ export default function Register(): ReactJSXElement {
   })
 
   useEffect(() => {
-    if (authenticationDetails !== undefined) {
+    if (authenticationDetails) {
       router.push("/")
     }
   }, [authenticationDetails, router]);
@@ -65,7 +65,7 @@ export default function Register(): ReactJSXElement {
   }
 
   return (
-    <Layout>
+    <Layout hideSidebar>
       <Head>
         <title>Finance - Register</title>
       </Head>

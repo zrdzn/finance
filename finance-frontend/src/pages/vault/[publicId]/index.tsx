@@ -5,27 +5,63 @@ import {
   Box,
   Card,
   CardBody, CardHeader,
-  Flex, Heading,
+  Flex, Heading, Link,
   Stack, StackDivider,
   Text,
 } from "@chakra-ui/react";
 import {useTheme} from "@/hooks/theme";
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {AddPaymentButton} from "@/components/payment/AddPaymentButton"
+import {useRouter} from "next/router"
+import {useAuthentication} from "@/hooks/authentication"
+import {VaultResponse} from "@/components/api"
+import {useApi} from "@/hooks/apiClient"
 
-export default function History(): ReactJSXElement {
+export default function Dashboard(): ReactJSXElement {
   const theme = useTheme();
+  const router = useRouter();
+  const api = useApi()
+  const { authenticationDetails } = useAuthentication()
+  const publicId = router.query.publicId
+  const [vault, setVault] = useState<VaultResponse | undefined>(undefined)
+
+  useEffect(() => {
+    if (authenticationDetails === null) {
+      router.push("/login")
+    }
+  }, [authenticationDetails, router]);
+
+  useEffect(() => {
+    if (publicId === undefined) {
+      return
+    }
+
+    api.get(`/vaults/${publicId}`)
+      .then(response => setVault(response.data))
+      .catch(error => console.error(error))
+  }, [api, publicId]);
+
+  if (authenticationDetails === null) {
+    return <></>
+  }
+
+  if (vault === undefined) {
+    return <>Loading vault...</>
+  }
 
   return (
     <Layout>
       <Head>
-        <title>Finance - History</title>
+        <title>Finance - Overview ({vault.name})</title>
       </Head>
       <Flex justifyContent={'center'}>
         <Flex direction={'column'} width={'full'} justifyContent={'center'}>
           <Card margin={2}>
             <CardHeader backgroundColor={theme.secondaryColor}>
-              <Flex justifyContent={'space-between'}>
-                <Heading size='md'>History of all transactions</Heading>
+              <Flex alignItems={'center'}
+                    justifyContent={'space-between'}>
+                <Heading size='md'>Last transactions</Heading>
+                <AddPaymentButton />
               </Flex>
             </CardHeader>
             <CardBody>
@@ -103,6 +139,17 @@ export default function History(): ReactJSXElement {
                           letterSpacing={0.5}>
                       CASH
                     </Text>
+                  </Flex>
+                </Box>
+                <Box>
+                  <Flex justifyContent={'space-between'}>
+                    <Box />
+                    <Link color={'dimgray'}
+                          fontSize={'sm'}
+                          href={'history'}
+                          letterSpacing={0.5}>
+                      View All
+                    </Link>
                   </Flex>
                 </Box>
               </Stack>

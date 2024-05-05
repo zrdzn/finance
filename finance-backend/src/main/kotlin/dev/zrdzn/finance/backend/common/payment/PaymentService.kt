@@ -4,6 +4,7 @@ import dev.zrdzn.finance.backend.api.payment.PaymentCreateResponse
 import dev.zrdzn.finance.backend.api.payment.PaymentMethod
 import dev.zrdzn.finance.backend.api.price.Price
 import dev.zrdzn.finance.backend.common.user.UserId
+import dev.zrdzn.finance.backend.common.vault.VaultId
 import java.time.Instant
 import org.slf4j.LoggerFactory
 
@@ -16,6 +17,7 @@ class PaymentService(
 
     fun createPayment(
         userId: UserId,
+        vaultId: VaultId,
         paymentMethod: PaymentMethod,
         description: String?,
         price: Price
@@ -25,6 +27,7 @@ class PaymentService(
                 Payment(
                     id = null,
                     userId = userId,
+                    vaultId = vaultId,
                     payedAt = Instant.now(),
                     paymentMethod = paymentMethod,
                     description = description

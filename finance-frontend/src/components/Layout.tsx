@@ -2,10 +2,14 @@ import {PropsWithChildren} from "react";
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import {Sidebar} from "@/components/Sidebar"
 
-export const Layout = ({children}: PropsWithChildren): ReactJSXElement => {
+interface LayoutProperties {
+  hideSidebar?: boolean
+}
+
+export const Layout = ({ children, hideSidebar }: PropsWithChildren<LayoutProperties>): ReactJSXElement => {
   return (
     <>
-      <Sidebar />
+      {!hideSidebar && <Sidebar />}
       {children}
     </>
   );

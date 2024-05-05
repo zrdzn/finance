@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset finance:4
+--changeset finance:5
 create table "product_prices"
 (
     "id"          serial,

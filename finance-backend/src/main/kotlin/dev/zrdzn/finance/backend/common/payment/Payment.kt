@@ -2,6 +2,7 @@ package dev.zrdzn.finance.backend.common.payment
 
 import dev.zrdzn.finance.backend.api.payment.PaymentMethod
 import dev.zrdzn.finance.backend.common.user.UserId
+import dev.zrdzn.finance.backend.common.vault.VaultId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -24,6 +25,9 @@ data class Payment(
 
     @Column(name = "user_id")
     val userId: UserId,
+
+    @Column(name = "vault_id")
+    val vaultId: VaultId,
 
     @Column(name = "payed_at")
     val payedAt: Instant,
