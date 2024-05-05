@@ -241,6 +241,7 @@ const BaseView = (): ReactJSXElement => {
                           </Button>
                       </Link>
                   </Flex>
+                    <Divider borderColor={theme.secondaryColor} />
                   <Flex width={'full'}
                         marginY={3}>
                       <Link href={`/login`}
