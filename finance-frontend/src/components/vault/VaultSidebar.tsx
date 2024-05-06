@@ -29,7 +29,9 @@ const SidebarLogo = (): ReactJSXElement => {
           letterSpacing={'wider'}
           fontSize={'xl'}
           textAlign={'center'}>
-      Finance
+      <Link href={"/"}>
+        Finance
+      </Link>
     </Flex>
   )
 }
@@ -64,7 +66,6 @@ const BaseView = ({ vault }: VaultSidebarProperties): ReactJSXElement => {
           </Button>
         </Flex>
       </Flex>
-
       <Drawer placement={'left'}
               onClose={onClose}
               isOpen={isOpen}>
