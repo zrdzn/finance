@@ -65,7 +65,7 @@ export default function Register(): ReactJSXElement {
   }
 
   return (
-    <Layout hideSidebar>
+    <Layout>
       <Head>
         <title>Finance - Register</title>
       </Head>

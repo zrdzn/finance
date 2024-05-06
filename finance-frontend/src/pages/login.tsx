@@ -46,7 +46,7 @@ export default function Login(): ReactJSXElement {
   }
 
   return (
-    <Layout hideSidebar>
+    <Layout>
       <Head>
         <title>Finance - Login</title>
       </Head>
