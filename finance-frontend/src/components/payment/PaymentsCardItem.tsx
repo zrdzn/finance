@@ -21,7 +21,7 @@ export const PaymentsCardItem = ({
             {payment.description}
           </Heading>
           <Heading size={'md'}>
-            {payment.total} {payment.currency}
+            {payment.total.toFixed(2)} {payment.currency}
           </Heading>
         </Flex>
         <Flex justifyContent={'space-between'}>
