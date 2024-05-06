@@ -4,13 +4,13 @@ import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/theme"
 import {PaymentResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/apiClient"
-import {PaymentCardItem} from "@/components/payment/PaymentCardItem"
+import {PaymentsCardItem} from "@/components/payment/PaymentsCardItem"
 
-interface HistoryPaymentsCardProperties {
+interface PaymentsCardProperties {
   vault: VaultResponse
 }
 
-export const HistoryPaymentsCard = ({ vault }: HistoryPaymentsCardProperties) => {
+export const PaymentsCard = ({ vault }: PaymentsCardProperties) => {
   const theme = useTheme()
   const api = useApi()
   const [payments, setPayments] = useState<PaymentResponse[]>([])
@@ -27,7 +27,8 @@ export const HistoryPaymentsCard = ({ vault }: HistoryPaymentsCardProperties) =>
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Heading size='md'>History of all payments</Heading>
+          <Heading size='md'>All payments</Heading>
+          <AddPaymentButton vaultId={vault.id} />
         </Flex>
       </CardHeader>
       <CardBody>
@@ -38,7 +39,7 @@ export const HistoryPaymentsCard = ({ vault }: HistoryPaymentsCardProperties) =>
           {
             payments &&
             payments.sort((payment, nextPayment) => new Date(nextPayment.payedAt).getTime() - new Date(payment.payedAt).getTime())
-              .map(payment => <PaymentCardItem key={payment.id} payment={payment} />)
+              .map(payment => <PaymentsCardItem key={payment.id} payment={payment} />)
           }
         </Stack>
       </CardBody>

@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/theme"
 import {PaymentResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/apiClient"
-import {PaymentCardItem} from "@/components/payment/PaymentCardItem"
+import {PaymentsCardItem} from "@/components/payment/PaymentsCardItem"
 
 interface LastPaymentsCardProperties {
   vault: VaultResponse
@@ -28,7 +28,6 @@ export const LastPaymentsCard = ({ vault }: LastPaymentsCardProperties) => {
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
           <Heading size='md'>Last payments</Heading>
-          <AddPaymentButton vaultId={vault.id} />
         </Flex>
       </CardHeader>
       <CardBody>
@@ -40,14 +39,14 @@ export const LastPaymentsCard = ({ vault }: LastPaymentsCardProperties) => {
             payments &&
             payments.sort((payment, nextPayment) => new Date(nextPayment.payedAt).getTime() - new Date(payment.payedAt).getTime())
               .slice(0, 3)
-              .map(payment => <PaymentCardItem key={payment.id} payment={payment} />)
+              .map(payment => <PaymentsCardItem key={payment.id} payment={payment} />)
           }
           <Box>
             <Flex justifyContent={'space-between'}>
               <Box />
               <Link color={'dimgray'}
                     fontSize={'sm'}
-                    href={`/vault/${vault.publicId}/history`}
+                    href={`/vault/${vault.publicId}/payments`}
                     letterSpacing={0.5}>
                 View All
               </Link>

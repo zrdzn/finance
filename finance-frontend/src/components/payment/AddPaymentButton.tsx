@@ -79,7 +79,7 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
       <Button backgroundColor={theme.primaryColor}
               onClick={onOpen}
               leftIcon={<FaPlus />}>
-        Add Payment
+        Add
       </Button>
 
       <Modal

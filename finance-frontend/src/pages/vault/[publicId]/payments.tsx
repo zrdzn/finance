@@ -6,9 +6,9 @@ import {
 import React from "react";
 import {useRouter} from "next/router"
 import {ProtectedVault} from "@/components/vault/ProtectedVault"
-import {HistoryPaymentsCard} from "@/components/payment/HistoryPaymentsCard"
+import {PaymentsCard} from "@/components/payment/PaymentsCard"
 
-export default function History(): ReactJSXElement {
+export default function Payments(): ReactJSXElement {
   const router = useRouter()
   const publicId = router.query.publicId
 
@@ -17,11 +17,11 @@ export default function History(): ReactJSXElement {
       { vault =>
         <>
           <Head>
-            <title>Finance - History</title>
+            <title>Finance - Payments</title>
           </Head>
           <Flex justifyContent={'center'}>
             <Flex direction={'column'} width={'full'} justifyContent={'center'}>
-              <HistoryPaymentsCard vault={vault} />
+              <PaymentsCard vault={vault} />
             </Flex>
           </Flex>
         </>

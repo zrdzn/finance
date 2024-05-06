@@ -113,7 +113,7 @@ const BaseView = ({ vault }: VaultSidebarProperties): ReactJSXElement => {
               <Divider borderColor={theme.secondaryColor} />
               <Flex width={'full'}
                     marginY={3}>
-                <Link href={`/vault/${vault.publicId}/history`}
+                <Link href={`/vault/${vault.publicId}/payments`}
                       style={{width: "inherit"}}>
                   <Button backgroundColor={theme.backgroundColor}
                           onClick={onClose}
@@ -125,7 +125,7 @@ const BaseView = ({ vault }: VaultSidebarProperties): ReactJSXElement => {
                         <FaBook />
                       </Flex>
                       <Flex>
-                        History
+                        Payments
                       </Flex>
                     </Flex>
                   </Button>

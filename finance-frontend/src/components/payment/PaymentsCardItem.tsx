@@ -8,7 +8,7 @@ interface LastPaymentsCardItemProperties {
   payment: PaymentResponse
 }
 
-export const PaymentCardItem = ({
+export const PaymentsCardItem = ({
   payment
 }: LastPaymentsCardItemProperties) => {
   return (
