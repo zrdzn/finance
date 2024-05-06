@@ -31,7 +31,7 @@ export const LastPaymentsCard = ({ vault }: LastPaymentsCardProperties) => {
         </Flex>
       </CardHeader>
       <CardBody>
-        <Stack divider={<StackDivider/>} spacing='4'>
+        <Stack gap={0}>
           {
             payments.length === 0 && <Text size={'sm'}>There are no payments</Text>
           }
@@ -41,7 +41,7 @@ export const LastPaymentsCard = ({ vault }: LastPaymentsCardProperties) => {
               .slice(0, 3)
               .map(payment => <PaymentsCardItem key={payment.id} payment={payment} />)
           }
-          <Box>
+          <Box paddingTop={4}>
             <Flex justifyContent={'space-between'}>
               <Box />
               <Link color={'dimgray'}
