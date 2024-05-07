@@ -12,7 +12,7 @@ import {
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace"
 import {useTheme} from "@/hooks/theme"
 import React from "react"
-import {FaBars, FaBook, FaSignInAlt, FaUser, FaUserPlus} from "react-icons/fa"
+import {FaBars, FaBook, FaSignInAlt, FaTags, FaUser, FaUserPlus} from "react-icons/fa"
 import {FaCalendarDays, FaGears, FaHouse, FaX} from "react-icons/fa6"
 import {useAuthentication} from "@/hooks/authentication"
 import {useRouter} from "next/router"
@@ -127,6 +127,27 @@ const BaseView = ({ vault }: VaultSidebarProperties): ReactJSXElement => {
                       </Flex>
                       <Flex>
                         Payments
+                      </Flex>
+                    </Flex>
+                  </Button>
+                </Link>
+              </Flex>
+              <Divider borderColor={theme.secondaryColor} />
+              <Flex width={'full'}
+                    marginY={3}>
+                <Link href={`/vault/${vault.publicId}/products`}
+                      style={{width: "inherit"}}>
+                  <Button backgroundColor={theme.backgroundColor}
+                          onClick={onClose}
+                          width={'full'}>
+                    <Flex alignItems={'center'}
+                          width={'full'}
+                          columnGap={2}>
+                      <Flex>
+                        <FaTags />
+                      </Flex>
+                      <Flex>
+                        Products
                       </Flex>
                     </Flex>
                   </Button>

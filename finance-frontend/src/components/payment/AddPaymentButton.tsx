@@ -11,9 +11,9 @@ import React, {ChangeEvent, useRef, useState} from "react"
 import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/theme"
 import {AddPaymentPriceButton} from "@/components/payment/AddPaymentPriceInput"
-import Select, {SingleValue} from "react-select"
+import Select from "react-select"
 import {useApi} from "@/hooks/apiClient"
-import {PaymentCreateRequest} from "@/components/api"
+import {PaymentCreateRequest, SelectProperties} from "@/components/api"
 
 interface AddPaymentButtonProperties {
   vaultId: number
@@ -23,7 +23,7 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
   const theme = useTheme()
   const api = useApi()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<SingleValue<{value: string, label: string}>>({
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<SelectProperties>({
     value: 'BLIK',
     label: 'BLIK'
   })
@@ -43,7 +43,7 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
     { value: 'CASH', label: 'Cash' }
   ]
 
-  const handlePaymentMethodChange = (newValue: SingleValue<{value: string, label: string}>) => {
+  const handlePaymentMethodChange = (newValue: SelectProperties) => {
     if (!newValue) {
       return
     }
@@ -77,8 +77,7 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
   return (
     <>
       <Button backgroundColor={theme.primaryColor}
-              onClick={onOpen}
-              leftIcon={<FaPlus />}>
+              onClick={onOpen}>
         Add
       </Button>
 

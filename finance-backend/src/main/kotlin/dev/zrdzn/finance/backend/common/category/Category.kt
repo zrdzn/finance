@@ -1,4 +1,4 @@
-package dev.zrdzn.finance.backend.common.product
+package dev.zrdzn.finance.backend.common.category
 
 import dev.zrdzn.finance.backend.common.vault.VaultId
 import jakarta.persistence.Column

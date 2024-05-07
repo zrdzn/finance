@@ -1,5 +1,6 @@
 package dev.zrdzn.finance.backend.common.product
 
+import dev.zrdzn.finance.backend.common.category.CategoryId
 import dev.zrdzn.finance.backend.common.vault.VaultId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

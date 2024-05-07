@@ -32,7 +32,7 @@ export const PaymentsCard = ({ vault }: PaymentsCardProperties) => {
         </Flex>
       </CardHeader>
       <CardBody>
-        <Stack divider={<StackDivider/>} spacing='4'>
+        <Stack gap={0}>
           {
             payments.length === 0 && <Text size={'sm'}>There are no payments</Text>
           }

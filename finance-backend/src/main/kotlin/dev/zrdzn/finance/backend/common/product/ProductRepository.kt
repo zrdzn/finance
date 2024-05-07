@@ -4,4 +4,8 @@ interface ProductRepository {
 
     fun save(product: Product): Product
 
+    fun deleteById(productId: Int)
+
+    fun findByVaultId(vaultId: Int): Set<Product>
+
 }
