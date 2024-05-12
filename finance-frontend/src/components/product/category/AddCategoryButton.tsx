@@ -14,6 +14,7 @@ import {AddPaymentPriceButton} from "@/components/payment/AddPaymentPriceInput"
 import Select from "react-select"
 import {useApi} from "@/hooks/apiClient"
 import {CategoryCreateRequest} from "@/components/api"
+import { useRouter } from 'next/router'
 
 interface AddCategoryButtonProperties {
   vaultId: number
@@ -22,6 +23,7 @@ interface AddCategoryButtonProperties {
 export const AddCategoryButton = ({ vaultId }: AddCategoryButtonProperties) => {
   const theme = useTheme()
   const api = useApi()
+  const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [categoryCreateRequest, setCategoryCreateRequest] = useState<CategoryCreateRequest>({
     name: '',
@@ -39,6 +41,7 @@ export const AddCategoryButton = ({ vaultId }: AddCategoryButtonProperties) => {
 
     api.post("/categories/create", categoryCreateRequest)
       .then(() => onClose())
+      .then(() => router.reload())
       .catch(error => console.error(error))
   }
 

@@ -14,6 +14,7 @@ import {useApi} from "@/hooks/apiClient"
 import {CategoryResponse, ProductCreateRequest, ProductPriceCreateRequest, SelectProperties} from "@/components/api"
 import {CategorySelect} from "@/components/product/category/CategorySelect"
 import Select from "react-select"
+import { useRouter } from 'next/router'
 
 interface AddProductPriceButtonProperties {
   productId: number
@@ -22,6 +23,7 @@ interface AddProductPriceButtonProperties {
 export const AddProductPriceButton = ({ productId }: AddProductPriceButtonProperties) => {
   const theme = useTheme()
   const api = useApi()
+  const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [selectedCurrency, setSelectedCurrency] = useState<SelectProperties>({
     value: 'PLN',
@@ -58,6 +60,7 @@ export const AddProductPriceButton = ({ productId }: AddProductPriceButtonProper
 
     api.post(`/products/${productId}/prices`, productPriceCreateRequest)
       .then(() => onClose())
+      .then(() => router.reload())
       .catch(error => console.error(error))
   }
 

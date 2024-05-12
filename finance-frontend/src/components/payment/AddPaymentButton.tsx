@@ -14,6 +14,7 @@ import {AddPaymentPriceButton} from "@/components/payment/AddPaymentPriceInput"
 import Select from "react-select"
 import {useApi} from "@/hooks/apiClient"
 import {PaymentCreateRequest, SelectProperties} from "@/components/api"
+import { useRouter } from 'next/router'
 
 interface AddPaymentButtonProperties {
   vaultId: number
@@ -22,6 +23,7 @@ interface AddPaymentButtonProperties {
 export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
   const theme = useTheme()
   const api = useApi()
+  const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<SelectProperties>({
     value: 'BLIK',
@@ -71,6 +73,7 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
       currency: paymentCreateForm.currency
     })
       .then(() => onClose())
+      .then(() => router.reload())
       .catch(error => console.error(error))
   }
 

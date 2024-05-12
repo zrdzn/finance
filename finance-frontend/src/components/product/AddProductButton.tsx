@@ -13,6 +13,7 @@ import {useTheme} from "@/hooks/theme"
 import {useApi} from "@/hooks/apiClient"
 import {CategoryResponse, ProductCreateRequest} from "@/components/api"
 import {CategorySelect} from "@/components/product/category/CategorySelect"
+import { useRouter } from 'next/router'
 
 interface AddProductButtonProperties {
   vaultId: number
@@ -21,6 +22,7 @@ interface AddProductButtonProperties {
 export const AddProductButton = ({ vaultId }: AddProductButtonProperties) => {
   const theme = useTheme()
   const api = useApi()
+  const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [productCreateRequest, setProductCreateRequest] = useState<ProductCreateRequest>({
     name: '',
@@ -43,6 +45,7 @@ export const AddProductButton = ({ vaultId }: AddProductButtonProperties) => {
 
     api.post("/products/create", productCreateRequest)
       .then(() => onClose())
+      .then(() => router.reload())
       .catch(error => console.error(error))
   }
 
