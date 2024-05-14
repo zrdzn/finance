@@ -1,27 +1,34 @@
 import Select from "react-select"
 import React, {useEffect, useState} from "react"
-import {CategoryResponse, SelectProperties} from "@/components/api"
+import {CategoryResponse, SelectOptionProperties, SelectProperties} from "@/components/api"
 import {useApi} from "@/hooks/apiClient"
 
 interface ProductCategorySelectProperties {
   vaultId: number
-  onChange: (category: CategoryResponse) => void
+  onChange: (category: CategoryResponse | null) => void
 }
+
+const noneCategory = { value: 'none', label: 'None' }
 
 export const CategorySelect = ({ vaultId, onChange }: ProductCategorySelectProperties) => {
   const api = useApi()
   const [categories, setCategories] = useState<CategoryResponse[]>()
-  const [selectedCategory, setSelectedCategory] = useState<SelectProperties>({ value: '', label: '' })
-  const [options, setOptions] = useState<[{ value: string, label: string }]>()
+  const [selectedCategory, setSelectedCategory] = useState<SelectProperties>(noneCategory)
+  const [options, setOptions] = useState<SelectOptionProperties[]>([{ value: selectedCategory?.value ?? '', label: selectedCategory?.label ?? '' }])
 
   useEffect(() => {
-    api.get(`/categories/${vaultId}`)
+    api.get(`/categories/vault/${vaultId}`)
       .then(response => {
         setCategories(response.data.categories)
-        setOptions(response.data.categories.map((category: CategoryResponse) => ({
-          value: category.id.toString(),
-          label: category.name
-        })))
+
+        const newOptions = response.data.categories
+          .map((category: CategoryResponse) => ({
+            value: category.id.toString(),
+            label: category.name
+          }))
+          .concat(noneCategory);
+
+        setOptions(newOptions)
       })
       .catch(error => console.error(error))
   }, [api, vaultId]);
@@ -35,18 +42,21 @@ export const CategorySelect = ({ vaultId, onChange }: ProductCategorySelectPrope
       return
     }
 
+    setSelectedCategory(newValue)
+
     const category = categories.find(category => category.id.toString() === newValue.value)
     if (!category) {
+      onChange(null)
       return
     }
 
-    setSelectedCategory(newValue)
     onChange(category)
   }
 
   return (
     <Select onChange={handleCategoryChange}
-            defaultValue={selectedCategory}
+            defaultValue={noneCategory}
+            value={selectedCategory}
             required
             options={options} />
   )

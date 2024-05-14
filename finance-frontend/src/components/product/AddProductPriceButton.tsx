@@ -15,6 +15,7 @@ import {CategoryResponse, ProductCreateRequest, ProductPriceCreateRequest, Selec
 import {CategorySelect} from "@/components/product/category/CategorySelect"
 import Select from "react-select"
 import { useRouter } from 'next/router'
+import {FaP} from "react-icons/fa6"
 
 interface AddProductPriceButtonProperties {
   productId: number
@@ -68,7 +69,7 @@ export const AddProductPriceButton = ({ productId }: AddProductPriceButtonProper
     <>
       <Button backgroundColor={theme.primaryColor}
               onClick={onOpen}>
-        Add
+        <FaPlus />
       </Button>
 
       <Modal

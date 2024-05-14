@@ -8,6 +8,8 @@ interface CategoryRepository {
 
     fun deleteById(categoryId: CategoryId)
 
+    fun findById(categoryId: CategoryId): Category?
+
     fun findAllByVaultId(vaultId: VaultId): Set<Category>
 
 }

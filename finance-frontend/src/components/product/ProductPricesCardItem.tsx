@@ -9,6 +9,8 @@ import {
 import React from "react"
 import {ProductPriceResponse} from "@/components/api"
 import {useApi} from "@/hooks/apiClient"
+import {useRouter} from "next/router"
+import {FaTrash} from "react-icons/fa"
 
 interface ProductPricesCardItemProperties {
   productPrice: ProductPriceResponse
@@ -18,11 +20,13 @@ export const ProductPricesCardItem = ({
   productPrice
 }: ProductPricesCardItemProperties) => {
   const api = useApi()
+  const router = useRouter()
 
   const handleProductPriceDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
     api.delete(`/products/prices/${productPrice.id}`)
+      .then(() => router.reload())
       .catch(error => console.error(error))
   }
 
@@ -44,7 +48,7 @@ export const ProductPricesCardItem = ({
                 <Button colorScheme={'red'}
                         size={'md'}
                         onClick={handleProductPriceDelete}>
-                  Delete
+                  <FaTrash />
                 </Button>
               </Flex>
               <Flex justifyContent={'space-between'}>

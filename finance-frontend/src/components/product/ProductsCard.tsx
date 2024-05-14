@@ -51,7 +51,7 @@ export const ProductsCard = ({ vault }: ProductsCardProperties) => {
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Heading size='md'>Products</Heading>
+          <Heading size='sm' textTransform={'uppercase'}>Products</Heading>
         </Flex>
       </CardHeader>
       <CardBody>

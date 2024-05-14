@@ -32,13 +32,13 @@ export const AddProductButton = ({ vaultId }: AddProductButtonProperties) => {
   const initialRef = useRef(null)
   const finalRef = useRef(null)
 
-  const handleCategoryChange = (category: CategoryResponse) => {
-    setProductCreateRequest({ ...productCreateRequest, categoryId: category.id });
+  const handleCategoryChange = (category: CategoryResponse | null) => {
+    setProductCreateRequest({ ...productCreateRequest, categoryId: category?.id ?? null });
   }
 
   const handleProductCreateRequestChange = (event: ChangeEvent<HTMLInputElement>) => {
     setProductCreateRequest({ ...productCreateRequest, [event.target.name]: event.target.value });
-  };
+  }
 
   const handleProductCreate = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -53,7 +53,7 @@ export const AddProductButton = ({ vaultId }: AddProductButtonProperties) => {
     <>
       <Button backgroundColor={theme.primaryColor}
               onClick={onOpen}>
-        Add
+        <FaPlus />
       </Button>
 
       <Modal

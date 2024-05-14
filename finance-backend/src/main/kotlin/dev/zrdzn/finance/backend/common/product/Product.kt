@@ -28,5 +28,5 @@ data class Product(
     val vaultId: VaultId,
 
     @Column(name = "category_id")
-    val categoryId: CategoryId?,
+    var categoryId: CategoryId?,
 )

@@ -17,6 +17,8 @@ import React from "react"
 import {useTheme} from "@/hooks/theme"
 import {CategoryResponse, PaymentResponse} from "@/components/api"
 import {useApi} from "@/hooks/apiClient"
+import {FaTrash} from "react-icons/fa"
+import {useRouter} from "next/router"
 
 interface CategoriesCardItemProperties {
   category: CategoryResponse
@@ -26,11 +28,13 @@ export const CategoriesCardItem = ({
   category
 }: CategoriesCardItemProperties) => {
   const api = useApi()
+  const router = useRouter()
 
   const handleCategoryDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
     api.delete(`/categories/${category.id}`)
+      .then(() => router.reload())
       .catch(error => console.error(error))
   }
 
@@ -44,7 +48,6 @@ export const CategoriesCardItem = ({
             <Flex justifyContent={'space-between'}
                   alignItems={'center'}>
               <Heading size='sm'
-                       textTransform='uppercase'
                        isTruncated
                        maxWidth={'70%'}>
                 {category.name}
@@ -52,14 +55,13 @@ export const CategoriesCardItem = ({
               <Button colorScheme={'red'}
                       size={'md'}
                       onClick={handleCategoryDelete}>
-                Delete
+                <FaTrash />
               </Button>
             </Flex>
             <Flex justifyContent={'space-between'}>
               <Text color={'dimgray'}
                     fontSize={'sm'}
                     letterSpacing={0.2}>
-
               </Text>
             </Flex>
           </Box>

@@ -32,6 +32,16 @@ class CategoryService(
         categoryRepository.deleteById(categoryId)
             .also { logger.info("Successfully deleted category with id: $categoryId") }
 
+    fun getCategoryById(categoryId: CategoryId): CategoryResponse? =
+        categoryRepository.findById(categoryId)
+            ?.let {
+                CategoryResponse(
+                    id = it.id!!,
+                    name = it.name,
+                    vaultId = it.vaultId
+                )
+            }
+
     fun getCategoriesByVaultId(vaultId: VaultId): CategoryListResponse =
         categoryRepository.findAllByVaultId(vaultId)
             .map {

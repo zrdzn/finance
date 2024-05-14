@@ -34,7 +34,7 @@ export const CategoriesCard = ({ vault }: CategoriesCardProperties) => {
   const [queriedCategories, setQueriedCategories] = useState<CategoryResponse[]>([])
 
   useEffect(() => {
-    api.get(`/categories/${vault.id}`)
+    api.get(`/categories/vault/${vault.id}`)
       .then(response => {
         setCategories(response.data.categories)
         setQueriedCategories(response.data.categories)
@@ -52,7 +52,7 @@ export const CategoriesCard = ({ vault }: CategoriesCardProperties) => {
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Heading size='md'>Categories</Heading>
+          <Heading size='sm' textTransform={'uppercase'}>Categories</Heading>
         </Flex>
       </CardHeader>
       <CardBody>

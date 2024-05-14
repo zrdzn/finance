@@ -8,36 +8,36 @@ import {
   ModalCloseButton, useDisclosure, Button, FormControl, FormLabel, Input,
 } from '@chakra-ui/react'
 import React, {ChangeEvent, useRef, useState} from "react"
-import {FaPlus} from "react-icons/fa"
+import {FaEdit, FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/theme"
 import {useApi} from "@/hooks/apiClient"
-import {CategoryCreateRequest} from "@/components/api"
+import {CategoryResponse, ProductCreateRequest, ProductResponse, ProductUpdateRequest} from "@/components/api"
+import {CategorySelect} from "@/components/product/category/CategorySelect"
 import { useRouter } from 'next/router'
 
-interface AddCategoryButtonProperties {
-  vaultId: number
+interface EditProductButtonProperties {
+  product: ProductResponse
 }
 
-export const AddCategoryButton = ({ vaultId }: AddCategoryButtonProperties) => {
+export const EditProductButton = ({ product }: EditProductButtonProperties) => {
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [categoryCreateRequest, setCategoryCreateRequest] = useState<CategoryCreateRequest>({
-    name: '',
-    vaultId: vaultId
+  const [productUpdateRequest, setProductUpdateRequest] = useState<ProductUpdateRequest>({
+    categoryId: null
   })
   const initialRef = useRef(null)
   const finalRef = useRef(null)
 
-  const handleCategoryCreateRequestChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setCategoryCreateRequest({ ...categoryCreateRequest, [event.target.name]: event.target.value });
-  };
+  const handleCategoryChange = (category: CategoryResponse | null) => {
+    setProductUpdateRequest({ ...productUpdateRequest, categoryId: category?.id ?? null });
+  }
 
-  const handleCategoryCreate = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleProductUpdate = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.post("/categories/create", categoryCreateRequest)
+    api.patch(`/products/${product.id}`, productUpdateRequest)
       .then(() => onClose())
       .then(() => router.reload())
       .catch(error => console.error(error))
@@ -46,8 +46,8 @@ export const AddCategoryButton = ({ vaultId }: AddCategoryButtonProperties) => {
   return (
     <>
       <Button backgroundColor={theme.primaryColor}
-              onClick={onOpen}>
-        <FaPlus />
+              onClick={(event) => { event.preventDefault(); onOpen() } }>
+        <FaEdit />
       </Button>
 
       <Modal
@@ -58,23 +58,20 @@ export const AddCategoryButton = ({ vaultId }: AddCategoryButtonProperties) => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add a new category</ModalHeader>
+          <ModalHeader>Update product</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <FormControl>
-              <FormLabel>Name</FormLabel>
-              <Input name={'name'}
-                     onChange={handleCategoryCreateRequestChange}
-                     ref={initialRef}
-                     placeholder='Name of the category' />
+            <FormControl mt={4}>
+              <FormLabel>Category</FormLabel>
+              <CategorySelect vaultId={product.vaultId} onChange={handleCategoryChange} />
             </FormControl>
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={handleCategoryCreate}
+            <Button onClick={handleProductUpdate}
                     backgroundColor={theme.primaryColor}
                     mr={3}>
-              Add
+              Save
             </Button>
             <Button onClick={onClose}>Cancel</Button>
           </ModalFooter>

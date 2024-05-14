@@ -27,7 +27,7 @@ export const PaymentsCard = ({ vault }: PaymentsCardProperties) => {
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Heading size='md'>All payments</Heading>
+          <Heading size='sm' textTransform={'uppercase'}>Payments</Heading>
           <AddPaymentButton vaultId={vault.id} />
         </Flex>
       </CardHeader>

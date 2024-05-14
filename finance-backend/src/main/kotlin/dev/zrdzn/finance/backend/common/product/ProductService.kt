@@ -3,6 +3,7 @@ package dev.zrdzn.finance.backend.common.product
 import dev.zrdzn.finance.backend.api.price.Price
 import dev.zrdzn.finance.backend.api.product.ProductCreateResponse
 import dev.zrdzn.finance.backend.api.product.ProductListResponse
+import dev.zrdzn.finance.backend.api.product.ProductNotFoundException
 import dev.zrdzn.finance.backend.api.product.ProductPriceCreateResponse
 import dev.zrdzn.finance.backend.api.product.ProductPriceListResponse
 import dev.zrdzn.finance.backend.api.product.ProductPriceResponse
@@ -12,15 +13,18 @@ import dev.zrdzn.finance.backend.common.category.CategoryId
 import dev.zrdzn.finance.backend.common.category.CategoryRepository
 import dev.zrdzn.finance.backend.common.vault.VaultId
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
-class ProductService(
+open class ProductService(
     private val productRepository: ProductRepository,
     private val productPriceRepository: ProductPriceRepository
 ) {
 
     private val logger = LoggerFactory.getLogger(ProductService::class.java)
 
-    fun createProduct(name: String, vaultId: VaultId, categoryId: CategoryId?): ProductCreateResponse =
+    @Transactional
+    open fun createProduct(name: String, vaultId: VaultId, categoryId: CategoryId?): ProductCreateResponse =
         productRepository
             .save(
                 Product(
@@ -40,7 +44,15 @@ class ProductService(
                 )
             }
 
-    fun createProductPrice(productId: ProductId, price: Price): ProductPriceCreateResponse =
+    @Transactional
+    open fun updateProduct(productId: ProductId, categoryId: CategoryId?) {
+        val product = productRepository.findById(productId) ?: throw ProductNotFoundException(productId)
+        product.categoryId = categoryId
+        logger.info("Successfully updated product: $product")
+    }
+
+    @Transactional
+    open fun createProductPrice(productId: ProductId, price: Price): ProductPriceCreateResponse =
         productPriceRepository
             .save(
                 ProductPrice(
@@ -57,15 +69,18 @@ class ProductService(
                 )
             }
 
-    fun deleteProductById(productId: ProductId): Unit =
+    @Transactional
+    open fun deleteProductById(productId: ProductId): Unit =
         productRepository.deleteById(productId)
             .also { logger.info("Successfully deleted product with id: $productId") }
 
-    fun deleteProductPriceById(productPriceId: ProductPriceId): Unit =
+    @Transactional
+    open fun deleteProductPriceById(productPriceId: ProductPriceId): Unit =
         productPriceRepository.deleteById(productPriceId)
             .also { logger.info("Successfully deleted product price with id: $productPriceId") }
 
-    fun getProductsByVaultId(vaultId: VaultId): ProductListResponse =
+    @Transactional(readOnly = true)
+    open fun getProductsByVaultId(vaultId: VaultId): ProductListResponse =
         productRepository
             .findByVaultId(vaultId)
             .map {
@@ -79,7 +94,8 @@ class ProductService(
             .toSet()
             .let { ProductListResponse(it) }
 
-    fun getProductPricesByProductId(productId: ProductId): ProductPriceListResponse =
+    @Transactional(readOnly = true)
+    open fun getProductPricesByProductId(productId: ProductId): ProductPriceListResponse =
         productPriceRepository
             .findByProductId(productId)
             .map {

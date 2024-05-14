@@ -1,7 +1,8 @@
 import {SingleValue} from "react-select"
 
 // global
-export type SelectProperties = SingleValue<{value: string, label: string}>
+export type SelectOptionProperties = {value: string, label: string}
+export type SelectProperties = SingleValue<SelectOptionProperties>
 
 // users
 export interface UserResponse {
@@ -45,12 +46,16 @@ export interface ProductResponse {
   id: number
   name: string
   vaultId: number
-  categoryId?: number
+  categoryId: number | null
 }
 
 export interface ProductCreateRequest {
   name: string
   vaultId: number
+  categoryId: number | null
+}
+
+export interface ProductUpdateRequest {
   categoryId: number | null
 }
 

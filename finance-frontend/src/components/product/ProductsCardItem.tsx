@@ -6,21 +6,24 @@ import {
   CardBody,
   CardHeader, Divider,
   Flex,
-  Heading,
+  Heading, HStack,
   Link,
   Stack,
-  StackDivider,
+  StackDivider, Tag, TagLabel, TagLeftIcon,
   Text
 } from "@chakra-ui/react"
 import {AddPaymentButton} from "@/components/payment/AddPaymentButton"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/theme"
-import {PaymentResponse, ProductPriceResponse, ProductResponse} from "@/components/api"
+import {CategoryResponse, PaymentResponse, ProductPriceResponse, ProductResponse} from "@/components/api"
 import {useApi} from "@/hooks/apiClient"
 import {ProductPricesCardItem} from "@/components/product/ProductPricesCardItem"
 import {SearchBar} from "@/components/shared/SearchBar"
 import {AddProductButton} from "@/components/product/AddProductButton"
 import {AddProductPriceButton} from "@/components/product/AddProductPriceButton"
+import {FaEdit, FaFolder, FaSquare, FaTrash} from "react-icons/fa"
+import {EditProductButton} from "@/components/product/EditProductButton"
+import {useRouter} from "next/router"
 
 interface ProductsCardItemProperties {
   product: ProductResponse
@@ -30,6 +33,8 @@ export const ProductsCardItem = ({
   product
 }: ProductsCardItemProperties) => {
   const api = useApi()
+  const router = useRouter()
+  const [category, setCategory] = useState<CategoryResponse | undefined>(undefined)
   const [productPrices, setProductPrices] = useState<ProductPriceResponse[]>([])
   const [queriedProductPrices, setQueriedProductPrices] = useState<ProductPriceResponse[]>([])
 
@@ -42,10 +47,17 @@ export const ProductsCardItem = ({
       .catch(error => console.error(error))
   }, [api, product.id]);
 
+  useEffect(() => {
+    api.get(`/categories/${product.categoryId}`)
+      .then(response => setCategory(response.data))
+      .catch(error => console.error(error))
+  }, [api, product.categoryId]);
+
   const handleProductDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
     api.delete(`/products/${product.id}`)
+      .then(() => router.reload())
       .catch(error => console.error(error))
   }
 
@@ -62,17 +74,30 @@ export const ProductsCardItem = ({
             <Box width={'full'}>
               <Flex justifyContent={'space-between'}
                     alignItems={'center'}>
-                <Heading size='sm'
-                         textTransform='uppercase'
-                         isTruncated
-                         maxWidth={'70%'}>
-                  {product.name}
-                </Heading>
-                <Button colorScheme={'red'}
-                        size={'md'}
-                        onClick={handleProductDelete}>
-                  Delete
-                </Button>
+                <Flex w={'full'}
+                      gap={3}
+                      alignItems={'center'}>
+                  <Heading size='sm'
+                           maxWidth={'70%'}>
+                    {product.name}
+                  </Heading>
+                  <HStack spacing={4}>
+                    {
+                      category !== undefined &&
+                      <Tag size={'sm'} colorScheme='cyan'>
+                        <TagLabel>{category.name}</TagLabel>
+                      </Tag>
+                    }
+                  </HStack>
+                </Flex>
+                <HStack spacing={2}>
+                  <EditProductButton product={product} />
+                  <Button colorScheme={'red'}
+                          size={'md'}
+                          onClick={handleProductDelete}>
+                    <FaTrash />
+                  </Button>
+                </HStack>
               </Flex>
               <Flex justifyContent={'space-between'}>
                 <Text color={'dimgray'}

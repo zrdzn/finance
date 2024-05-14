@@ -33,7 +33,6 @@ export const PaymentsCardItem = ({
             <Box width={'full'}>
               <Flex justifyContent={'space-between'}>
                 <Heading size='sm'
-                         textTransform='uppercase'
                          isTruncated
                          maxWidth={'70%'}>
                   {payment.description}
