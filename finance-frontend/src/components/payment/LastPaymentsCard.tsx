@@ -27,7 +27,7 @@ export const LastPaymentsCard = ({ vault }: LastPaymentsCardProperties) => {
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Heading size='md'>Last payments</Heading>
+          <Heading size='sm' textTransform={'uppercase'}>Last payments</Heading>
         </Flex>
       </CardHeader>
       <CardBody>
