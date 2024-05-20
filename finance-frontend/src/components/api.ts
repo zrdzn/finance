@@ -41,6 +41,18 @@ export interface PaymentCreateRequest {
   currency: string
 }
 
+export interface PaymentExpensesResponse {
+  amount: number
+  currency: string
+}
+
+export enum PaymentExpensesRange {
+  Day = "DAY",
+  Week = "WEEK",
+  Month = "MONTH",
+  Year = "YEAR",
+}
+
 // products
 export interface ProductResponse {
   id: number

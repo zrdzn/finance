@@ -7,7 +7,7 @@ create table "payment_products"
     "product_id"  int not null,
     "quantity"    int not null,
     "unit_amount" numeric(10, 2) not null,
-    "price_currency"    price_currency not null,
+    "currency"    varchar(3) not null,
     constraint "pk_payment_products" primary key ("id"),
     constraint "fk_payment_products_payments" foreign key ("payment_id") references "payments" ("id"),
     constraint "fk_payment_products_products" foreign key ("product_id") references "products" ("id")

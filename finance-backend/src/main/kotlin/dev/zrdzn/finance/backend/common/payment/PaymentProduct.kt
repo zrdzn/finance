@@ -1,6 +1,6 @@
 package dev.zrdzn.finance.backend.common.payment
 
-import dev.zrdzn.finance.backend.api.price.PriceCurrency
+import dev.zrdzn.finance.backend.api.shared.Currency
 import dev.zrdzn.finance.backend.common.product.ProductId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -9,8 +9,6 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.math.BigDecimal
-import org.hibernate.annotations.JdbcType
-import org.hibernate.dialect.PostgreSQLEnumJdbcType
 
 typealias PaymentProductId = Int
 
@@ -34,7 +32,6 @@ data class PaymentProduct(
     @Column(name = "unit_amount")
     val unitAmount: BigDecimal,
 
-    @Column(name = "price_currency", columnDefinition = "price_currency")
-    @JdbcType(PostgreSQLEnumJdbcType::class)
-    val currency: PriceCurrency,
+    @Column(name = "currency")
+    val currency: Currency,
 )

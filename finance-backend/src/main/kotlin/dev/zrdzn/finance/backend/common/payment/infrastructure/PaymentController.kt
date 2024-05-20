@@ -1,18 +1,24 @@
 package dev.zrdzn.finance.backend.common.payment.infrastructure
 
+import dev.zrdzn.finance.backend.api.payment.PaymentAverageExpensesResponse
 import dev.zrdzn.finance.backend.api.payment.PaymentCreateRequest
 import dev.zrdzn.finance.backend.api.payment.PaymentCreateResponse
+import dev.zrdzn.finance.backend.api.payment.PaymentExpenseRange
+import dev.zrdzn.finance.backend.api.payment.PaymentExpensesResponse
 import dev.zrdzn.finance.backend.api.payment.PaymentListResponse
 import dev.zrdzn.finance.backend.api.price.Price
+import dev.zrdzn.finance.backend.api.shared.Currency
 import dev.zrdzn.finance.backend.common.payment.PaymentService
 import dev.zrdzn.finance.backend.common.user.UserId
 import dev.zrdzn.finance.backend.common.vault.VaultId
+import java.time.Instant
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -44,5 +50,31 @@ class PaymentController(
         @PathVariable vaultId: VaultId
     ): PaymentListResponse =
         paymentService.getPaymentsByVaultId(vaultId)
+
+    @GetMapping("/{vaultId}/expenses")
+    fun getExpensesByVaultId(
+        @AuthenticationPrincipal userId: UserId,
+        @PathVariable vaultId: VaultId,
+        @RequestParam("currency") currency: Currency,
+        @RequestParam("start") start: Instant
+    ): PaymentExpensesResponse =
+        paymentService.getPaymentExpenses(
+            vaultId = vaultId,
+            currency = currency,
+            start = start
+        )
+
+    @GetMapping("/{vaultId}/expenses/average")
+    fun getAverageExpensesByVaultId(
+        @AuthenticationPrincipal userId: UserId,
+        @PathVariable vaultId: VaultId,
+        @RequestParam("currency") currency: Currency,
+        @RequestParam("range") range: PaymentExpenseRange
+    ): PaymentAverageExpensesResponse =
+        paymentService.getPaymentAverageExpenses(
+            vaultId = vaultId,
+            currency = currency,
+            range = range
+        )
 
 }

@@ -44,15 +44,18 @@ dependencies {
 
     implementation("com.auth0:java-jwt:4.4.0")
 
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    implementation("com.konghq:unirest-java-core:4.2.4")
+    implementation("com.konghq:unirest-objectmapper-jackson:4.2.4")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql:1.19.3")
-    testImplementation("com.konghq:unirest-java-core:4.2.4")
-    testImplementation("com.konghq:unirest-objectmapper-jackson:4.2.4")
 }
 
 java {
