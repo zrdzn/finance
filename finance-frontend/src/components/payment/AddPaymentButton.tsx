@@ -12,7 +12,7 @@ import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/theme"
 import Select from "react-select"
 import {useApi} from "@/hooks/apiClient"
-import {PaymentCreateRequest, SelectProperties} from "@/components/api"
+import {PaymentCreateRequest, SelectOptionProperties, SelectProperties} from "@/components/api"
 import { useRouter } from 'next/router'
 import {PriceInput} from "@/components/shared/PriceInput"
 import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"
@@ -46,12 +46,7 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
     { value: 'CASH', label: 'Cash' }
   ]
 
-  const handlePaymentMethodChange = (newValue: SelectProperties) => {
-    if (!newValue) {
-      return
-    }
-
-    setSelectedPaymentMethod(newValue)
+  const handlePaymentMethodChange = (newValue: SelectOptionProperties) => {
     setPaymentCreateForm((previous) => ({ ...previous, paymentMethod: newValue.value }))
   }
 
