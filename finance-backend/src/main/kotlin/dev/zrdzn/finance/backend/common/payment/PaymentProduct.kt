@@ -1,6 +1,5 @@
 package dev.zrdzn.finance.backend.common.payment
 
-import dev.zrdzn.finance.backend.api.shared.Currency
 import dev.zrdzn.finance.backend.common.product.ProductId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -26,12 +25,9 @@ data class PaymentProduct(
     @Column(name = "product_id")
     val productId: ProductId,
 
-    @Column(name = "quantity")
-    val quantity: Int,
-
     @Column(name = "unit_amount")
     val unitAmount: BigDecimal,
 
-    @Column(name = "currency")
-    val currency: Currency,
+    @Column(name = "quantity")
+    val quantity: Int,
 )

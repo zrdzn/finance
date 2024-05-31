@@ -39,7 +39,7 @@ export const LastPaymentsCard = ({ vault }: LastPaymentsCardProperties) => {
             payments &&
             payments.sort((payment, nextPayment) => new Date(nextPayment.payedAt).getTime() - new Date(payment.payedAt).getTime())
               .slice(0, 3)
-              .map(payment => <PaymentsCardItem key={payment.id} payment={payment} />)
+              .map(payment => <PaymentsCardItem key={payment.id} vaultId={vault.id} payment={payment} />)
           }
           <Box paddingTop={4}>
             <Flex justifyContent={'space-between'}>

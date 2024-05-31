@@ -11,18 +11,18 @@ import React, {ChangeEvent, useRef, useState} from "react"
 import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/theme"
 import {useApi} from "@/hooks/apiClient"
-import {CategoryResponse, ProductCreateRequest} from "@/components/api"
+import {ProductResponse, ProductCreateRequest} from "@/components/api"
 import {CategorySelect} from "@/components/product/category/CategorySelect"
 import { useRouter } from 'next/router'
 
 interface AddProductButtonProperties {
   vaultId: number
+  onCreate?: (product: ProductResponse) => void
 }
 
-export const AddProductButton = ({ vaultId }: AddProductButtonProperties) => {
+export const AddProductButton = ({ vaultId, onCreate }: AddProductButtonProperties) => {
   const theme = useTheme()
   const api = useApi()
-  const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [productCreateRequest, setProductCreateRequest] = useState<ProductCreateRequest>({
     name: '',
@@ -32,7 +32,7 @@ export const AddProductButton = ({ vaultId }: AddProductButtonProperties) => {
   const initialRef = useRef(null)
   const finalRef = useRef(null)
 
-  const handleCategoryChange = (category: CategoryResponse | null) => {
+  const handleCategoryChange = (category: ProductResponse | null) => {
     setProductCreateRequest({ ...productCreateRequest, categoryId: category?.id ?? null });
   }
 
@@ -44,8 +44,10 @@ export const AddProductButton = ({ vaultId }: AddProductButtonProperties) => {
     event.preventDefault()
 
     api.post("/products/create", productCreateRequest)
-      .then(() => onClose())
-      .then(() => router.reload())
+      .then(response => {
+        onClose()
+        onCreate?.(response.data)
+      })
       .catch(error => console.error(error))
   }
 

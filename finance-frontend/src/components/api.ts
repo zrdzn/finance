@@ -33,12 +33,26 @@ export interface PaymentResponse {
   currency: string
 }
 
+export interface PaymentProductWithProductResponse {
+  id: number
+  paymentId: number
+  product: ProductResponse
+  unitAmount: number
+  quantity: number
+}
+
 export interface PaymentCreateRequest {
   vaultId: number
   paymentMethod: string
   description: string | null
   price: number
   currency: string
+}
+
+export interface PaymentProductCreateRequest {
+  productId: number
+  unitAmount: number
+  quantity: number
 }
 
 export interface PaymentExpensesResponse {
@@ -71,23 +85,8 @@ export interface ProductUpdateRequest {
   categoryId: number | null
 }
 
-// product prices
-export interface ProductPriceResponse {
-  id: number
-  productId: number
-  price: {
-    amount: number
-    currency: string
-  }
-}
-
-export interface ProductPriceCreateRequest {
-  unitAmount: number
-  currency: string
-}
-
 // categories
-export interface CategoryResponse {
+export interface ProductResponse {
   id: number
   name: string
   vaultId: number

@@ -1,24 +1,16 @@
 package dev.zrdzn.finance.backend.common.product
 
-import dev.zrdzn.finance.backend.api.price.Price
 import dev.zrdzn.finance.backend.api.product.ProductCreateResponse
 import dev.zrdzn.finance.backend.api.product.ProductListResponse
 import dev.zrdzn.finance.backend.api.product.ProductNotFoundException
-import dev.zrdzn.finance.backend.api.product.ProductPriceCreateResponse
-import dev.zrdzn.finance.backend.api.product.ProductPriceListResponse
-import dev.zrdzn.finance.backend.api.product.ProductPriceResponse
 import dev.zrdzn.finance.backend.api.product.ProductResponse
-import dev.zrdzn.finance.backend.common.category.Category
 import dev.zrdzn.finance.backend.common.category.CategoryId
-import dev.zrdzn.finance.backend.common.category.CategoryRepository
 import dev.zrdzn.finance.backend.common.vault.VaultId
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 open class ProductService(
-    private val productRepository: ProductRepository,
-    private val productPriceRepository: ProductPriceRepository
+    private val productRepository: ProductRepository
 ) {
 
     private val logger = LoggerFactory.getLogger(ProductService::class.java)
@@ -52,32 +44,9 @@ open class ProductService(
     }
 
     @Transactional
-    open fun createProductPrice(productId: ProductId, price: Price): ProductPriceCreateResponse =
-        productPriceRepository
-            .save(
-                ProductPrice(
-                    id = null,
-                    productId = productId,
-                    unitAmount = price.amount,
-                    currency = price.currency
-                )
-            )
-            .also { logger.info("Successfully created product price: $it") }
-            .let {
-                ProductPriceCreateResponse(
-                    id = it.id!!
-                )
-            }
-
-    @Transactional
     open fun deleteProductById(productId: ProductId): Unit =
         productRepository.deleteById(productId)
             .also { logger.info("Successfully deleted product with id: $productId") }
-
-    @Transactional
-    open fun deleteProductPriceById(productPriceId: ProductPriceId): Unit =
-        productPriceRepository.deleteById(productPriceId)
-            .also { logger.info("Successfully deleted product price with id: $productPriceId") }
 
     @Transactional(readOnly = true)
     open fun getProductsByVaultId(vaultId: VaultId): ProductListResponse =
@@ -95,20 +64,17 @@ open class ProductService(
             .let { ProductListResponse(it) }
 
     @Transactional(readOnly = true)
-    open fun getProductPricesByProductId(productId: ProductId): ProductPriceListResponse =
-        productPriceRepository
-            .findByProductId(productId)
-            .map {
-                ProductPriceResponse(
+    open fun getProductById(productId: ProductId): ProductResponse =
+        productRepository
+            .findById(productId)
+            ?.let {
+                ProductResponse(
                     id = it.id!!,
-                    productId = it.productId,
-                    price = Price(
-                        amount = it.unitAmount,
-                        currency = it.currency
-                    )
+                    name = it.name,
+                    vaultId = it.vaultId,
+                    categoryId = it.categoryId
                 )
             }
-            .toSet()
-            .let { ProductPriceListResponse(it) }
+            ?: throw ProductNotFoundException(productId)
 
 }

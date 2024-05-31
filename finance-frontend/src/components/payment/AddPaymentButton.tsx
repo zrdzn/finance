@@ -10,11 +10,11 @@ import {
 import React, {ChangeEvent, useRef, useState} from "react"
 import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/theme"
-import {AddPaymentPriceButton} from "@/components/payment/AddPaymentPriceInput"
 import Select from "react-select"
 import {useApi} from "@/hooks/apiClient"
 import {PaymentCreateRequest, SelectProperties} from "@/components/api"
 import { useRouter } from 'next/router'
+import {PriceInput} from "@/components/shared/PriceInput"
 
 interface AddPaymentButtonProperties {
   vaultId: number
@@ -112,7 +112,7 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
 
             <FormControl mt={4}>
               <FormLabel>Price</FormLabel>
-              <AddPaymentPriceButton handlePrice={handlePriceChange} />
+              <PriceInput handlePrice={handlePriceChange} />
             </FormControl>
           </ModalBody>
 

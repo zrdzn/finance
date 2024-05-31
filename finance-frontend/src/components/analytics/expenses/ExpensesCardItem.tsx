@@ -68,7 +68,13 @@ export const ExpensesCardItem = ({
                     </Heading>
                 }
                 {
-                  !expenses || expenses.amount === 0 &&
+                  expenses && expenses.amount === 0 &&
+                    <Heading size={'md'}>
+                      0.00 {expenses.currency}
+                    </Heading>
+                }
+                {
+                  !expenses &&
                     <Heading size={'md'}>
                         N/A
                     </Heading>

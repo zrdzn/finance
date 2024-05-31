@@ -1,18 +1,18 @@
 import Select from "react-select"
 import React, {useEffect, useState} from "react"
-import {CategoryResponse, SelectOptionProperties, SelectProperties} from "@/components/api"
+import {ProductResponse, SelectOptionProperties, SelectProperties} from "@/components/api"
 import {useApi} from "@/hooks/apiClient"
 
 interface ProductCategorySelectProperties {
   vaultId: number
-  onChange: (category: CategoryResponse | null) => void
+  onChange: (category: ProductResponse | null) => void
 }
 
 const noneCategory = { value: 'none', label: 'None' }
 
 export const CategorySelect = ({ vaultId, onChange }: ProductCategorySelectProperties) => {
   const api = useApi()
-  const [categories, setCategories] = useState<CategoryResponse[]>()
+  const [categories, setCategories] = useState<ProductResponse[]>()
   const [selectedCategory, setSelectedCategory] = useState<SelectProperties>(noneCategory)
   const [options, setOptions] = useState<SelectOptionProperties[]>([{ value: selectedCategory?.value ?? '', label: selectedCategory?.label ?? '' }])
 
@@ -22,7 +22,7 @@ export const CategorySelect = ({ vaultId, onChange }: ProductCategorySelectPrope
         setCategories(response.data.categories)
 
         const newOptions = response.data.categories
-          .map((category: CategoryResponse) => ({
+          .map((category: ProductResponse) => ({
             value: category.id.toString(),
             label: category.name
           }))

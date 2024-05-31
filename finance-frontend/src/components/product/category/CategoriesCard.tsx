@@ -15,7 +15,7 @@ import {
 import {AddPaymentButton} from "@/components/payment/AddPaymentButton"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/theme"
-import {CategoryResponse, PaymentResponse, VaultResponse} from "@/components/api"
+import {ProductResponse, PaymentResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/apiClient"
 import {PaymentsCardItem} from "@/components/payment/PaymentsCardItem"
 import {CategoriesCardItem} from "@/components/product/category/CategoriesCardItem"
@@ -30,8 +30,8 @@ interface CategoriesCardProperties {
 export const CategoriesCard = ({ vault }: CategoriesCardProperties) => {
   const theme = useTheme()
   const api = useApi()
-  const [categories, setCategories] = useState<CategoryResponse[]>([])
-  const [queriedCategories, setQueriedCategories] = useState<CategoryResponse[]>([])
+  const [categories, setCategories] = useState<ProductResponse[]>([])
+  const [queriedCategories, setQueriedCategories] = useState<ProductResponse[]>([])
 
   useEffect(() => {
     api.get(`/categories/vault/${vault.id}`)
@@ -42,7 +42,7 @@ export const CategoriesCard = ({ vault }: CategoriesCardProperties) => {
       .catch(error => console.error(error))
   }, [api, vault.id]);
 
-  const handleSearchResults = (results: CategoryResponse[]) => {
+  const handleSearchResults = (results: ProductResponse[]) => {
     setQueriedCategories(results)
   }
 

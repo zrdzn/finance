@@ -11,7 +11,7 @@ import React, {ChangeEvent, useRef, useState} from "react"
 import {FaEdit, FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/theme"
 import {useApi} from "@/hooks/apiClient"
-import {CategoryResponse, ProductCreateRequest, ProductResponse, ProductUpdateRequest} from "@/components/api"
+import {ProductResponse, ProductUpdateRequest} from "@/components/api"
 import {CategorySelect} from "@/components/product/category/CategorySelect"
 import { useRouter } from 'next/router'
 
@@ -30,7 +30,7 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
   const initialRef = useRef(null)
   const finalRef = useRef(null)
 
-  const handleCategoryChange = (category: CategoryResponse | null) => {
+  const handleCategoryChange = (category: ProductResponse | null) => {
     setProductUpdateRequest({ ...productUpdateRequest, categoryId: category?.id ?? null });
   }
 

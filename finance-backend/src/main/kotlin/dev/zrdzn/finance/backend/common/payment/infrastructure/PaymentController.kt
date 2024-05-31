@@ -6,9 +6,14 @@ import dev.zrdzn.finance.backend.api.payment.PaymentCreateResponse
 import dev.zrdzn.finance.backend.api.payment.PaymentExpenseRange
 import dev.zrdzn.finance.backend.api.payment.PaymentExpensesResponse
 import dev.zrdzn.finance.backend.api.payment.PaymentListResponse
+import dev.zrdzn.finance.backend.api.payment.PaymentProductCreateRequest
+import dev.zrdzn.finance.backend.api.payment.PaymentProductCreateResponse
+import dev.zrdzn.finance.backend.api.payment.PaymentProductListResponse
 import dev.zrdzn.finance.backend.api.price.Price
 import dev.zrdzn.finance.backend.api.shared.Currency
+import dev.zrdzn.finance.backend.common.payment.PaymentId
 import dev.zrdzn.finance.backend.common.payment.PaymentService
+import dev.zrdzn.finance.backend.common.product.ProductId
 import dev.zrdzn.finance.backend.common.user.UserId
 import dev.zrdzn.finance.backend.common.vault.VaultId
 import java.time.Instant
@@ -44,12 +49,32 @@ class PaymentController(
                 )
             )
 
+    @PostMapping("/{paymentId}/products/create")
+    fun createPaymentProduct(
+        @AuthenticationPrincipal userId: UserId,
+        @PathVariable paymentId: PaymentId,
+        @RequestBody paymentProductCreateRequest: PaymentProductCreateRequest
+    ): PaymentProductCreateResponse =
+        paymentService.createPaymentProduct(
+            paymentId = paymentId,
+            productId = paymentProductCreateRequest.productId,
+            unitAmount = paymentProductCreateRequest.unitAmount,
+            quantity = paymentProductCreateRequest.quantity
+        )
+
     @GetMapping("/{vaultId}")
     fun getPaymentsByVaultId(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable vaultId: VaultId
     ): PaymentListResponse =
         paymentService.getPaymentsByVaultId(vaultId)
+
+    @GetMapping("/{paymentId}/products")
+    fun getPaymentProducts(
+        @AuthenticationPrincipal userId: UserId,
+        @PathVariable paymentId: PaymentId
+    ): PaymentProductListResponse =
+        paymentService.getPaymentProducts(paymentId)
 
     @GetMapping("/{vaultId}/expenses")
     fun getExpensesByVaultId(

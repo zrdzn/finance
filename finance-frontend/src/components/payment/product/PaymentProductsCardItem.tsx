@@ -7,25 +7,25 @@ import {
   Text
 } from "@chakra-ui/react"
 import React from "react"
-import {ProductPriceResponse} from "@/components/api"
+import {PaymentProductWithProductResponse} from "@/components/api"
 import {useApi} from "@/hooks/apiClient"
 import {useRouter} from "next/router"
 import {FaTrash} from "react-icons/fa"
 
-interface ProductPricesCardItemProperties {
-  productPrice: ProductPriceResponse
+interface PaymentProductsCardItemProperties {
+  paymentProduct: PaymentProductWithProductResponse
 }
 
-export const ProductPricesCardItem = ({
-  productPrice
-}: ProductPricesCardItemProperties) => {
+export const PaymentProductsCardItem = ({
+  paymentProduct
+}: PaymentProductsCardItemProperties) => {
   const api = useApi()
   const router = useRouter()
 
-  const handleProductPriceDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handlePaymentProductDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.delete(`/products/prices/${productPrice.id}`)
+    api.delete(`/payment/${paymentProduct.paymentId}/products/${paymentProduct.id}`)
       .then(() => router.reload())
       .catch(error => console.error(error))
   }
@@ -43,19 +43,22 @@ export const ProductPricesCardItem = ({
                          textTransform='uppercase'
                          isTruncated
                          maxWidth={'70%'}>
-                  {productPrice.price.currency}
+                  {paymentProduct.product.name}
                 </Heading>
-                <Button colorScheme={'red'}
-                        size={'md'}
-                        onClick={handleProductPriceDelete}>
-                  <FaTrash />
-                </Button>
+                <Heading size={'md'}>
+                  {(paymentProduct.unitAmount * paymentProduct.quantity).toFixed(2)}
+                </Heading>
               </Flex>
               <Flex justifyContent={'space-between'}>
                 <Text color={'dimgray'}
                       fontSize={'sm'}
-                      letterSpacing={0.2}>
-                  {productPrice.price.amount.toFixed(2)}
+                      letterSpacing={0.5}>
+                  {paymentProduct.quantity}x
+                </Text>
+                <Text color={'dimgray'}
+                      fontSize={'sm'}
+                      letterSpacing={0.5}>
+                  {paymentProduct.unitAmount.toFixed(2)}/unit
                 </Text>
               </Flex>
             </Box>

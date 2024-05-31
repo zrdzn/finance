@@ -15,13 +15,13 @@ import {
 import {AddPaymentButton} from "@/components/payment/AddPaymentButton"
 import React from "react"
 import {useTheme} from "@/hooks/theme"
-import {CategoryResponse, PaymentResponse} from "@/components/api"
+import {ProductResponse, PaymentResponse} from "@/components/api"
 import {useApi} from "@/hooks/apiClient"
 import {FaTrash} from "react-icons/fa"
 import {useRouter} from "next/router"
 
 interface CategoriesCardItemProperties {
-  category: CategoryResponse
+  category: ProductResponse
 }
 
 export const CategoriesCardItem = ({

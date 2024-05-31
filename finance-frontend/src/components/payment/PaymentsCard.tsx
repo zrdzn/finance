@@ -39,7 +39,7 @@ export const PaymentsCard = ({ vault }: PaymentsCardProperties) => {
           {
             payments &&
             payments.sort((payment, nextPayment) => new Date(nextPayment.payedAt).getTime() - new Date(payment.payedAt).getTime())
-              .map(payment => <PaymentsCardItem key={payment.id} payment={payment} />)
+              .map(payment => <PaymentsCardItem key={payment.id} vaultId={vault.id} payment={payment} />)
           }
         </Stack>
       </CardBody>

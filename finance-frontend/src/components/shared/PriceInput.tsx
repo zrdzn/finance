@@ -5,25 +5,22 @@ import {
   NumberInputField,
   NumberInputStepper
 } from "@chakra-ui/react"
-import React from "react"
+import React, {useState} from "react"
 
-interface AddPaymentPriceButtonProperties {
+interface PriceInputProperties {
   handlePrice: (price: number) => void
 }
 
-export const AddPaymentPriceButton = ({ handlePrice }: AddPaymentPriceButtonProperties) => {
-  const format = (value: string) => `$` + value
-  const parse = (value: string) => value.replace(/^\$/, '')
-
-  const [value, setValue] = React.useState('0.00')
+export const PriceInput = ({ handlePrice }: PriceInputProperties) => {
+  const [value, setValue] = useState('0.00')
 
   return (
     <NumberInput
       onChange={(valueString) => {
-        setValue(parse(valueString))
+        setValue(valueString)
         handlePrice(parseFloat(value))
       }}
-      value={format(value)}
+      value={value}
       min={0}
     >
       <NumberInputField />

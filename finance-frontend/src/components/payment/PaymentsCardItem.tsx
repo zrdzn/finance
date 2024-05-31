@@ -4,7 +4,7 @@ import {
   Box,
   Card,
   CardBody,
-  CardHeader,
+  CardHeader, Divider,
   Flex,
   Heading,
   Link,
@@ -13,17 +13,45 @@ import {
   Text
 } from "@chakra-ui/react"
 import {AddPaymentButton} from "@/components/payment/AddPaymentButton"
-import React from "react"
+import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/theme"
-import {PaymentResponse} from "@/components/api"
+import {
+  ProductResponse,
+  PaymentResponse, PaymentProductWithProductResponse,
+} from "@/components/api"
+import {SearchBar} from "@/components/shared/SearchBar"
+import {useApi} from "@/hooks/apiClient"
+import {useRouter} from "next/router"
+import {AddPaymentProductsButton} from "@/components/payment/product/AddPaymentProductsButton"
+import {PaymentProductsCardItem} from "@/components/payment/product/PaymentProductsCardItem"
 
 interface PaymentsCardItemProperties {
+  vaultId: number
   payment: PaymentResponse
 }
 
 export const PaymentsCardItem = ({
+  vaultId,
   payment
 }: PaymentsCardItemProperties) => {
+  const api = useApi()
+  const router = useRouter()
+  const [paymentProducts, setPaymentProducts] = useState<PaymentProductWithProductResponse[]>([])
+  const [queriedPaymentProducts, setQueriedPaymentProducts] = useState<PaymentProductWithProductResponse[]>([])
+
+  useEffect(() => {
+    api.get(`/payment/${payment.id}/products`)
+      .then(response => {
+        setPaymentProducts(response.data.products)
+        setQueriedPaymentProducts(response.data.products)
+      })
+      .catch(error => console.error(error))
+  }, [api, payment.id]);
+
+  const handleSearchResults = (results: PaymentProductWithProductResponse[]) => {
+    setQueriedPaymentProducts(results)
+  }
+
   return (
     <Accordion allowToggle width={'full'}>
       <AccordionItem width={'full'}
@@ -56,7 +84,30 @@ export const PaymentsCardItem = ({
             </Box>
           </AccordionButton>
         <AccordionPanel pb={4}>
-          list of products will appear here
+          <Flex justifyContent={'space-between'}
+                gap={4}>
+            <SearchBar
+              placeholder="Search products"
+              content={paymentProducts}
+              onSearch={handleSearchResults}
+              filter={(paymentProduct, query) => paymentProduct.product.name.toLowerCase().includes(query.toLowerCase())}
+            />
+            <AddPaymentProductsButton vaultId={vaultId} paymentId={payment.id} />
+          </Flex>
+          <Divider mt={4} />
+          <Stack gap={0}>
+            {
+              queriedPaymentProducts.length === 0 &&
+                <Flex justifyContent={'center'}
+                      mt={4}>
+                    <Text size={'sm'}>There are no products added</Text>
+                </Flex>
+            }
+            {
+              queriedPaymentProducts &&
+              queriedPaymentProducts.map(paymentProduct => <PaymentProductsCardItem key={paymentProduct.id} paymentProduct={paymentProduct} />)
+            }
+          </Stack>
         </AccordionPanel>
       </AccordionItem>
     </Accordion>

@@ -21,6 +21,7 @@ import {PaymentsCardItem} from "@/components/payment/PaymentsCardItem"
 import {AddProductButton} from "@/components/product/AddProductButton"
 import {ProductsCardItem} from "@/components/product/ProductsCardItem"
 import {SearchBar} from "@/components/shared/SearchBar"
+import {useRouter} from "next/router"
 
 interface ProductsCardProperties {
   vault: VaultResponse
@@ -29,6 +30,7 @@ interface ProductsCardProperties {
 export const ProductsCard = ({ vault }: ProductsCardProperties) => {
   const theme = useTheme()
   const api = useApi()
+  const router = useRouter()
   const [products, setProducts] = useState<ProductResponse[]>([])
   const [queriedProducts, setQueriedProducts] = useState<ProductResponse[]>([])
 
@@ -43,6 +45,10 @@ export const ProductsCard = ({ vault }: ProductsCardProperties) => {
 
   const handleSearchResults = (results: ProductResponse[]) => {
     setQueriedProducts(results)
+  }
+
+  const handleProductCreate = () => {
+    router.reload()
   }
 
   return (
@@ -63,7 +69,7 @@ export const ProductsCard = ({ vault }: ProductsCardProperties) => {
             onSearch={handleSearchResults}
             filter={(product, query) => product.name.toLowerCase().includes(query.toLowerCase())}
           />
-          <AddProductButton vaultId={vault.id} />
+          <AddProductButton vaultId={vault.id} onCreate={handleProductCreate} />
         </Flex>
         <Divider mt={4} />
         <Stack gap={0}>
