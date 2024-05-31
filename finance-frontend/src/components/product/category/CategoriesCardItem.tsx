@@ -19,6 +19,7 @@ import {ProductResponse, PaymentResponse} from "@/components/api"
 import {useApi} from "@/hooks/apiClient"
 import {FaTrash} from "react-icons/fa"
 import {useRouter} from "next/router"
+import {DeleteButton} from "@/components/shared/DeleteButton"
 
 interface CategoriesCardItemProperties {
   category: ProductResponse
@@ -52,11 +53,7 @@ export const CategoriesCardItem = ({
                        maxWidth={'70%'}>
                 {category.name}
               </Heading>
-              <Button colorScheme={'red'}
-                      size={'md'}
-                      onClick={handleCategoryDelete}>
-                <FaTrash />
-              </Button>
+              <DeleteButton onClick={handleCategoryDelete} />
             </Flex>
             <Flex justifyContent={'space-between'}>
               <Text color={'dimgray'}

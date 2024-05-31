@@ -20,6 +20,7 @@ import {useApi} from "@/hooks/apiClient"
 import {FaEdit, FaFolder, FaSquare, FaTrash} from "react-icons/fa"
 import {EditProductButton} from "@/components/product/EditProductButton"
 import {useRouter} from "next/router"
+import {DeleteButton} from "@/components/shared/DeleteButton"
 
 interface ProductsCardItemProperties {
   product: ProductResponse
@@ -73,11 +74,7 @@ export const ProductsCardItem = ({
                 </Flex>
                 <HStack spacing={2}>
                   <EditProductButton product={product} />
-                  <Button colorScheme={'red'}
-                          size={'md'}
-                          onClick={handleProductDelete}>
-                    <FaTrash />
-                  </Button>
+                  <DeleteButton onClick={handleProductDelete} />
                 </HStack>
               </Flex>
             </Box>
