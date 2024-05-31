@@ -15,6 +15,7 @@ import {useApi} from "@/hooks/apiClient"
 import {PaymentCreateRequest, SelectProperties} from "@/components/api"
 import { useRouter } from 'next/router'
 import {PriceInput} from "@/components/shared/PriceInput"
+import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"
 
 interface AddPaymentButtonProperties {
   vaultId: number
@@ -104,10 +105,7 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
 
             <FormControl mt={4}>
               <FormLabel>Payment method</FormLabel>
-              <Select onChange={handlePaymentMethodChange}
-                      defaultValue={selectedPaymentMethod}
-                      required
-                      options={options} />
+              <PaymentMethodSelect onChange={handlePaymentMethodChange} />
             </FormControl>
 
             <FormControl mt={4}>
