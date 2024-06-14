@@ -67,6 +67,7 @@ export default function Main(): ReactJSXElement {
             <Link href={'/vault/setup'}>Create new</Link>
           </Button>
           <Button backgroundColor={theme.secondaryColor}
+                  isDisabled
                   color={theme.textColor}>Join existing</Button>
         </HStack>
       </Flex>
