@@ -22,14 +22,14 @@ interface VaultSidebarProperties {
   vault: VaultResponse
 }
 
-const SidebarLogo = (): ReactJSXElement => {
+const SidebarLogo = ({ vault }: { vault: VaultResponse }): ReactJSXElement => {
   return (
     <Flex textTransform={'uppercase'}
           fontWeight={'semibold'}
           letterSpacing={'wider'}
           fontSize={'xl'}
           textAlign={'center'}>
-      <Link href={"/"}>
+      <Link href={`/vault/${vault.publicId}`}>
         Finance
       </Link>
     </Flex>
@@ -55,7 +55,7 @@ const BaseView = ({ vault }: VaultSidebarProperties): ReactJSXElement => {
             alignItems={'center'}
             width={'full'}>
         <Flex padding={4}>
-          <SidebarLogo />
+          <SidebarLogo vault={vault} />
         </Flex>
         <Flex padding={2}>
           <Button backgroundColor={theme.primaryColor}
@@ -76,7 +76,7 @@ const BaseView = ({ vault }: VaultSidebarProperties): ReactJSXElement => {
                   width={'full'}
                   alignItems={'center'}>
               <Flex>
-                <SidebarLogo />
+                <SidebarLogo vault={vault} />
               </Flex>
               <Flex>
                 <Button backgroundColor={theme.primaryColor}
