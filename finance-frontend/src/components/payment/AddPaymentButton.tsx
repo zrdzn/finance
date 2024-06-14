@@ -16,6 +16,7 @@ import {PaymentCreateRequest, SelectOptionProperties, SelectProperties} from "@/
 import { useRouter } from 'next/router'
 import {PriceInput} from "@/components/shared/PriceInput"
 import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"
+import {CurrencySelect} from "@/components/shared/CurrencySelect"
 
 interface AddPaymentButtonProperties {
   vaultId: number
@@ -46,6 +47,10 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
 
   const handlePriceChange = (price: number) => {
     setPaymentCreateForm((previous) => ({ ...previous, price: price }));
+  }
+
+  const handleCurrencyChange = (currency: string) => {
+    setPaymentCreateForm((previous) => ({ ...previous, currency: currency }))
   }
 
   const handlePaymentCreate = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -96,6 +101,11 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
             <FormControl mt={4}>
               <FormLabel>Price</FormLabel>
               <PriceInput onChange={handlePriceChange} />
+            </FormControl>
+
+            <FormControl mt={4}>
+              <FormLabel>Currency</FormLabel>
+              <CurrencySelect onChange={handleCurrencyChange} />
             </FormControl>
           </ModalBody>
 
