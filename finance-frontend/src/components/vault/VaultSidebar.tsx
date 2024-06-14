@@ -160,6 +160,7 @@ const BaseView = ({ vault }: VaultSidebarProperties): ReactJSXElement => {
                       style={{width: "inherit"}}>
                   <Button backgroundColor={theme.backgroundColor}
                           onClick={onClose}
+                          isDisabled
                           width={'full'}>
                     <Flex alignItems={'center'}
                           width={'full'}
@@ -181,6 +182,7 @@ const BaseView = ({ vault }: VaultSidebarProperties): ReactJSXElement => {
                       style={{width: "inherit"}}>
                   <Button backgroundColor={theme.backgroundColor}
                           onClick={onClose}
+                          isDisabled
                           width={'full'}>
                     <Flex alignItems={'center'}
                           width={'full'}
@@ -202,6 +204,7 @@ const BaseView = ({ vault }: VaultSidebarProperties): ReactJSXElement => {
                       style={{width: "inherit"}}>
                   <Button backgroundColor={theme.backgroundColor}
                           onClick={onClose}
+                          isDisabled
                           width={'full'}>
                     <Flex alignItems={'center'}
                           width={'full'}
