@@ -13,6 +13,7 @@ data class PaymentResponse(
     val payedAt: String,
     val paymentMethod: PaymentMethod,
     val description: String?,
+    val totalInVaultCurrency: BigDecimal,
     val total: BigDecimal,
     val currency: Currency
 )

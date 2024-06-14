@@ -8,6 +8,10 @@ interface PaymentRepository {
 
     fun save(payment: Payment): Payment
 
+    fun deleteById(paymentId: PaymentId)
+
+    fun findById(paymentId: PaymentId): Payment?
+
     fun findByVaultId(vaultId: VaultId): Set<Payment>
 
     fun sumAndGroupExpensesByVaultId(vaultId: VaultId): List<Price>

@@ -29,6 +29,7 @@ export interface PaymentResponse {
   payedAt: string
   paymentMethod: string
   description: string | null
+  totalInVaultCurrency: number
   total: number
   currency: string
 }
@@ -46,6 +47,13 @@ export interface PaymentCreateRequest {
   paymentMethod: string
   description: string | null
   price: number
+  currency: string
+}
+
+export interface PaymentUpdateRequest {
+  paymentMethod: string
+  description: string | null
+  total: number
   currency: string
 }
 

@@ -1,4 +1,4 @@
-package dev.zrdzn.finance.backend.api.payment
+package dev.zrdzn.finance.backend.api.payment.expense
 
 enum class PaymentExpenseRange {
 

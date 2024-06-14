@@ -1,4 +1,4 @@
-package dev.zrdzn.finance.backend.api.payment
+package dev.zrdzn.finance.backend.api.payment.product
 
 import dev.zrdzn.finance.backend.common.product.ProductId
 import java.math.BigDecimal

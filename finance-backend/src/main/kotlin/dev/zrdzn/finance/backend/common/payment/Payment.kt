@@ -36,14 +36,14 @@ data class Payment(
 
     @Column(columnDefinition = "payment_method")
     @JdbcType(PostgreSQLEnumJdbcType::class)
-    val paymentMethod: PaymentMethod,
+    var paymentMethod: PaymentMethod,
 
     @Column(name = "description")
-    val description: String?,
+    var description: String?,
 
     @Column(name = "total")
-    val total: BigDecimal,
+    var total: BigDecimal,
 
     @Column(name = "currency")
-    val currency: Currency,
+    var currency: Currency,
 )

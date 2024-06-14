@@ -25,7 +25,7 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
   const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [productUpdateRequest, setProductUpdateRequest] = useState<ProductUpdateRequest>({
-    categoryId: null
+    categoryId: product.categoryId
   })
   const initialRef = useRef(null)
   const finalRef = useRef(null)

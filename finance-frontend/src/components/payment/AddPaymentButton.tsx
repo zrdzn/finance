@@ -26,13 +26,9 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
   const api = useApi()
   const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<SelectProperties>({
-    value: 'BLIK',
-    label: 'BLIK'
-  })
   const [paymentCreateForm, setPaymentCreateForm] = useState<PaymentCreateRequest>({
     vaultId: 0,
-    paymentMethod: selectedPaymentMethod?.value ?? '',
+    paymentMethod: 'BLIK',
     description: null,
     price: 0,
     currency: 'PLN'
@@ -40,14 +36,8 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
   const initialRef = useRef(null)
   const finalRef = useRef(null)
 
-  const options = [
-    { value: 'BLIK', label: 'BLIK' },
-    { value: 'CARD', label: 'Card' },
-    { value: 'CASH', label: 'Cash' }
-  ]
-
-  const handlePaymentMethodChange = (newValue: SelectOptionProperties) => {
-    setPaymentCreateForm((previous) => ({ ...previous, paymentMethod: newValue.value }))
+  const handlePaymentMethodChange = (paymentMethod: string) => {
+    setPaymentCreateForm((previous) => ({ ...previous, paymentMethod: paymentMethod }))
   }
 
   const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -105,7 +95,7 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
 
             <FormControl mt={4}>
               <FormLabel>Price</FormLabel>
-              <PriceInput handlePrice={handlePriceChange} />
+              <PriceInput onChange={handlePriceChange} />
             </FormControl>
           </ModalBody>
 

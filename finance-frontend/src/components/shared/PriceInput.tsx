@@ -8,19 +8,20 @@ import {
 import React, {useState} from "react"
 
 interface PriceInputProperties {
-  handlePrice: (price: number) => void
+  onChange: (price: number) => void
+  defaultValue?: number
 }
 
-export const PriceInput = ({ handlePrice }: PriceInputProperties) => {
-  const [value, setValue] = useState('0.00')
+export const PriceInput = ({ onChange, defaultValue }: PriceInputProperties) => {
+  const [value, setValue] = useState<string | null>(null)
 
   return (
     <NumberInput
       onChange={(valueString) => {
         setValue(valueString)
-        handlePrice(parseFloat(value))
+        onChange(parseFloat(valueString))
       }}
-      value={value}
+      value={value ?? defaultValue?.toFixed(2) ?? '0.00'}
       min={0}
     >
       <NumberInputField />

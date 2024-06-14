@@ -1,14 +1,15 @@
 package dev.zrdzn.finance.backend.common.payment
 
-import dev.zrdzn.finance.backend.api.payment.PaymentAverageExpensesResponse
+import dev.zrdzn.finance.backend.api.payment.expense.PaymentAverageExpensesResponse
 import dev.zrdzn.finance.backend.api.payment.PaymentCreateResponse
-import dev.zrdzn.finance.backend.api.payment.PaymentExpenseRange
-import dev.zrdzn.finance.backend.api.payment.PaymentExpensesResponse
+import dev.zrdzn.finance.backend.api.payment.expense.PaymentExpenseRange
+import dev.zrdzn.finance.backend.api.payment.expense.PaymentExpensesResponse
 import dev.zrdzn.finance.backend.api.payment.PaymentListResponse
 import dev.zrdzn.finance.backend.api.payment.PaymentMethod
-import dev.zrdzn.finance.backend.api.payment.PaymentProductCreateResponse
-import dev.zrdzn.finance.backend.api.payment.PaymentProductListResponse
-import dev.zrdzn.finance.backend.api.payment.PaymentProductWithProductResponse
+import dev.zrdzn.finance.backend.api.payment.PaymentNotFoundException
+import dev.zrdzn.finance.backend.api.payment.product.PaymentProductCreateResponse
+import dev.zrdzn.finance.backend.api.payment.product.PaymentProductListResponse
+import dev.zrdzn.finance.backend.api.payment.product.PaymentProductWithProductResponse
 import dev.zrdzn.finance.backend.api.payment.PaymentResponse
 import dev.zrdzn.finance.backend.api.price.Price
 import dev.zrdzn.finance.backend.api.shared.Currency
@@ -20,8 +21,9 @@ import dev.zrdzn.finance.backend.common.vault.VaultId
 import java.math.BigDecimal
 import java.time.Instant
 import org.slf4j.LoggerFactory
+import org.springframework.transaction.annotation.Transactional
 
-class PaymentService(
+open class PaymentService(
     private val paymentRepository: PaymentRepository,
     private val paymentProductRepository: PaymentProductRepository,
     private val productService: ProductService,
@@ -30,7 +32,8 @@ class PaymentService(
 
     private val logger = LoggerFactory.getLogger(PaymentService::class.java)
 
-    fun createPayment(
+    @Transactional
+    open fun createPayment(
         userId: UserId,
         vaultId: VaultId,
         paymentMethod: PaymentMethod,
@@ -53,7 +56,8 @@ class PaymentService(
             .also { logger.info("Successfully created new payment: $it") }
             .let { PaymentCreateResponse(id = it.id!!) }
 
-    fun createPaymentProduct(paymentId: PaymentId, productId: ProductId, unitAmount: BigDecimal, quantity: Int): PaymentProductCreateResponse =
+    @Transactional
+    open fun createPaymentProduct(paymentId: PaymentId, productId: ProductId, unitAmount: BigDecimal, quantity: Int): PaymentProductCreateResponse =
         paymentProductRepository
             .save(
                 PaymentProduct(
@@ -67,8 +71,23 @@ class PaymentService(
             .also { logger.info("Successfully created new payment product: $it") }
             .let { PaymentProductCreateResponse(id = it.id!!) }
 
+    @Transactional
+    open fun updatePayment(paymentId: PaymentId, paymentMethod: PaymentMethod, description: String?, price: Price) {
+        val payment = paymentRepository.findById(paymentId) ?: throw PaymentNotFoundException(paymentId)
+        payment.paymentMethod = paymentMethod
+        payment.description = description
+        payment.total = price.amount
+        payment.currency = price.currency
+        logger.info("Successfully updated payment: $payment")
+    }
 
-    fun getPaymentsByVaultId(vaultId: VaultId): PaymentListResponse =
+    @Transactional
+    open fun deletePayment(paymentId: PaymentId): Unit =
+        paymentRepository.deleteById(paymentId)
+            .also { logger.info("Successfully deleted payment with id: $paymentId") }
+
+    @Transactional(readOnly = true)
+    open fun getPaymentsByVaultId(vaultId: VaultId): PaymentListResponse =
         paymentRepository
             .findByVaultId(vaultId)
             .map {
@@ -79,6 +98,11 @@ class PaymentService(
                     payedAt = it.payedAt.toString(),
                     paymentMethod = it.paymentMethod,
                     description = it.description,
+                    totalInVaultCurrency = exchangeService.convertCurrency(
+                        amount = it.total,
+                        source = it.currency,
+                        target = "PLN"
+                    ).amount,
                     total = it.total,
                     currency = it.currency
                 )
@@ -86,7 +110,8 @@ class PaymentService(
             .toSet()
             .let { PaymentListResponse(it)}
 
-    fun getPaymentProducts(paymentId: PaymentId): PaymentProductListResponse =
+    @Transactional(readOnly = true)
+    open fun getPaymentProducts(paymentId: PaymentId): PaymentProductListResponse =
         paymentProductRepository
             .findByPaymentId(paymentId)
             .map {
@@ -101,7 +126,8 @@ class PaymentService(
             .toSet()
             .let { PaymentProductListResponse(it) }
 
-    fun getPaymentExpenses(vaultId: VaultId, currency: Currency, start: Instant): PaymentExpensesResponse =
+    @Transactional(readOnly = true)
+    open fun getPaymentExpenses(vaultId: VaultId, currency: Currency, start: Instant): PaymentExpensesResponse =
         paymentRepository.sumAndGroupExpensesByVaultId(vaultId, start)
             .sumOf {
                 exchangeService.convertCurrency(
@@ -119,7 +145,8 @@ class PaymentService(
                 )
             }
 
-    fun getPaymentAverageExpenses(vaultId: VaultId, currency: Currency, range: PaymentExpenseRange): PaymentAverageExpensesResponse {
+    @Transactional(readOnly = true)
+    open fun getPaymentAverageExpenses(vaultId: VaultId, currency: Currency, range: PaymentExpenseRange): PaymentAverageExpensesResponse {
         val totalExpenses = paymentRepository.sumAndGroupExpensesByVaultId(vaultId)
 
         val convertedTotal = totalExpenses.sumOf {
@@ -132,7 +159,6 @@ class PaymentService(
 
         val totalDays = paymentRepository.countTotalDaysByVaultId(vaultId).toBigDecimal()
 
-        // make sure we don't divide by zero
         val dailyAverageAmount = convertedTotal / totalDays
 
         val averageAmount: BigDecimal = when (range) {

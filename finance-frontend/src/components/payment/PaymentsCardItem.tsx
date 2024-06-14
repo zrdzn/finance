@@ -24,6 +24,8 @@ import {useApi} from "@/hooks/apiClient"
 import {useRouter} from "next/router"
 import {AddPaymentProductsButton} from "@/components/payment/product/AddPaymentProductsButton"
 import {PaymentProductsCardItem} from "@/components/payment/product/PaymentProductsCardItem"
+import {EditPaymentButton} from "@/components/payment/EditPaymentButton"
+import {DeleteButton} from "@/components/shared/DeleteButton"
 
 interface PaymentsCardItemProperties {
   vaultId: number
@@ -50,6 +52,14 @@ export const PaymentsCardItem = ({
 
   const handleSearchResults = (results: PaymentProductWithProductResponse[]) => {
     setQueriedPaymentProducts(results)
+  }
+
+  const handlePaymentDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+
+    api.delete(`/payment/${payment.id}`)
+      .then(() => router.reload())
+      .catch(error => console.error(error))
   }
 
   return (
@@ -84,7 +94,12 @@ export const PaymentsCardItem = ({
             </Box>
           </AccordionButton>
         <AccordionPanel pb={4}>
+          <Flex justifyContent={'end'} gap={2}>
+            <EditPaymentButton payment={payment} />
+            <DeleteButton onClick={handlePaymentDelete} />
+          </Flex>
           <Flex justifyContent={'space-between'}
+                mt={4}
                 gap={4}>
             <SearchBar
               placeholder="Search products"

@@ -17,19 +17,20 @@ import { useRouter } from 'next/router'
 import {PriceInput} from "@/components/shared/PriceInput"
 
 interface PaymentMethodSelectProperties {
-  onChange: (paymentMethod: SelectOptionProperties) => void
+  onChange: (paymentMethod: string) => void
+  defaultValue?: string
 }
 
-export const PaymentMethodSelect = ({ onChange }: PaymentMethodSelectProperties) => {
+export const PaymentMethodSelect = ({ onChange, defaultValue }: PaymentMethodSelectProperties) => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<SelectProperties>({
-    value: 'BLIK',
-    label: 'BLIK'
+    value: defaultValue ?? 'BLIK',
+    label: defaultValue ?? 'BLIK'
   })
 
   const options = [
     { value: 'BLIK', label: 'BLIK' },
-    { value: 'CARD', label: 'Card' },
-    { value: 'CASH', label: 'Cash' }
+    { value: 'CARD', label: 'CARD' },
+    { value: 'CASH', label: 'CASH' }
   ]
 
   const handlePaymentMethodChange = (newValue: SelectProperties) => {
@@ -38,13 +39,14 @@ export const PaymentMethodSelect = ({ onChange }: PaymentMethodSelectProperties)
     }
 
     setSelectedPaymentMethod(newValue)
-    onChange(newValue)
+    onChange(newValue.value)
   }
 
   return (
     <Select onChange={handlePaymentMethodChange}
             defaultValue={selectedPaymentMethod}
             required
+            isClearable
             options={options} />
   )
 }

@@ -97,7 +97,7 @@ export const AddPaymentProductsButton = ({ vaultId, paymentId }: AddPaymentProdu
 
             <FormControl mt={4}>
               <FormLabel>Price per unit</FormLabel>
-              <PriceInput handlePrice={handlePriceChange} />
+              <PriceInput onChange={handlePriceChange} />
             </FormControl>
 
             <FormControl mt={4}>
