@@ -5,12 +5,14 @@ import dev.zrdzn.finance.backend.api.product.ProductListResponse
 import dev.zrdzn.finance.backend.api.product.ProductNotFoundException
 import dev.zrdzn.finance.backend.api.product.ProductResponse
 import dev.zrdzn.finance.backend.common.category.CategoryId
+import dev.zrdzn.finance.backend.common.category.CategoryService
 import dev.zrdzn.finance.backend.common.vault.VaultId
 import org.slf4j.LoggerFactory
 import org.springframework.transaction.annotation.Transactional
 
 open class ProductService(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val categoryService: CategoryService
 ) {
 
     private val logger = LoggerFactory.getLogger(ProductService::class.java)
@@ -57,7 +59,8 @@ open class ProductService(
                     id = it.id!!,
                     name = it.name,
                     vaultId = it.vaultId,
-                    categoryId = it.categoryId
+                    categoryId = it.categoryId,
+                    categoryName = it.categoryId?.let { categoryService.getCategoryById(it) }?.name
                 )
             }
             .toSet()
@@ -72,7 +75,8 @@ open class ProductService(
                     id = it.id!!,
                     name = it.name,
                     vaultId = it.vaultId,
-                    categoryId = it.categoryId
+                    categoryId = it.categoryId,
+                    categoryName = it.categoryId?.let { categoryService.getCategoryById(it) }?.name
                 )
             }
             ?: throw ProductNotFoundException(productId)

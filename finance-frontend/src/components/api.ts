@@ -81,6 +81,7 @@ export interface ProductResponse {
   name: string
   vaultId: number
   categoryId: number | null
+  categoryName: string | null
 }
 
 export interface ProductCreateRequest {
@@ -94,7 +95,7 @@ export interface ProductUpdateRequest {
 }
 
 // categories
-export interface ProductResponse {
+export interface CategoryResponse {
   id: number
   name: string
   vaultId: number

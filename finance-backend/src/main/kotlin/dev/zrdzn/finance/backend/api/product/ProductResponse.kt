@@ -8,5 +8,6 @@ data class ProductResponse(
     val id: ProductId,
     val name: String,
     val vaultId: VaultId,
-    val categoryId: CategoryId?
+    val categoryId: CategoryId?,
+    val categoryName: String?
 )

@@ -11,7 +11,7 @@ import React, {ChangeEvent, useRef, useState} from "react"
 import {FaEdit, FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/theme"
 import {useApi} from "@/hooks/apiClient"
-import {ProductResponse, ProductUpdateRequest} from "@/components/api"
+import {CategoryResponse, ProductResponse, ProductUpdateRequest} from "@/components/api"
 import {CategorySelect} from "@/components/product/category/CategorySelect"
 import { useRouter } from 'next/router'
 
@@ -30,7 +30,7 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
   const initialRef = useRef(null)
   const finalRef = useRef(null)
 
-  const handleCategoryChange = (category: ProductResponse | null) => {
+  const handleCategoryChange = (category: CategoryResponse | null) => {
     setProductUpdateRequest({ ...productUpdateRequest, categoryId: category?.id ?? null });
   }
 
@@ -63,7 +63,13 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
           <ModalBody pb={6}>
             <FormControl mt={4}>
               <FormLabel>Category</FormLabel>
-              <CategorySelect vaultId={product.vaultId} onChange={handleCategoryChange} />
+              <CategorySelect vaultId={product.vaultId}
+                              onChange={handleCategoryChange}
+                              defaultValue={{
+                                id: product.categoryId ?? 0,
+                                name: product.categoryName ?? 'None',
+                                vaultId: product.vaultId
+                              }} />
             </FormControl>
           </ModalBody>
 

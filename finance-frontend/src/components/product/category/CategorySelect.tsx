@@ -1,19 +1,21 @@
 import Select from "react-select"
 import React, {useEffect, useState} from "react"
-import {ProductResponse, SelectOptionProperties, SelectProperties} from "@/components/api"
+import {CategoryResponse, ProductResponse, SelectOptionProperties, SelectProperties} from "@/components/api"
 import {useApi} from "@/hooks/apiClient"
 
 interface ProductCategorySelectProperties {
   vaultId: number
-  onChange: (category: ProductResponse | null) => void
+  onChange: (category: CategoryResponse | null) => void
+  defaultValue?: CategoryResponse
 }
 
-const noneCategory = { value: 'none', label: 'None' }
-
-export const CategorySelect = ({ vaultId, onChange }: ProductCategorySelectProperties) => {
+export const CategorySelect = ({ vaultId, onChange, defaultValue }: ProductCategorySelectProperties) => {
   const api = useApi()
-  const [categories, setCategories] = useState<ProductResponse[]>()
-  const [selectedCategory, setSelectedCategory] = useState<SelectProperties>(noneCategory)
+  const [categories, setCategories] = useState<CategoryResponse[]>()
+  const [selectedCategory, setSelectedCategory] = useState<SelectProperties>({
+    value: defaultValue?.id.toString() ?? 'None',
+    label: defaultValue?.name ?? 'None'
+  })
   const [options, setOptions] = useState<SelectOptionProperties[]>([{ value: selectedCategory?.value ?? '', label: selectedCategory?.label ?? '' }])
 
   useEffect(() => {
@@ -26,7 +28,7 @@ export const CategorySelect = ({ vaultId, onChange }: ProductCategorySelectPrope
             value: category.id.toString(),
             label: category.name
           }))
-          .concat(noneCategory);
+          .concat({ value: 'None', label: 'None' });
 
         setOptions(newOptions)
       })
@@ -55,8 +57,7 @@ export const CategorySelect = ({ vaultId, onChange }: ProductCategorySelectPrope
 
   return (
     <Select onChange={handleCategoryChange}
-            defaultValue={noneCategory}
-            value={selectedCategory}
+            defaultValue={selectedCategory}
             required
             options={options} />
   )
