@@ -23,6 +23,16 @@ export interface VaultResponse {
   name: string
 }
 
+export interface VaultMemberResponse {
+  id: number
+  vaultId: number
+  userId: number
+}
+
+export interface VaultCreateRequest {
+  name: string
+}
+
 // payments
 export interface PaymentResponse {
   id: number
