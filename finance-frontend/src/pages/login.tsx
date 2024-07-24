@@ -86,7 +86,7 @@ export default function Login(): ReactJSXElement {
               <FormLabel>Email</FormLabel>
               <Input name={'email'}
                      onChange={handleLoginFormUpdate}
-                     placeholder='Enter your e-mail address' />
+                     placeholder='Enter your email address' />
               {
                 emailError && <FormErrorMessage>{emailError}</FormErrorMessage>
               }

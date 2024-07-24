@@ -26,11 +26,24 @@ export interface VaultResponse {
 export interface VaultMemberResponse {
   id: number
   vaultId: number
-  userId: number
+  user: UserResponse
+  role: string
+}
+
+export interface VaultInvitationResponse {
+  id: number
+  vault: VaultResponse
+  userEmail: string,
+  expiresAt: number
 }
 
 export interface VaultCreateRequest {
   name: string
+}
+
+export interface VaultInvitationCreateRequest {
+  vaultId: number
+  userEmail: string
 }
 
 // payments

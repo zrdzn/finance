@@ -34,6 +34,17 @@ class UserService(
                 )
             }
 
+    fun getUserByEmail(email: String): UserResponse? =
+        userRepository
+            .findByEmail(email)
+            ?.let {
+                UserResponse(
+                    id = it.id!!,
+                    email = it.email,
+                    username = it.username
+                )
+            }
+
     fun getUsernameByUserId(id: UserId): UsernameResponse? =
         getUserById(id)?.let { UsernameResponse(it.username) }
 

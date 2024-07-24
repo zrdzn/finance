@@ -53,7 +53,7 @@ class TokenService(
                     .withClaim("refreshTokenId", accessTokenCreateRequest.refreshTokenId)
                     .withSubject(accessTokenCreateRequest.email)
                     .withIssuedAt(Date.from(it))
-                    .withExpiresAt(Date.from(it.plus(2, ChronoUnit.MINUTES)))
+                    .withExpiresAt(Date.from(it.plus(7, ChronoUnit.DAYS)))
                     .sign(algorithm)
             }
             .let { AccessTokenCreateResponse(it) }

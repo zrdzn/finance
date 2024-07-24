@@ -178,11 +178,10 @@ const BaseView = ({ vault }: VaultSidebarProperties): ReactJSXElement => {
               <Divider borderColor={theme.secondaryColor} />
               <Flex width={'full'}
                     marginY={3}>
-                <Link href={`/vault/${vault.publicId}/users`}
+                <Link href={`/vault/${vault.publicId}/members`}
                       style={{width: "inherit"}}>
                   <Button backgroundColor={theme.backgroundColor}
                           onClick={onClose}
-                          isDisabled
                           width={'full'}>
                     <Flex alignItems={'center'}
                           width={'full'}
@@ -191,7 +190,7 @@ const BaseView = ({ vault }: VaultSidebarProperties): ReactJSXElement => {
                         <FaUser />
                       </Flex>
                       <Flex>
-                        Users
+                        Members
                       </Flex>
                     </Flex>
                   </Button>
