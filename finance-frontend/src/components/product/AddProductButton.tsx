@@ -11,7 +11,7 @@ import React, {ChangeEvent, useRef, useState} from "react"
 import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/theme"
 import {useApi} from "@/hooks/apiClient"
-import {ProductResponse, ProductCreateRequest} from "@/components/api"
+import {ProductResponse, ProductCreateRequest, CategoryResponse} from "@/components/api"
 import {CategorySelect} from "@/components/product/category/CategorySelect"
 import { useRouter } from 'next/router'
 
@@ -32,7 +32,7 @@ export const AddProductButton = ({ vaultId, onCreate }: AddProductButtonProperti
   const initialRef = useRef(null)
   const finalRef = useRef(null)
 
-  const handleCategoryChange = (category: ProductResponse | null) => {
+  const handleProductChange = (category: CategoryResponse | null) => {
     setProductCreateRequest({ ...productCreateRequest, categoryId: category?.id ?? null });
   }
 
@@ -79,7 +79,7 @@ export const AddProductButton = ({ vaultId, onCreate }: AddProductButtonProperti
 
             <FormControl mt={4}>
               <FormLabel>Category</FormLabel>
-              <CategorySelect vaultId={vaultId} onChange={handleCategoryChange} />
+              <CategorySelect vaultId={vaultId} onChange={handleProductChange} />
             </FormControl>
           </ModalBody>
 
