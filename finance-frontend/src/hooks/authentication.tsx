@@ -1,10 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {useApi} from "@/hooks/apiClient"
-
-interface AuthenticationDetails {
-  email: string | undefined;
-  username: string | undefined;
-}
+import {AuthenticationDetails} from "@/components/api"
 
 interface AuthenticationContext {
   authenticationDetails: AuthenticationDetails | null | undefined;

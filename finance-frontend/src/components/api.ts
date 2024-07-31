@@ -128,3 +128,9 @@ export interface CategoryCreateRequest {
   name: string
   vaultId: number
 }
+
+// authentication
+export interface AuthenticationDetails {
+  email: string
+  username: string
+}
