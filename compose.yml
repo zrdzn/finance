@@ -1,17 +1,4 @@
 services:
-  database:
-    image: postgres
-    restart: always
-    volumes:
-      - database:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    ports:
-      - '5432:5432'
-    expose:
-      - '5432'
   backend:
     image: zrdzn/finance-backend:latest
     ports:
