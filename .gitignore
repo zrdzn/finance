@@ -3,5 +3,4 @@
 node_modules/
 .next/
 .gradle/
-.env
 build/
