@@ -17,6 +17,7 @@ The database stores all data required for the application to function.
 - `DATABASE_URL` - Database JDBC URL
 - `DATABASE_USERNAME` - Database username
 - `DATABASE_PASSWORD` - Database password
+- `NEXT_PUBLIC_BACKEND_URL` - Backend URL
 ## Installation
 ### Standalone
 #### Backend
