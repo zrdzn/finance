@@ -11,7 +11,6 @@ interface ExpensesStatisticCardProperties {
 
 export const ExpensesCard = ({ vault }: ExpensesStatisticCardProperties) => {
   const theme = useTheme()
-  const api = useApi()
 
   return (
     <Card margin={2}>

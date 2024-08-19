@@ -18,6 +18,23 @@ services:
       - "3000:3000"
     expose:
       - "3000"
+    env_file:
+      - .env
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+  database:
+    image: postgres
+    restart: always
+    volumes:
+      - database:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - '5432:5432'
+    expose:
+      - '5432'
 
 volumes:
   database:

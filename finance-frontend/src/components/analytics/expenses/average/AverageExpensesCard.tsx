@@ -12,7 +12,6 @@ interface AverageExpensesStatisticCardProperties {
 
 export const AverageCard = ({ vault }: AverageExpensesStatisticCardProperties) => {
   const theme = useTheme()
-  const api = useApi()
 
   return (
     <Card margin={2}>
