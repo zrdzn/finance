@@ -18,6 +18,8 @@ import dev.zrdzn.finance.backend.shared.Currency
 import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.vault.VaultId
+import dev.zrdzn.finance.backend.vault.VaultService
+import dev.zrdzn.finance.backend.vault.api.VaultPermission
 import java.math.BigDecimal
 import java.time.Instant
 import org.slf4j.LoggerFactory
@@ -27,24 +29,27 @@ open class PaymentService(
     private val paymentRepository: PaymentRepository,
     private val paymentProductRepository: PaymentProductRepository,
     private val productService: ProductService,
-    private val exchangeService: ExchangeService
+    private val exchangeService: ExchangeService,
+    private val vaultService: VaultService
 ) {
 
     private val logger = LoggerFactory.getLogger(PaymentService::class.java)
 
     @Transactional
     open fun createPayment(
-        userId: UserId,
+        requesterId: UserId,
         vaultId: VaultId,
         paymentMethod: PaymentMethod,
         description: String?,
         price: Price
-    ): PaymentCreateResponse =
-        paymentRepository
+    ): PaymentCreateResponse {
+        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.PAYMENT_CREATE)
+
+        return paymentRepository
             .save(
                 Payment(
                     id = null,
-                    userId = userId,
+                    userId = requesterId,
                     vaultId = vaultId,
                     payedAt = Instant.now(),
                     paymentMethod = paymentMethod,
@@ -55,15 +60,21 @@ open class PaymentService(
             )
             .also { logger.info("Successfully created new payment: $it") }
             .let { PaymentCreateResponse(id = it.id!!) }
+    }
 
     @Transactional
     open fun createPaymentProduct(
+        requesterId: UserId,
         paymentId: PaymentId,
         productId: ProductId,
         unitAmount: BigDecimal,
         quantity: Int
-    ): PaymentProductCreateResponse =
-        paymentProductRepository
+    ): PaymentProductCreateResponse {
+        val product = productService.getProductById(requesterId, productId)
+
+        vaultService.authorizeMember(product.vaultId, requesterId, VaultPermission.PAYMENT_CREATE)
+
+        return paymentProductRepository
             .save(
                 PaymentProduct(
                     id = null,
@@ -75,10 +86,14 @@ open class PaymentService(
             )
             .also { logger.info("Successfully created new payment product: $it") }
             .let { PaymentProductCreateResponse(id = it.id!!) }
+    }
 
     @Transactional
-    open fun updatePayment(paymentId: PaymentId, paymentMethod: PaymentMethod, description: String?, price: Price) {
+    open fun updatePayment(requesterId: UserId, paymentId: PaymentId, paymentMethod: PaymentMethod, description: String?, price: Price) {
         val payment = paymentRepository.findById(paymentId) ?: throw PaymentNotFoundException(paymentId)
+
+        vaultService.authorizeMember(payment.vaultId, requesterId, VaultPermission.PAYMENT_UPDATE)
+
         payment.paymentMethod = paymentMethod
         payment.description = description
         payment.total = price.amount
@@ -87,15 +102,22 @@ open class PaymentService(
     }
 
     @Transactional
-    open fun deletePayment(paymentId: PaymentId): Unit =
+    open fun deletePayment(paymentId: PaymentId) {
+        val payment = paymentRepository.findById(paymentId) ?: throw PaymentNotFoundException(paymentId)
+
+        vaultService.authorizeMember(payment.vaultId, payment.userId, VaultPermission.PAYMENT_DELETE)
+
         paymentRepository.deleteById(paymentId)
             .also { logger.info("Successfully deleted payment with id: $paymentId") }
+    }
 
     @Transactional(readOnly = true)
-    open fun getPaymentsByVaultId(vaultId: VaultId): PaymentListResponse =
+    open fun getPaymentsByVaultId(requesterId: UserId, vaultId: VaultId): PaymentListResponse =
         paymentRepository
             .findByVaultId(vaultId)
             .map {
+                vaultService.authorizeMember(vaultId, it.userId, VaultPermission.PAYMENT_READ)
+
                 PaymentResponse(
                     id = it.id!!,
                     userId = it.userId,
@@ -116,24 +138,31 @@ open class PaymentService(
             .let { PaymentListResponse(it) }
 
     @Transactional(readOnly = true)
-    open fun getPaymentProducts(paymentId: PaymentId): PaymentProductListResponse =
-        paymentProductRepository
+    open fun getPaymentProducts(requesterId: UserId, paymentId: PaymentId): PaymentProductListResponse {
+        val payment = paymentRepository.findById(paymentId) ?: throw PaymentNotFoundException(paymentId)
+
+        vaultService.authorizeMember(payment.vaultId, requesterId, VaultPermission.PAYMENT_READ)
+
+        return paymentProductRepository
             .findByPaymentId(paymentId)
             .map {
                 PaymentProductWithProductResponse(
                     id = it.id!!,
                     paymentId = it.paymentId,
-                    product = productService.getProductById(it.productId),
+                    product = productService.getProductById(requesterId, it.productId),
                     unitAmount = it.unitAmount,
                     quantity = it.quantity
                 )
             }
             .toSet()
             .let { PaymentProductListResponse(it) }
+    }
 
     @Transactional(readOnly = true)
-    open fun getPaymentExpenses(vaultId: VaultId, currency: Currency, start: Instant): PaymentExpensesResponse =
-        paymentRepository.sumAndGroupExpensesByVaultId(vaultId, start)
+    open fun getPaymentExpenses(requesterId: UserId, vaultId: VaultId, currency: Currency, start: Instant): PaymentExpensesResponse {
+        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.DETAILS_READ)
+
+        return paymentRepository.sumAndGroupExpensesByVaultId(vaultId, start)
             .sumOf {
                 exchangeService.convertCurrency(
                     amount = it.amount,
@@ -149,13 +178,17 @@ open class PaymentService(
                     )
                 )
             }
+    }
 
     @Transactional(readOnly = true)
     open fun getPaymentAverageExpenses(
+        requesterId: UserId,
         vaultId: VaultId,
         currency: Currency,
         range: PaymentExpenseRange
     ): PaymentAverageExpensesResponse {
+        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.DETAILS_READ)
+
         val totalExpenses = paymentRepository.sumAndGroupExpensesByVaultId(vaultId)
 
         val convertedTotal = totalExpenses.sumOf {

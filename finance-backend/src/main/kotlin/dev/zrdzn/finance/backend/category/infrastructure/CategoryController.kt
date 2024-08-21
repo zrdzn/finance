@@ -8,7 +8,6 @@ import dev.zrdzn.finance.backend.category.api.CategoryListResponse
 import dev.zrdzn.finance.backend.category.api.CategoryResponse
 import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.vault.VaultId
-import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -30,30 +29,29 @@ class CategoryController(
         @RequestBody categoryCreateRequest: CategoryCreateRequest
     ): CategoryCreateResponse =
         categoryService.createCategory(
+            requesterId = userId,
             name = categoryCreateRequest.name,
-            vaultId = categoryCreateRequest.vaultId
+            vaultId = categoryCreateRequest.vaultId,
         )
 
     @DeleteMapping("/{categoryId}")
     fun deleteCategory(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable categoryId: CategoryId
-    ): Unit = categoryService.deleteCategoryById(categoryId)
+    ): Unit = categoryService.deleteCategoryById(userId, categoryId)
 
     @GetMapping("/{id}")
     fun getCategoryById(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable id: CategoryId
-    ): ResponseEntity<CategoryResponse> =
-        categoryService.getCategoryById(id)
-            ?.let { ResponseEntity.ok(it) }
-            ?: ResponseEntity.notFound().build()
+    ): CategoryResponse =
+        categoryService.getCategoryById(userId, id)
 
     @GetMapping("/vault/{vaultId}")
     fun getCategoriesByVaultId(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable vaultId: VaultId
     ): CategoryListResponse =
-        categoryService.getCategoriesByVaultId(vaultId)
+        categoryService.getCategoriesByVaultId(userId, vaultId)
 
 }

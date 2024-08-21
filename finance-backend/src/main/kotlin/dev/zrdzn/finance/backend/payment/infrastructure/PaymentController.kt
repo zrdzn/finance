@@ -41,7 +41,7 @@ class PaymentController(
     ): PaymentCreateResponse =
         paymentService
             .createPayment(
-                userId = userId,
+                requesterId = userId,
                 vaultId = paymentCreateRequest.vaultId,
                 paymentMethod = paymentCreateRequest.paymentMethod,
                 description = paymentCreateRequest.description,
@@ -58,6 +58,7 @@ class PaymentController(
         @RequestBody paymentProductCreateRequest: PaymentProductCreateRequest
     ): PaymentProductCreateResponse =
         paymentService.createPaymentProduct(
+            requesterId = userId,
             paymentId = paymentId,
             productId = paymentProductCreateRequest.productId,
             unitAmount = paymentProductCreateRequest.unitAmount,
@@ -71,6 +72,7 @@ class PaymentController(
         @RequestBody paymentUpdateRequest: PaymentUpdateRequest
     ): Unit =
         paymentService.updatePayment(
+            requesterId = userId,
             paymentId = paymentId,
             paymentMethod = paymentUpdateRequest.paymentMethod,
             description = paymentUpdateRequest.description,
@@ -91,14 +93,14 @@ class PaymentController(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable vaultId: VaultId
     ): PaymentListResponse =
-        paymentService.getPaymentsByVaultId(vaultId)
+        paymentService.getPaymentsByVaultId(userId, vaultId)
 
     @GetMapping("/{paymentId}/products")
     fun getPaymentProducts(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable paymentId: PaymentId
     ): PaymentProductListResponse =
-        paymentService.getPaymentProducts(paymentId)
+        paymentService.getPaymentProducts(userId, paymentId)
 
     @GetMapping("/{vaultId}/expenses")
     fun getExpensesByVaultId(
@@ -108,6 +110,7 @@ class PaymentController(
         @RequestParam("start") start: Instant
     ): PaymentExpensesResponse =
         paymentService.getPaymentExpenses(
+            requesterId = userId,
             vaultId = vaultId,
             currency = currency,
             start = start
@@ -121,6 +124,7 @@ class PaymentController(
         @RequestParam("range") range: PaymentExpenseRange
     ): PaymentAverageExpensesResponse =
         paymentService.getPaymentAverageExpenses(
+            requesterId = userId,
             vaultId = vaultId,
             currency = currency,
             range = range

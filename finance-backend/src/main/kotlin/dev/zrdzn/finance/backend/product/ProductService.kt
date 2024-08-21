@@ -6,20 +6,26 @@ import dev.zrdzn.finance.backend.product.api.ProductCreateResponse
 import dev.zrdzn.finance.backend.product.api.ProductListResponse
 import dev.zrdzn.finance.backend.product.api.ProductNotFoundException
 import dev.zrdzn.finance.backend.product.api.ProductResponse
+import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.vault.VaultId
+import dev.zrdzn.finance.backend.vault.VaultService
+import dev.zrdzn.finance.backend.vault.api.VaultPermission
 import org.slf4j.LoggerFactory
 import org.springframework.transaction.annotation.Transactional
 
 open class ProductService(
     private val productRepository: ProductRepository,
-    private val categoryService: CategoryService
+    private val categoryService: CategoryService,
+    private val vaultService: VaultService
 ) {
 
     private val logger = LoggerFactory.getLogger(ProductService::class.java)
 
     @Transactional
-    open fun createProduct(name: String, vaultId: VaultId, categoryId: CategoryId?): ProductCreateResponse =
-        productRepository
+    open fun createProduct(requesterId: UserId, name: String, vaultId: VaultId, categoryId: CategoryId?): ProductCreateResponse {
+        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.PRODUCT_CREATE)
+
+        return productRepository
             .save(
                 Product(
                     id = null,
@@ -37,21 +43,30 @@ open class ProductService(
                     categoryId = it.categoryId
                 )
             }
+    }
 
     @Transactional
-    open fun updateProduct(productId: ProductId, categoryId: CategoryId?) {
+    open fun updateProduct(requesterId: UserId, productId: ProductId, categoryId: CategoryId?) {
         val product = productRepository.findById(productId) ?: throw ProductNotFoundException(productId)
+
+        vaultService.authorizeMember(product.vaultId, requesterId, VaultPermission.PRODUCT_UPDATE)
+
         product.categoryId = categoryId
         logger.info("Successfully updated product: $product")
     }
 
     @Transactional
-    open fun deleteProductById(productId: ProductId): Unit =
+    open fun deleteProductById(requesterId: UserId, productId: ProductId) {
+        val product = productRepository.findById(productId) ?: throw ProductNotFoundException(productId)
+
+        vaultService.authorizeMember(product.vaultId, requesterId, VaultPermission.PRODUCT_DELETE)
+
         productRepository.deleteById(productId)
             .also { logger.info("Successfully deleted product with id: $productId") }
+    }
 
     @Transactional(readOnly = true)
-    open fun getProductsByVaultId(vaultId: VaultId): ProductListResponse =
+    open fun getProductsByVaultId(requesterId: UserId, vaultId: VaultId): ProductListResponse =
         productRepository
             .findByVaultId(vaultId)
             .map {
@@ -60,23 +75,25 @@ open class ProductService(
                     name = it.name,
                     vaultId = it.vaultId,
                     categoryId = it.categoryId,
-                    categoryName = it.categoryId?.let { categoryService.getCategoryById(it) }?.name
+                    categoryName = categoryService.getCategoryById(requesterId, vaultId).name
                 )
             }
             .toSet()
             .let { ProductListResponse(it) }
 
     @Transactional(readOnly = true)
-    open fun getProductById(productId: ProductId): ProductResponse =
+    open fun getProductById(requesterId: UserId, productId: ProductId): ProductResponse =
         productRepository
             .findById(productId)
             ?.let {
+                vaultService.authorizeMember(it.vaultId, requesterId, VaultPermission.PRODUCT_READ)
+
                 ProductResponse(
                     id = it.id!!,
                     name = it.name,
                     vaultId = it.vaultId,
                     categoryId = it.categoryId,
-                    categoryName = it.categoryId?.let { categoryService.getCategoryById(it) }?.name
+                    categoryName = categoryService.getCategoryById(requesterId, it.vaultId).name
                 )
             }
             ?: throw ProductNotFoundException(productId)

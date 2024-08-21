@@ -31,6 +31,7 @@ class ProductController(
     ): ProductCreateResponse =
         productService
             .createProduct(
+                requesterId = userId,
                 name = productCreateRequest.name,
                 vaultId = productCreateRequest.vaultId,
                 categoryId = productCreateRequest.categoryId
@@ -44,6 +45,7 @@ class ProductController(
     ): Unit =
         productService
             .updateProduct(
+                requesterId = userId,
                 productId = productId,
                 categoryId = productUpdateRequest.categoryId
             )
@@ -52,13 +54,13 @@ class ProductController(
     fun deleteProduct(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable productId: ProductId
-    ): Unit = productService.deleteProductById(productId)
+    ): Unit = productService.deleteProductById(userId, productId)
 
     @GetMapping("/{vaultId}")
     fun getPaymentsByVaultId(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable vaultId: VaultId
     ): ProductListResponse =
-        productService.getProductsByVaultId(vaultId)
+        productService.getProductsByVaultId(userId, vaultId)
 
 }

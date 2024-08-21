@@ -8,8 +8,10 @@ interface VaultMemberRepository {
 
     fun findByVaultId(vaultId: VaultId): Set<VaultMember>
 
-    fun deleteByVaultIdAndUserId(vaultId: VaultId, userId: UserId)
+    fun findByVaultIdAndUserId(vaultId: VaultId, userId: UserId): VaultMember?
 
     fun findVaultsByUserId(userId: UserId): Set<Vault>
+
+    fun deleteByVaultIdAndUserId(vaultId: VaultId, userId: UserId)
 
 }
