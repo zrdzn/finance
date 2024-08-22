@@ -19,33 +19,18 @@ The database stores all data required for the application to function.
 - `DATABASE_PASSWORD` - Database password
 - `NEXT_PUBLIC_BACKEND_URL` - Backend URL
 ## Installation
-### Standalone
-#### Backend
-**1.** Download latest .jar from [releases](https://github.com/zrdzn/finance/releases)
-
-**2.** Run downloaded .jar
-```bash
-java -jar finance-backend-0.1.0-SNAPSHOT.jar
-```
-#### Frontend
-**1.** Download latest .zip from [releases](https://github.com/zrdzn/finance/releases)
-
-**2.** Unzip downloaded .zip
-
-**3.** Run frontend service with npm
-```bash
-npm run start
-```
-
 ### Docker
 **1.** Pull images from Docker Hub
 ```bash
 docker pull zrdzn/finance-backend:latest
 docker pull zrdzn/finance-frontend:latest
 ```
-**2.** Run images
+**2.** Configure `.env` file to your needs
+
+**3.** Run images
 ```bash
-docker-compose up -d
+docker-compose up backend -d
+docker-compose up frontend -d
 ```
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE)
