@@ -23,10 +23,12 @@ import {DeleteButton} from "@/components/shared/DeleteButton"
 
 interface CategoriesCardItemProperties {
   category: ProductResponse
+  permissions: string[]
 }
 
 export const CategoriesCardItem = ({
-  category
+  category,
+  permissions
 }: CategoriesCardItemProperties) => {
   const api = useApi()
   const router = useRouter()
@@ -53,7 +55,9 @@ export const CategoriesCardItem = ({
                        maxWidth={'70%'}>
                 {category.name}
               </Heading>
-              <DeleteButton onClick={handleCategoryDelete} />
+              {
+                permissions.includes("CATEGORY_DELETE") && <DeleteButton onClick={handleCategoryDelete} />
+              }
             </Flex>
             <Flex justifyContent={'space-between'}>
               <Text color={'dimgray'}

@@ -11,6 +11,7 @@ import dev.zrdzn.finance.backend.vault.api.VaultInvitationCreateRequest
 import dev.zrdzn.finance.backend.vault.api.VaultInvitationListResponse
 import dev.zrdzn.finance.backend.vault.api.VaultListResponse
 import dev.zrdzn.finance.backend.vault.api.VaultMemberListResponse
+import dev.zrdzn.finance.backend.vault.api.VaultPermissionListResponse
 import dev.zrdzn.finance.backend.vault.api.VaultResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -54,7 +55,10 @@ class VaultController(
     fun acceptVaultInvitation(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable invitationId: VaultInvitationId
-    ): Unit = vaultService.acceptVaultInvitation(invitationId, userId)
+    ): Unit = vaultService.acceptVaultInvitation(
+        requesterId = userId,
+        invitationId = invitationId
+    )
 
     @GetMapping
     fun getVaults(
@@ -89,6 +93,15 @@ class VaultController(
     ): VaultInvitationListResponse = vaultService.getVaultInvitations(
         requesterId = authenticatedUserId,
         userEmail = userEmail
+    )
+
+    @GetMapping("/{vaultId}/permissions")
+    fun getVaultRole(
+        @AuthenticationPrincipal userId: UserId,
+        @PathVariable vaultId: VaultId
+    ): VaultPermissionListResponse = vaultService.getVaultPermissions(
+        vaultId = vaultId,
+        userId = userId
     )
 
     @DeleteMapping("/{vaultId}/members/{userId}")

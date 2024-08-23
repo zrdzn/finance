@@ -22,12 +22,14 @@ import {CategoriesCardItem} from "@/components/product/category/CategoriesCardIt
 import {AddProductButton} from "@/components/product/AddProductButton"
 import {AddCategoryButton} from "@/components/product/category/AddCategoryButton"
 import {SearchBar} from "@/components/shared/SearchBar"
+import {PaymentsCard} from "@/components/payment/PaymentsCard"
 
 interface CategoriesCardProperties {
   vault: VaultResponse
+  permissions: string[]
 }
 
-export const CategoriesCard = ({ vault }: CategoriesCardProperties) => {
+export const CategoriesCard = ({ vault, permissions }: CategoriesCardProperties) => {
   const theme = useTheme()
   const api = useApi()
   const [categories, setCategories] = useState<ProductResponse[]>([])
@@ -64,7 +66,9 @@ export const CategoriesCard = ({ vault }: CategoriesCardProperties) => {
             onSearch={handleSearchResults}
             filter={(category, query) => category.name.toLowerCase().includes(query.toLowerCase())}
           />
-          <AddCategoryButton vaultId={vault.id} />
+          {
+            permissions.includes("CATEGORY_CREATE") && <AddCategoryButton vaultId={vault.id} />
+          }
         </Flex>
         <Divider mt={4} />
         <Stack gap={0}>
@@ -77,7 +81,9 @@ export const CategoriesCard = ({ vault }: CategoriesCardProperties) => {
           }
           {
             queriedCategories &&
-            queriedCategories.map(category => <CategoriesCardItem key={category.id} category={category} />)
+            queriedCategories.map(category => <CategoriesCardItem key={category.id}
+                                                                  category={category}
+                                                                  permissions={permissions} />)
           }
         </Stack>
       </CardBody>

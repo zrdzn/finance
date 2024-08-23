@@ -14,14 +14,16 @@ export default function Payments(): ReactJSXElement {
 
   return (
     <ProtectedVault publicId={publicId}>
-      { vault =>
+      { (vault, permissions) =>
         <>
           <Head>
             <title>Finance - Payments</title>
           </Head>
           <Flex justifyContent={'center'}>
             <Flex direction={'column'} width={'full'} justifyContent={'center'}>
-              <PaymentsCard vault={vault} />
+              {
+                permissions.includes("PAYMENT_READ") && <PaymentsCard vault={vault} permissions={permissions} />
+              }
             </Flex>
           </Flex>
         </>

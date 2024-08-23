@@ -8,9 +8,10 @@ import {PaymentsCardItem} from "@/components/payment/PaymentsCardItem"
 
 interface LastPaymentsCardProperties {
   vault: VaultResponse
+  permissions: string[]
 }
 
-export const LastPaymentsCard = ({ vault }: LastPaymentsCardProperties) => {
+export const LastPaymentsCard = ({ vault, permissions }: LastPaymentsCardProperties) => {
   const theme = useTheme()
   const api = useApi()
   const [payments, setPayments] = useState<PaymentResponse[]>([])
@@ -39,7 +40,10 @@ export const LastPaymentsCard = ({ vault }: LastPaymentsCardProperties) => {
             payments &&
             payments.sort((payment, nextPayment) => new Date(nextPayment.payedAt).getTime() - new Date(payment.payedAt).getTime())
               .slice(0, 3)
-              .map(payment => <PaymentsCardItem key={payment.id} vaultId={vault.id} payment={payment} />)
+              .map(payment => <PaymentsCardItem key={payment.id}
+                                                vaultId={vault.id}
+                                                payment={payment}
+                                                permissions={permissions} />)
           }
           <Box paddingTop={4}>
             <Flex justifyContent={'space-between'}>

@@ -30,11 +30,13 @@ import {DeleteButton} from "@/components/shared/DeleteButton"
 interface PaymentsCardItemProperties {
   vaultId: number
   payment: PaymentResponse
+  permissions: string[]
 }
 
 export const PaymentsCardItem = ({
   vaultId,
-  payment
+  payment,
+  permissions
 }: PaymentsCardItemProperties) => {
   const api = useApi()
   const router = useRouter()
@@ -95,8 +97,12 @@ export const PaymentsCardItem = ({
           </AccordionButton>
         <AccordionPanel pb={4}>
           <Flex justifyContent={'end'} gap={2}>
-            <EditPaymentButton payment={payment} />
-            <DeleteButton onClick={handlePaymentDelete} />
+            {
+              permissions.includes("PAYMENT_UPDATE") && <EditPaymentButton payment={payment} />
+            }
+            {
+              permissions.includes("PAYMENT_DELETE") && <DeleteButton onClick={handlePaymentDelete} />
+            }
           </Flex>
           <Flex justifyContent={'space-between'}
                 mt={4}

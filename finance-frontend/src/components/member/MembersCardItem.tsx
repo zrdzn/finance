@@ -21,10 +21,12 @@ import {DeleteButton} from "@/components/shared/DeleteButton"
 
 interface MembersCardItemProperties {
   member: VaultMemberResponse
+  permissions: string[]
 }
 
 export const MembersCardItem = ({
-  member
+  member,
+  permissions
 }: MembersCardItemProperties) => {
   const api = useApi()
   const router = useRouter()
@@ -60,11 +62,25 @@ export const MembersCardItem = ({
                             <TagLabel>Owner</TagLabel>
                         </Tag>
                     }
+                    {
+                      member.role === 'MANAGER' &&
+                        <Tag size={'sm'} colorScheme='purple'>
+                            <TagLabel>Manager</TagLabel>
+                        </Tag>
+                    }
+                    {
+                      member.role === 'MEMBER' &&
+                        <Tag size={'sm'} colorScheme='green'>
+                            <TagLabel>Member</TagLabel>
+                        </Tag>
+                    }
                   </HStack>
                 </Flex>
                 <HStack spacing={2}>
                   {
-                    member.role !== 'OWNER' && <DeleteButton onClick={handleMemberDelete} />
+                    member.role !== 'OWNER' &&
+                    permissions.includes("MEMBER_REMOVE") &&
+                    <DeleteButton onClick={handleMemberDelete} />
                   }
                 </HStack>
               </Flex>

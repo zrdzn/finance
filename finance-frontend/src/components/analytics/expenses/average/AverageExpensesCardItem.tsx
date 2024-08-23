@@ -34,7 +34,6 @@ export const AverageExpensesCardItem = ({
   })
 
   useEffect(() => {
-    console.log('expensesRange', expensesRange)
     api.get(`/payment/${vault.id}/expenses/average?currency=PLN&range=${expensesRange}`)
       .then(response => setExpenses(response.data.total))
       .catch(error => console.error(error))

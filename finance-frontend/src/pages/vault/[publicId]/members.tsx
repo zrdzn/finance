@@ -15,15 +15,19 @@ export default function Members(): ReactJSXElement {
 
   return (
     <ProtectedVault publicId={publicId}>
-      { vault =>
+      { (vault, permissions) =>
         <>
           <Head>
             <title>Finance - Members</title>
           </Head>
           <Flex justifyContent={'center'}>
             <Flex direction={'column'} width={'full'} justifyContent={'center'}>
-              <MembersCard vault={vault} />
-              <InvitationsCard vault={vault} />
+              {
+                permissions.includes("MEMBER_READ") && <MembersCard vault={vault} permissions={permissions} />
+              }
+              {
+                permissions.includes("MEMBER_INVITE_READ") && <InvitationsCard vault={vault} permissions={permissions} />
+              }
             </Flex>
           </Flex>
         </>

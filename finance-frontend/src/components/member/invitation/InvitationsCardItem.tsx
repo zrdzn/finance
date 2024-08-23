@@ -18,13 +18,16 @@ import {useApi} from "@/hooks/apiClient"
 import {EditProductButton} from "@/components/product/EditProductButton"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
+import {InvitationCreateButton} from "@/components/member/invitation/InvitationCreateButton"
 
 interface InvitationsCardItemProperties {
   invitation: VaultInvitationResponse
+  permissions: string[]
 }
 
 export const InvitationsCardItem = ({
-  invitation
+  invitation,
+  permissions
 }: InvitationsCardItemProperties) => {
   const api = useApi()
   const router = useRouter()
@@ -60,7 +63,9 @@ export const InvitationsCardItem = ({
                   </HStack>
                 </Flex>
                 <HStack spacing={2}>
-                  <DeleteButton onClick={handleInvitationDelete} />
+                  {
+                    permissions.includes("MEMBER_INVITE_DELETE") && <DeleteButton onClick={handleInvitationDelete} />
+                  }
                 </HStack>
               </Flex>
             </Box>

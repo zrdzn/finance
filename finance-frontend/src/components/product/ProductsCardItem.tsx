@@ -24,10 +24,12 @@ import {DeleteButton} from "@/components/shared/DeleteButton"
 
 interface ProductsCardItemProperties {
   product: ProductResponse
+  permissions: string[]
 }
 
 export const ProductsCardItem = ({
-  product
+  product,
+  permissions
 }: ProductsCardItemProperties) => {
   const api = useApi()
   const router = useRouter()
@@ -73,8 +75,12 @@ export const ProductsCardItem = ({
                   </HStack>
                 </Flex>
                 <HStack spacing={2}>
-                  <EditProductButton product={product} />
-                  <DeleteButton onClick={handleProductDelete} />
+                  {
+                    permissions.includes("PRODUCT_UPDATE") && <EditProductButton product={product} />
+                  }
+                  {
+                    permissions.includes("PRODUCT_DELETE") && <DeleteButton onClick={handleProductDelete} />
+                  }
                 </HStack>
               </Flex>
             </Box>
