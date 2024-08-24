@@ -187,7 +187,6 @@ const DesktopView = (
             width="100%"
             justifyContent={isCollapsed ? "center" : "flex-start"}
             leftIcon={<FaHouse />}
-            onClick={toggleCollapse}
           >
             {!isCollapsed && "Overview"}
           </Button>
@@ -198,7 +197,6 @@ const DesktopView = (
             width="100%"
             justifyContent={isCollapsed ? "center" : "flex-start"}
             leftIcon={<FaBook />}
-            onClick={toggleCollapse}
           >
             {!isCollapsed && "Payments"}
           </Button>
@@ -209,7 +207,6 @@ const DesktopView = (
             width="100%"
             justifyContent={isCollapsed ? "center" : "flex-start"}
             leftIcon={<FaTags />}
-            onClick={toggleCollapse}
           >
             {!isCollapsed && "Products"}
           </Button>
@@ -220,7 +217,6 @@ const DesktopView = (
             width="100%"
             justifyContent={isCollapsed ? "center" : "flex-start"}
             leftIcon={<FaCalendarDays />}
-            onClick={toggleCollapse}
             isDisabled
           >
             {!isCollapsed && "Schedules"}
@@ -232,7 +228,6 @@ const DesktopView = (
             width="100%"
             justifyContent={isCollapsed ? "center" : "flex-start"}
             leftIcon={<FaUser />}
-            onClick={toggleCollapse}
           >
             {!isCollapsed && "Members"}
           </Button>
@@ -243,7 +238,6 @@ const DesktopView = (
             width="100%"
             justifyContent={isCollapsed ? "center" : "flex-start"}
             leftIcon={<FaGears />}
-            onClick={toggleCollapse}
             isDisabled
           >
             {!isCollapsed && "Settings"}
