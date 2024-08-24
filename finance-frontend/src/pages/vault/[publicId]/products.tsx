@@ -8,6 +8,7 @@ import {useRouter} from "next/router"
 import {ProtectedVault} from "@/components/vault/ProtectedVault"
 import {ProductsCard} from "@/components/product/ProductsCard"
 import {CategoriesCard} from "@/components/product/category/CategoriesCard"
+import {AddProductButton} from "@/components/product/AddProductButton"
 
 export default function Products(): ReactJSXElement {
   const router = useRouter()
@@ -15,15 +16,19 @@ export default function Products(): ReactJSXElement {
 
   return (
     <ProtectedVault publicId={publicId}>
-      { vault =>
+      { (vault, permissions) =>
         <>
           <Head>
             <title>Finance - Products</title>
           </Head>
           <Flex justifyContent={'center'}>
             <Flex direction={'column'} width={'full'} justifyContent={'center'}>
-              <ProductsCard vault={vault} />
-              <CategoriesCard vault={vault} />
+              {
+                permissions.includes("PRODUCT_READ") && <ProductsCard vault={vault} permissions={permissions} />
+              }
+              {
+                permissions.includes("CATEGORY_READ") && <CategoriesCard vault={vault} permissions={permissions} />
+              }
             </Flex>
           </Flex>
         </>

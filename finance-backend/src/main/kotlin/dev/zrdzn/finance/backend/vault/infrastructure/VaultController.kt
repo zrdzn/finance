@@ -11,6 +11,7 @@ import dev.zrdzn.finance.backend.vault.api.VaultInvitationCreateRequest
 import dev.zrdzn.finance.backend.vault.api.VaultInvitationListResponse
 import dev.zrdzn.finance.backend.vault.api.VaultListResponse
 import dev.zrdzn.finance.backend.vault.api.VaultMemberListResponse
+import dev.zrdzn.finance.backend.vault.api.VaultPermissionListResponse
 import dev.zrdzn.finance.backend.vault.api.VaultResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -46,6 +47,7 @@ class VaultController(
         @RequestBody vaultInvitationCreateRequest: VaultInvitationCreateRequest
     ): Unit = vaultService.createVaultInvitation(
         vaultId = vaultId,
+        requesterId = userId,
         userEmail = vaultInvitationCreateRequest.userEmail
     )
 
@@ -53,7 +55,10 @@ class VaultController(
     fun acceptVaultInvitation(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable invitationId: VaultInvitationId
-    ): Unit = vaultService.acceptVaultInvitation(invitationId)
+    ): Unit = vaultService.acceptVaultInvitation(
+        requesterId = userId,
+        invitationId = invitationId
+    )
 
     @GetMapping
     fun getVaults(
@@ -65,7 +70,7 @@ class VaultController(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable vaultPublicId: VaultPublicId
     ): ResponseEntity<VaultResponse> =
-        vaultService.getVaultByPublicId(vaultPublicId)
+        vaultService.getVaultByPublicId(vaultPublicId, userId)
             ?.let { ResponseEntity.ok(it) }
             ?: ResponseEntity.notFound().build()
 
@@ -73,35 +78,56 @@ class VaultController(
     fun getVaultMembers(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable vaultId: VaultId
-    ): VaultMemberListResponse = vaultService.getVaultMembers(vaultId)
+    ): VaultMemberListResponse = vaultService.getVaultMembers(vaultId, userId)
 
     @GetMapping("/{vaultId}/invitations")
     fun getVaultInvitations(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable vaultId: VaultId
-    ): VaultInvitationListResponse = vaultService.getVaultInvitations(vaultId)
+    ): VaultInvitationListResponse = vaultService.getVaultInvitations(vaultId, userId)
 
     @GetMapping("/invitations/{userEmail}")
     fun getVaultInvitation(
-        @AuthenticationPrincipal userId: UserId,
+        @AuthenticationPrincipal authenticatedUserId: UserId,
         @PathVariable userEmail: String
-    ): VaultInvitationListResponse = vaultService.getVaultInvitations(userEmail)
+    ): VaultInvitationListResponse = vaultService.getVaultInvitations(
+        requesterId = authenticatedUserId,
+        userEmail = userEmail
+    )
+
+    @GetMapping("/{vaultId}/permissions")
+    fun getVaultRole(
+        @AuthenticationPrincipal userId: UserId,
+        @PathVariable vaultId: VaultId
+    ): VaultPermissionListResponse = vaultService.getVaultPermissions(
+        vaultId = vaultId,
+        userId = userId
+    )
 
     @DeleteMapping("/{vaultId}/members/{userId}")
     fun removeVaultMember(
         @AuthenticationPrincipal authenticatedUserId: UserId,
         @PathVariable vaultId: VaultId,
         @PathVariable userId: UserId
-    ): Unit = vaultService.removeVaultMember(vaultId, userId)
+    ) {
+        vaultService.removeVaultMember(
+            vaultId = vaultId,
+            requesterId = authenticatedUserId,
+            userId = userId
+        )
+    }
 
     @DeleteMapping("/{vaultId}/invitations/{userEmail}")
     fun removeVaultInvitation(
         @AuthenticationPrincipal authenticatedUserId: UserId,
         @PathVariable vaultId: VaultId,
         @PathVariable userEmail: String
-    ): Unit = vaultService.removeVaultInvitation(
-        vaultId = vaultId,
-        userEmail = userEmail
-    )
+    ) {
+        vaultService.removeVaultInvitation(
+            vaultId = vaultId,
+            requesterId = authenticatedUserId,
+            userEmail = userEmail
+        )
+    }
 
 }

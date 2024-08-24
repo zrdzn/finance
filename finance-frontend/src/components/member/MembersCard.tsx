@@ -26,9 +26,10 @@ import {MembersCardItem} from "@/components/member/MembersCardItem"
 
 interface MembersCardProperties {
   vault: VaultResponse
+  permissions: string[]
 }
 
-export const MembersCard = ({ vault }: MembersCardProperties) => {
+export const MembersCard = ({ vault, permissions }: MembersCardProperties) => {
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
@@ -81,7 +82,9 @@ export const MembersCard = ({ vault }: MembersCardProperties) => {
           }
           {
             queriedMembers &&
-            queriedMembers.map(member => <MembersCardItem key={member.id} member={member} />)
+            queriedMembers.map(member => <MembersCardItem key={member.id}
+                                                          member={member}
+                                                          permissions={permissions} />)
           }
         </Stack>
       </CardBody>

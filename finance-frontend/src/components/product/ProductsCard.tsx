@@ -22,12 +22,14 @@ import {AddProductButton} from "@/components/product/AddProductButton"
 import {ProductsCardItem} from "@/components/product/ProductsCardItem"
 import {SearchBar} from "@/components/shared/SearchBar"
 import {useRouter} from "next/router"
+import {DeleteButton} from "@/components/shared/DeleteButton"
 
 interface ProductsCardProperties {
   vault: VaultResponse
+  permissions: string[]
 }
 
-export const ProductsCard = ({ vault }: ProductsCardProperties) => {
+export const ProductsCard = ({ vault, permissions }: ProductsCardProperties) => {
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
@@ -69,7 +71,9 @@ export const ProductsCard = ({ vault }: ProductsCardProperties) => {
             onSearch={handleSearchResults}
             filter={(product, query) => product.name.toLowerCase().includes(query.toLowerCase())}
           />
-          <AddProductButton vaultId={vault.id} onCreate={handleProductCreate} />
+          {
+            permissions.includes("PRODUCT_CREATE") && <AddProductButton vaultId={vault.id} onCreate={handleProductCreate} />
+          }
         </Flex>
         <Divider mt={4} />
         <Stack gap={0}>
@@ -82,7 +86,9 @@ export const ProductsCard = ({ vault }: ProductsCardProperties) => {
           }
           {
             queriedProducts &&
-            queriedProducts.map(product => <ProductsCardItem key={product.id} product={product} />)
+            queriedProducts.map(product => <ProductsCardItem key={product.id}
+                                                             product={product}
+                                                             permissions={permissions} />)
           }
         </Stack>
       </CardBody>

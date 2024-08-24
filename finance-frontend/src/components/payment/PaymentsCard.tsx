@@ -5,12 +5,14 @@ import {useTheme} from "@/hooks/theme"
 import {PaymentResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/apiClient"
 import {PaymentsCardItem} from "@/components/payment/PaymentsCardItem"
+import {InvitationCreateButton} from "@/components/member/invitation/InvitationCreateButton"
 
 interface PaymentsCardProperties {
   vault: VaultResponse
+  permissions: string[]
 }
 
-export const PaymentsCard = ({ vault }: PaymentsCardProperties) => {
+export const PaymentsCard = ({ vault, permissions }: PaymentsCardProperties) => {
   const theme = useTheme()
   const api = useApi()
   const [payments, setPayments] = useState<PaymentResponse[]>([])
@@ -28,7 +30,9 @@ export const PaymentsCard = ({ vault }: PaymentsCardProperties) => {
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
           <Heading size='sm' textTransform={'uppercase'}>Payments</Heading>
-          <AddPaymentButton vaultId={vault.id} />
+          {
+            permissions.includes("PAYMENT_CREATE") && <AddPaymentButton vaultId={vault.id} />
+          }
         </Flex>
       </CardHeader>
       <CardBody>
@@ -39,7 +43,10 @@ export const PaymentsCard = ({ vault }: PaymentsCardProperties) => {
           {
             payments &&
             payments.sort((payment, nextPayment) => new Date(nextPayment.payedAt).getTime() - new Date(payment.payedAt).getTime())
-              .map(payment => <PaymentsCardItem key={payment.id} vaultId={vault.id} payment={payment} />)
+              .map(payment => <PaymentsCardItem key={payment.id}
+                                                vaultId={vault.id}
+                                                payment={payment}
+                                                permissions={permissions} />)
           }
         </Stack>
       </CardBody>

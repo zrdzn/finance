@@ -1,0 +1,30 @@
+package dev.zrdzn.finance.backend.vault.api
+
+enum class VaultPermission {
+
+    DETAILS_READ,
+    DELETE,
+
+    PAYMENT_CREATE,
+    PAYMENT_READ,
+    PAYMENT_UPDATE,
+    PAYMENT_DELETE,
+
+    PRODUCT_CREATE,
+    PRODUCT_READ,
+    PRODUCT_UPDATE,
+    PRODUCT_DELETE,
+
+    CATEGORY_CREATE,
+    CATEGORY_READ,
+    CATEGORY_UPDATE,
+    CATEGORY_DELETE,
+
+    MEMBER_READ,
+    MEMBER_REMOVE,
+
+    MEMBER_INVITE_CREATE,
+    MEMBER_INVITE_READ,
+    MEMBER_INVITE_DELETE
+
+}

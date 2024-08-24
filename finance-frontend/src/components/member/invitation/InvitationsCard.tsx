@@ -34,9 +34,10 @@ import {InvitationCreateButton} from "@/components/member/invitation/InvitationC
 
 interface InvitationsCardProperties {
   vault: VaultResponse
+  permissions: string[]
 }
 
-export const InvitationsCard = ({ vault }: InvitationsCardProperties) => {
+export const InvitationsCard = ({ vault, permissions }: InvitationsCardProperties) => {
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
@@ -63,7 +64,9 @@ export const InvitationsCard = ({ vault }: InvitationsCardProperties) => {
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
           <Heading size='sm' textTransform={'uppercase'}>Invitations</Heading>
-          <InvitationCreateButton vaultId={vault.id} />
+          {
+            permissions.includes("MEMBER_INVITE_CREATE") && <InvitationCreateButton vaultId={vault.id} />
+          }
         </Flex>
       </CardHeader>
       <CardBody>
@@ -89,7 +92,9 @@ export const InvitationsCard = ({ vault }: InvitationsCardProperties) => {
           }
           {
             queriedInvitations &&
-            queriedInvitations.map(invitation => <InvitationsCardItem key={invitation.id} invitation={invitation} />)
+            queriedInvitations.map(invitation => <InvitationsCardItem key={invitation.id}
+                                                                      invitation={invitation}
+                                                                      permissions={permissions} />)
           }
         </Stack>
       </CardBody>
