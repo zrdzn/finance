@@ -13,16 +13,16 @@ interface ProtectedVaultProperties {
 }
 
 export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties) => {
-  const router = useRouter()
-  const api = useApi()
-  const { authenticationDetails } = useAuthentication()
-  const vault = useVault({ publicId })
-  const [permissions, setPermissions] = useState<string[]>([])
+  const router = useRouter();
+  const api = useApi();
+  const { authenticationDetails } = useAuthentication();
+  const vault = useVault({ publicId });
+  const [permissions, setPermissions] = useState<string[]>([]);
+  const [isCollapsed, setIsCollapsed] = useState(false); // Track sidebar state
 
   useEffect(() => {
     if (authenticationDetails === null) {
-      router.push("/login")
-        .catch((error) => console.error(error))
+      router.push("/login").catch((error) => console.error(error));
     }
   }, [authenticationDetails, router]);
 
@@ -30,29 +30,31 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
     if (vault && authenticationDetails) {
       api.get(`/vaults/${vault.id}/permissions`)
         .then((response) => {
-          setPermissions(response.data.vaultPermissions)
-          console.info("Available permissions: ", response.data.vaultPermissions)
+          setPermissions(response.data.vaultPermissions);
+          console.info("Available permissions: ", response.data.vaultPermissions);
         })
-        .catch((error) => console.error(error))
+        .catch((error) => console.error(error));
     }
   }, [api, authenticationDetails, vault]);
 
   if (vault === undefined) {
-    return <>Loading vault...</>
+    return <>Loading vault...</>;
   }
 
   if (vault === null) {
-    return <>Vault not found</>
+    return <>Vault not found</>;
   }
 
   if (authenticationDetails === null || permissions === undefined) {
-    return <>You must be authenticated</>
+    return <>You must be authenticated</>;
   }
 
   return (
-    <Layout>
-      <VaultSidebar vault={vault} />
-      {children(vault, permissions)}
-    </Layout>
+    <>
+      <VaultSidebar vault={vault} isCollapsed={isCollapsed} toggleCollapse={() => setIsCollapsed(!isCollapsed)} />
+      <Layout isCollapsed={isCollapsed}>
+        {children(vault, permissions)}
+      </Layout>
+    </>
   );
-}
+};
