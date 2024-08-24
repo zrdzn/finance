@@ -18,7 +18,18 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
   const { authenticationDetails } = useAuthentication();
   const vault = useVault({ publicId });
   const [permissions, setPermissions] = useState<string[]>([]);
-  const [isCollapsed, setIsCollapsed] = useState(false); // Track sidebar state
+  const [isCollapsed, setIsCollapsed] = useState<boolean | undefined>(undefined);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedState = localStorage.getItem('sidebar-collapsed')
+      if (savedState !== null) {
+        setIsCollapsed(savedState === 'true')
+      } else {
+        setIsCollapsed(false)
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (authenticationDetails === null) {
@@ -36,6 +47,12 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
         .catch((error) => console.error(error));
     }
   }, [api, authenticationDetails, vault]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && isCollapsed !== undefined) {
+      localStorage.setItem('sidebar-collapsed', isCollapsed.toString());
+    }
+  }, [isCollapsed]);
 
   if (vault === undefined) {
     return <>Loading vault...</>;

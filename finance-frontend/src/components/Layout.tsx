@@ -3,7 +3,7 @@ import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import {Box} from "@chakra-ui/react"
 
 interface LayoutProperties {
-  isCollapsed: boolean;
+  isCollapsed?: boolean;
 }
 
 export const Layout = ({ children, isCollapsed }: PropsWithChildren<LayoutProperties>): ReactJSXElement => {
