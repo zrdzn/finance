@@ -73,46 +73,48 @@ export default function Login(): ReactJSXElement {
         <title>Finance - Login</title>
       </Head>
 
-      <Card margin={2}>
-        <CardHeader backgroundColor={theme.secondaryColor}>
-          <Flex alignItems={'center'}
-                justifyContent={'space-between'}>
-            <Heading size='md'>Sign in</Heading>
-          </Flex>
-        </CardHeader>
-        <CardBody>
-          <Stack spacing='4'>
-            <FormControl isRequired isInvalid={!!emailError}>
-              <FormLabel>Email</FormLabel>
-              <Input name={'email'}
-                     onChange={handleLoginFormUpdate}
-                     placeholder='Enter your email address' />
-              {
-                emailError && <FormErrorMessage>{emailError}</FormErrorMessage>
-              }
-            </FormControl>
-
-            <FormControl isRequired isInvalid={!!passwordError}>
-              <FormLabel>Password</FormLabel>
-              <Input type={'password'}
-                     name={'password'}
-                     onChange={handleLoginFormUpdate}
-                     placeholder='Enter your password' />
-              {
-                passwordError && <FormErrorMessage>{passwordError}</FormErrorMessage>
-              }
-            </FormControl>
-
-            <Flex mt={2}
-                  justifyContent={'space-between'}
-                  gap={3}>
-              <Button onClick={() => router.push("/register")}>Do not have an account?</Button>
-              <Button backgroundColor={theme.primaryColor}
-                      onClick={handleLogin}>Sign in</Button>
+      <Flex justifyContent="center" p={4}>
+        <Card
+          width={{ base: 'full', sm: '80%', md: '60%', lg: '50%' }}
+          maxWidth="500px"
+          margin={2}
+        >
+          <CardHeader backgroundColor={theme.secondaryColor}>
+            <Flex alignItems={'center'} justifyContent={'space-between'}>
+              <Heading size='md'>Sign in</Heading>
             </Flex>
-          </Stack>
-        </CardBody>
-      </Card>
+          </CardHeader>
+          <CardBody>
+            <Stack spacing='4'>
+              <FormControl isRequired isInvalid={!!emailError}>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  name={'email'}
+                  onChange={handleLoginFormUpdate}
+                  placeholder='Enter your email address'
+                />
+                {emailError && <FormErrorMessage>{emailError}</FormErrorMessage>}
+              </FormControl>
+
+              <FormControl isRequired isInvalid={!!passwordError}>
+                <FormLabel>Password</FormLabel>
+                <Input
+                  type={'password'}
+                  name={'password'}
+                  onChange={handleLoginFormUpdate}
+                  placeholder='Enter your password'
+                />
+                {passwordError && <FormErrorMessage>{passwordError}</FormErrorMessage>}
+              </FormControl>
+
+              <Flex mt={2} justifyContent={'space-between'} gap={3}>
+                <Button onClick={() => router.push("/register")}>Do not have an account?</Button>
+                <Button backgroundColor={theme.primaryColor} onClick={handleLogin}>Sign in</Button>
+              </Flex>
+            </Stack>
+          </CardBody>
+        </Card>
+      </Flex>
     </Layout>
   );
 }

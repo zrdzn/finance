@@ -1,7 +1,7 @@
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
 import {
-  Flex
+  Flex, Grid
 } from "@chakra-ui/react";
 import React from "react";
 import {useRouter} from "next/router"
@@ -21,14 +21,16 @@ export default function Dashboard(): ReactJSXElement {
           <Head>
             <title>Finance - Overview ({vault.name})</title>
           </Head>
-          <Flex justifyContent={'center'}>
-            <Flex direction={'column'}
-                  width={'full'}
-                  justifyContent={'center'}>
+          <Flex justifyContent="center"
+                p={4}>
+            <Grid
+              templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }}
+              gap={4}
+              width="full">
               <LastPaymentsCard vault={vault} permissions={permissions} />
               <ExpensesCard vault={vault} />
               <AverageCard vault={vault} />
-            </Flex>
+            </Grid>
           </Flex>
         </>
       }

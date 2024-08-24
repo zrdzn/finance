@@ -19,11 +19,15 @@ export default function Payments(): ReactJSXElement {
           <Head>
             <title>Finance - Payments</title>
           </Head>
-          <Flex justifyContent={'center'}>
-            <Flex direction={'column'} width={'full'} justifyContent={'center'}>
-              {
-                permissions.includes("PAYMENT_READ") && <PaymentsCard vault={vault} permissions={permissions} />
-              }
+          <Flex justifyContent="center" p={4}>
+            <Flex
+              direction="column"
+              width={{ base: 'full', md: '80%', lg: '60%' }}
+              maxWidth="800px"
+              justifyContent="center">
+              {permissions.includes("PAYMENT_READ") && (
+                <PaymentsCard vault={vault} permissions={permissions} />
+              )}
             </Flex>
           </Flex>
         </>

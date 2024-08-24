@@ -1,7 +1,7 @@
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
 import {
-  Flex
+  Flex, Grid
 } from "@chakra-ui/react";
 import React from "react";
 import {useRouter} from "next/router"
@@ -21,15 +21,18 @@ export default function Products(): ReactJSXElement {
           <Head>
             <title>Finance - Products</title>
           </Head>
-          <Flex justifyContent={'center'}>
-            <Flex direction={'column'} width={'full'} justifyContent={'center'}>
-              {
-                permissions.includes("PRODUCT_READ") && <ProductsCard vault={vault} permissions={permissions} />
-              }
-              {
-                permissions.includes("CATEGORY_READ") && <CategoriesCard vault={vault} permissions={permissions} />
-              }
-            </Flex>
+          <Flex justifyContent="center" p={4}>
+            <Grid
+              templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
+              gap={4}
+              width="full">
+              {permissions.includes("PRODUCT_READ") && (
+                <ProductsCard vault={vault} permissions={permissions} />
+              )}
+              {permissions.includes("CATEGORY_READ") && (
+                <CategoriesCard vault={vault} permissions={permissions} />
+              )}
+            </Grid>
           </Flex>
         </>
       }

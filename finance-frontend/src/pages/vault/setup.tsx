@@ -61,34 +61,41 @@ export default function SetupVault(): ReactJSXElement {
         <title>Finance - Vault Setup</title>
       </Head>
 
-      <Card margin={2}>
-        <CardHeader backgroundColor={theme.secondaryColor}>
-          <Flex alignItems={'center'}
-                justifyContent={'space-between'}>
-            <Heading size='md'>Setup new vault</Heading>
-          </Flex>
-        </CardHeader>
-        <CardBody>
-          <Stack spacing='4'>
-            <FormControl isRequired isInvalid={!!nameError}>
-              <FormLabel>Name</FormLabel>
-              <Input name={'name'}
-                     onChange={handleVaultFormChange}
-                     placeholder='Choose name' />
-              {
-                nameError && <FormErrorMessage>{nameError}</FormErrorMessage>
-              }
-            </FormControl>
-
-            <Flex mt={2}
-                  justifyContent={'space-between'}
-                  gap={3}>
-              <Button backgroundColor={theme.primaryColor}
-                      onClick={handleVaultSetup}>Setup</Button>
+      <Flex justifyContent="center" p={4}>
+        <Card
+          width={{ base: 'full', sm: '90%', md: '80%', lg: '60%' }}
+          maxWidth="600px"
+          margin={2}
+        >
+          <CardHeader backgroundColor={theme.secondaryColor}>
+            <Flex alignItems={'center'} justifyContent={'space-between'}>
+              <Heading size='md'>Setup new vault</Heading>
             </Flex>
-          </Stack>
-        </CardBody>
-      </Card>
+          </CardHeader>
+          <CardBody>
+            <Stack spacing='4'>
+              <FormControl isRequired isInvalid={!!nameError}>
+                <FormLabel>Name</FormLabel>
+                <Input
+                  name={'name'}
+                  onChange={handleVaultFormChange}
+                  placeholder='Choose name'
+                />
+                {nameError && <FormErrorMessage>{nameError}</FormErrorMessage>}
+              </FormControl>
+
+              <Flex mt={2} justifyContent={'space-between'} gap={3}>
+                <Button
+                  backgroundColor={theme.primaryColor}
+                  onClick={handleVaultSetup}
+                >
+                  Setup
+                </Button>
+              </Flex>
+            </Stack>
+          </CardBody>
+        </Card>
+      </Flex>
     </Layout>
   );
 }

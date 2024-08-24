@@ -37,7 +37,7 @@ interface InvitationsCardProperties {
   permissions: string[]
 }
 
-export const InvitationsCard = ({ vault, permissions }: InvitationsCardProperties) => {
+export const  InvitationsCard = ({ vault, permissions }: InvitationsCardProperties) => {
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
@@ -64,9 +64,6 @@ export const InvitationsCard = ({ vault, permissions }: InvitationsCardPropertie
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
           <Heading size='sm' textTransform={'uppercase'}>Invitations</Heading>
-          {
-            permissions.includes("MEMBER_INVITE_CREATE") && <InvitationCreateButton vaultId={vault.id} />
-          }
         </Flex>
       </CardHeader>
       <CardBody>
@@ -80,6 +77,9 @@ export const InvitationsCard = ({ vault, permissions }: InvitationsCardPropertie
               return invitation.userEmail.toLowerCase().includes(query.toLowerCase())
             }}
           />
+          {
+            permissions.includes("MEMBER_INVITE_CREATE") && <InvitationCreateButton vaultId={vault.id} />
+          }
         </Flex>
         <Divider mt={4} />
         <Stack gap={0}>
