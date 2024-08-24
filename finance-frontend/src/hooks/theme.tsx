@@ -20,10 +20,10 @@ interface ThemeColors {
 }
 
 export const themeColors: ThemeColors = {
-  lightText: '#000000',
+  lightText: '#111111',
   lightBackground: 'rgba(238,255,239,0.32)',
-  lightPrimary: 'rgba(11,210,89,0.7)',
-  lightSecondary: '#C6F6D5',
+  lightPrimary: 'rgb(76, 175, 80)',
+  lightSecondary: 'rgb(129, 199, 132)',
 
   darkText: '#000000',
   darkBackground: 'rgba(238,255,239,0.32)',
