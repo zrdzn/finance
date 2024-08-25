@@ -68,7 +68,7 @@ export default function Login(): ReactJSXElement {
   }
 
   return (
-    <Layout>
+    <>
       <Head>
         <title>Finance - Login</title>
       </Head>
@@ -115,6 +115,6 @@ export default function Login(): ReactJSXElement {
           </CardBody>
         </Card>
       </Flex>
-    </Layout>
+    </>
   );
 }

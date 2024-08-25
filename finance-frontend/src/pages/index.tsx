@@ -50,7 +50,7 @@ export default function Main(): ReactJSXElement {
   }
 
   return (
-    <Layout>
+    <>
       <Head>
         <title>Finance - Manage Vaults</title>
       </Head>
@@ -106,6 +106,6 @@ export default function Main(): ReactJSXElement {
           }
         </Flex>
       </Flex>
-    </Layout>
-  );
+    </>
+  )
 }

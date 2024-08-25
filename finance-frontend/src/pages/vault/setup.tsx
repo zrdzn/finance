@@ -56,7 +56,7 @@ export default function SetupVault(): ReactJSXElement {
   }
 
   return (
-    <Layout>
+    <>
       <Head>
         <title>Finance - Vault Setup</title>
       </Head>
@@ -96,6 +96,6 @@ export default function SetupVault(): ReactJSXElement {
           </CardBody>
         </Card>
       </Flex>
-    </Layout>
+    </>
   );
 }

@@ -103,75 +103,74 @@ export default function Register(): ReactJSXElement {
   }
 
   return (
-    (
-      <Layout>
-        <Head>
-          <title>Finance - Register</title>
-        </Head>
+    <>
+      <Head>
+        <title>Finance - Register</title>
+      </Head>
 
-        <Flex justifyContent="center" p={4}>
-          <Card
-            width={{ base: 'full', sm: '80%', md: '60%', lg: '50%' }}
-            maxWidth="500px"
-            margin={2}
-          >
-            <CardHeader backgroundColor={theme.secondaryColor}>
-              <Flex alignItems={'center'} justifyContent={'space-between'}>
-                <Heading size='md'>Register your account</Heading>
+      <Flex justifyContent="center" p={4}>
+        <Card
+          width={{ base: 'full', sm: '80%', md: '60%', lg: '50%' }}
+          maxWidth="500px"
+          margin={2}
+        >
+          <CardHeader backgroundColor={theme.secondaryColor}>
+            <Flex alignItems={'center'} justifyContent={'space-between'}>
+              <Heading size='md'>Register your account</Heading>
+            </Flex>
+          </CardHeader>
+          <CardBody>
+            <Stack spacing='4'>
+              <FormControl isRequired isInvalid={!!emailError}>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  name={'email'}
+                  onChange={handleRegistrationFormUpdate}
+                  placeholder='What is your email address?'
+                />
+                {emailError && <FormErrorMessage>{emailError}</FormErrorMessage>}
+              </FormControl>
+
+              <FormControl isRequired isInvalid={!!usernameError}>
+                <FormLabel>Username</FormLabel>
+                <Input
+                  name={'username'}
+                  onChange={handleRegistrationFormUpdate}
+                  placeholder='Pick your username'
+                />
+                {usernameError && <FormErrorMessage>{usernameError}</FormErrorMessage>}
+              </FormControl>
+
+              <FormControl isRequired isInvalid={!!passwordError}>
+                <FormLabel>Password</FormLabel>
+                <Input
+                  type={'password'}
+                  name={'password'}
+                  onChange={handleRegistrationFormUpdate}
+                  placeholder='Pick your password'
+                />
+                {passwordError && <FormErrorMessage>{passwordError}</FormErrorMessage>}
+              </FormControl>
+
+              <FormControl isRequired isInvalid={!!confirmPasswordError}>
+                <FormLabel>Confirm Password</FormLabel>
+                <Input
+                  type={'password'}
+                  name={'confirmPassword'}
+                  onChange={handleRegistrationFormUpdate}
+                  placeholder='Confirm your password'
+                />
+                {confirmPasswordError && <FormErrorMessage>{confirmPasswordError}</FormErrorMessage>}
+              </FormControl>
+
+              <Flex mt={2} justifyContent={'space-between'} gap={3}>
+                <Button onClick={() => router.push("/login")}>Already have an account?</Button>
+                <Button backgroundColor={theme.primaryColor} onClick={handleRegistration}>Sign up</Button>
               </Flex>
-            </CardHeader>
-            <CardBody>
-              <Stack spacing='4'>
-                <FormControl isRequired isInvalid={!!emailError}>
-                  <FormLabel>Email</FormLabel>
-                  <Input
-                    name={'email'}
-                    onChange={handleRegistrationFormUpdate}
-                    placeholder='What is your email address?'
-                  />
-                  {emailError && <FormErrorMessage>{emailError}</FormErrorMessage>}
-                </FormControl>
-
-                <FormControl isRequired isInvalid={!!usernameError}>
-                  <FormLabel>Username</FormLabel>
-                  <Input
-                    name={'username'}
-                    onChange={handleRegistrationFormUpdate}
-                    placeholder='Pick your username'
-                  />
-                  {usernameError && <FormErrorMessage>{usernameError}</FormErrorMessage>}
-                </FormControl>
-
-                <FormControl isRequired isInvalid={!!passwordError}>
-                  <FormLabel>Password</FormLabel>
-                  <Input
-                    type={'password'}
-                    name={'password'}
-                    onChange={handleRegistrationFormUpdate}
-                    placeholder='Pick your password'
-                  />
-                  {passwordError && <FormErrorMessage>{passwordError}</FormErrorMessage>}
-                </FormControl>
-
-                <FormControl isRequired isInvalid={!!confirmPasswordError}>
-                  <FormLabel>Confirm Password</FormLabel>
-                  <Input
-                    type={'password'}
-                    name={'confirmPassword'}
-                    onChange={handleRegistrationFormUpdate}
-                    placeholder='Confirm your password'
-                  />
-                  {confirmPasswordError && <FormErrorMessage>{confirmPasswordError}</FormErrorMessage>}
-                </FormControl>
-
-                <Flex mt={2} justifyContent={'space-between'} gap={3}>
-                  <Button onClick={() => router.push("/login")}>Already have an account?</Button>
-                  <Button backgroundColor={theme.primaryColor} onClick={handleRegistration}>Sign up</Button>
-                </Flex>
-              </Stack>
-            </CardBody>
-          </Card>
-        </Flex>
-      </Layout>
-  ));
+            </Stack>
+          </CardBody>
+        </Card>
+      </Flex>
+    </>
+  )
 }

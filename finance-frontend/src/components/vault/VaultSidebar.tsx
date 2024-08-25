@@ -238,7 +238,6 @@ const DesktopView = (
             width="100%"
             justifyContent={isCollapsed ? "center" : "flex-start"}
             leftIcon={<FaGears />}
-            isDisabled
           >
             {!isCollapsed && "Settings"}
           </Button>
