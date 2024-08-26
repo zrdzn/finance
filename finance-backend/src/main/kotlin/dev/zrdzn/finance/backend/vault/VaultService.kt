@@ -1,5 +1,7 @@
 package dev.zrdzn.finance.backend.vault
 
+import dev.zrdzn.finance.backend.payment.api.PaymentMethod
+import dev.zrdzn.finance.backend.shared.Currency
 import dev.zrdzn.finance.backend.shared.createRandomToken
 import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.user.UserService
@@ -56,14 +58,16 @@ open class VaultService(
     }
 
     @Transactional
-    open fun createVault(ownerId: UserId, name: String): VaultCreateResponse =
+    open fun createVault(ownerId: UserId, name: String, defaultCurrency: Currency, defaultPaymentMethod: PaymentMethod): VaultCreateResponse =
         vaultRepository
             .save(
                 Vault(
                     id = null,
                     publicId = createRandomToken(16),
                     ownerId = ownerId,
-                    name = name
+                    name = name,
+                    currency = defaultCurrency,
+                    paymentMethod = defaultPaymentMethod
                 )
             )
             .let {
@@ -116,6 +120,19 @@ open class VaultService(
     }
 
     @Transactional
+    open fun updateVault(requesterId: UserId, vaultId: VaultId, name: String, currency: Currency, paymentMethod: PaymentMethod) {
+        val vault = vaultRepository.findById(vaultId) ?: throw VaultNotFoundException(vaultId)
+
+        authorizeMember(vaultId, requesterId, VaultPermission.SETTINGS_UPDATE)
+
+        vault.name = name
+        vault.currency = currency
+        vault.paymentMethod = paymentMethod
+
+        logger.info("Successfully updated vault: $vault")
+    }
+
+    @Transactional
     open fun acceptVaultInvitation(requesterId: UserId, invitationId: VaultInvitationId) {
         val invitation = vaultInvitationRepository.findById(invitationId) ?: throw VaultInvitationNotFoundException(invitationId)
 
@@ -145,7 +162,9 @@ open class VaultService(
                     id = it.id!!,
                     publicId = it.publicId,
                     ownerId = it.ownerId,
-                    name = it.name
+                    name = it.name,
+                    currency = it.currency,
+                    paymentMethod = it.paymentMethod
                 )
             }
     }
@@ -168,7 +187,9 @@ open class VaultService(
                         id = it.id!!,
                         publicId = it.publicId,
                         ownerId = it.ownerId,
-                        name = it.name
+                        name = it.name,
+                        currency = it.currency,
+                        paymentMethod = it.paymentMethod
                     )
                 }
                 .toSet()
@@ -183,7 +204,9 @@ open class VaultService(
                     id = it.id!!,
                     publicId = it.publicId,
                     ownerId = it.ownerId,
-                    name = it.name
+                    name = it.name,
+                    currency = it.currency,
+                    paymentMethod = it.paymentMethod
                 )
             }
     }
@@ -262,6 +285,14 @@ open class VaultService(
             ?.getPermissions()
             ?.let { VaultPermissionListResponse(it) }
             ?: throw VaultMemberNotFoundException(vaultId, userId)
+    }
+
+    @Transactional
+    open fun removeVault(vaultId: VaultId, requesterId: UserId) {
+        authorizeMember(vaultId, requesterId, VaultPermission.DELETE)
+
+        vaultRepository.deleteById(vaultId)
+        logger.info("Successfully removed vault with id: $vaultId")
     }
 
     @Transactional

@@ -19,9 +19,10 @@ import {PriceInput} from "@/components/shared/PriceInput"
 interface PaymentMethodSelectProperties {
   onChange: (paymentMethod: string) => void
   defaultValue?: string
+  isDisabled?: boolean
 }
 
-export const PaymentMethodSelect = ({ onChange, defaultValue }: PaymentMethodSelectProperties) => {
+export const PaymentMethodSelect = ({ onChange, defaultValue, isDisabled }: PaymentMethodSelectProperties) => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<SelectProperties>({
     value: defaultValue ?? 'BLIK',
     label: defaultValue ?? 'BLIK'
@@ -46,6 +47,7 @@ export const PaymentMethodSelect = ({ onChange, defaultValue }: PaymentMethodSel
     <Select onChange={handlePaymentMethodChange}
             defaultValue={selectedPaymentMethod}
             required
+            isDisabled={isDisabled}
             isClearable
             options={options} />
   )

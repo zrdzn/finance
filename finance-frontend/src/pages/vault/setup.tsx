@@ -11,6 +11,8 @@ import {useRouter} from "next/router"
 import {useTheme} from "@/hooks/theme"
 import {useAuthentication} from "@/hooks/authentication"
 import {VaultCreateRequest} from "@/components/api"
+import {CurrencySelect} from "@/components/shared/CurrencySelect"
+import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"
 
 export default function SetupVault(): ReactJSXElement {
   const { authenticationDetails } = useAuthentication()
@@ -18,7 +20,9 @@ export default function SetupVault(): ReactJSXElement {
   const router = useRouter()
   const theme = useTheme()
   const [vaultCreateRequest, setVaultCreateRequest] = useState<VaultCreateRequest>({
-    name: ''
+    name: '',
+    currency: 'PLN',
+    paymentMethod: 'BLIK'
   })
   const [nameError, setNameError] = useState<string | null>(null)
 
@@ -41,6 +45,14 @@ export default function SetupVault(): ReactJSXElement {
 
     setVaultCreateRequest({ ...vaultCreateRequest, [event.target.name]: event.target.value });
   };
+
+  const handleDefaultCurrencyChange = (currency: string) => {
+    setVaultCreateRequest((previous) => ({ ...previous, currency: currency }))
+  }
+
+  const handleDefaultPaymentMethodChange = (paymentMethod: string) => {
+    setVaultCreateRequest((previous) => ({ ...previous, paymentMethod: paymentMethod }))
+  }
 
   const handleVaultSetup = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -82,6 +94,16 @@ export default function SetupVault(): ReactJSXElement {
                   placeholder='Choose name'
                 />
                 {nameError && <FormErrorMessage>{nameError}</FormErrorMessage>}
+              </FormControl>
+
+              <FormControl mt={4}>
+                <FormLabel>Default currency</FormLabel>
+                <CurrencySelect onChange={handleDefaultCurrencyChange} />
+              </FormControl>
+
+              <FormControl mt={4}>
+                <FormLabel>Default payment method</FormLabel>
+                <PaymentMethodSelect onChange={handleDefaultPaymentMethodChange} />
               </FormControl>
 
               <Flex mt={2} justifyContent={'space-between'} gap={3}>

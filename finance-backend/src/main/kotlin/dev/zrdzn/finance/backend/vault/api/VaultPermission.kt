@@ -5,6 +5,9 @@ enum class VaultPermission {
     DETAILS_READ,
     DELETE,
 
+    SETTINGS_READ,
+    SETTINGS_UPDATE,
+
     PAYMENT_CREATE,
     PAYMENT_READ,
     PAYMENT_UPDATE,

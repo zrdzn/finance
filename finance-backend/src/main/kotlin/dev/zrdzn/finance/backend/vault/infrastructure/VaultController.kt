@@ -13,10 +13,12 @@ import dev.zrdzn.finance.backend.vault.api.VaultListResponse
 import dev.zrdzn.finance.backend.vault.api.VaultMemberListResponse
 import dev.zrdzn.finance.backend.vault.api.VaultPermissionListResponse
 import dev.zrdzn.finance.backend.vault.api.VaultResponse
+import dev.zrdzn.finance.backend.vault.api.VaultUpdateRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -37,7 +39,9 @@ class VaultController(
         vaultService
             .createVault(
                 ownerId = userId,
-                name = vaultCreateRequest.name
+                name = vaultCreateRequest.name,
+                defaultCurrency = vaultCreateRequest.currency,
+                defaultPaymentMethod = vaultCreateRequest.paymentMethod
             )
 
     @PostMapping("/{vaultId}/invitations")
@@ -50,6 +54,20 @@ class VaultController(
         requesterId = userId,
         userEmail = vaultInvitationCreateRequest.userEmail
     )
+
+    @PatchMapping("/{vaultId}")
+    fun updateVault(
+        @AuthenticationPrincipal userId: UserId,
+        @PathVariable vaultId: VaultId,
+        @RequestBody vaultUpdateRequest: VaultUpdateRequest
+    ): Unit =
+        vaultService.updateVault(
+            vaultId = vaultId,
+            requesterId = userId,
+            name = vaultUpdateRequest.name,
+            currency = vaultUpdateRequest.currency,
+            paymentMethod = vaultUpdateRequest.paymentMethod
+        )
 
     @PostMapping("/invitations/{invitationId}/accept")
     fun acceptVaultInvitation(
@@ -103,6 +121,14 @@ class VaultController(
         vaultId = vaultId,
         userId = userId
     )
+
+    @DeleteMapping("/{vaultId}")
+    fun removeVault(
+        @AuthenticationPrincipal userId: UserId,
+        @PathVariable vaultId: VaultId
+    ) {
+        vaultService.removeVault(vaultId = vaultId, requesterId = userId)
+    }
 
     @DeleteMapping("/{vaultId}/members/{userId}")
     fun removeVaultMember(

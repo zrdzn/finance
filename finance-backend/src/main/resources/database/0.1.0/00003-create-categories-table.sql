@@ -6,5 +6,5 @@ create table "categories"
     "name"     varchar(100) not null,
     "vault_id" int not null,
     constraint "pk_categories" primary key ("id"),
-    constraint "fk_categories_vaults" foreign key ("vault_id") references "vaults" ("id")
+    constraint "fk_categories_vaults" foreign key ("vault_id") references "vaults" ("id") on delete cascade
 );

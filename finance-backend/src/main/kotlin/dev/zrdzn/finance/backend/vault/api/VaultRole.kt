@@ -18,6 +18,8 @@ import dev.zrdzn.finance.backend.vault.api.VaultPermission.PRODUCT_CREATE
 import dev.zrdzn.finance.backend.vault.api.VaultPermission.PRODUCT_DELETE
 import dev.zrdzn.finance.backend.vault.api.VaultPermission.PRODUCT_READ
 import dev.zrdzn.finance.backend.vault.api.VaultPermission.PRODUCT_UPDATE
+import dev.zrdzn.finance.backend.vault.api.VaultPermission.SETTINGS_READ
+import dev.zrdzn.finance.backend.vault.api.VaultPermission.SETTINGS_UPDATE
 
 private val MEMBER_PERMISSIONS = setOf(
     DETAILS_READ,
@@ -30,9 +32,9 @@ private val MEMBER_PERMISSIONS = setOf(
 
 private val MANAGER_PERMISSIONS = MEMBER_PERMISSIONS.union(
     setOf(
+        SETTINGS_READ, SETTINGS_UPDATE,
         MEMBER_REMOVE,
-        MEMBER_INVITE_CREATE,
-        MEMBER_INVITE_DELETE
+        MEMBER_INVITE_CREATE, MEMBER_INVITE_DELETE
     )
 )
 

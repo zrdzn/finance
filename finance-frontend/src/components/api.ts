@@ -21,6 +21,8 @@ export interface VaultResponse {
   publicId: string
   ownerId: number
   name: string
+  currency: string
+  paymentMethod: string
 }
 
 export interface VaultMemberResponse {
@@ -39,6 +41,14 @@ export interface VaultInvitationResponse {
 
 export interface VaultCreateRequest {
   name: string
+  currency: string
+  paymentMethod: string
+}
+
+export interface VaultUpdateRequest {
+  name: string
+  currency: string
+  paymentMethod: string
 }
 
 export interface VaultInvitationCreateRequest {

@@ -12,27 +12,27 @@ import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/theme"
 import Select from "react-select"
 import {useApi} from "@/hooks/apiClient"
-import {PaymentCreateRequest, SelectOptionProperties, SelectProperties} from "@/components/api"
+import {PaymentCreateRequest, SelectOptionProperties, SelectProperties, VaultResponse} from "@/components/api"
 import { useRouter } from 'next/router'
 import {PriceInput} from "@/components/shared/PriceInput"
 import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
 
 interface AddPaymentButtonProperties {
-  vaultId: number
+  vault: VaultResponse
 }
 
-export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
+export const AddPaymentButton = ({ vault }: AddPaymentButtonProperties) => {
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [paymentCreateForm, setPaymentCreateForm] = useState<PaymentCreateRequest>({
     vaultId: 0,
-    paymentMethod: 'BLIK',
+    paymentMethod: vault.paymentMethod,
     description: null,
     price: 0,
-    currency: 'PLN'
+    currency: vault.currency
   })
   const initialRef = useRef(null)
   const finalRef = useRef(null)
@@ -57,7 +57,7 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
     event.preventDefault()
 
     api.post("/payment/create", {
-      vaultId: vaultId,
+      vaultId: vault.id,
       paymentMethod: paymentCreateForm.paymentMethod,
       description: paymentCreateForm.description,
       price: paymentCreateForm.price,
@@ -95,7 +95,7 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
 
             <FormControl mt={4}>
               <FormLabel>Payment method</FormLabel>
-              <PaymentMethodSelect onChange={handlePaymentMethodChange} />
+              <PaymentMethodSelect onChange={handlePaymentMethodChange} defaultValue={paymentCreateForm.paymentMethod} />
             </FormControl>
 
             <FormControl mt={4}>
@@ -105,7 +105,7 @@ export const AddPaymentButton = ({ vaultId }: AddPaymentButtonProperties) => {
 
             <FormControl mt={4}>
               <FormLabel>Currency</FormLabel>
-              <CurrencySelect onChange={handleCurrencyChange} />
+              <CurrencySelect onChange={handleCurrencyChange} defaultValue={paymentCreateForm.currency} />
             </FormControl>
           </ModalBody>
 

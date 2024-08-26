@@ -31,7 +31,7 @@ export const PaymentsCard = ({ vault, permissions }: PaymentsCardProperties) => 
               justifyContent={'space-between'}>
           <Heading size='sm' textTransform={'uppercase'}>Payments</Heading>
           {
-            permissions.includes("PAYMENT_CREATE") && <AddPaymentButton vaultId={vault.id} />
+            permissions.includes("PAYMENT_CREATE") && <AddPaymentButton vault={vault} />
           }
         </Flex>
       </CardHeader>

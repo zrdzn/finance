@@ -8,4 +8,6 @@ interface VaultRepository {
 
     fun findByPublicId(publicId: VaultPublicId): Vault?
 
+    fun deleteById(vaultId: VaultId)
+
 }

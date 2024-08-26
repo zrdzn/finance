@@ -10,9 +10,10 @@ interface CurrencyOption {
 interface CurrencySelectProperties {
   onChange: (currencyCode: string) => void
   defaultValue?: string
+  isDisabled?: boolean
 }
 
-export const CurrencySelect = ({ onChange, defaultValue }: CurrencySelectProperties) => {
+export const CurrencySelect = ({ onChange, defaultValue, isDisabled }: CurrencySelectProperties) => {
   const currencies = currencyCodes.codes().map(code => ({
     value: code,
     label: `${code} - ${currencyCodes.code(code)?.currency}`
@@ -32,6 +33,7 @@ export const CurrencySelect = ({ onChange, defaultValue }: CurrencySelectPropert
     <Select defaultValue={selectedCurrency}
             onChange={handleChange}
             required
+            isDisabled={isDisabled}
             options={currencies}
             isClearable />
   )
