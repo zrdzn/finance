@@ -75,7 +75,7 @@ open class ProductService(
                     name = it.name,
                     vaultId = it.vaultId,
                     categoryId = it.categoryId,
-                    categoryName = categoryService.getCategoryById(requesterId, vaultId).name
+                    categoryName = it.categoryId?.let { categoryService.getCategoryById(requesterId, it) }?.name
                 )
             }
             .toSet()
@@ -93,7 +93,7 @@ open class ProductService(
                     name = it.name,
                     vaultId = it.vaultId,
                     categoryId = it.categoryId,
-                    categoryName = categoryService.getCategoryById(requesterId, it.vaultId).name
+                    categoryName = it.categoryId?.let { categoryService.getCategoryById(requesterId, it) }?.name
                 )
             }
             ?: throw ProductNotFoundException(productId)
