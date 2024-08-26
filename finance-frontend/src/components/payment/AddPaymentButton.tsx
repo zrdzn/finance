@@ -12,7 +12,13 @@ import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/theme"
 import Select from "react-select"
 import {useApi} from "@/hooks/apiClient"
-import {PaymentCreateRequest, SelectOptionProperties, SelectProperties, VaultResponse} from "@/components/api"
+import {
+  PaymentCreateRequest, PaymentResponse,
+  ProductResponse,
+  SelectOptionProperties,
+  SelectProperties,
+  VaultResponse
+} from "@/components/api"
 import { useRouter } from 'next/router'
 import {PriceInput} from "@/components/shared/PriceInput"
 import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"
@@ -20,9 +26,10 @@ import {CurrencySelect} from "@/components/shared/CurrencySelect"
 
 interface AddPaymentButtonProperties {
   vault: VaultResponse
+  onCreate?: (payment: PaymentResponse) => void
 }
 
-export const AddPaymentButton = ({ vault }: AddPaymentButtonProperties) => {
+export const AddPaymentButton = ({ vault, onCreate }: AddPaymentButtonProperties) => {
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
@@ -63,7 +70,10 @@ export const AddPaymentButton = ({ vault }: AddPaymentButtonProperties) => {
       price: paymentCreateForm.price,
       currency: paymentCreateForm.currency
     })
-      .then(() => onClose())
+      .then(response => {
+        onClose()
+        onCreate?.(response.data)
+      })
       .then(() => router.reload())
       .catch(error => console.error(error))
   }
