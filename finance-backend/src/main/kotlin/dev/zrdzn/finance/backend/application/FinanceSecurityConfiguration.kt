@@ -2,8 +2,8 @@ package dev.zrdzn.finance.backend.application
 
 import dev.zrdzn.finance.backend.authentication.infrastructure.AuthenticationFilter
 import dev.zrdzn.finance.backend.authentication.token.TokenService
-import dev.zrdzn.finance.backend.user.UserService
 import java.time.Clock
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
@@ -19,8 +19,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 class FinanceSecurityConfiguration(
     private val tokenService: TokenService,
-    private val userService: UserService,
-    private val clock: Clock
+    private val clock: Clock,
+    @Value("\${client.url}") private val clientUrl: String
 ) {
 
     @Bean
@@ -44,7 +44,7 @@ class FinanceSecurityConfiguration(
                         registerCorsConfiguration(
                             "/**",
                             CorsConfiguration().apply {
-                                allowedOrigins = listOf("http://localhost:3000")
+                                allowedOrigins = listOf(clientUrl)
                                 allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS")
                                 allowedHeaders = listOf(
                                     "Content-Type",

@@ -1,7 +1,7 @@
 FROM gradle:jdk17-focal as builder
 WORKDIR /app
 COPY . /app
-RUN gradle assemble
+RUN gradle bootJar
 
 FROM openjdk:17-jdk-slim
 COPY --from=builder /app/build/libs/*.jar /app/app.jar
