@@ -14,6 +14,7 @@ The database stores all data required for the application to function.
   - **Migration Files:** [View schema](https://github.com/zrdzn/finance/tree/main/finance-backend/src/main/resources/database)
 ## Environment variables
 - `SERVER_PORT` - Port on which server will be running
+- `CLIENT_URL' - Frontend URL
 - `DATABASE_URL` - Database JDBC URL
 - `DATABASE_USERNAME` - Database username
 - `DATABASE_PASSWORD` - Database password

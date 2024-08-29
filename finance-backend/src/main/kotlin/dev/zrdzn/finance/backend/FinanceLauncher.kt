@@ -6,11 +6,12 @@ import org.springframework.context.ConfigurableApplicationContext
 
 fun main(args: Array<String>) {
     val serverPort = System.getenv("SERVER_PORT")?.toInt() ?: 8080
+    val clientUrl = System.getenv("CLIENT_URL") ?: "http://localhost:3000"
     val databaseUrl = System.getenv("DATABASE_URL") ?: "jdbc:postgresql://localhost:5432/finance"
     val databaseUsername = System.getenv("DATABASE_USERNAME") ?: "finance"
     val databasePassword = System.getenv("DATABASE_PASSWORD") ?: "finance"
 
-    FinanceLauncher().launchApplication(serverPort, databaseUrl, databaseUsername, databasePassword)
+    FinanceLauncher().launchApplication(serverPort, clientUrl, databaseUrl, databaseUsername, databasePassword)
 }
 
 class FinanceLauncher {
@@ -18,6 +19,7 @@ class FinanceLauncher {
 
     fun launchApplication(
         serverPort: Int,
+        clientUrl: String,
         databaseUrl: String,
         databaseUsername: String,
         databasePassword: String
@@ -26,6 +28,7 @@ class FinanceLauncher {
 
         val properties = mapOf<String, Any>(
             EnvironmentProperty.SERVER_PORT.name to serverPort,
+            EnvironmentProperty.CLIENT_URL.name to clientUrl,
             EnvironmentProperty.DATABASE_URL.name to databaseUrl,
             EnvironmentProperty.DATABASE_USERNAME.name to databaseUsername,
             EnvironmentProperty.DATABASE_PASSWORD.name to databasePassword
