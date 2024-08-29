@@ -14,7 +14,7 @@ The database stores all data required for the application to function.
   - **Migration Files:** [View schema](https://github.com/zrdzn/finance/tree/main/finance-backend/src/main/resources/database)
 ## Environment variables
 - `SERVER_PORT` - Port on which server will be running
-- `CLIENT_URL' - Frontend URL
+- `CLIENT_URL` - Frontend URL
 - `DATABASE_URL` - Database JDBC URL
 - `DATABASE_USERNAME` - Database username
 - `DATABASE_PASSWORD` - Database password
@@ -28,7 +28,9 @@ docker pull zrdzn/finance-frontend:latest
 ```
 **2.** Configure `.env` file to your needs
 
-**3.** Run images
+**3.** Copy docker [compose file](compose.yml)
+
+**4.** Run images
 ```bash
 docker-compose up backend -d
 docker-compose up frontend -d
