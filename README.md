@@ -1,6 +1,24 @@
 # Finance
 ## Live Preview
 You can preview the live version of the application [here](https://zrdzn.dev).
+## Features
+### Vault Management
+A Vault is a central place where you manage members, payments, products, categories — essentially everything within the application.
+Each user can create multiple vaults, and automatically becomes a member with the owner role for the vaults they create.
+### Products and Categories
+Create and manage products and categories for easy reuse when adding payment records.
+### Payment Records
+Create detailed payment records with the ability to add existing products to these records. 
+### Statistics and Reporting
+View various statistics, including average expenses and total expenses over specific periods. 
+### User and Member Management
+Invite new users to vaults, manage existing vault members, and assign roles.
+### Vault Settings
+Customize the settings for each vault to suit your needs.
+### Currency Conversion
+View real exchange rates to display financial data in different currencies.
+### Responsive Design
+The application is designed with a mobile-first approach, ensuring that it is fully responsive and accessible on all device types.
 ## Infrastructure
 ### Backend
 The backend provides access to other infrastructure elements, such as the database, and offers a REST API for clients.
