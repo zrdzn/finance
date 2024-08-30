@@ -4,7 +4,7 @@ import dev.zrdzn.finance.backend.exchange.ExchangeService
 import dev.zrdzn.finance.backend.payment.api.PaymentCreateResponse
 import dev.zrdzn.finance.backend.payment.api.PaymentListResponse
 import dev.zrdzn.finance.backend.payment.api.PaymentMethod
-import dev.zrdzn.finance.backend.payment.api.PaymentNotFoundException
+import dev.zrdzn.finance.backend.payment.api.ProductNotFoundException
 import dev.zrdzn.finance.backend.payment.api.PaymentResponse
 import dev.zrdzn.finance.backend.payment.api.expense.PaymentAverageExpensesResponse
 import dev.zrdzn.finance.backend.payment.api.expense.PaymentExpenseRange
@@ -90,7 +90,7 @@ open class PaymentService(
 
     @Transactional
     open fun updatePayment(requesterId: UserId, paymentId: PaymentId, paymentMethod: PaymentMethod, description: String?, price: Price) {
-        val payment = paymentRepository.findById(paymentId) ?: throw PaymentNotFoundException(paymentId)
+        val payment = paymentRepository.findById(paymentId) ?: throw ProductNotFoundException(paymentId)
 
         vaultService.authorizeMember(payment.vaultId, requesterId, VaultPermission.PAYMENT_UPDATE)
 
@@ -103,7 +103,7 @@ open class PaymentService(
 
     @Transactional
     open fun deletePayment(paymentId: PaymentId) {
-        val payment = paymentRepository.findById(paymentId) ?: throw PaymentNotFoundException(paymentId)
+        val payment = paymentRepository.findById(paymentId) ?: throw ProductNotFoundException(paymentId)
 
         vaultService.authorizeMember(payment.vaultId, payment.userId, VaultPermission.PAYMENT_DELETE)
 
@@ -139,7 +139,7 @@ open class PaymentService(
 
     @Transactional(readOnly = true)
     open fun getPaymentProducts(requesterId: UserId, paymentId: PaymentId): PaymentProductListResponse {
-        val payment = paymentRepository.findById(paymentId) ?: throw PaymentNotFoundException(paymentId)
+        val payment = paymentRepository.findById(paymentId) ?: throw ProductNotFoundException(paymentId)
 
         vaultService.authorizeMember(payment.vaultId, requesterId, VaultPermission.PAYMENT_READ)
 

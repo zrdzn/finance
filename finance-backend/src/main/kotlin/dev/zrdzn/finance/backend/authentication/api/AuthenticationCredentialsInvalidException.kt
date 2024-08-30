@@ -3,4 +3,4 @@ package dev.zrdzn.finance.backend.authentication.api
 data class AuthenticationCredentialsInvalidException(
     val email: String,
     override val cause: Throwable? = null
-) : RuntimeException("Invalid authentication credentials for email: $email.", cause)
+) : RuntimeException("Account with email $email does not exist or the password is incorrect", cause)

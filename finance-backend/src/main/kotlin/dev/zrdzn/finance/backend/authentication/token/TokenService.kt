@@ -72,13 +72,13 @@ class TokenService(
     fun getAccessTokenDetails(accessToken: String): AccessTokenResponse {
         val token = JWT.decode(accessToken)
         if (algorithm.name != token.algorithm) {
-            throw TokenSignatureMismatchException(accessToken)
+            throw TokenSignatureMismatchException()
         }
 
         try {
             algorithm.verify(token)
         } catch (exception: Exception) {
-            throw TokenSignatureMismatchException(accessToken, exception)
+            throw TokenSignatureMismatchException(exception)
         }
 
         return AccessTokenResponse(
