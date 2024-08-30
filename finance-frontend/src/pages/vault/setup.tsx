@@ -13,6 +13,7 @@ import {useAuthentication} from "@/hooks/authentication"
 import {VaultCreateRequest} from "@/components/api"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
 import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"
+import toast from "react-hot-toast"
 
 export default function SetupVault(): ReactJSXElement {
   const { authenticationDetails } = useAuthentication()
@@ -37,12 +38,6 @@ export default function SetupVault(): ReactJSXElement {
   }
 
   const handleVaultFormChange = (event: ChangeEvent<HTMLInputElement>) => {
-    switch (event.target.name) {
-      case 'name':
-        setNameError(null);
-        break;
-    }
-
     setVaultCreateRequest({ ...vaultCreateRequest, [event.target.name]: event.target.value });
   };
 
@@ -58,13 +53,22 @@ export default function SetupVault(): ReactJSXElement {
     event.preventDefault()
 
     if (vaultCreateRequest.name === '') {
-      setNameError('Name is required')
+      toast.error('You need to provide a name')
       return
     }
 
-    api.post("/vaults/create", vaultCreateRequest)
+    const vaultCreateResult = api.post("/vaults/create", vaultCreateRequest)
       .then(response => router.push(`/vault/${response.data.publicId}`))
-      .catch(error => console.error(error))
+      .catch(error => {
+        console.error(error)
+        throw error
+      })
+
+    toast.promise(vaultCreateResult, {
+      loading: 'Creating vault',
+      success: 'Vault has been created',
+      error: 'An error occurred while creating vault'
+    })
   }
 
   return (

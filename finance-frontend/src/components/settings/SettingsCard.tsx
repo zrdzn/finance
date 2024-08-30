@@ -20,6 +20,7 @@ import {PaymentsCardItem} from "@/components/payment/PaymentsCardItem"
 import {useRouter} from "next/router"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
 import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"
+import toast from "react-hot-toast"
 
 interface SettingsCardProperties {
   vault: VaultResponse
@@ -35,15 +36,8 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
     currency: vault.currency,
     paymentMethod: vault.paymentMethod
   })
-  const [nameError, setNameError] = useState<string | null>(null)
 
   const handleVaultFormChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    switch (event.target.name) {
-      case 'name':
-        setNameError(null)
-        break
-    }
-
     setVaultUpdateRequest((previous) => ({ ...previous, [event.target.name]: event.target.value }))
   }
 
@@ -59,21 +53,36 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
     event.preventDefault()
 
     if (vaultUpdateRequest.name === '') {
-      setNameError('Name is required')
+      toast.error('You need to provide a name')
       return
     }
 
     api.patch(`/vaults/${vault.id}`, vaultUpdateRequest)
-      .then(() => router.reload())
-      .catch(error => console.error(error))
+      .then(() => {
+        toast.success('Vault updated')
+        setTimeout(() => router.reload(), 1000)
+      })
+      .catch(error => {
+        console.error(error)
+        toast.error('Failed to update vault')
+      })
   }
 
   const handleVaultDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.delete(`/vaults/${vault.id}`)
+    const vaultDeleteResult = api.delete(`/vaults/${vault.id}`)
       .then(() => router.push('/'))
-      .catch(error => console.error(error))
+      .catch(error => {
+        console.error(error)
+        throw error
+      })
+
+    toast.promise(vaultDeleteResult, {
+      loading: 'Deleting vault',
+      success: 'Vault deleted',
+      error: 'Failed to delete vault'
+    })
   }
 
   return (
@@ -87,7 +96,7 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
       </CardHeader>
       <CardBody>
         <Stack spacing='4'>
-          <FormControl isRequired isInvalid={!!nameError}>
+          <FormControl isRequired>
             <FormLabel>Name</FormLabel>
             <Input
               name={'name'}
@@ -96,7 +105,6 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
               value={vaultUpdateRequest.name}
               isDisabled={!permissions.includes("SETTINGS_UPDATE")}
             />
-            {nameError && <FormErrorMessage>{nameError}</FormErrorMessage>}
           </FormControl>
 
           <FormControl mt={4}>

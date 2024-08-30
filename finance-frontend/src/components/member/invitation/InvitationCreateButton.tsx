@@ -22,6 +22,7 @@ import { useRouter } from 'next/router'
 import {PriceInput} from "@/components/shared/PriceInput"
 import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
+import toast from "react-hot-toast"
 
 interface InvitationCreateButtonProperties {
   vaultId: number
@@ -50,8 +51,14 @@ export const InvitationCreateButton = ({ vaultId }: InvitationCreateButtonProper
       userEmail: vaultInvitationCreateRequest.userEmail,
     })
       .then(() => onClose())
-      .then(() => router.reload())
-      .catch(error => console.error(error))
+      .then(() => {
+        toast.success(`Successfully invited user ${vaultInvitationCreateRequest.userEmail}`)
+        setTimeout(() => router.reload(), 1000)
+      })
+      .catch(error => {
+        console.error(error)
+        toast.error(`Failed to invite user ${vaultInvitationCreateRequest.userEmail}`)
+      })
   }
 
   return (

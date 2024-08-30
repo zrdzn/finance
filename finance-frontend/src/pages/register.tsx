@@ -10,6 +10,7 @@ import {useApi} from "@/hooks/apiClient"
 import {useRouter} from "next/router"
 import {useTheme} from "@/hooks/theme"
 import {useAuthentication} from "@/hooks/authentication"
+import toast from "react-hot-toast"
 
 interface RegistrationForm {
   email: string;
@@ -29,10 +30,6 @@ export default function Register(): ReactJSXElement {
     password: '',
     confirmPassword: ''
   })
-  const [emailError, setEmailError] = useState<string | null>(null)
-  const [usernameError, setUsernameError] = useState<string | null>(null)
-  const [passwordError, setPasswordError] = useState<string | null>(null)
-  const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null)
 
   useEffect(() => {
     if (authenticationDetails) {
@@ -45,53 +42,38 @@ export default function Register(): ReactJSXElement {
   }
 
   const handleRegistrationFormUpdate = (event: ChangeEvent<HTMLInputElement>) => {
-    switch (event.target.name) {
-      case 'email':
-        setEmailError(null);
-        break;
-      case 'username':
-        setUsernameError(null);
-        break;
-      case 'password':
-        setPasswordError(null);
-        break;
-      case 'confirmPassword':
-        setConfirmPasswordError(null);
-        break;
-    }
-
     setRegistrationForm({ ...registrationForm, [event.target.name]: event.target.value });
-  };
+  }
 
   const handleRegistration = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
     if (registrationForm.email === '') {
-      setEmailError("Email is required")
+      toast.error('You need to provide an email')
       return
     }
 
     if (registrationForm.username === '') {
-      setUsernameError("Username is required")
+      toast.error('You need to provide a username')
       return
     }
 
     if (registrationForm.password === '') {
-      setPasswordError("Password is required")
+      toast.error('You need to provide a password')
       return
     }
 
     if (registrationForm.confirmPassword === '') {
-      setConfirmPasswordError("Confirm password is required")
+      toast.error('You need to confirm your password')
       return
     }
 
     if (registrationForm.password !== registrationForm.confirmPassword) {
-      setConfirmPasswordError("Passwords do not match")
+      toast.error("Passwords don't match")
       return
     }
 
-    api.post("/authentication/register", {
+    const registerResult = api.post("/authentication/register", {
       email: registrationForm.email,
       username: registrationForm.username,
       password: registrationForm.password
@@ -99,7 +81,16 @@ export default function Register(): ReactJSXElement {
       .then(() => login(registrationForm.email, registrationForm.password)
         .then(() => router.push("/"))
       )
-      .catch(error => console.error(error))
+      .catch(error => {
+        console.error(error)
+        throw error
+      })
+
+    toast.promise(registerResult, {
+      loading: 'Signing up',
+      success: "You\'ve successfully signed up",
+      error: "An error occurred while signing up",
+    })
   }
 
   return (
@@ -121,27 +112,25 @@ export default function Register(): ReactJSXElement {
           </CardHeader>
           <CardBody>
             <Stack spacing='4'>
-              <FormControl isRequired isInvalid={!!emailError}>
+              <FormControl isRequired>
                 <FormLabel>Email</FormLabel>
                 <Input
                   name={'email'}
                   onChange={handleRegistrationFormUpdate}
                   placeholder='What is your email address?'
                 />
-                {emailError && <FormErrorMessage>{emailError}</FormErrorMessage>}
               </FormControl>
 
-              <FormControl isRequired isInvalid={!!usernameError}>
+              <FormControl isRequired>
                 <FormLabel>Username</FormLabel>
                 <Input
                   name={'username'}
                   onChange={handleRegistrationFormUpdate}
                   placeholder='Pick your username'
                 />
-                {usernameError && <FormErrorMessage>{usernameError}</FormErrorMessage>}
               </FormControl>
 
-              <FormControl isRequired isInvalid={!!passwordError}>
+              <FormControl isRequired>
                 <FormLabel>Password</FormLabel>
                 <Input
                   type={'password'}
@@ -149,10 +138,9 @@ export default function Register(): ReactJSXElement {
                   onChange={handleRegistrationFormUpdate}
                   placeholder='Pick your password'
                 />
-                {passwordError && <FormErrorMessage>{passwordError}</FormErrorMessage>}
               </FormControl>
 
-              <FormControl isRequired isInvalid={!!confirmPasswordError}>
+              <FormControl isRequired>
                 <FormLabel>Confirm Password</FormLabel>
                 <Input
                   type={'password'}
@@ -160,7 +148,6 @@ export default function Register(): ReactJSXElement {
                   onChange={handleRegistrationFormUpdate}
                   placeholder='Confirm your password'
                 />
-                {confirmPasswordError && <FormErrorMessage>{confirmPasswordError}</FormErrorMessage>}
               </FormControl>
 
               <Flex mt={2} justifyContent={'space-between'} gap={3}>

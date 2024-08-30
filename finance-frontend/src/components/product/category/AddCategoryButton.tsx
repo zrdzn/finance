@@ -13,6 +13,7 @@ import {useTheme} from "@/hooks/theme"
 import {useApi} from "@/hooks/apiClient"
 import {CategoryCreateRequest} from "@/components/api"
 import { useRouter } from 'next/router'
+import toast from "react-hot-toast"
 
 interface AddCategoryButtonProperties {
   vaultId: number
@@ -39,8 +40,14 @@ export const AddCategoryButton = ({ vaultId }: AddCategoryButtonProperties) => {
 
     api.post("/categories/create", categoryCreateRequest)
       .then(() => onClose())
-      .then(() => router.reload())
-      .catch(error => console.error(error))
+      .then(() => {
+        toast.success(`Category ${categoryCreateRequest.name} has been created`)
+        setTimeout(() => router.reload(), 1000)
+      })
+      .catch(error => {
+        console.error(error)
+        toast.error(`Failed to create a category`)
+      })
   }
 
   return (

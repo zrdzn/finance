@@ -20,6 +20,7 @@ import {useApi} from "@/hooks/apiClient"
 import {FaTrash} from "react-icons/fa"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
+import toast from "react-hot-toast"
 
 interface CategoriesCardItemProperties {
   category: ProductResponse
@@ -37,8 +38,14 @@ export const CategoriesCardItem = ({
     event.preventDefault()
 
     api.delete(`/categories/${category.id}`)
-      .then(() => router.reload())
-      .catch(error => console.error(error))
+      .then(() => {
+        toast.success(`Category deleted`)
+        setTimeout(() => router.reload(), 1000)
+      })
+      .catch(error => {
+        console.error(error)
+        toast.error('Failed to delete category')
+      })
   }
 
   return (

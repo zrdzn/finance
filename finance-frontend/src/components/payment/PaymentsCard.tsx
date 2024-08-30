@@ -48,10 +48,6 @@ export const PaymentsCard = ({ vault, permissions }: PaymentsCardProperties) => 
     setQueriedPayments(results)
   }
 
-  const handlePaymentCreate = () => {
-    router.reload()
-  }
-
   return (
     <Card margin={2}>
       <CardHeader backgroundColor={theme.secondaryColor}

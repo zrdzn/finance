@@ -23,6 +23,7 @@ import { useRouter } from 'next/router'
 import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"
 import {PriceInput} from "@/components/shared/PriceInput"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
+import toast from "react-hot-toast"
 
 interface EditPaymentButtonProperties {
   payment: PaymentResponse
@@ -63,8 +64,14 @@ export const EditPaymentButton = ({ payment }: EditPaymentButtonProperties) => {
 
     api.patch(`/payment/${payment.id}`, paymentUpdateRequest)
       .then(() => onClose())
-      .then(() => router.reload())
-      .catch(error => console.error(error))
+      .then(() => {
+        toast.success(`Payment updated`)
+        setTimeout(() => router.reload(), 1000)
+      })
+      .catch(error => {
+        console.error(error)
+        toast.error(`Failed to update payment`)
+      })
   }
 
   return (

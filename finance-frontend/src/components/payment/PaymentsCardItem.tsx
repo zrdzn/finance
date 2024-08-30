@@ -26,6 +26,7 @@ import {AddPaymentProductsButton} from "@/components/payment/product/AddPaymentP
 import {PaymentProductsCardItem} from "@/components/payment/product/PaymentProductsCardItem"
 import {EditPaymentButton} from "@/components/payment/EditPaymentButton"
 import {DeleteButton} from "@/components/shared/DeleteButton"
+import toast from "react-hot-toast"
 
 interface PaymentsCardItemProperties {
   vaultId: number
@@ -60,8 +61,14 @@ export const PaymentsCardItem = ({
     event.preventDefault()
 
     api.delete(`/payment/${payment.id}`)
-      .then(() => router.reload())
-      .catch(error => console.error(error))
+      .then(() => {
+        toast.success('Payment deleted')
+        setTimeout(() => router.reload(), 1000)
+      })
+      .catch(error => {
+        console.error(error)
+        toast.error('Failed to delete payment')
+      })
   }
 
   return (

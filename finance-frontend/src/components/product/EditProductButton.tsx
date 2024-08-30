@@ -14,6 +14,7 @@ import {useApi} from "@/hooks/apiClient"
 import {CategoryResponse, ProductResponse, ProductUpdateRequest} from "@/components/api"
 import {CategorySelect} from "@/components/product/category/CategorySelect"
 import { useRouter } from 'next/router'
+import toast from "react-hot-toast"
 
 interface EditProductButtonProperties {
   product: ProductResponse
@@ -39,7 +40,10 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
 
     api.patch(`/products/${product.id}`, productUpdateRequest)
       .then(() => onClose())
-      .then(() => router.reload())
+      .then(() => {
+        toast.success('Product updated')
+        setTimeout(() => router.reload(), 1000)
+      })
       .catch(error => console.error(error))
   }
 

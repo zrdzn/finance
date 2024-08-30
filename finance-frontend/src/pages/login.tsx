@@ -9,6 +9,7 @@ import React, {ChangeEvent, useEffect, useState} from "react";
 import {useRouter} from "next/router"
 import {useTheme} from "@/hooks/theme"
 import {useAuthentication} from "@/hooks/authentication"
+import toast from "react-hot-toast"
 
 interface LoginForm {
   email: string;
@@ -23,8 +24,6 @@ export default function Login(): ReactJSXElement {
     email: '',
     password: ''
   })
-  const [emailError, setEmailError] = useState<string | null>(null)
-  const [passwordError, setPasswordError] = useState<string | null>(null)
 
   useEffect(() => {
     if (authenticationDetails) {
@@ -37,15 +36,6 @@ export default function Login(): ReactJSXElement {
   }
 
   const handleLoginFormUpdate = (event: ChangeEvent<HTMLInputElement>) => {
-    switch (event.target.name) {
-      case 'email':
-        setEmailError(null);
-        break;
-      case 'password':
-        setPasswordError(null);
-        break;
-    }
-
     setLoginForm({ ...loginForm, [event.target.name]: event.target.value });
   };
 
@@ -53,12 +43,12 @@ export default function Login(): ReactJSXElement {
     event.preventDefault()
 
     if (loginForm.email === '') {
-      setEmailError('Email is required')
+      toast.error('You need to provide an email')
       return
     }
 
     if (loginForm.password === '') {
-      setPasswordError('Password is required')
+      toast.error('You need to provide a password')
       return
     }
 
@@ -86,17 +76,16 @@ export default function Login(): ReactJSXElement {
           </CardHeader>
           <CardBody>
             <Stack spacing='4'>
-              <FormControl isRequired isInvalid={!!emailError}>
+              <FormControl isRequired>
                 <FormLabel>Email</FormLabel>
                 <Input
                   name={'email'}
                   onChange={handleLoginFormUpdate}
                   placeholder='Enter your email address'
                 />
-                {emailError && <FormErrorMessage>{emailError}</FormErrorMessage>}
               </FormControl>
 
-              <FormControl isRequired isInvalid={!!passwordError}>
+              <FormControl isRequired>
                 <FormLabel>Password</FormLabel>
                 <Input
                   type={'password'}
@@ -104,7 +93,6 @@ export default function Login(): ReactJSXElement {
                   onChange={handleLoginFormUpdate}
                   placeholder='Enter your password'
                 />
-                {passwordError && <FormErrorMessage>{passwordError}</FormErrorMessage>}
               </FormControl>
 
               <Flex mt={2} justifyContent={'space-between'} gap={3}>

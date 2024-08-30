@@ -12,6 +12,7 @@ import {useTheme} from "@/hooks/theme"
 import {useApi} from "@/hooks/apiClient"
 import {UsernameResponse, VaultInvitationResponse, VaultResponse} from "@/components/api"
 import {useRouter} from "next/router"
+import toast from "react-hot-toast"
 
 interface VaultInvitationCardProperties {
   invitation: VaultInvitationResponse
@@ -33,7 +34,10 @@ export const VaultInvitationCard = ({ invitation }: VaultInvitationCardPropertie
     event.preventDefault()
 
     api.post(`/vaults/invitations/${invitation.id}/accept`)
-      .then(() => router.push(`/vault/${invitation.vault.publicId}`))
+      .then(() => {
+        toast.success(`Welcome to ${invitation.vault.name}!`)
+        setTimeout(() => router.push(`/vault/${invitation.vault.publicId}`), 1000)
+      })
       .catch((error) => console.error(error))
   }
 
@@ -41,7 +45,10 @@ export const VaultInvitationCard = ({ invitation }: VaultInvitationCardPropertie
     event.preventDefault()
 
     api.delete(`/vaults/${invitation.vault.id}/invitations/${invitation.userEmail}`)
-      .then(() => router.reload())
+      .then(() => {
+        toast.success(`Invitation cancelled`)
+        setTimeout(() => router.reload(), 1000)
+      })
       .catch(error => console.error(error))
   }
 

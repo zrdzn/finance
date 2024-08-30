@@ -36,6 +36,7 @@ import {ProductSelect} from "@/components/product/ProductSelect"
 import {PriceInput} from "@/components/shared/PriceInput"
 import {AddProductButton} from "@/components/product/AddProductButton"
 import {ProductSelectWithAddButton} from "@/components/product/ProductSelectWithAddButton"
+import toast from "react-hot-toast"
 
 interface AddPaymentProductsButtonProperties {
   vaultId: number
@@ -68,8 +69,14 @@ export const AddPaymentProductsButton = ({ vaultId, paymentId }: AddPaymentProdu
 
     api.post(`/payment/${paymentId}/products/create`, paymentProductCreateRequest)
       .then(() => onClose())
-      .then(() => router.reload())
-      .catch(error => console.error(error))
+      .then(() => {
+        toast.success(`Product has been added to the payment`)
+        setTimeout(() => router.reload(), 1000)
+      })
+      .catch(error => {
+        console.error(error)
+        toast.error(`Failed to add product to the payment`)
+      })
   }
 
   return (

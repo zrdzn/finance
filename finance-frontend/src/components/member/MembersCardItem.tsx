@@ -18,6 +18,7 @@ import {useApi} from "@/hooks/apiClient"
 import {EditProductButton} from "@/components/product/EditProductButton"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
+import toast from "react-hot-toast"
 
 interface MembersCardItemProperties {
   member: VaultMemberResponse
@@ -35,8 +36,14 @@ export const MembersCardItem = ({
     event.preventDefault()
 
     api.delete(`/vaults/${member.vaultId}/members/${member.id}`)
-      .then(() => router.reload())
-      .catch(error => console.error(error))
+      .then(() => {
+        toast.success(`Member ${member.user.username} has been deleted`)
+        setTimeout(() => router.reload(), 1000)
+      })
+      .catch(error => {
+        console.error(error)
+        toast.error(`Failed to delete member ${member.user.username}`)
+      })
   }
 
   return (

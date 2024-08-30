@@ -23,6 +23,7 @@ import { useRouter } from 'next/router'
 import {PriceInput} from "@/components/shared/PriceInput"
 import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
+import toast from "react-hot-toast"
 
 interface AddPaymentButtonProperties {
   vault: VaultResponse
@@ -74,8 +75,14 @@ export const AddPaymentButton = ({ vault, onCreate }: AddPaymentButtonProperties
         onClose()
         onCreate?.(response.data)
       })
-      .then(() => router.reload())
-      .catch(error => console.error(error))
+      .then(() => {
+        toast.success(`Payment has been added`)
+        setTimeout(() => router.reload(), 1000)
+      })
+      .catch(error => {
+        console.error(error)
+        toast.error(`Failed to add payment`)
+      })
   }
 
   return (

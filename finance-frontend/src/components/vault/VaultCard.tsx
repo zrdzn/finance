@@ -12,6 +12,7 @@ import {useTheme} from "@/hooks/theme"
 import {useApi} from "@/hooks/apiClient"
 import {UsernameResponse} from "@/components/api"
 import {useRouter} from "next/router"
+import toast from "react-hot-toast"
 
 interface VaultCardProperties {
   publicId: string
@@ -35,6 +36,7 @@ export const VaultCard = ({ publicId, ownerId, name }: VaultCardProperties) => {
     event.preventDefault()
 
     router.push(`/vault/${publicId}`)
+      .then(() => toast.success(`Welcome back ${username?.username}!`))
       .catch((error) => console.error(error))
   }
 

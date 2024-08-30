@@ -19,6 +19,7 @@ import {EditProductButton} from "@/components/product/EditProductButton"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
 import {InvitationCreateButton} from "@/components/member/invitation/InvitationCreateButton"
+import toast from "react-hot-toast"
 
 interface InvitationsCardItemProperties {
   invitation: VaultInvitationResponse
@@ -36,8 +37,14 @@ export const InvitationsCardItem = ({
     event.preventDefault()
 
     api.delete(`/vaults/${invitation.vault.id}/invitations/${invitation.userEmail}`)
-      .then(() => router.reload())
-      .catch(error => console.error(error))
+      .then(() => {
+        toast.success(`Invitation for ${invitation.userEmail} has been deleted`)
+        setTimeout(() => router.reload(), 1000)
+      })
+      .catch(error => {
+        console.error(error)
+        toast.error(`Failed to delete invitation for ${invitation.userEmail}`)
+      })
   }
 
   return (

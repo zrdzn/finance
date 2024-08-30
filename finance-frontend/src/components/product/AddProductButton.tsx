@@ -14,6 +14,8 @@ import {useApi} from "@/hooks/apiClient"
 import {ProductResponse, ProductCreateRequest, CategoryResponse} from "@/components/api"
 import {CategorySelect} from "@/components/product/category/CategorySelect"
 import { useRouter } from 'next/router'
+import toast from "react-hot-toast"
+import {router} from "next/client"
 
 interface AddProductButtonProperties {
   vaultId: number
@@ -45,8 +47,11 @@ export const AddProductButton = ({ vaultId, onCreate }: AddProductButtonProperti
 
     api.post("/products/create", productCreateRequest)
       .then(response => {
-        onClose()
-        onCreate?.(response.data)
+        toast.success(`Product ${productCreateRequest.name} has been created`)
+        setTimeout(() => {
+          onClose()
+          onCreate?.(response.data)
+        }, 1000)
       })
       .catch(error => console.error(error))
   }

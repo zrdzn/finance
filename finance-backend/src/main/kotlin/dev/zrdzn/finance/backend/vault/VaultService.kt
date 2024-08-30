@@ -310,8 +310,15 @@ open class VaultService(
     }
 
     @Transactional
-    open fun removeVaultInvitation(vaultId: VaultId, requesterId: UserId, userEmail: String) =
+    open fun removeVaultInvitation(vaultId: VaultId, requesterId: UserId, userEmail: String) {
+        val user = userService.getUserById(requesterId) ?: throw UserNotFoundException(requesterId)
+        if (user.email == userEmail) {
+            removeVaultInvitationForcefully(vaultId, userEmail)
+            return
+        }
+
         authorizeMember(vaultId, requesterId, VaultPermission.MEMBER_INVITE_DELETE)
             .also { removeVaultInvitationForcefully(vaultId, userEmail) }
+    }
 
 }

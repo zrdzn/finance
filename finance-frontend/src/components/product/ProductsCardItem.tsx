@@ -21,6 +21,7 @@ import {FaEdit, FaFolder, FaSquare, FaTrash} from "react-icons/fa"
 import {EditProductButton} from "@/components/product/EditProductButton"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
+import toast from "react-hot-toast"
 
 interface ProductsCardItemProperties {
   product: ProductResponse
@@ -45,7 +46,10 @@ export const ProductsCardItem = ({
     event.preventDefault()
 
     api.delete(`/products/${product.id}`)
-      .then(() => router.reload())
+      .then(() => {
+        toast.success('Product deleted')
+        setTimeout(() => router.reload(), 1000)
+      })
       .catch(error => console.error(error))
   }
 

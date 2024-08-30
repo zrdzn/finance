@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {useApi} from "@/hooks/apiClient"
 import {AuthenticationDetails} from "@/components/api"
+import toast from "react-hot-toast"
 
 interface AuthenticationContext {
   authenticationDetails: AuthenticationDetails | null | undefined;
@@ -34,18 +35,33 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
   }
 
   const login = async (email: string, password: string): Promise<void> => {
-    api.post("/authentication/login", {
+    const loginResult = api.post("/authentication/login", {
       email: email,
       password: password
     })
       .then(() => updateAuthenticationDetails())
-      .catch(error => console.error(error))
+      .catch(error => {
+        console.error(error)
+        throw error
+      })
+
+    await toast.promise(loginResult, {
+      loading: 'Logging in',
+      success: "You\'ve successfully logged in",
+      error: "Credentials you've provided are incorrect",
+    })
   };
 
   const logout = async (): Promise<void> => {
-    api.post("/authentication/logout")
+    const logoutResult = api.post("/authentication/logout")
       .then(() => setAuthenticationDetails(null))
       .catch(error => console.error(error))
+
+    await toast.promise(logoutResult, {
+      loading: 'Logging out',
+      success: "You\'ve successfully logged out",
+      error: "An error occurred while logging out",
+    })
   }
 
   return (

@@ -4,6 +4,7 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import { themeExtension } from '@/hooks/theme';
 import {AuthenticationProvider} from "@/hooks/authentication"
 import {Inter} from "next/font/google"
+import {Toaster} from "react-hot-toast"
 
 config.autoAddCss = false;
 
@@ -18,6 +19,9 @@ export default function FinanceApplication({Component, pageProps}: AppProps) {
       <ChakraProvider theme={themeExtension}>
         <main className={inter.className}>
           <Component {...pageProps} />
+          <Toaster position={'top-center'} toastOptions={{
+            duration: 3000,
+          }} />
         </main>
       </ChakraProvider>
     </AuthenticationProvider>
