@@ -1,4 +1,6 @@
 # Finance
+## Live Preview
+You can preview the live version of the application [here](https://zrdzn.dev).
 ## Infrastructure
 ### Backend
 The backend provides access to other infrastructure elements, such as the database, and offers a REST API for clients.
@@ -12,7 +14,7 @@ The frontend consists of a dashboard accessible via a website.
 The database stores all data required for the application to function.
   - **Management System:** [PostgreSQL](https://www.postgresql.org/)
   - **Migration Files:** [View schema](https://github.com/zrdzn/finance/tree/main/finance-backend/src/main/resources/database)
-## Environment variables
+## Environment Variables
 - `SERVER_PORT` - Port on which server will be running
 - `CLIENT_URL` - Frontend URL
 - `DATABASE_URL` - Database JDBC URL
