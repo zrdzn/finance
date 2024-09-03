@@ -3,9 +3,9 @@
 create table "payments"
 (
     "id"             serial,
+    "created_at"     timestamp not null,
     "user_id"        int not null,
     "vault_id"       int not null,
-    "payed_at"       timestamp not null,
     "payment_method" payment_method not null,
     "description"    text,
     "total"          numeric(10, 2) not null,

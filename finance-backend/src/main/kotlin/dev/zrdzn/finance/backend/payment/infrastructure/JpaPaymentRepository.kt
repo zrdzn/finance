@@ -30,7 +30,7 @@ interface JpaPaymentRepository : PaymentRepository, Repository<Payment, PaymentI
         """
         SELECT NEW dev.zrdzn.finance.backend.shared.Price(SUM(payment.total), payment.currency)
         FROM Payment payment
-        WHERE payment.vaultId = :vaultId AND payment.payedAt >= :start
+        WHERE payment.vaultId = :vaultId AND payment.createdAt >= :start
         GROUP BY payment.currency
     """
     )
@@ -41,7 +41,7 @@ interface JpaPaymentRepository : PaymentRepository, Repository<Payment, PaymentI
 
     @Query(
         """
-        SELECT GREATEST(TIMESTAMPDIFF(DAY, MIN(payment.payedAt), MAX(payment.payedAt)), 1)
+        SELECT GREATEST(TIMESTAMPDIFF(DAY, MIN(payment.createdAt), MAX(payment.createdAt)), 1)
         FROM Payment payment
     """
     )

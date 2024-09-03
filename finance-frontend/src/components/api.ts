@@ -59,7 +59,7 @@ export interface VaultInvitationCreateRequest {
 // payments
 export interface PaymentResponse {
   id: number
-  payedAt: string
+  createdAt: number
   paymentMethod: string
   description: string | null
   totalInVaultCurrency: number

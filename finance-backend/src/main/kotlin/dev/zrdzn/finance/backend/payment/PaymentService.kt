@@ -51,7 +51,7 @@ open class PaymentService(
                     id = null,
                     userId = requesterId,
                     vaultId = vaultId,
-                    payedAt = Instant.now(),
+                    createdAt = Instant.now(),
                     paymentMethod = paymentMethod,
                     description = description,
                     total = price.amount,
@@ -122,7 +122,7 @@ open class PaymentService(
                     id = it.id!!,
                     userId = it.userId,
                     vaultId = it.vaultId,
-                    payedAt = it.payedAt.toString(),
+                    createdAt = it.payedAt.toString(),
                     paymentMethod = it.paymentMethod,
                     description = it.description,
                     totalInVaultCurrency = exchangeService.convertCurrency(

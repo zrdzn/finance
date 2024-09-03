@@ -83,7 +83,7 @@ export const PaymentsCard = ({ vault, permissions }: PaymentsCardProperties) => 
           }
           {
             queriedPayments &&
-            queriedPayments.sort((payment, nextPayment) => new Date(nextPayment.payedAt).getTime() - new Date(payment.payedAt).getTime())
+            queriedPayments.sort((payment, nextPayment) => new Date(nextPayment.createdAt).getTime() - new Date(payment.createdAt).getTime())
               .map(payment => <PaymentsCardItem key={payment.id}
                                                 vaultId={vault.id}
                                                 payment={payment}

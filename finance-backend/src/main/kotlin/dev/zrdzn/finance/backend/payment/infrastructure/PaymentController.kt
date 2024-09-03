@@ -93,7 +93,7 @@ class PaymentController(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable vaultId: VaultId
     ): PaymentListResponse =
-        paymentService.getPaymentsByVaultId(userId, vaultId)
+        paymentService.getPayments(userId, vaultId)
 
     @GetMapping("/{paymentId}/products")
     fun getPaymentProducts(

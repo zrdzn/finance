@@ -92,7 +92,7 @@ export const PaymentsCardItem = ({
                 <Text color={'dimgray'}
                       fontSize={'sm'}
                       letterSpacing={0.2}>
-                  {new Date(payment.payedAt).toLocaleDateString()}
+                  {new Date(payment.createdAt).toLocaleDateString()}
                 </Text>
                 <Text color={'dimgray'}
                       fontSize={'sm'}

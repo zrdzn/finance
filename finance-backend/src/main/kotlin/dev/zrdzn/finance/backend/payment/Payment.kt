@@ -25,14 +25,14 @@ data class Payment(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: PaymentId?,
 
+    @Column(name = "created_at")
+    val createdAt: Instant,
+
     @Column(name = "user_id")
     val userId: UserId,
 
     @Column(name = "vault_id")
     val vaultId: VaultId,
-
-    @Column(name = "payed_at")
-    val payedAt: Instant,
 
     @Column(columnDefinition = "payment_method")
     @JdbcType(PostgreSQLEnumJdbcType::class)
