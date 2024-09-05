@@ -63,6 +63,7 @@ open class VaultService(
             .save(
                 Vault(
                     id = null,
+                    createdAt = Instant.now(clock),
                     publicId = createRandomToken(16),
                     ownerId = ownerId,
                     name = name,
@@ -160,6 +161,7 @@ open class VaultService(
             ?.let {
                 VaultResponse(
                     id = it.id!!,
+                    createdAt = it.createdAt,
                     publicId = it.publicId,
                     ownerId = it.ownerId,
                     name = it.name,
@@ -185,6 +187,7 @@ open class VaultService(
 
                     VaultResponse(
                         id = it.id!!,
+                        createdAt = it.createdAt,
                         publicId = it.publicId,
                         ownerId = it.ownerId,
                         name = it.name,
@@ -202,6 +205,7 @@ open class VaultService(
             ?.let {
                 VaultResponse(
                     id = it.id!!,
+                    createdAt = it.createdAt,
                     publicId = it.publicId,
                     ownerId = it.ownerId,
                     name = it.name,

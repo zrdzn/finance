@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import java.time.Instant
 import org.hibernate.annotations.JdbcType
 import org.hibernate.dialect.PostgreSQLEnumJdbcType
 
@@ -22,6 +23,9 @@ data class Vault(
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: VaultId?,
+
+    @Column(name = "created_at")
+    val createdAt: Instant,
 
     @Column(name = "public_id")
     val publicId: VaultPublicId,

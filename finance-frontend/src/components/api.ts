@@ -18,6 +18,7 @@ export interface UsernameResponse {
 // vaults
 export interface VaultResponse {
   id: number
+  createdAt: number
   publicId: string
   ownerId: number
   name: string

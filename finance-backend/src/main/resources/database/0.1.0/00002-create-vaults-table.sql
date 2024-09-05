@@ -3,6 +3,7 @@
 create table "vaults"
 (
     "id"             serial,
+    "created_at"     timestamp not null,
     "public_id"      varchar(16) not null unique,
     "owner_id"       int not null,
     "name"           varchar(100) not null,

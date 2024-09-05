@@ -14,6 +14,8 @@ interface PaymentRepository {
 
     fun findByVaultId(vaultId: VaultId): Set<Payment>
 
+    fun findByVaultIdAndCreatedAtBetween(vaultId: VaultId, startDate: Instant, endDate: Instant): Set<Payment>
+
     fun sumAndGroupExpensesByVaultId(vaultId: VaultId): List<Price>
 
     fun sumAndGroupExpensesByVaultId(vaultId: VaultId, start: Instant): List<Price>

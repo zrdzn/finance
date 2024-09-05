@@ -53,6 +53,8 @@ dependencies {
     implementation("com.konghq:unirest-java-core:4.2.4")
     implementation("com.konghq:unirest-objectmapper-jackson:4.2.4")
 
+    implementation("com.opencsv:opencsv:5.9")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.springframework.security:spring-security-test")

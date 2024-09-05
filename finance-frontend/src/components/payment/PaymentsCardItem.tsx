@@ -49,6 +49,7 @@ export const PaymentsCardItem = ({
       .then(response => {
         setPaymentProducts(response.data.products)
         setQueriedPaymentProducts(response.data.products)
+        console.info(payment)
       })
       .catch(error => console.error(error))
   }, [api, payment.id]);
@@ -92,7 +93,7 @@ export const PaymentsCardItem = ({
                 <Text color={'dimgray'}
                       fontSize={'sm'}
                       letterSpacing={0.2}>
-                  {new Date(payment.createdAt).toLocaleDateString()}
+                  {new Date(payment.createdAt * 1000).toLocaleDateString()}
                 </Text>
                 <Text color={'dimgray'}
                       fontSize={'sm'}

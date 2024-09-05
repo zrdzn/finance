@@ -17,6 +17,9 @@ import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.vault.VaultId
 import java.time.Instant
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -33,6 +36,29 @@ import org.springframework.web.bind.annotation.RestController
 class PaymentController(
     private val paymentService: PaymentService
 ) {
+
+    @GetMapping("/{vaultId}/export")
+    fun exportPayments(
+        @AuthenticationPrincipal userId: UserId,
+        @PathVariable vaultId: VaultId,
+        @RequestParam("startDate") startDate: Instant,
+        @RequestParam("endDate") endDate: Instant
+    ): ResponseEntity<String> {
+        val content = paymentService.exportPaymentsToCsv(
+            requesterId = userId,
+            vaultId = vaultId,
+            startDate = startDate,
+            endDate = endDate
+        )
+
+        val headers = HttpHeaders()
+        headers.add("Content-Disposition", "attachment; filename=payments.csv")
+
+        return ResponseEntity.ok()
+            .headers(headers)
+            .contentType(MediaType.parseMediaType("text/csv"))
+            .body(content)
+    }
 
     @PostMapping("/create")
     fun createPayment(

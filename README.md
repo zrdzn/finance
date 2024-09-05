@@ -9,6 +9,8 @@ Each user can create multiple vaults, and automatically becomes a member with th
 Create and manage products and categories for easy reuse when adding payment records.
 ### Payment Records
 Create detailed payment records with the ability to add existing products to these records. 
+#### Export Payments to .CSV File
+Export payment records to a .CSV file for easy offline access and analysis.
 ### Statistics and Reporting
 View various statistics, including average expenses and total expenses over specific periods. 
 ### User and Member Management

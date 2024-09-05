@@ -5,6 +5,7 @@ import dev.zrdzn.finance.backend.payment.PaymentProductRepository
 import dev.zrdzn.finance.backend.payment.PaymentRepository
 import dev.zrdzn.finance.backend.payment.PaymentService
 import dev.zrdzn.finance.backend.product.ProductService
+import dev.zrdzn.finance.backend.user.UserService
 import dev.zrdzn.finance.backend.vault.VaultService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,7 +16,8 @@ class PaymentApplicationConfiguration(
     private val paymentProductRepository: PaymentProductRepository,
     private val productService: ProductService,
     private val exchangeService: ExchangeService,
-    private val vaultService: VaultService
+    private val vaultService: VaultService,
+    private val userService: UserService
 ) {
 
     @Bean
@@ -24,7 +26,8 @@ class PaymentApplicationConfiguration(
         paymentProductRepository = paymentProductRepository,
         productService = productService,
         exchangeService = exchangeService,
-        vaultService = vaultService
+        vaultService = vaultService,
+        userService = userService
     )
 
 }

@@ -1,11 +1,12 @@
 package dev.zrdzn.finance.backend.payment
 
+import com.opencsv.CSVWriter
 import dev.zrdzn.finance.backend.exchange.ExchangeService
 import dev.zrdzn.finance.backend.payment.api.PaymentCreateResponse
 import dev.zrdzn.finance.backend.payment.api.PaymentListResponse
 import dev.zrdzn.finance.backend.payment.api.PaymentMethod
-import dev.zrdzn.finance.backend.payment.api.ProductNotFoundException
 import dev.zrdzn.finance.backend.payment.api.PaymentResponse
+import dev.zrdzn.finance.backend.payment.api.ProductNotFoundException
 import dev.zrdzn.finance.backend.payment.api.expense.PaymentAverageExpensesResponse
 import dev.zrdzn.finance.backend.payment.api.expense.PaymentExpenseRange
 import dev.zrdzn.finance.backend.payment.api.expense.PaymentExpensesResponse
@@ -17,11 +18,15 @@ import dev.zrdzn.finance.backend.product.ProductService
 import dev.zrdzn.finance.backend.shared.Currency
 import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.user.UserId
+import dev.zrdzn.finance.backend.user.UserService
 import dev.zrdzn.finance.backend.vault.VaultId
 import dev.zrdzn.finance.backend.vault.VaultService
 import dev.zrdzn.finance.backend.vault.api.VaultPermission
+import java.io.StringWriter
 import java.math.BigDecimal
 import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import org.slf4j.LoggerFactory
 import org.springframework.transaction.annotation.Transactional
 
@@ -30,10 +35,44 @@ open class PaymentService(
     private val paymentProductRepository: PaymentProductRepository,
     private val productService: ProductService,
     private val exchangeService: ExchangeService,
-    private val vaultService: VaultService
+    private val vaultService: VaultService,
+    private val userService: UserService
 ) {
 
     private val logger = LoggerFactory.getLogger(PaymentService::class.java)
+
+    @Transactional
+    open fun exportPaymentsToCsv(requesterId: UserId, vaultId: VaultId, startDate: Instant, endDate: Instant): String {
+        val payments = getPayments(requesterId, vaultId, startDate, endDate).payments
+
+        val writer = StringWriter()
+        val csvWriter = CSVWriter(writer)
+
+        val headers = arrayOf("Payer Email", "Vault Name", "Payment Date", "Payment Method", "Description", "Total", "Currency")
+        csvWriter.writeNext(headers)
+
+        payments.forEach {
+            val createdAtLocalDateTime = Instant.ofEpochSecond(it.createdAt.epochSecond)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime()
+
+            val data = arrayOf(
+                userService.getUserById(it.userId)!!.email,
+                vaultService.getVault(vaultId = vaultId, requesterId = requesterId)!!.name,
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(createdAtLocalDateTime),
+                it.paymentMethod.toString(),
+                it.description ?: "",
+                it.total.toString(),
+                it.currency
+            )
+
+            csvWriter.writeNext(data)
+        }
+
+        csvWriter.close()
+
+        return writer.toString()
+    }
 
     @Transactional
     open fun createPayment(
@@ -112,17 +151,17 @@ open class PaymentService(
     }
 
     @Transactional(readOnly = true)
-    open fun getPaymentsByVaultId(requesterId: UserId, vaultId: VaultId): PaymentListResponse =
-        paymentRepository
+    open fun getPayments(requesterId: UserId, vaultId: VaultId): PaymentListResponse {
+        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.PAYMENT_READ)
+
+        return paymentRepository
             .findByVaultId(vaultId)
             .map {
-                vaultService.authorizeMember(vaultId, it.userId, VaultPermission.PAYMENT_READ)
-
                 PaymentResponse(
                     id = it.id!!,
                     userId = it.userId,
                     vaultId = it.vaultId,
-                    createdAt = it.payedAt.toString(),
+                    createdAt = it.createdAt,
                     paymentMethod = it.paymentMethod,
                     description = it.description,
                     totalInVaultCurrency = exchangeService.convertCurrency(
@@ -136,6 +175,34 @@ open class PaymentService(
             }
             .toSet()
             .let { PaymentListResponse(it) }
+    }
+
+    @Transactional(readOnly = true)
+    open fun getPayments(requesterId: UserId, vaultId: VaultId, startDate: Instant, endDate: Instant): PaymentListResponse {
+        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.PAYMENT_READ)
+
+        return paymentRepository
+            .findByVaultIdAndCreatedAtBetween(vaultId, startDate, endDate)
+            .map {
+                PaymentResponse(
+                    id = it.id!!,
+                    userId = it.userId,
+                    vaultId = it.vaultId,
+                    createdAt = it.createdAt,
+                    paymentMethod = it.paymentMethod,
+                    description = it.description,
+                    totalInVaultCurrency = exchangeService.convertCurrency(
+                        amount = it.total,
+                        source = it.currency,
+                        target = "PLN"
+                    ).amount,
+                    total = it.total,
+                    currency = it.currency
+                )
+            }
+            .toSet()
+            .let { PaymentListResponse(it) }
+    }
 
     @Transactional(readOnly = true)
     open fun getPaymentProducts(requesterId: UserId, paymentId: PaymentId): PaymentProductListResponse {
