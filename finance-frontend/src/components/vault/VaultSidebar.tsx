@@ -122,7 +122,7 @@ const BaseView = ({ vault }: VaultSidebarProperties) => {
                   <Menu>
                     <MenuButton as={Button} width={'full'} backgroundColor={theme.backgroundColor}>
                       <Flex alignItems={'center'} width={'full'} columnGap={2}>
-                        <FaUserPlus />
+                        <FaUser />
                         <Box>{authenticationDetails.username}</Box>
                       </Flex>
                     </MenuButton>
@@ -146,7 +146,7 @@ const DesktopView = (
   }: VaultSidebarProperties
 ) => {
   const theme = useTheme();
-  const { logout } = useAuthentication();
+  const { authenticationDetails, logout } = useAuthentication();
 
   return (
     <Flex
@@ -248,10 +248,19 @@ const DesktopView = (
         padding="4"
         borderTop={`1px solid ${theme.secondaryColor}`}
       >
-        <Button variant="ghost" width="100%" onClick={logout}>
-          <FaSignOutAlt />
-          {!isCollapsed && <Box ml={2}>Logout</Box>}
-        </Button>
+        {authenticationDetails && (
+          <Menu>
+            <MenuButton as={Button} width={'full'} backgroundColor={theme.backgroundColor}>
+              <Flex alignItems={'center'} width={'full'} columnGap={2}>
+                <FaUser />
+                {!isCollapsed && <Box>{authenticationDetails.username}</Box>}
+              </Flex>
+            </MenuButton>
+            <MenuList>
+              <MenuItem onClick={logout}>Logout</MenuItem>
+            </MenuList>
+          </Menu>
+        )}
       </Flex>
     </Flex>
   );
