@@ -4,6 +4,12 @@ import {SingleValue} from "react-select"
 export type SelectOptionProperties = {value: string, label: string}
 export type SelectProperties = SingleValue<SelectOptionProperties>
 
+export enum AnalyticsOverviewStatisticType {
+  TotalPaymentsMade = "TOTAL_PAYMENTS_MADE",
+  TotalExpenses = "TOTAL_EXPENSES",
+  AverageExpenses = "AVERAGE_EXPENSES",
+}
+
 // users
 export interface UserResponse {
   id: number

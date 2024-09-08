@@ -2,6 +2,7 @@ package dev.zrdzn.finance.backend.payment
 
 import com.opencsv.CSVWriter
 import dev.zrdzn.finance.backend.exchange.ExchangeService
+import dev.zrdzn.finance.backend.payment.api.PaymentAmountResponse
 import dev.zrdzn.finance.backend.payment.api.PaymentCreateResponse
 import dev.zrdzn.finance.backend.payment.api.PaymentListResponse
 import dev.zrdzn.finance.backend.payment.api.PaymentMethod
@@ -202,6 +203,15 @@ open class PaymentService(
             }
             .toSet()
             .let { PaymentListResponse(it) }
+    }
+
+    @Transactional(readOnly = true)
+    open fun getPaymentsAmount(requesterId: UserId, vaultId: VaultId): PaymentAmountResponse {
+        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.PAYMENT_READ)
+
+        return paymentRepository
+            .countByVaultId(vaultId)
+            .let { PaymentAmountResponse(it.toInt()) }
     }
 
     @Transactional(readOnly = true)

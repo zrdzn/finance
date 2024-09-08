@@ -26,7 +26,7 @@ import {
   FaUser,
   FaUserPlus
 } from "react-icons/fa"
-import {FaCalendarDays, FaGears, FaHouse, FaX} from "react-icons/fa6"
+import {FaCalendarDays, FaChartSimple, FaGears, FaHouse, FaX} from "react-icons/fa6"
 import {useAuthentication} from "@/hooks/authentication"
 import {useRouter} from "next/router"
 import {VaultResponse} from "@/components/api"
@@ -101,6 +101,7 @@ const BaseView = ({ vault }: VaultSidebarProperties) => {
                 { href: `/vault/${vault.publicId}`, icon: FaHouse, label: 'Overview' },
                 { href: `/vault/${vault.publicId}/payments`, icon: FaBook, label: 'Payments' },
                 { href: `/vault/${vault.publicId}/products`, icon: FaTags, label: 'Products' },
+                { href: `/vault/${vault.publicId}/statistics`, icon: FaChartSimple, label: 'Statistics' },
                 { href: `/vault/${vault.publicId}/schedules`, icon: FaCalendarDays, label: 'Schedules', isDisabled: true },
                 { href: `/vault/${vault.publicId}/members`, icon: FaUser, label: 'Members' },
                 { href: `/vault/${vault.publicId}/settings`, icon: FaGears, label: 'Settings', isDisabled: true }
@@ -209,6 +210,16 @@ const DesktopView = (
             leftIcon={<FaTags />}
           >
             {!isCollapsed && "Products"}
+          </Button>
+        </Link>
+        <Link href={`/vault/${vault.publicId}/statistics`} style={{ width: "100%" }}>
+          <Button
+            variant="ghost"
+            width="100%"
+            justifyContent={isCollapsed ? "center" : "flex-start"}
+            leftIcon={<FaChartSimple />}
+          >
+            {!isCollapsed && "Statistics"}
           </Button>
         </Link>
         <Link href={`/vault/${vault.publicId}/schedules`} style={{ width: "100%" }}>

@@ -2,6 +2,7 @@ package dev.zrdzn.finance.backend.payment.infrastructure
 
 import dev.zrdzn.finance.backend.payment.PaymentId
 import dev.zrdzn.finance.backend.payment.PaymentService
+import dev.zrdzn.finance.backend.payment.api.PaymentAmountResponse
 import dev.zrdzn.finance.backend.payment.api.PaymentCreateRequest
 import dev.zrdzn.finance.backend.payment.api.PaymentCreateResponse
 import dev.zrdzn.finance.backend.payment.api.PaymentListResponse
@@ -120,6 +121,12 @@ class PaymentController(
         @PathVariable vaultId: VaultId
     ): PaymentListResponse =
         paymentService.getPayments(userId, vaultId)
+
+    @GetMapping("/{vaultId}/amount")
+    fun getPaymentsAmountByVaultId(
+        @AuthenticationPrincipal userId: UserId,
+        @PathVariable vaultId: VaultId
+    ): PaymentAmountResponse = paymentService.getPaymentsAmount(userId, vaultId)
 
     @GetMapping("/{paymentId}/products")
     fun getPaymentProducts(
