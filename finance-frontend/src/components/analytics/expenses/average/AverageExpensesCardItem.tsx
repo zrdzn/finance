@@ -50,10 +50,7 @@ export const AverageExpensesCardItem = ({
                 <Heading size='sm'
                          isTruncated
                          maxWidth={'70%'}>
-                  {expensesRange === PaymentExpensesRange.Day && 'Per day'}
-                  {expensesRange === PaymentExpensesRange.Week && 'Per week'}
-                  {expensesRange === PaymentExpensesRange.Month && 'Per month'}
-                  {expensesRange === PaymentExpensesRange.Year && 'Per year'}
+                  Total
                 </Heading>
                 {
                   expenses && expenses.amount > 0 &&

@@ -17,6 +17,7 @@ import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/theme"
 import {PaymentExpensesRange, PaymentExpensesResponse, PaymentResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/apiClient"
+import {ExpensesChart} from "@/components/analytics/expenses/ExpensesChart"
 
 interface ExpensesCardItemProperties {
   vault: VaultResponse
@@ -47,52 +48,25 @@ export const ExpensesCardItem = ({
 
   return (
     <Accordion allowToggle width={'full'}>
-      <AccordionItem width={'full'}
-                     paddingY={4}
-                     borderTop={'none'}>
-          <AccordionButton width={'full'}>
-            <Box width={'full'}>
-              <Flex justifyContent={'space-between'}>
-                <Heading size='sm'
-                         isTruncated
-                         maxWidth={'70%'}>
-                  {expensesRange === PaymentExpensesRange.Day && 'Last 24 hours'}
-                  {expensesRange === PaymentExpensesRange.Week && 'Last 7 days'}
-                  {expensesRange === PaymentExpensesRange.Month && 'Last 30 days'}
-                  {expensesRange === PaymentExpensesRange.Year && 'Last 365 days'}
-                </Heading>
-                {
-                  expenses && expenses.amount > 0 &&
-                    <Heading size={'md'}>
-                      {expenses.amount.toFixed(2)} {expenses.currency}
-                    </Heading>
-                }
-                {
-                  expenses && expenses.amount === 0 &&
-                    <Heading size={'md'}>
-                      0.00 {expenses.currency}
-                    </Heading>
-                }
-                {
-                  !expenses &&
-                    <Heading size={'md'}>
-                        N/A
-                    </Heading>
-                }
-              </Flex>
-              <Flex justifyContent={'space-between'}>
-                <Text color={'dimgray'}
-                      fontSize={'sm'}
-                      letterSpacing={0.2}>
-                </Text>
-                <Text color={'dimgray'}
-                      fontSize={'sm'}
-                      letterSpacing={0.5}>
-                </Text>
-              </Flex>
-            </Box>
-          </AccordionButton>
+      <AccordionItem width={'full'} paddingY={4} borderTop={'none'}>
+        <AccordionButton width={'full'}>
+          <Box width={'full'}>
+            <Flex justifyContent={'space-between'}>
+              <Heading size='sm' isTruncated maxWidth={'70%'}>
+                Total
+              </Heading>
+              <Heading size={'md'}>
+                {expenses.amount.toFixed(2)} {expenses.currency}
+              </Heading>
+            </Flex>
+            <Flex justifyContent={'center'} mt={6}>
+              <Box width={{ base: '100%', sm: '100%', md: '100%' }} height={{ base: '250px', sm: '250px', md: '250px' }}>
+                <ExpensesChart />
+              </Box>
+            </Flex>
+          </Box>
+        </AccordionButton>
       </AccordionItem>
     </Accordion>
-  )
+  );
 }
