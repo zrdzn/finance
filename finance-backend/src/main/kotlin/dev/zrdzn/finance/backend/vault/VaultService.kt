@@ -6,6 +6,7 @@ import dev.zrdzn.finance.backend.shared.createRandomToken
 import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.user.UserService
 import dev.zrdzn.finance.backend.user.api.UserNotFoundException
+import dev.zrdzn.finance.backend.vault.api.UserNotMemberOfVaultException
 import dev.zrdzn.finance.backend.vault.api.VaultCreateResponse
 import dev.zrdzn.finance.backend.vault.api.VaultInsufficientPermissionException
 import dev.zrdzn.finance.backend.vault.api.VaultInvitationListResponse
@@ -48,7 +49,7 @@ open class VaultService(
                     user = userService.getUserById(it.userId)!!,
                     role = it.vaultRole
                 )
-            } ?: throw VaultMemberNotFoundException(vaultId, userId)
+            } ?: throw UserNotMemberOfVaultException(vaultId, userId)
 
         when {
             !member.role.hasPermission(requiredPermission) -> throw VaultInsufficientPermissionException(vaultId, userId, requiredPermission)
@@ -243,6 +244,19 @@ open class VaultService(
     }
 
     @Transactional(readOnly = true)
+    open fun getVaultMemberForcefully(vaultMemberId: VaultMemberId): VaultMemberResponse =
+        vaultMemberRepository.findById(vaultMemberId)
+            ?.let {
+                VaultMemberResponse(
+                    id = it.id!!,
+                    vaultId = it.vaultId,
+                    user = userService.getUserById(it.userId)!!,
+                    role = it.vaultRole
+                )
+            }
+            ?: throw VaultMemberNotFoundException(vaultMemberId)
+
+    @Transactional(readOnly = true)
     open fun getVaultInvitations(vaultId: VaultId, requesterId: UserId): VaultInvitationListResponse {
         authorizeMember(vaultId, requesterId, VaultPermission.MEMBER_INVITE_READ)
 
@@ -288,7 +302,7 @@ open class VaultService(
             ?.vaultRole
             ?.getPermissions()
             ?.let { VaultPermissionListResponse(it) }
-            ?: throw VaultMemberNotFoundException(vaultId, userId)
+            ?: throw UserNotMemberOfVaultException(vaultId, userId)
     }
 
     @Transactional

@@ -151,3 +151,11 @@ export interface AuthenticationDetails {
   email: string
   username: string
 }
+
+// audits
+export interface AuditResponse {
+  id: number
+  createdAt: number
+  vaultMember: VaultMemberResponse
+  description: string
+}

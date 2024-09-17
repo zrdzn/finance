@@ -1,5 +1,6 @@
 package dev.zrdzn.finance.backend.vault.api
 
+import dev.zrdzn.finance.backend.vault.api.VaultPermission.AUDIT_READ
 import dev.zrdzn.finance.backend.vault.api.VaultPermission.CATEGORY_CREATE
 import dev.zrdzn.finance.backend.vault.api.VaultPermission.CATEGORY_DELETE
 import dev.zrdzn.finance.backend.vault.api.VaultPermission.CATEGORY_READ
@@ -32,6 +33,7 @@ private val MEMBER_PERMISSIONS = setOf(
 
 private val MANAGER_PERMISSIONS = MEMBER_PERMISSIONS.union(
     setOf(
+        AUDIT_READ,
         SETTINGS_READ, SETTINGS_UPDATE,
         MEMBER_REMOVE,
         MEMBER_INVITE_CREATE, MEMBER_INVITE_DELETE

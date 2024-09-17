@@ -2,6 +2,7 @@ package dev.zrdzn.finance.backend.vault.infrastructure
 
 import dev.zrdzn.finance.backend.shared.ErrorResponse
 import dev.zrdzn.finance.backend.shared.toResponse
+import dev.zrdzn.finance.backend.vault.api.UserNotMemberOfVaultException
 import dev.zrdzn.finance.backend.vault.api.VaultInsufficientPermissionException
 import dev.zrdzn.finance.backend.vault.api.VaultInvitationNotFoundException
 import dev.zrdzn.finance.backend.vault.api.VaultInvitationNotOwnedException
@@ -39,5 +40,10 @@ class VaultExceptionHandler {
     fun handleVaultMemberNotFoundException(
         exception: VaultMemberNotFoundException
     ): ResponseEntity<ErrorResponse> = exception.toResponse(HttpStatus.NOT_FOUND)
+
+    @ExceptionHandler(UserNotMemberOfVaultException::class)
+    fun handleUserNotMemberOfVaultException(
+        exception: UserNotMemberOfVaultException
+    ): ResponseEntity<ErrorResponse> = exception.toResponse(HttpStatus.FORBIDDEN)
 
 }
