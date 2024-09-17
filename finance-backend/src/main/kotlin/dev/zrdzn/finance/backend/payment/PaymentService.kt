@@ -3,9 +3,12 @@ package dev.zrdzn.finance.backend.payment
 import com.opencsv.CSVWriter
 import dev.zrdzn.finance.backend.exchange.ExchangeService
 import dev.zrdzn.finance.backend.payment.api.PaymentAmountResponse
+import dev.zrdzn.finance.backend.payment.api.PaymentChartDataListResponse
+import dev.zrdzn.finance.backend.payment.api.PaymentChartDataResponse
 import dev.zrdzn.finance.backend.payment.api.PaymentCreateResponse
 import dev.zrdzn.finance.backend.payment.api.PaymentListResponse
 import dev.zrdzn.finance.backend.payment.api.PaymentMethod
+import dev.zrdzn.finance.backend.payment.api.PaymentRawChartData
 import dev.zrdzn.finance.backend.payment.api.PaymentResponse
 import dev.zrdzn.finance.backend.payment.api.ProductNotFoundException
 import dev.zrdzn.finance.backend.payment.api.expense.PaymentAverageExpensesResponse
@@ -25,7 +28,10 @@ import dev.zrdzn.finance.backend.vault.VaultService
 import dev.zrdzn.finance.backend.vault.api.VaultPermission
 import java.io.StringWriter
 import java.math.BigDecimal
+import java.time.DayOfWeek
 import java.time.Instant
+import java.time.LocalDate
+import java.time.Month
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import org.slf4j.LoggerFactory
@@ -293,6 +299,81 @@ open class PaymentService(
                 currency = currency
             )
         )
+    }
+
+    @Transactional(readOnly = true)
+    open fun getExpensesForChart(requesterId: UserId, vaultId: VaultId, startDate: Instant, range: PaymentExpenseRange): PaymentChartDataListResponse {
+        vaultService.authorizeMember(vaultId = vaultId, userId = requesterId, requiredPermission = VaultPermission.DETAILS_READ)
+
+        val rawData = when (range) {
+            PaymentExpenseRange.DAY -> paymentRepository.findDailyExpenses(startDate, vaultId)
+            PaymentExpenseRange.WEEK -> paymentRepository.findWeeklyExpenses(startDate, vaultId)
+            PaymentExpenseRange.MONTH -> paymentRepository.findMonthlyExpenses(startDate, vaultId)
+            PaymentExpenseRange.YEAR -> paymentRepository.findYearlyExpenses(startDate, vaultId)
+        }
+
+        return when (range) {
+            PaymentExpenseRange.DAY -> fillDailyData(rawData)
+            PaymentExpenseRange.WEEK -> fillWeeklyData(rawData)
+            PaymentExpenseRange.MONTH -> fillMonthlyData(rawData)
+            PaymentExpenseRange.YEAR -> fillYearlyData(rawData)
+        }
+    }
+
+    private fun fillDailyData(rawData: List<PaymentRawChartData>): PaymentChartDataListResponse {
+        val dailyData = (1..24).associateWith { BigDecimal.ZERO }.toMutableMap()
+
+        rawData.forEach { data ->
+            val date = LocalDate.ofInstant(data.period, ZoneId.systemDefault())
+            dailyData[date.dayOfMonth] = data.value
+        }
+
+        return dailyData.map { (day, value) ->
+            PaymentChartDataResponse(day.toString(), value)
+        }
+            .let { PaymentChartDataListResponse(it) }
+    }
+
+    private fun fillWeeklyData(rawData: List<PaymentRawChartData>): PaymentChartDataListResponse {
+        val weeklyData = DayOfWeek.entries.associateWith { BigDecimal.ZERO }.toMutableMap()
+
+        rawData.forEach { data ->
+            val date = LocalDate.ofInstant(data.period, ZoneId.systemDefault())
+            weeklyData[date.dayOfWeek] = data.value
+        }
+
+        return weeklyData.map { (day, value) ->
+            PaymentChartDataResponse(day.name, value)
+        }
+            .let { PaymentChartDataListResponse(it) }
+    }
+
+    private fun fillMonthlyData(rawData: List<PaymentRawChartData>): PaymentChartDataListResponse {
+        val monthlyData = (1..31).associateWith { BigDecimal.ZERO }.toMutableMap()
+
+        rawData.forEach { data ->
+            val date = LocalDate.ofInstant(data.period, ZoneId.systemDefault())
+            monthlyData[date.dayOfMonth] = data.value
+        }
+
+        return monthlyData.map { (day, value) ->
+            PaymentChartDataResponse(day.toString(), value)
+        }
+            .let { PaymentChartDataListResponse(it) }
+    }
+
+    private fun fillYearlyData(rawData: List<PaymentRawChartData>): PaymentChartDataListResponse {
+        val yearlyData = Month.entries.associateWith { BigDecimal.ZERO }.toMutableMap()
+
+        rawData.forEach { data ->
+            val date = LocalDate.ofInstant(data.period, ZoneId.systemDefault())
+            yearlyData[date.month] = data.value
+        }
+
+        return yearlyData.map { (month, value) ->
+            PaymentChartDataResponse(month.name, value)
+        }
+            .let { PaymentChartDataListResponse(it) }
     }
 
 }

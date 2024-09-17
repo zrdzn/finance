@@ -1,4 +1,16 @@
-import {Card, CardBody, CardHeader, Flex, Heading, Stack} from "@chakra-ui/react"
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Flex,
+  Heading,
+  Stack,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs
+} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/theme"
 import {PaymentExpensesRange, PaymentResponse, VaultResponse} from "@/components/api"
@@ -22,12 +34,28 @@ export const ExpensesCard = ({ vault }: ExpensesStatisticCardProperties) => {
         </Flex>
       </CardHeader>
       <CardBody>
-        <Stack gap={0}>
-          <ExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Day} />
-          <ExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Week} />
-          <ExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Month} />
-          <ExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Year} />
-        </Stack>
+          <Tabs isFitted>
+            <TabList>
+              <Tab>24 hours</Tab>
+              <Tab>7 days</Tab>
+              <Tab>30 days</Tab>
+              <Tab>365 days</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <ExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Day} />
+              </TabPanel>
+              <TabPanel>
+                <ExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Week} />
+              </TabPanel>
+              <TabPanel>
+                <ExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Month} />
+              </TabPanel>
+              <TabPanel>
+                <ExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Year} />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
       </CardBody>
     </Card>
   )
