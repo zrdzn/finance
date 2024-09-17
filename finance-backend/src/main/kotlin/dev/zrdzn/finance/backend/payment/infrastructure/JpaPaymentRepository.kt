@@ -3,6 +3,7 @@ package dev.zrdzn.finance.backend.payment.infrastructure
 import dev.zrdzn.finance.backend.payment.Payment
 import dev.zrdzn.finance.backend.payment.PaymentId
 import dev.zrdzn.finance.backend.payment.PaymentRepository
+import dev.zrdzn.finance.backend.payment.api.PaymentRawChartData
 import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.vault.VaultId
 import java.time.Instant
@@ -46,5 +47,49 @@ interface JpaPaymentRepository : PaymentRepository, Repository<Payment, PaymentI
     """
     )
     override fun countTotalDaysByVaultId(@Param("vaultId") vaultId: VaultId): Long
+
+    @Query("""
+        SELECT new dev.zrdzn.finance.backend.payment.api.PaymentRawChartData(
+            FUNCTION('date_trunc', 'day', payment.createdAt), 
+            SUM(payment.total)
+        )    
+        FROM Payment payment WHERE payment.createdAt >= :startDate AND payment.vaultId = :vaultId 
+        GROUP BY FUNCTION('date_trunc', 'day', payment.createdAt) 
+        ORDER BY FUNCTION('date_trunc', 'day', payment.createdAt)
+    """)
+    override fun findDailyExpenses(@Param("startDate") startDate: Instant, @Param("vaultId") vaultId: VaultId): List<PaymentRawChartData>
+
+    @Query("""
+        SELECT new dev.zrdzn.finance.backend.payment.api.PaymentRawChartData(
+            FUNCTION('date_trunc', 'week', payment.createdAt), 
+            SUM(payment.total)
+        )    
+        FROM Payment payment WHERE payment.createdAt >= :startDate AND payment.vaultId = :vaultId 
+        GROUP BY FUNCTION('date_trunc', 'week', payment.createdAt) 
+        ORDER BY FUNCTION('date_trunc', 'week', payment.createdAt)
+    """)
+    override fun findWeeklyExpenses(@Param("startDate") startDate: Instant, @Param("vaultId") vaultId: VaultId): List<PaymentRawChartData>
+
+    @Query("""
+        SELECT new dev.zrdzn.finance.backend.payment.api.PaymentRawChartData(
+            FUNCTION('date_trunc', 'month', payment.createdAt), 
+            SUM(payment.total)
+        )     
+        FROM Payment payment WHERE payment.createdAt >= :startDate AND payment.vaultId = :vaultId 
+        GROUP BY FUNCTION('date_trunc', 'month', payment.createdAt) 
+        ORDER BY FUNCTION('date_trunc', 'month', payment.createdAt)
+    """)
+    override fun findMonthlyExpenses(@Param("startDate") startDate: Instant, @Param("vaultId") vaultId: VaultId): List<PaymentRawChartData>
+
+    @Query("""
+        SELECT new dev.zrdzn.finance.backend.payment.api.PaymentRawChartData(
+            FUNCTION('date_trunc', 'year', payment.createdAt), 
+            SUM(payment.total)
+        )    
+        FROM Payment payment WHERE payment.createdAt >= :startDate AND payment.vaultId = :vaultId 
+        GROUP BY FUNCTION('date_trunc', 'year', payment.createdAt) 
+        ORDER BY FUNCTION('date_trunc', 'year', payment.createdAt)
+    """)
+    override fun findYearlyExpenses(@Param("startDate") startDate: Instant, @Param("vaultId") vaultId: VaultId): List<PaymentRawChartData>
 
 }

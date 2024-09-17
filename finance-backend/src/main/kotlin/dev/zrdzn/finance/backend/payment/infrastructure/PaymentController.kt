@@ -3,6 +3,7 @@ package dev.zrdzn.finance.backend.payment.infrastructure
 import dev.zrdzn.finance.backend.payment.PaymentId
 import dev.zrdzn.finance.backend.payment.PaymentService
 import dev.zrdzn.finance.backend.payment.api.PaymentAmountResponse
+import dev.zrdzn.finance.backend.payment.api.PaymentChartDataListResponse
 import dev.zrdzn.finance.backend.payment.api.PaymentCreateRequest
 import dev.zrdzn.finance.backend.payment.api.PaymentCreateResponse
 import dev.zrdzn.finance.backend.payment.api.PaymentListResponse
@@ -162,5 +163,19 @@ class PaymentController(
             currency = currency,
             range = range
         )
+
+    @GetMapping("/{vaultId}/expenses-chart-data")
+    fun getExpensesChartData(
+        @AuthenticationPrincipal userId: UserId,
+        @PathVariable vaultId: VaultId,
+        @RequestParam("currency") currency: Currency,
+        @RequestParam("start") start: Instant,
+        @RequestParam("range") range: PaymentExpenseRange
+    ): PaymentChartDataListResponse = paymentService.getExpensesForChart(
+        requesterId = userId,
+        vaultId = vaultId,
+        startDate = start,
+        range = range
+    )
 
 }

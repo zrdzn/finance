@@ -20,31 +20,28 @@ import {useApi} from "@/hooks/apiClient"
 import {ExpensesChart} from "@/components/analytics/expenses/ExpensesChart"
 
 interface ExpensesCardItemProperties {
-  vault: VaultResponse
-  expensesRange: PaymentExpensesRange
+  vault: VaultResponse;
+  expensesRange: PaymentExpensesRange;
 }
 
-export const ExpensesCardItem = ({
-  vault,
-  expensesRange
-}: ExpensesCardItemProperties) => {
-  const api = useApi()
+export const ExpensesCardItem = ({ vault, expensesRange }: ExpensesCardItemProperties) => {
+  const api = useApi();
   const [expenses, setExpenses] = useState<PaymentExpensesResponse>({
     amount: 0,
     currency: 'PLN'
-  })
+  });
 
   useEffect(() => {
-    const startDate = new Date()
-    if (expensesRange === PaymentExpensesRange.Day) startDate.setDate(startDate.getDate() - 1)
-    if (expensesRange === PaymentExpensesRange.Week) startDate.setDate(startDate.getDate() - 7)
-    if (expensesRange === PaymentExpensesRange.Month) startDate.setMonth(startDate.getMonth() - 1)
-    if (expensesRange === PaymentExpensesRange.Year) startDate.setFullYear(startDate.getFullYear() - 1)
+    const startDate = new Date();
+    if (expensesRange === PaymentExpensesRange.Day) startDate.setDate(startDate.getDate() - 1);
+    if (expensesRange === PaymentExpensesRange.Week) startDate.setDate(startDate.getDate() - 7);
+    if (expensesRange === PaymentExpensesRange.Month) startDate.setMonth(startDate.getMonth() - 1);
+    if (expensesRange === PaymentExpensesRange.Year) startDate.setFullYear(startDate.getFullYear() - 1);
 
     api.get(`/payment/${vault.id}/expenses?currency=PLN&start=${startDate.toISOString()}`)
       .then(response => setExpenses(response.data.total))
-      .catch(error => console.error(error))
-  }, [api, expensesRange, vault.id])
+      .catch(error => console.error(error));
+  }, [api, expensesRange, vault.id]);
 
   return (
     <Accordion allowToggle width={'full'}>
@@ -61,7 +58,7 @@ export const ExpensesCardItem = ({
             </Flex>
             <Flex justifyContent={'center'} mt={6}>
               <Box width={{ base: '100%', sm: '100%', md: '100%' }} height={{ base: '250px', sm: '250px', md: '250px' }}>
-                <ExpensesChart />
+                <ExpensesChart vault={vault} expensesRange={expensesRange} />
               </Box>
             </Flex>
           </Box>
@@ -69,4 +66,4 @@ export const ExpensesCardItem = ({
       </AccordionItem>
     </Accordion>
   );
-}
+};

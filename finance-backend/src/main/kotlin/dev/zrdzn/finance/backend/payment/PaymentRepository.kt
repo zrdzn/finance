@@ -1,5 +1,6 @@
 package dev.zrdzn.finance.backend.payment
 
+import dev.zrdzn.finance.backend.payment.api.PaymentRawChartData
 import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.vault.VaultId
 import java.time.Instant
@@ -23,5 +24,13 @@ interface PaymentRepository {
     fun sumAndGroupExpensesByVaultId(vaultId: VaultId, start: Instant): List<Price>
 
     fun countTotalDaysByVaultId(vaultId: VaultId): Long
+
+    fun findDailyExpenses(startDate: Instant, vaultId: VaultId): List<PaymentRawChartData>
+
+    fun findWeeklyExpenses(startDate: Instant, vaultId: VaultId): List<PaymentRawChartData>
+
+    fun findMonthlyExpenses(startDate: Instant, vaultId: VaultId): List<PaymentRawChartData>
+
+    fun findYearlyExpenses(startDate: Instant, vaultId: VaultId): List<PaymentRawChartData>
 
 }
