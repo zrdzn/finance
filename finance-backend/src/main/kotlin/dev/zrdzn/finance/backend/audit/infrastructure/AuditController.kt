@@ -17,7 +17,7 @@ class AuditController(
 ) {
 
     @GetMapping("/{vaultId}")
-    fun getCategoriesByVaultId(
+    fun getAudits(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable vaultId: VaultId
     ): AuditListResponse = auditService.getAudits(requesterId = userId, vaultId = vaultId)
