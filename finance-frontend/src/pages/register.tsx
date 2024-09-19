@@ -1,9 +1,16 @@
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
-import {Layout} from "@/components/Layout";
 import Head from 'next/head';
 import {
-  Button, Card, CardBody, CardHeader, Flex,
-  FormControl, FormErrorMessage, FormLabel, Heading, Input, Stack
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Stack
 } from "@chakra-ui/react";
 import React, {ChangeEvent, useEffect, useState} from "react";
 import {useApi} from "@/hooks/useApi"

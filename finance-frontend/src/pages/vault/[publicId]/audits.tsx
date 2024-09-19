@@ -1,14 +1,9 @@
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
-import {
-  Flex, Heading, Table, Tbody, Td, Th, Thead, Tr
-} from "@chakra-ui/react";
-import React, {useEffect} from "react";
+import {Flex} from "@chakra-ui/react";
+import React from "react";
 import {ProtectedVault} from "@/components/vault/ProtectedVault"
-import {PaymentsCard} from "@/components/payment/PaymentsCard"
-import {SettingsCard} from "@/components/settings/SettingsCard"
 import {useRouter} from "next/router"
-import {useApi} from "@/hooks/useApi"
 import {AuditTable} from "@/components/audit/AuditTable"
 
 export default function Audits(): ReactJSXElement {

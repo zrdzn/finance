@@ -2,7 +2,6 @@ import {Card, CardBody, CardHeader, Flex, Heading, Stack} from "@chakra-ui/react
 import React from "react"
 import {useTheme} from "@/hooks/useTheme"
 import {AnalyticsOverviewStatisticType, VaultResponse} from "@/components/api"
-import {useApi} from "@/hooks/useApi"
 import {AnalyticsSummaryCardItem} from "@/components/analytics/AnalyticsSummaryCardItem"
 
 interface AnalyticsSummaryCardProperties {
@@ -12,7 +11,6 @@ interface AnalyticsSummaryCardProperties {
 
 export const AnalyticsSummaryCard = ({ vault, permissions }: AnalyticsSummaryCardProperties) => {
   const theme = useTheme()
-  const api = useApi()
 
   return (
     <Card margin={2}>

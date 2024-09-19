@@ -1,10 +1,6 @@
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
-import {Layout} from "@/components/Layout";
 import Head from 'next/head';
-import {
-  Button,
-  Flex, Heading, HStack, Link, Text
-} from "@chakra-ui/react";
+import {Button, Flex, Heading, HStack, Link, Text} from "@chakra-ui/react";
 import React, {useEffect, useState} from "react";
 import {useApi} from "@/hooks/useApi"
 import {VaultCard} from "@/components/vault/VaultCard"

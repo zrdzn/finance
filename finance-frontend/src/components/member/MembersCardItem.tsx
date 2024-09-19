@@ -1,21 +1,18 @@
 import {
-  Accordion, AccordionButton, AccordionIcon, AccordionItem,
-  AccordionPanel,
-  Box, Button,
-  Card,
-  CardBody,
-  CardHeader, Divider,
+  Accordion,
+  AccordionButton,
+  AccordionItem,
+  Box,
   Flex,
-  Heading, HStack,
-  Link,
-  Stack,
-  StackDivider, Tag, TagLabel, TagLeftIcon,
+  Heading,
+  HStack,
+  Tag,
+  TagLabel,
   Text
 } from "@chakra-ui/react"
-import React, {useEffect, useState} from "react"
+import React from "react"
 import {VaultMemberResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
-import {EditProductButton} from "@/components/product/EditProductButton"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
 import toast from "react-hot-toast"

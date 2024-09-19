@@ -1,11 +1,8 @@
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
-import {
-  Flex
-} from "@chakra-ui/react";
+import {Flex} from "@chakra-ui/react";
 import React from "react";
 import {ProtectedVault} from "@/components/vault/ProtectedVault"
-import {PaymentsCard} from "@/components/payment/PaymentsCard"
 import {SettingsCard} from "@/components/settings/SettingsCard"
 import {useRouter} from "next/router"
 

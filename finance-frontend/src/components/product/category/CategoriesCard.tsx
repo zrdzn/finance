@@ -1,28 +1,11 @@
-import {
-  Box,
-  Card,
-  CardBody,
-  CardHeader,
-  Divider,
-  Flex,
-  Heading,
-  Input,
-  Link,
-  Stack,
-  StackDivider,
-  Text
-} from "@chakra-ui/react"
-import {AddPaymentButton} from "@/components/payment/AddPaymentButton"
+import {Card, CardBody, CardHeader, Divider, Flex, Heading, Stack, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {ProductResponse, PaymentResponse, VaultResponse} from "@/components/api"
+import {ProductResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
-import {PaymentsCardItem} from "@/components/payment/PaymentsCardItem"
 import {CategoriesCardItem} from "@/components/product/category/CategoriesCardItem"
-import {AddProductButton} from "@/components/product/AddProductButton"
 import {AddCategoryButton} from "@/components/product/category/AddCategoryButton"
 import {SearchBar} from "@/components/shared/SearchBar"
-import {PaymentsCard} from "@/components/payment/PaymentsCard"
 
 interface CategoriesCardProperties {
   vault: VaultResponse

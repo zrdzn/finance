@@ -1,25 +1,25 @@
-import {AnalyticsOverviewStatisticType, AuditResponse, VaultResponse} from "@/components/api"
+import {AuditResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
 import {
+  Accordion,
+  AccordionButton,
+  AccordionItem,
+  Box,
   Card,
   CardBody,
   CardHeader,
+  Divider,
   Flex,
-  Text,
   Heading,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  Box,
-  Stack, AccordionItem, AccordionButton, Accordion, Divider, HStack, Tag, TagLabel
+  HStack,
+  Tag,
+  TagLabel,
+  Text
 } from "@chakra-ui/react"
 import {useDateFormatter} from "@/hooks/useDateFormatter"
-import {FaClock, FaLink, FaUser} from "react-icons/fa"
+import {FaClock, FaUser} from "react-icons/fa"
 import {FaCircleCheck} from "react-icons/fa6"
 import {useAuditActionFormatter} from "@/hooks/useAuditActionFormatter"
 

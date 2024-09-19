@@ -1,24 +1,9 @@
-import {
-  Accordion, AccordionButton, AccordionIcon, AccordionItem,
-  AccordionPanel,
-  Box, Button,
-  Card,
-  CardBody,
-  CardHeader, Divider,
-  Flex,
-  Heading, HStack,
-  Link,
-  Stack,
-  StackDivider, Tag, TagLabel, TagLeftIcon,
-  Text
-} from "@chakra-ui/react"
-import React, {useEffect, useState} from "react"
-import {VaultInvitationResponse, VaultMemberResponse} from "@/components/api"
+import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, HStack, Tag, TagLabel} from "@chakra-ui/react"
+import React from "react"
+import {VaultInvitationResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
-import {EditProductButton} from "@/components/product/EditProductButton"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
-import {InvitationCreateButton} from "@/components/member/invitation/InvitationCreateButton"
 import toast from "react-hot-toast"
 
 interface InvitationsCardItemProperties {

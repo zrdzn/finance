@@ -1,5 +1,4 @@
-import {Box, Card, CardBody, CardHeader, Flex, Heading, Link, Stack, StackDivider, Text} from "@chakra-ui/react"
-import {AddPaymentButton} from "@/components/payment/AddPaymentButton"
+import {Box, Card, CardBody, CardHeader, Flex, Heading, Link, Stack, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
 import {PaymentResponse, VaultResponse} from "@/components/api"

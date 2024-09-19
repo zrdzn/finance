@@ -1,19 +1,23 @@
 import {
+  Button,
+  FormControl,
+  FormLabel,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
-  ModalCloseButton, useDisclosure, Button, FormControl, FormLabel, Input,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
 } from '@chakra-ui/react'
-import React, {ChangeEvent, useRef, useState} from "react"
-import {FaEdit, FaPlus} from "react-icons/fa"
+import React, {useRef, useState} from "react"
+import {FaEdit} from "react-icons/fa"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
 import {CategoryResponse, ProductResponse, ProductUpdateRequest} from "@/components/api"
 import {CategorySelect} from "@/components/product/category/CategorySelect"
-import { useRouter } from 'next/router'
+import {useRouter} from 'next/router'
 import toast from "react-hot-toast"
 
 interface EditProductButtonProperties {

@@ -1,22 +1,8 @@
-import {
-  Box, Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Flex,
-  FormControl, FormErrorMessage, FormLabel,
-  Heading, Input,
-  Link,
-  Stack,
-  StackDivider,
-  Text
-} from "@chakra-ui/react"
-import {AddPaymentButton} from "@/components/payment/AddPaymentButton"
-import React, {useEffect, useState} from "react"
+import {Button, Card, CardBody, CardHeader, Flex, FormControl, FormLabel, Heading, Input, Stack} from "@chakra-ui/react"
+import React, {useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {PaymentResponse, VaultResponse, VaultUpdateRequest} from "@/components/api"
+import {VaultResponse, VaultUpdateRequest} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
-import {PaymentsCardItem} from "@/components/payment/PaymentsCardItem"
 import {useRouter} from "next/router"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
 import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"

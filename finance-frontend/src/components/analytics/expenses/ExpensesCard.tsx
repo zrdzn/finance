@@ -1,8 +1,7 @@
 import {Card, CardBody, CardHeader, Flex, Heading, Stack} from "@chakra-ui/react"
-import React, {useEffect, useState} from "react"
+import React from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {PaymentExpensesRange, PaymentResponse, VaultResponse} from "@/components/api"
-import {useApi} from "@/hooks/useApi"
+import {PaymentExpensesRange, VaultResponse} from "@/components/api"
 import {ExpensesCardItem} from "@/components/analytics/expenses/ExpensesCardItem"
 
 interface ExpensesStatisticCardProperties {

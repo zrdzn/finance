@@ -1,26 +1,11 @@
-import {
-  Box,
-  Card,
-  CardBody,
-  CardHeader,
-  Divider,
-  Flex,
-  Heading,
-  Link,
-  Stack,
-  StackDivider,
-  Text
-} from "@chakra-ui/react"
+import {Card, CardBody, CardHeader, Divider, Flex, Heading, Stack, Text} from "@chakra-ui/react"
 import {AddPaymentButton} from "@/components/payment/AddPaymentButton"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {PaymentResponse, ProductResponse, VaultResponse} from "@/components/api"
+import {PaymentResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {PaymentsCardItem} from "@/components/payment/PaymentsCardItem"
-import {InvitationCreateButton} from "@/components/member/invitation/InvitationCreateButton"
 import {SearchBar} from "@/components/shared/SearchBar"
-import {AddProductButton} from "@/components/product/AddProductButton"
-import {router} from "next/client"
 import {useRouter} from "next/router"
 
 interface PaymentsCardProperties {

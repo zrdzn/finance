@@ -1,31 +1,26 @@
 import {
   Box,
-  Button, Divider,
+  Button,
+  Divider,
   Drawer,
   DrawerBody,
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
-  Flex, IconButton,
-  Link, Menu, MenuButton, MenuItem, MenuList, Text,
+  Flex,
+  Link,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Text,
   useDisclosure,
   useMediaQuery
 } from "@chakra-ui/react";
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace"
 import {useTheme} from "@/hooks/useTheme"
-import React, {useState} from "react"
-import {
-  FaAngleLeft,
-  FaAngleRight,
-  FaBars,
-  FaBook,
-  FaChevronLeft,
-  FaChevronRight, FaHistory,
-  FaSignInAlt, FaSignOutAlt,
-  FaTags,
-  FaUser,
-  FaUserPlus
-} from "react-icons/fa"
+import React from "react"
+import {FaAngleLeft, FaAngleRight, FaBars, FaBook, FaHistory, FaTags, FaUser} from "react-icons/fa"
 import {FaCalendarDays, FaChartSimple, FaGears, FaHouse, FaX} from "react-icons/fa6"
 import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"

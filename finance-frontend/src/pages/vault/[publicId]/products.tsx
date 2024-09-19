@@ -1,14 +1,11 @@
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
-import {
-  Flex, Grid
-} from "@chakra-ui/react";
+import {Flex, Grid} from "@chakra-ui/react";
 import React from "react";
 import {useRouter} from "next/router"
 import {ProtectedVault} from "@/components/vault/ProtectedVault"
 import {ProductsCard} from "@/components/product/ProductsCard"
 import {CategoriesCard} from "@/components/product/category/CategoriesCard"
-import {AddProductButton} from "@/components/product/AddProductButton"
 
 export default function Products(): ReactJSXElement {
   const router = useRouter()

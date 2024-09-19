@@ -1,23 +1,7 @@
-import {
-  Accordion, AccordionButton, AccordionIcon, AccordionItem,
-  AccordionPanel,
-  Box, Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Flex,
-  Heading,
-  Link,
-  Stack,
-  StackDivider,
-  Text
-} from "@chakra-ui/react"
-import {AddPaymentButton} from "@/components/payment/AddPaymentButton"
+import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, Text} from "@chakra-ui/react"
 import React from "react"
-import {useTheme} from "@/hooks/useTheme"
-import {ProductResponse, PaymentResponse} from "@/components/api"
+import {ProductResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
-import {FaTrash} from "react-icons/fa"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
 import toast from "react-hot-toast"

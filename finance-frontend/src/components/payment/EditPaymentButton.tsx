@@ -1,25 +1,23 @@
 import {
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
-  ModalCloseButton, useDisclosure, Button, FormControl, FormLabel, Input,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
 } from '@chakra-ui/react'
 import React, {ChangeEvent, useRef, useState} from "react"
-import {FaEdit, FaPlus} from "react-icons/fa"
+import {FaEdit} from "react-icons/fa"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
-import {
-  PaymentResponse,
-  PaymentUpdateRequest,
-  ProductResponse,
-  ProductUpdateRequest,
-  SelectOptionProperties
-} from "@/components/api"
-import {CategorySelect} from "@/components/product/category/CategorySelect"
-import { useRouter } from 'next/router'
+import {PaymentResponse, PaymentUpdateRequest} from "@/components/api"
+import {useRouter} from 'next/router'
 import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"
 import {PriceInput} from "@/components/shared/PriceInput"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"

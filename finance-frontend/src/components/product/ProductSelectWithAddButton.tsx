@@ -1,39 +1,8 @@
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
-  Stack,
-  Text,
-  HStack, Flex,
-  Box,
-} from '@chakra-ui/react'
-import React, {ChangeEvent, useEffect, useRef, useState} from "react"
-import {FaPlus} from "react-icons/fa"
-import {useTheme} from "@/hooks/useTheme"
+import {Flex,} from '@chakra-ui/react'
+import React, {useEffect, useState} from "react"
 import {useApi} from "@/hooks/useApi"
-import {CategoryCreateRequest, PaymentProductCreateRequest, ProductResponse} from "@/components/api"
-import { useRouter } from 'next/router'
+import {ProductResponse} from "@/components/api"
 import {ProductSelect} from "@/components/product/ProductSelect"
-import {PriceInput} from "@/components/shared/PriceInput"
 import {AddProductButton} from "@/components/product/AddProductButton"
 import {Axios} from "axios"
 

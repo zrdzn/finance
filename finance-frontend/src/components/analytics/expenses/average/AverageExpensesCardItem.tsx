@@ -1,21 +1,6 @@
-import {
-  Accordion, AccordionButton, AccordionIcon, AccordionItem,
-  AccordionPanel,
-  Box,
-  Card,
-  CardBody,
-  CardHeader,
-  Flex,
-  Heading,
-  Link,
-  Stack,
-  StackDivider,
-  Text
-} from "@chakra-ui/react"
-import {AddPaymentButton} from "@/components/payment/AddPaymentButton"
+import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
-import {useTheme} from "@/hooks/useTheme"
-import {PaymentExpensesRange, PaymentExpensesResponse, PaymentResponse, VaultResponse} from "@/components/api"
+import {PaymentExpensesRange, PaymentExpensesResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 
 interface AverageExpensesCardItemProperties {

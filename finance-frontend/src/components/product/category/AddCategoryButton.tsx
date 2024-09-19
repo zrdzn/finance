@@ -1,18 +1,23 @@
 import {
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
-  ModalCloseButton, useDisclosure, Button, FormControl, FormLabel, Input,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
 } from '@chakra-ui/react'
 import React, {ChangeEvent, useRef, useState} from "react"
 import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
 import {CategoryCreateRequest} from "@/components/api"
-import { useRouter } from 'next/router'
+import {useRouter} from 'next/router'
 import toast from "react-hot-toast"
 
 interface AddCategoryButtonProperties {

@@ -1,20 +1,6 @@
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton, useDisclosure, Button, FormControl, FormLabel, Input,
-} from '@chakra-ui/react'
-import React, {ChangeEvent, useRef, useState} from "react"
-import {FaPlus} from "react-icons/fa"
-import {useTheme} from "@/hooks/useTheme"
+import React, {useState} from "react"
 import Select from "react-select"
-import {useApi} from "@/hooks/useApi"
-import {PaymentCreateRequest, SelectOptionProperties, SelectProperties} from "@/components/api"
-import { useRouter } from 'next/router'
-import {PriceInput} from "@/components/shared/PriceInput"
+import {SelectProperties} from "@/components/api"
 
 interface PaymentMethodSelectProperties {
   onChange: (paymentMethod: string) => void

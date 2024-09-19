@@ -1,24 +1,17 @@
 import {
-  Accordion, AccordionButton, AccordionIcon, AccordionItem,
+  Accordion,
+  AccordionButton,
+  AccordionItem,
   AccordionPanel,
   Box,
-  Card,
-  CardBody,
-  CardHeader, Divider,
+  Divider,
   Flex,
   Heading,
-  Link,
   Stack,
-  StackDivider,
   Text
 } from "@chakra-ui/react"
-import {AddPaymentButton} from "@/components/payment/AddPaymentButton"
 import React, {useEffect, useState} from "react"
-import {useTheme} from "@/hooks/useTheme"
-import {
-  ProductResponse,
-  PaymentResponse, PaymentProductWithProductResponse,
-} from "@/components/api"
+import {PaymentProductWithProductResponse, PaymentResponse,} from "@/components/api"
 import {SearchBar} from "@/components/shared/SearchBar"
 import {useApi} from "@/hooks/useApi"
 import {useRouter} from "next/router"
