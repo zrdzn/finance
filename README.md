@@ -1,6 +1,4 @@
 # Finance
-## Live Preview
-You can preview the live version of the application [here](https://zrdzn.dev).
 ## Features
 ### Vault Management
 A Vault is a central place where you manage members, payments, products, categories — essentially everything within the application.
