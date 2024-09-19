@@ -6,7 +6,7 @@ import {
   PaymentExpensesResponse,
   VaultResponse
 } from "@/components/api"
-import {useApi} from "@/hooks/apiClient"
+import {useApi} from "@/hooks/useApi"
 
 interface AnalyticsSummaryCardItemProperties {
   vault: VaultResponse

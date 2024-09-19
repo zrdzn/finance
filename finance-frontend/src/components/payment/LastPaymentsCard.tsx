@@ -1,9 +1,9 @@
 import {Box, Card, CardBody, CardHeader, Flex, Heading, Link, Stack, StackDivider, Text} from "@chakra-ui/react"
 import {AddPaymentButton} from "@/components/payment/AddPaymentButton"
 import React, {useEffect, useState} from "react"
-import {useTheme} from "@/hooks/theme"
+import {useTheme} from "@/hooks/useTheme"
 import {PaymentResponse, VaultResponse} from "@/components/api"
-import {useApi} from "@/hooks/apiClient"
+import {useApi} from "@/hooks/useApi"
 import {PaymentsCardItem} from "@/components/payment/PaymentsCardItem"
 
 interface LastPaymentsCardProperties {

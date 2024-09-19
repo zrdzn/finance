@@ -1,8 +1,8 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { AppProps } from 'next/app';
 import { config } from '@fortawesome/fontawesome-svg-core';
-import { themeExtension } from '@/hooks/theme';
-import {AuthenticationProvider} from "@/hooks/authentication"
+import { themeExtension } from '@/hooks/useTheme';
+import {AuthenticationProvider} from "@/hooks/useAuthentication"
 import {Inter} from "next/font/google"
 import {Toaster} from "react-hot-toast"
 

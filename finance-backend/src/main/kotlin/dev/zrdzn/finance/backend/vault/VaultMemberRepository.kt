@@ -6,6 +6,8 @@ interface VaultMemberRepository {
 
     fun save(vaultMember: VaultMember): VaultMember
 
+    fun findById(vaultMemberId: VaultMemberId): VaultMember?
+
     fun findByVaultId(vaultId: VaultId): Set<VaultMember>
 
     fun findByVaultIdAndUserId(vaultId: VaultId, userId: UserId): VaultMember?

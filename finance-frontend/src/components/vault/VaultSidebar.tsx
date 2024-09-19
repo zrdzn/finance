@@ -12,7 +12,7 @@ import {
   useMediaQuery
 } from "@chakra-ui/react";
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace"
-import {useTheme} from "@/hooks/theme"
+import {useTheme} from "@/hooks/useTheme"
 import React, {useState} from "react"
 import {
   FaAngleLeft,
@@ -20,14 +20,14 @@ import {
   FaBars,
   FaBook,
   FaChevronLeft,
-  FaChevronRight,
+  FaChevronRight, FaHistory,
   FaSignInAlt, FaSignOutAlt,
   FaTags,
   FaUser,
   FaUserPlus
 } from "react-icons/fa"
 import {FaCalendarDays, FaChartSimple, FaGears, FaHouse, FaX} from "react-icons/fa6"
-import {useAuthentication} from "@/hooks/authentication"
+import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"
 import {VaultResponse} from "@/components/api"
 
@@ -104,7 +104,8 @@ const BaseView = ({ vault }: VaultSidebarProperties) => {
                 { href: `/vault/${vault.publicId}/statistics`, icon: FaChartSimple, label: 'Statistics' },
                 { href: `/vault/${vault.publicId}/schedules`, icon: FaCalendarDays, label: 'Schedules', isDisabled: true },
                 { href: `/vault/${vault.publicId}/members`, icon: FaUser, label: 'Members' },
-                { href: `/vault/${vault.publicId}/settings`, icon: FaGears, label: 'Settings', isDisabled: true }
+                { href: `/vault/${vault.publicId}/audits`, icon: FaHistory, label: 'Audit Logs' },
+                { href: `/vault/${vault.publicId}/settings`, icon: FaGears, label: 'Settings' }
               ].map(({ href, icon: Icon, label, isDisabled }) => (
                 <Flex key={href} width={'full'} marginY={3}>
                   <Link href={href} style={{ width: 'inherit' }}>
@@ -241,6 +242,16 @@ const DesktopView = (
             leftIcon={<FaUser />}
           >
             {!isCollapsed && "Members"}
+          </Button>
+        </Link>
+        <Link href={`/vault/${vault.publicId}/audits`} style={{ width: "100%" }}>
+          <Button
+            variant="ghost"
+            width="100%"
+            justifyContent={isCollapsed ? "center" : "flex-start"}
+            leftIcon={<FaHistory />}
+          >
+            {!isCollapsed && "Audit Logs"}
           </Button>
         </Link>
         <Link href={`/vault/${vault.publicId}/settings`} style={{ width: "100%" }}>

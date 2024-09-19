@@ -1,5 +1,6 @@
 package dev.zrdzn.finance.backend.product.application
 
+import dev.zrdzn.finance.backend.audit.AuditService
 import dev.zrdzn.finance.backend.category.CategoryService
 import dev.zrdzn.finance.backend.product.ProductRepository
 import dev.zrdzn.finance.backend.product.ProductService
@@ -11,14 +12,16 @@ import org.springframework.context.annotation.Configuration
 class ProductApplicationConfiguration(
     private val productRepository: ProductRepository,
     private val categoryService: CategoryService,
-    private val vaultService: VaultService
+    private val vaultService: VaultService,
+    private val auditService: AuditService
 ) {
 
     @Bean
     fun productService(): ProductService = ProductService(
         productRepository = productRepository,
         categoryService = categoryService,
-        vaultService = vaultService
+        vaultService = vaultService,
+        auditService = auditService
     )
 
 }

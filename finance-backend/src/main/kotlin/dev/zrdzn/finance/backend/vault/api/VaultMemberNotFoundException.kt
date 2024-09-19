@@ -1,10 +1,8 @@
 package dev.zrdzn.finance.backend.vault.api
 
-import dev.zrdzn.finance.backend.user.UserId
-import dev.zrdzn.finance.backend.vault.VaultId
+import dev.zrdzn.finance.backend.vault.VaultMemberId
 
 data class VaultMemberNotFoundException(
-    val vaultId: VaultId,
-    val userId: UserId,
+    val vaultMemberId: VaultMemberId,
     override val cause: Throwable? = null
-) : RuntimeException("User with id $userId is not a member of vault with id $vaultId", cause)
+) : RuntimeException("Vault member with id $vaultMemberId not found", cause)

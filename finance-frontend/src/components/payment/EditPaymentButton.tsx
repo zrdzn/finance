@@ -9,8 +9,8 @@ import {
 } from '@chakra-ui/react'
 import React, {ChangeEvent, useRef, useState} from "react"
 import {FaEdit, FaPlus} from "react-icons/fa"
-import {useTheme} from "@/hooks/theme"
-import {useApi} from "@/hooks/apiClient"
+import {useTheme} from "@/hooks/useTheme"
+import {useApi} from "@/hooks/useApi"
 import {
   PaymentResponse,
   PaymentUpdateRequest,

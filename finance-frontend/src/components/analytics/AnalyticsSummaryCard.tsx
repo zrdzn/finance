@@ -1,8 +1,8 @@
 import {Card, CardBody, CardHeader, Flex, Heading, Stack} from "@chakra-ui/react"
-import React, {useEffect, useState} from "react"
-import {useTheme} from "@/hooks/theme"
+import React from "react"
+import {useTheme} from "@/hooks/useTheme"
 import {AnalyticsOverviewStatisticType, VaultResponse} from "@/components/api"
-import {useApi} from "@/hooks/apiClient"
+import {useApi} from "@/hooks/useApi"
 import {AnalyticsSummaryCardItem} from "@/components/analytics/AnalyticsSummaryCardItem"
 
 interface AnalyticsSummaryCardProperties {
@@ -13,15 +13,6 @@ interface AnalyticsSummaryCardProperties {
 export const AnalyticsSummaryCard = ({ vault, permissions }: AnalyticsSummaryCardProperties) => {
   const theme = useTheme()
   const api = useApi()
-  const [paymentsAmount, setPaymentsAmount] = useState<number>(0)
-
-  useEffect(() => {
-    api.get(`/payment/${vault.id}/amount`)
-      .then(response => {
-        setPaymentsAmount(response.data.amount)
-      })
-      .catch(error => console.error(error))
-  }, [api, vault.id]);
 
   return (
     <Card margin={2}>

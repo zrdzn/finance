@@ -5,6 +5,8 @@ enum class VaultPermission {
     DETAILS_READ,
     DELETE,
 
+    AUDIT_READ,
+
     SETTINGS_READ,
     SETTINGS_UPDATE,
 
