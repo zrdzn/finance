@@ -6,11 +6,11 @@ import {
   Flex, Heading, HStack, Link, Text
 } from "@chakra-ui/react";
 import React, {useEffect, useState} from "react";
-import {useApi} from "@/hooks/apiClient"
+import {useApi} from "@/hooks/useApi"
 import {VaultCard} from "@/components/vault/VaultCard"
-import {useTheme} from "@/hooks/theme"
+import {useTheme} from "@/hooks/useTheme"
 import {useRouter} from "next/router"
-import {useAuthentication} from "@/hooks/authentication"
+import {useAuthentication} from "@/hooks/useAuthentication"
 import {VaultInvitationCard} from "@/components/vault/VaultInvitationCard"
 import {VaultInvitationResponse} from "@/components/api"
 

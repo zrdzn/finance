@@ -1,0 +1,14 @@
+--liquibase formatted sql
+--changeset finance:0
+CREATE TYPE "audit_action" AS ENUM (
+    'PAYMENT_CREATED',
+    'PAYMENT_UPDATED',
+    'PAYMENT_DELETED',
+    'PAYMENT_EXPORTED',
+    'PAYMENT_PRODUCT_CREATED',
+    'CATEGORY_CREATED',
+    'CATEGORY_DELETED',
+    'PRODUCT_CREATED',
+    'PRODUCT_UPDATED',
+    'PRODUCT_DELETED'
+);

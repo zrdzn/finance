@@ -1,5 +1,6 @@
 package dev.zrdzn.finance.backend.payment.application
 
+import dev.zrdzn.finance.backend.audit.AuditService
 import dev.zrdzn.finance.backend.exchange.ExchangeService
 import dev.zrdzn.finance.backend.payment.PaymentProductRepository
 import dev.zrdzn.finance.backend.payment.PaymentRepository
@@ -17,7 +18,8 @@ class PaymentApplicationConfiguration(
     private val productService: ProductService,
     private val exchangeService: ExchangeService,
     private val vaultService: VaultService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val auditService: AuditService
 ) {
 
     @Bean
@@ -27,7 +29,8 @@ class PaymentApplicationConfiguration(
         productService = productService,
         exchangeService = exchangeService,
         vaultService = vaultService,
-        userService = userService
+        userService = userService,
+        auditService = auditService
     )
 
 }

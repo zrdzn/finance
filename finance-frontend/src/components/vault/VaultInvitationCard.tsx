@@ -8,8 +8,8 @@ import {
   CardFooter, Text,
 } from '@chakra-ui/react'
 import React, {useEffect, useState} from "react"
-import {useTheme} from "@/hooks/theme"
-import {useApi} from "@/hooks/apiClient"
+import {useTheme} from "@/hooks/useTheme"
+import {useApi} from "@/hooks/useApi"
 import {UsernameResponse, VaultInvitationResponse, VaultResponse} from "@/components/api"
 import {useRouter} from "next/router"
 import toast from "react-hot-toast"

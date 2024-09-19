@@ -1,5 +1,7 @@
 package dev.zrdzn.finance.backend.category
 
+import dev.zrdzn.finance.backend.audit.AuditService
+import dev.zrdzn.finance.backend.audit.api.AuditAction
 import dev.zrdzn.finance.backend.category.api.CategoryCreateResponse
 import dev.zrdzn.finance.backend.category.api.CategoryListResponse
 import dev.zrdzn.finance.backend.category.api.CategoryNotFoundException
@@ -12,7 +14,8 @@ import org.slf4j.LoggerFactory
 
 class CategoryService(
     private val categoryRepository: CategoryRepository,
-    private val vaultService: VaultService
+    private val vaultService: VaultService,
+    private val auditService: AuditService
 ) {
 
     private val logger = LoggerFactory.getLogger(CategoryService::class.java)
@@ -29,6 +32,14 @@ class CategoryService(
                 )
             )
             .also { logger.info("Successfully created category: $it") }
+            .also {
+                auditService.createAudit(
+                    vaultId = vaultId,
+                    userId = requesterId,
+                    auditAction = AuditAction.CATEGORY_CREATED,
+                    description = name
+                )
+            }
             .let {
                 CategoryCreateResponse(
                     id = it.id!!
@@ -42,7 +53,15 @@ class CategoryService(
         vaultService.authorizeMember(category.vaultId, requesterId, VaultPermission.CATEGORY_DELETE)
 
         categoryRepository.deleteById(categoryId)
-            .also { logger.info("Successfully deleted category with id: $categoryId") }
+
+        logger.info("Successfully deleted category with id: $categoryId")
+
+        auditService.createAudit(
+            vaultId = category.vaultId,
+            userId = requesterId,
+            auditAction = AuditAction.CATEGORY_DELETED,
+            description = category.name
+        )
     }
 
     fun getCategoryById(requesterId: UserId, categoryId: CategoryId): CategoryResponse =

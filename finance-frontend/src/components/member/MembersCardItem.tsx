@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {VaultMemberResponse} from "@/components/api"
-import {useApi} from "@/hooks/apiClient"
+import {useApi} from "@/hooks/useApi"
 import {EditProductButton} from "@/components/product/EditProductButton"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"

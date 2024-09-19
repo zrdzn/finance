@@ -1,6 +1,8 @@
 package dev.zrdzn.finance.backend.payment
 
 import com.opencsv.CSVWriter
+import dev.zrdzn.finance.backend.audit.AuditService
+import dev.zrdzn.finance.backend.audit.api.AuditAction
 import dev.zrdzn.finance.backend.exchange.ExchangeService
 import dev.zrdzn.finance.backend.payment.api.PaymentAmountResponse
 import dev.zrdzn.finance.backend.payment.api.PaymentCreateResponse
@@ -37,7 +39,8 @@ open class PaymentService(
     private val productService: ProductService,
     private val exchangeService: ExchangeService,
     private val vaultService: VaultService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val auditService: AuditService
 ) {
 
     private val logger = LoggerFactory.getLogger(PaymentService::class.java)
@@ -72,6 +75,13 @@ open class PaymentService(
 
         csvWriter.close()
 
+        auditService.createAudit(
+            vaultId = vaultId,
+            userId = requesterId,
+            auditAction = AuditAction.PAYMENT_EXPORTED,
+            description = "Payments amount ${payments.size}"
+        )
+
         return writer.toString()
     }
 
@@ -99,6 +109,14 @@ open class PaymentService(
                 )
             )
             .also { logger.info("Successfully created new payment: $it") }
+            .also {
+                auditService.createAudit(
+                    vaultId = vaultId,
+                    userId = requesterId,
+                    auditAction = AuditAction.PAYMENT_CREATED,
+                    description = description ?: "Payment ID ${it.id}"
+                )
+            }
             .let { PaymentCreateResponse(id = it.id!!) }
     }
 
@@ -125,6 +143,14 @@ open class PaymentService(
                 )
             )
             .also { logger.info("Successfully created new payment product: $it") }
+            .also {
+                auditService.createAudit(
+                    vaultId = product.vaultId,
+                    userId = requesterId,
+                    auditAction = AuditAction.PAYMENT_PRODUCT_CREATED,
+                    description = product.name
+                )
+            }
             .let { PaymentProductCreateResponse(id = it.id!!) }
     }
 
@@ -139,6 +165,13 @@ open class PaymentService(
         payment.total = price.amount
         payment.currency = price.currency
         logger.info("Successfully updated payment: $payment")
+
+        auditService.createAudit(
+            vaultId = payment.vaultId,
+            userId = requesterId,
+            auditAction = AuditAction.PAYMENT_UPDATED,
+            description = description ?: "Payment ID $paymentId"
+        )
     }
 
     @Transactional
@@ -148,7 +181,15 @@ open class PaymentService(
         vaultService.authorizeMember(payment.vaultId, payment.userId, VaultPermission.PAYMENT_DELETE)
 
         paymentRepository.deleteById(paymentId)
-            .also { logger.info("Successfully deleted payment with id: $paymentId") }
+
+        logger.info("Successfully deleted payment with id: $paymentId")
+
+        auditService.createAudit(
+            vaultId = payment.vaultId,
+            userId = payment.userId,
+            auditAction = AuditAction.PAYMENT_DELETED,
+            description = payment.description ?: "Payment ID $paymentId"
+        )
     }
 
     @Transactional(readOnly = true)

@@ -8,7 +8,7 @@ import {ProtectedVault} from "@/components/vault/ProtectedVault"
 import {PaymentsCard} from "@/components/payment/PaymentsCard"
 import {SettingsCard} from "@/components/settings/SettingsCard"
 import {useRouter} from "next/router"
-import {useApi} from "@/hooks/apiClient"
+import {useApi} from "@/hooks/useApi"
 import {AuditTable} from "@/components/audit/AuditTable"
 
 export default function Audits(): ReactJSXElement {
@@ -26,7 +26,8 @@ export default function Audits(): ReactJSXElement {
             <Flex
               direction="column"
               width={{ base: 'full', md: '80%', lg: '60%' }}
-              maxWidth="800px"
+              maxWidth={'1400px'}
+              minWidth={{ xl: '1200px' }}
               justifyContent="center">
               {permissions.includes("AUDIT_READ") && (
                 <AuditTable vault={vault} permissions={permissions} />

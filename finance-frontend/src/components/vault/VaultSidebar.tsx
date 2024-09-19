@@ -12,7 +12,7 @@ import {
   useMediaQuery
 } from "@chakra-ui/react";
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace"
-import {useTheme} from "@/hooks/theme"
+import {useTheme} from "@/hooks/useTheme"
 import React, {useState} from "react"
 import {
   FaAngleLeft,
@@ -27,7 +27,7 @@ import {
   FaUserPlus
 } from "react-icons/fa"
 import {FaCalendarDays, FaChartSimple, FaGears, FaHouse, FaX} from "react-icons/fa6"
-import {useAuthentication} from "@/hooks/authentication"
+import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"
 import {VaultResponse} from "@/components/api"
 

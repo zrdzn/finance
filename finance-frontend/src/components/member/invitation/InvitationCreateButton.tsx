@@ -9,9 +9,9 @@ import {
 } from '@chakra-ui/react'
 import React, {ChangeEvent, useRef, useState} from "react"
 import {FaPlus} from "react-icons/fa"
-import {useTheme} from "@/hooks/theme"
+import {useTheme} from "@/hooks/useTheme"
 import Select from "react-select"
-import {useApi} from "@/hooks/apiClient"
+import {useApi} from "@/hooks/useApi"
 import {
   PaymentCreateRequest,
   SelectOptionProperties,

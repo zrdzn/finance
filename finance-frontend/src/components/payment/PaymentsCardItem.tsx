@@ -14,13 +14,13 @@ import {
 } from "@chakra-ui/react"
 import {AddPaymentButton} from "@/components/payment/AddPaymentButton"
 import React, {useEffect, useState} from "react"
-import {useTheme} from "@/hooks/theme"
+import {useTheme} from "@/hooks/useTheme"
 import {
   ProductResponse,
   PaymentResponse, PaymentProductWithProductResponse,
 } from "@/components/api"
 import {SearchBar} from "@/components/shared/SearchBar"
-import {useApi} from "@/hooks/apiClient"
+import {useApi} from "@/hooks/useApi"
 import {useRouter} from "next/router"
 import {AddPaymentProductsButton} from "@/components/payment/product/AddPaymentProductsButton"
 import {PaymentProductsCardItem} from "@/components/payment/product/PaymentProductsCardItem"

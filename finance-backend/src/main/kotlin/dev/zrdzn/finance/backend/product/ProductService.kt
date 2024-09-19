@@ -1,5 +1,7 @@
 package dev.zrdzn.finance.backend.product
 
+import dev.zrdzn.finance.backend.audit.AuditService
+import dev.zrdzn.finance.backend.audit.api.AuditAction
 import dev.zrdzn.finance.backend.category.CategoryId
 import dev.zrdzn.finance.backend.category.CategoryService
 import dev.zrdzn.finance.backend.product.api.ProductCreateResponse
@@ -16,7 +18,8 @@ import org.springframework.transaction.annotation.Transactional
 open class ProductService(
     private val productRepository: ProductRepository,
     private val categoryService: CategoryService,
-    private val vaultService: VaultService
+    private val vaultService: VaultService,
+    private val auditService: AuditService
 ) {
 
     private val logger = LoggerFactory.getLogger(ProductService::class.java)
@@ -35,6 +38,14 @@ open class ProductService(
                 )
             )
             .also { logger.info("Successfully created product: $it") }
+            .also {
+                auditService.createAudit(
+                    vaultId = vaultId,
+                    userId = requesterId,
+                    auditAction = AuditAction.PRODUCT_CREATED,
+                    description = name
+                )
+            }
             .let {
                 ProductCreateResponse(
                     id = it.id!!,
@@ -53,6 +64,13 @@ open class ProductService(
 
         product.categoryId = categoryId
         logger.info("Successfully updated product: $product")
+
+        auditService.createAudit(
+            vaultId = product.vaultId,
+            userId = requesterId,
+            auditAction = AuditAction.PRODUCT_UPDATED,
+            description = product.name
+        )
     }
 
     @Transactional
@@ -62,7 +80,15 @@ open class ProductService(
         vaultService.authorizeMember(product.vaultId, requesterId, VaultPermission.PRODUCT_DELETE)
 
         productRepository.deleteById(productId)
-            .also { logger.info("Successfully deleted product with id: $productId") }
+
+        logger.info("Successfully deleted product with id: $productId")
+
+        auditService.createAudit(
+            vaultId = product.vaultId,
+            userId = requesterId,
+            auditAction = AuditAction.PRODUCT_DELETED,
+            description = product.name
+        )
     }
 
     @Transactional(readOnly = true)

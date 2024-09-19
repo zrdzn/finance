@@ -6,10 +6,10 @@ import {
   FormControl, FormErrorMessage, FormLabel, Heading, Input, Stack
 } from "@chakra-ui/react";
 import React, {ChangeEvent, useEffect, useState} from "react";
-import {useApi} from "@/hooks/apiClient"
+import {useApi} from "@/hooks/useApi"
 import {useRouter} from "next/router"
-import {useTheme} from "@/hooks/theme"
-import {useAuthentication} from "@/hooks/authentication"
+import {useTheme} from "@/hooks/useTheme"
+import {useAuthentication} from "@/hooks/useAuthentication"
 import {VaultCreateRequest} from "@/components/api"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
 import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"

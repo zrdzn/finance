@@ -2,7 +2,7 @@ import { ColorModeScript, ThemeConfig } from '@chakra-ui/react';
 import { Head, Html, Main, NextScript } from 'next/document';
 import React from 'react';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import {themeColors} from "@/hooks/theme";
+import {themeColors} from "@/hooks/useTheme";
 
 const config: ThemeConfig = {
   initialColorMode: 'light',

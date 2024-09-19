@@ -1,11 +1,11 @@
 import React, {useEffect, useState,} from "react"
 import {VaultSidebar} from "@/components/vault/VaultSidebar"
 import {Layout} from "@/components/Layout"
-import {useAuthentication} from "@/hooks/authentication"
+import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"
-import {useVault} from "@/hooks/vaultAccessor"
+import {useVault} from "@/hooks/useVault"
 import {VaultResponse} from "@/components/api"
-import {useApi} from "@/hooks/apiClient"
+import {useApi} from "@/hooks/useApi"
 
 interface ProtectedVaultProperties {
   publicId: string | string[] | undefined

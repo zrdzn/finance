@@ -1,4 +1,4 @@
-import {useApi} from "@/hooks/apiClient"
+import {useApi} from "@/hooks/useApi"
 import {useEffect, useState} from "react"
 import {VaultResponse} from "@/components/api"
 

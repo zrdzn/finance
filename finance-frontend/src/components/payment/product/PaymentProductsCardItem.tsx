@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react"
 import React from "react"
 import {PaymentProductWithProductResponse} from "@/components/api"
-import {useApi} from "@/hooks/apiClient"
+import {useApi} from "@/hooks/useApi"
 import {useRouter} from "next/router"
 import {FaTrash} from "react-icons/fa"
 import toast from "react-hot-toast"

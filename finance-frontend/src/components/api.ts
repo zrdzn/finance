@@ -156,6 +156,8 @@ export interface AuthenticationDetails {
 export interface AuditResponse {
   id: number
   createdAt: number
-  vaultMember: VaultMemberResponse
+  vault: VaultResponse
+  user: UserResponse
+  auditAction: string
   description: string
 }

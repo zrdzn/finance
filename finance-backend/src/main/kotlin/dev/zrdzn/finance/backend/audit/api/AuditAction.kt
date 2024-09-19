@@ -1,0 +1,19 @@
+package dev.zrdzn.finance.backend.audit.api
+
+enum class AuditAction {
+
+    PAYMENT_CREATED,
+    PAYMENT_UPDATED,
+    PAYMENT_DELETED,
+    PAYMENT_EXPORTED,
+
+    PAYMENT_PRODUCT_CREATED,
+
+    CATEGORY_CREATED,
+    CATEGORY_DELETED,
+
+    PRODUCT_CREATED,
+    PRODUCT_UPDATED,
+    PRODUCT_DELETED,
+
+}

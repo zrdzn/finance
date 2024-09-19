@@ -1,7 +1,7 @@
 import Select from "react-select"
 import React, {useEffect, useState} from "react"
 import {CategoryResponse, ProductResponse, SelectOptionProperties, SelectProperties} from "@/components/api"
-import {useApi} from "@/hooks/apiClient"
+import {useApi} from "@/hooks/useApi"
 
 interface ProductCategorySelectProperties {
   vaultId: number

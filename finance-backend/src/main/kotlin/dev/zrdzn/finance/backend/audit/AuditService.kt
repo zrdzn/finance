@@ -1,12 +1,15 @@
 package dev.zrdzn.finance.backend.audit
 
+import dev.zrdzn.finance.backend.audit.api.AuditAction
 import dev.zrdzn.finance.backend.audit.api.AuditCreateResponse
 import dev.zrdzn.finance.backend.audit.api.AuditListResponse
 import dev.zrdzn.finance.backend.audit.api.AuditResponse
 import dev.zrdzn.finance.backend.user.UserId
+import dev.zrdzn.finance.backend.user.UserService
+import dev.zrdzn.finance.backend.user.api.UserNotFoundException
 import dev.zrdzn.finance.backend.vault.VaultId
-import dev.zrdzn.finance.backend.vault.VaultMemberId
 import dev.zrdzn.finance.backend.vault.VaultService
+import dev.zrdzn.finance.backend.vault.api.VaultNotFoundException
 import dev.zrdzn.finance.backend.vault.api.VaultPermission
 import java.time.Clock
 import java.time.Instant
@@ -15,18 +18,21 @@ import org.slf4j.LoggerFactory
 class AuditService(
     private val auditRepository: AuditRepository,
     private val vaultService: VaultService,
+    private val userService: UserService,
     private val clock: Clock
 ) {
 
     private val logger = LoggerFactory.getLogger(AuditService::class.java)
 
-    fun createAudit(vaultMemberId: VaultMemberId, description: String): AuditCreateResponse =
+    fun createAudit(vaultId: VaultId, userId: UserId, auditAction: AuditAction, description: String): AuditCreateResponse =
         auditRepository
             .save(
                 Audit(
                     id = null,
                     createdAt = Instant.now(clock),
-                    memberId = vaultMemberId,
+                    vaultId = vaultId,
+                    userId = userId,
+                    auditAction = auditAction,
                     description = description
                 )
             )
@@ -45,7 +51,9 @@ class AuditService(
                 AuditResponse(
                     id = it.id!!,
                     createdAt = it.createdAt,
-                    vaultMember = vaultService.getVaultMemberForcefully(it.memberId),
+                    vault = vaultService.getVault(vaultId = it.vaultId, requesterId = requesterId) ?: throw VaultNotFoundException(vaultId),
+                    user = userService.getUserById(it.userId) ?: throw UserNotFoundException(it.userId),
+                    auditAction = it.auditAction,
                     description = it.description
                 )
             }
