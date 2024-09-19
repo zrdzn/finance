@@ -2,6 +2,8 @@ package dev.zrdzn.finance.backend.user
 
 import dev.zrdzn.finance.backend.user.api.UserCreateRequest
 import dev.zrdzn.finance.backend.user.api.UserCreateResponse
+import dev.zrdzn.finance.backend.user.api.UserNotFoundByEmailException
+import dev.zrdzn.finance.backend.user.api.UserNotFoundException
 import dev.zrdzn.finance.backend.user.api.UserResponse
 import dev.zrdzn.finance.backend.user.api.UserWithPasswordResponse
 import dev.zrdzn.finance.backend.user.api.UsernameResponse
@@ -24,7 +26,7 @@ class UserService(
             )
             .let { UserCreateResponse(it.id!!) }
 
-    fun getUserById(id: UserId): UserResponse? =
+    fun getUserById(id: UserId): UserResponse =
         userRepository.findById(id)
             ?.let {
                 UserResponse(
@@ -33,11 +35,12 @@ class UserService(
                     username = it.username
                 )
             }
+            ?: throw UserNotFoundException(id)
 
-    fun getUsernameByUserId(id: UserId): UsernameResponse? =
-        getUserById(id)?.let { UsernameResponse(it.username) }
+    fun getUsernameByUserId(id: UserId): UsernameResponse =
+        UsernameResponse(getUserById(id).username)
 
-    fun getUserWithPasswordByEmail(email: String): UserWithPasswordResponse? =
+    fun getUserWithPasswordByEmail(email: String): UserWithPasswordResponse =
         userRepository
             .findByEmail(email)
             ?.let {
@@ -48,5 +51,7 @@ class UserService(
                     password = it.password
                 )
             }
+            ?: throw UserNotFoundByEmailException(email)
+
 
 }

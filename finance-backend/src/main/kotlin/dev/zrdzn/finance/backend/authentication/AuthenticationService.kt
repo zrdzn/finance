@@ -29,9 +29,9 @@ class AuthenticationService(
     fun logout(accessToken: String) =
         tokenService.removeRefreshToken(tokenService.getAccessTokenDetails(accessToken).refreshTokenId)
 
-    fun getAuthenticationDetailsByUserId(userId: UserId): AuthenticationDetailsResponse? =
+    fun getAuthenticationDetailsByUserId(userId: UserId): AuthenticationDetailsResponse =
         userService.getUserById(userId)
-            ?.let {
+            .let {
                 AuthenticationDetailsResponse(
                     email = it.email,
                     username = it.username
@@ -58,6 +58,6 @@ class AuthenticationService(
     private fun getValidatedUser(authenticationLoginRequest: AuthenticationLoginRequest): UserWithPasswordResponse? =
         userService
             .getUserWithPasswordByEmail(authenticationLoginRequest.email)
-            ?.takeIf { passwordEncoder.matches(authenticationLoginRequest.password, it.password) }
+            .takeIf { passwordEncoder.matches(authenticationLoginRequest.password, it.password) }
 
 }

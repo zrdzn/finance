@@ -22,7 +22,7 @@ class ExchangeService(
         val targetRate = rates.first { it.currency == target }.rate
 
         return when {
-            // Convert from PLN to target currency
+            // convert from PLN to target currency
             source == "PLN" -> {
                 val convertedAmount = amount.divide(targetRate, RoundingMode.HALF_UP)
                 Price(
@@ -31,7 +31,7 @@ class ExchangeService(
                 )
             }
 
-            // Convert from source currency to PLN
+            // convert from source currency to PLN
             target == "PLN" -> {
                 val convertedAmount = amount.multiply(sourceRate)
                 Price(
@@ -40,7 +40,7 @@ class ExchangeService(
                 )
             }
 
-            // Convert from source currency to PLN, then to target currency
+            // convert from source currency to PLN, then to target currency
             else -> {
                 val plnAmount = amount.multiply(sourceRate)
                 val convertedAmount = plnAmount.divide(targetRate, RoundingMode.HALF_UP)
