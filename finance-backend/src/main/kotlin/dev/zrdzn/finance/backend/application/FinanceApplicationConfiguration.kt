@@ -21,7 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 class FinanceApplicationConfiguration {
 
     @Bean
-    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder(16)
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder(10)
 
     @Bean
     fun clock(): Clock = Clock.systemUTC()
