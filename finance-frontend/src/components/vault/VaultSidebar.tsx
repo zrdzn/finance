@@ -25,6 +25,7 @@ import {FaCalendarDays, FaChartSimple, FaGears, FaHouse, FaX} from "react-icons/
 import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"
 import {VaultResponse} from "@/components/api"
+import {router} from "next/client"
 
 interface VaultSidebarProperties {
   vault: VaultResponse;
@@ -104,7 +105,11 @@ const BaseView = ({ vault }: VaultSidebarProperties) => {
               ].map(({ href, icon: Icon, label, isDisabled }) => (
                 <Flex key={href} width={'full'} marginY={3}>
                   <Link href={href} style={{ width: 'inherit' }}>
-                    <Button backgroundColor={theme.backgroundColor} onClick={onClose} width={'full'} isDisabled={isDisabled}>
+                    <Button backgroundColor={router.asPath === href ? theme.secondaryColor : theme.backgroundColor}
+                            onClick={onClose}
+                            width={'full'}
+                            borderRadius={0}
+                            isDisabled={isDisabled}>
                       <Flex alignItems={'center'} width={'full'} columnGap={2}>
                         <Icon />
                         <Box>{label}</Box>
@@ -143,6 +148,7 @@ const DesktopView = (
   }: VaultSidebarProperties
 ) => {
   const theme = useTheme();
+  const router = useRouter()
   const { authenticationDetails, logout } = useAuthentication();
 
   return (
@@ -178,87 +184,29 @@ const DesktopView = (
         alignItems={isCollapsed ? "center" : "flex-start"}
         flexGrow={1}
       >
-        <Link href={`/vault/${vault.publicId}`} style={{ width: "100%" }}>
-          <Button
-            variant="ghost"
-            width="100%"
-            justifyContent={isCollapsed ? "center" : "flex-start"}
-            leftIcon={<FaHouse />}
-          >
-            {!isCollapsed && "Overview"}
-          </Button>
-        </Link>
-        <Link href={`/vault/${vault.publicId}/payments`} style={{ width: "100%" }}>
-          <Button
-            variant="ghost"
-            width="100%"
-            justifyContent={isCollapsed ? "center" : "flex-start"}
-            leftIcon={<FaBook />}
-          >
-            {!isCollapsed && "Payments"}
-          </Button>
-        </Link>
-        <Link href={`/vault/${vault.publicId}/products`} style={{ width: "100%" }}>
-          <Button
-            variant="ghost"
-            width="100%"
-            justifyContent={isCollapsed ? "center" : "flex-start"}
-            leftIcon={<FaTags />}
-          >
-            {!isCollapsed && "Products"}
-          </Button>
-        </Link>
-        <Link href={`/vault/${vault.publicId}/statistics`} style={{ width: "100%" }}>
-          <Button
-            variant="ghost"
-            width="100%"
-            justifyContent={isCollapsed ? "center" : "flex-start"}
-            leftIcon={<FaChartSimple />}
-          >
-            {!isCollapsed && "Statistics"}
-          </Button>
-        </Link>
-        <Link href={`/vault/${vault.publicId}/schedules`} style={{ width: "100%" }}>
-          <Button
-            variant="ghost"
-            width="100%"
-            justifyContent={isCollapsed ? "center" : "flex-start"}
-            leftIcon={<FaCalendarDays />}
-            isDisabled
-          >
-            {!isCollapsed && "Schedules"}
-          </Button>
-        </Link>
-        <Link href={`/vault/${vault.publicId}/members`} style={{ width: "100%" }}>
-          <Button
-            variant="ghost"
-            width="100%"
-            justifyContent={isCollapsed ? "center" : "flex-start"}
-            leftIcon={<FaUser />}
-          >
-            {!isCollapsed && "Members"}
-          </Button>
-        </Link>
-        <Link href={`/vault/${vault.publicId}/audits`} style={{ width: "100%" }}>
-          <Button
-            variant="ghost"
-            width="100%"
-            justifyContent={isCollapsed ? "center" : "flex-start"}
-            leftIcon={<FaHistory />}
-          >
-            {!isCollapsed && "Audit Logs"}
-          </Button>
-        </Link>
-        <Link href={`/vault/${vault.publicId}/settings`} style={{ width: "100%" }}>
-          <Button
-            variant="ghost"
-            width="100%"
-            justifyContent={isCollapsed ? "center" : "flex-start"}
-            leftIcon={<FaGears />}
-          >
-            {!isCollapsed && "Settings"}
-          </Button>
-        </Link>
+        {[
+          { href: `/vault/${vault.publicId}`, icon: FaHouse, label: 'Overview' },
+          { href: `/vault/${vault.publicId}/payments`, icon: FaBook, label: 'Payments' },
+          { href: `/vault/${vault.publicId}/products`, icon: FaTags, label: 'Products' },
+          { href: `/vault/${vault.publicId}/statistics`, icon: FaChartSimple, label: 'Statistics' },
+          { href: `/vault/${vault.publicId}/schedules`, icon: FaCalendarDays, label: 'Schedules', isDisabled: true },
+          { href: `/vault/${vault.publicId}/members`, icon: FaUser, label: 'Members' },
+          { href: `/vault/${vault.publicId}/audits`, icon: FaHistory, label: 'Audit Logs' },
+          { href: `/vault/${vault.publicId}/settings`, icon: FaGears, label: 'Settings' }
+        ].map(({ href, icon: Icon, label, isDisabled }) => (
+          <Link key={href} href={href} style={{ width: "100%" }} backgroundColor={isCollapsed && router.asPath === href ? theme.secondaryColor : theme.backgroundColor}>
+            <Button
+              variant="ghost"
+              width="100%"
+              justifyContent={isCollapsed ? "center" : "flex-start"}
+              leftIcon={<Icon />}
+              backgroundColor={!isCollapsed && router.asPath === href ? theme.secondaryColor : theme.backgroundColor}
+              isDisabled={isDisabled}
+            >
+              {!isCollapsed && label}
+            </Button>
+          </Link>
+        ))}
       </Flex>
       <Flex
         justifyContent={isCollapsed ? "center" : "flex-start"}
