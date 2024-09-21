@@ -57,7 +57,7 @@ class ProductController(
     ): Unit = productService.deleteProductById(userId, productId)
 
     @GetMapping("/{vaultId}")
-    fun getPaymentsByVaultId(
+    fun getProductsByVaultId(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable vaultId: VaultId
     ): ProductListResponse =

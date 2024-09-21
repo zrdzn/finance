@@ -1,11 +1,11 @@
 import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
-import {PaymentExpensesRange, PaymentExpensesResponse, VaultResponse} from "@/components/api"
+import {TransactionExpensesRange, TransactionExpensesResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 
 interface ExpensesCardItemProperties {
   vault: VaultResponse
-  expensesRange: PaymentExpensesRange
+  expensesRange: TransactionExpensesRange
 }
 
 export const ExpensesCardItem = ({
@@ -13,19 +13,19 @@ export const ExpensesCardItem = ({
   expensesRange
 }: ExpensesCardItemProperties) => {
   const api = useApi()
-  const [expenses, setExpenses] = useState<PaymentExpensesResponse>({
+  const [expenses, setExpenses] = useState<TransactionExpensesResponse>({
     amount: 0,
     currency: 'PLN'
   })
 
   useEffect(() => {
     const startDate = new Date()
-    if (expensesRange === PaymentExpensesRange.Day) startDate.setDate(startDate.getDate() - 1)
-    if (expensesRange === PaymentExpensesRange.Week) startDate.setDate(startDate.getDate() - 7)
-    if (expensesRange === PaymentExpensesRange.Month) startDate.setMonth(startDate.getMonth() - 1)
-    if (expensesRange === PaymentExpensesRange.Year) startDate.setFullYear(startDate.getFullYear() - 1)
+    if (expensesRange === TransactionExpensesRange.Day) startDate.setDate(startDate.getDate() - 1)
+    if (expensesRange === TransactionExpensesRange.Week) startDate.setDate(startDate.getDate() - 7)
+    if (expensesRange === TransactionExpensesRange.Month) startDate.setMonth(startDate.getMonth() - 1)
+    if (expensesRange === TransactionExpensesRange.Year) startDate.setFullYear(startDate.getFullYear() - 1)
 
-    api.get(`/payment/${vault.id}/expenses?currency=PLN&start=${startDate.toISOString()}`)
+    api.get(`/transactions/${vault.id}/expenses?currency=PLN&start=${startDate.toISOString()}`)
       .then(response => setExpenses(response.data.total))
       .catch(error => console.error(error))
   }, [api, expensesRange, vault.id])
@@ -41,10 +41,10 @@ export const ExpensesCardItem = ({
                 <Heading size='sm'
                          isTruncated
                          maxWidth={'70%'}>
-                  {expensesRange === PaymentExpensesRange.Day && 'Last 24 hours'}
-                  {expensesRange === PaymentExpensesRange.Week && 'Last 7 days'}
-                  {expensesRange === PaymentExpensesRange.Month && 'Last 30 days'}
-                  {expensesRange === PaymentExpensesRange.Year && 'Last 365 days'}
+                  {expensesRange === TransactionExpensesRange.Day && 'Last 24 hours'}
+                  {expensesRange === TransactionExpensesRange.Week && 'Last 7 days'}
+                  {expensesRange === TransactionExpensesRange.Month && 'Last 30 days'}
+                  {expensesRange === TransactionExpensesRange.Year && 'Last 365 days'}
                 </Heading>
                 {
                   expenses && expenses.amount > 0 &&

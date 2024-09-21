@@ -1,7 +1,7 @@
 import {Card, CardBody, CardHeader, Flex, Heading, Stack} from "@chakra-ui/react"
 import React from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {PaymentExpensesRange, VaultResponse} from "@/components/api"
+import {TransactionExpensesRange, VaultResponse} from "@/components/api"
 import {AverageExpensesCardItem} from "@/components/analytics/expenses/average/AverageExpensesCardItem"
 
 interface AverageExpensesStatisticCardProperties {
@@ -22,10 +22,10 @@ export const AverageCard = ({ vault }: AverageExpensesStatisticCardProperties) =
       </CardHeader>
       <CardBody>
         <Stack gap={0}>
-          <AverageExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Day} />
-          <AverageExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Week} />
-          <AverageExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Month} />
-          <AverageExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Year} />
+          <AverageExpensesCardItem vault={vault} expensesRange={TransactionExpensesRange.Day} />
+          <AverageExpensesCardItem vault={vault} expensesRange={TransactionExpensesRange.Week} />
+          <AverageExpensesCardItem vault={vault} expensesRange={TransactionExpensesRange.Month} />
+          <AverageExpensesCardItem vault={vault} expensesRange={TransactionExpensesRange.Year} />
         </Stack>
       </CardBody>
     </Card>

@@ -11,10 +11,10 @@ import dev.zrdzn.finance.backend.vault.api.VaultPermission.MEMBER_INVITE_DELETE
 import dev.zrdzn.finance.backend.vault.api.VaultPermission.MEMBER_INVITE_READ
 import dev.zrdzn.finance.backend.vault.api.VaultPermission.MEMBER_READ
 import dev.zrdzn.finance.backend.vault.api.VaultPermission.MEMBER_REMOVE
-import dev.zrdzn.finance.backend.vault.api.VaultPermission.PAYMENT_CREATE
-import dev.zrdzn.finance.backend.vault.api.VaultPermission.PAYMENT_DELETE
-import dev.zrdzn.finance.backend.vault.api.VaultPermission.PAYMENT_READ
-import dev.zrdzn.finance.backend.vault.api.VaultPermission.PAYMENT_UPDATE
+import dev.zrdzn.finance.backend.vault.api.VaultPermission.TRANSACTION_CREATE
+import dev.zrdzn.finance.backend.vault.api.VaultPermission.TRANSACTION_DELETE
+import dev.zrdzn.finance.backend.vault.api.VaultPermission.TRANSACTION_READ
+import dev.zrdzn.finance.backend.vault.api.VaultPermission.TRANSACTION_UPDATE
 import dev.zrdzn.finance.backend.vault.api.VaultPermission.PRODUCT_CREATE
 import dev.zrdzn.finance.backend.vault.api.VaultPermission.PRODUCT_DELETE
 import dev.zrdzn.finance.backend.vault.api.VaultPermission.PRODUCT_READ
@@ -24,7 +24,7 @@ import dev.zrdzn.finance.backend.vault.api.VaultPermission.SETTINGS_UPDATE
 
 private val MEMBER_PERMISSIONS = setOf(
     DETAILS_READ,
-    PAYMENT_CREATE, PAYMENT_READ, PAYMENT_UPDATE, PAYMENT_DELETE,
+    TRANSACTION_CREATE, TRANSACTION_READ, TRANSACTION_UPDATE, TRANSACTION_DELETE,
     PRODUCT_CREATE, PRODUCT_READ, PRODUCT_UPDATE, PRODUCT_DELETE,
     CATEGORY_CREATE, CATEGORY_READ, CATEGORY_UPDATE, CATEGORY_DELETE,
     MEMBER_READ,

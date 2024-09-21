@@ -25,7 +25,6 @@ import {FaCalendarDays, FaChartSimple, FaGears, FaHouse, FaX} from "react-icons/
 import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"
 import {VaultResponse} from "@/components/api"
-import {router} from "next/client"
 
 interface VaultSidebarProperties {
   vault: VaultResponse;
@@ -95,7 +94,7 @@ const BaseView = ({ vault }: VaultSidebarProperties) => {
             <Flex direction={'column'} mt={5}>
               {[
                 { href: `/vault/${vault.publicId}`, icon: FaHouse, label: 'Overview' },
-                { href: `/vault/${vault.publicId}/payments`, icon: FaBook, label: 'Payments' },
+                { href: `/vault/${vault.publicId}/transactions`, icon: FaBook, label: 'Transactions' },
                 { href: `/vault/${vault.publicId}/products`, icon: FaTags, label: 'Products' },
                 { href: `/vault/${vault.publicId}/statistics`, icon: FaChartSimple, label: 'Statistics' },
                 { href: `/vault/${vault.publicId}/schedules`, icon: FaCalendarDays, label: 'Schedules', isDisabled: true },
@@ -186,7 +185,7 @@ const DesktopView = (
       >
         {[
           { href: `/vault/${vault.publicId}`, icon: FaHouse, label: 'Overview' },
-          { href: `/vault/${vault.publicId}/payments`, icon: FaBook, label: 'Payments' },
+          { href: `/vault/${vault.publicId}/transactions`, icon: FaBook, label: 'Transactions' },
           { href: `/vault/${vault.publicId}/products`, icon: FaTags, label: 'Products' },
           { href: `/vault/${vault.publicId}/statistics`, icon: FaChartSimple, label: 'Statistics' },
           { href: `/vault/${vault.publicId}/schedules`, icon: FaCalendarDays, label: 'Schedules', isDisabled: true },

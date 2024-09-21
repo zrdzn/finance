@@ -5,7 +5,7 @@ export type SelectOptionProperties = {value: string, label: string}
 export type SelectProperties = SingleValue<SelectOptionProperties>
 
 export enum AnalyticsOverviewStatisticType {
-  TotalPaymentsMade = "TOTAL_PAYMENTS_MADE",
+  TotalTransactionsMade = "TOTAL_TRANSACTIONS_MADE",
   TotalExpenses = "TOTAL_EXPENSES",
   AverageExpenses = "AVERAGE_EXPENSES",
 }
@@ -29,7 +29,7 @@ export interface VaultResponse {
   ownerId: number
   name: string
   currency: string
-  paymentMethod: string
+  transactionMethod: string
 }
 
 export interface VaultMemberResponse {
@@ -49,13 +49,13 @@ export interface VaultInvitationResponse {
 export interface VaultCreateRequest {
   name: string
   currency: string
-  paymentMethod: string
+  transactionMethod: string
 }
 
 export interface VaultUpdateRequest {
   name: string
   currency: string
-  paymentMethod: string
+  transactionMethod: string
 }
 
 export interface VaultInvitationCreateRequest {
@@ -63,52 +63,52 @@ export interface VaultInvitationCreateRequest {
   userEmail: string
 }
 
-// payments
-export interface PaymentResponse {
+// transactions
+export interface TransactionResponse {
   id: number
   createdAt: number
-  paymentMethod: string
+  transactionMethod: string
   description: string | null
   totalInVaultCurrency: number
   total: number
   currency: string
 }
 
-export interface PaymentProductWithProductResponse {
+export interface TransactionProductWithProductResponse {
   id: number
-  paymentId: number
+  transactionId: number
   product: ProductResponse
   unitAmount: number
   quantity: number
 }
 
-export interface PaymentCreateRequest {
+export interface TransactionCreateRequest {
   vaultId: number
-  paymentMethod: string
+  transactionMethod: string
   description: string | null
   price: number
   currency: string
 }
 
-export interface PaymentUpdateRequest {
-  paymentMethod: string
+export interface TransactionUpdateRequest {
+  transactionMethod: string
   description: string | null
   total: number
   currency: string
 }
 
-export interface PaymentProductCreateRequest {
+export interface TransactionProductCreateRequest {
   productId: number
   unitAmount: number
   quantity: number
 }
 
-export interface PaymentExpensesResponse {
+export interface TransactionExpensesResponse {
   amount: number
   currency: string
 }
 
-export enum PaymentExpensesRange {
+export enum TransactionExpensesRange {
   Day = "DAY",
   Week = "WEEK",
   Month = "MONTH",

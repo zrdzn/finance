@@ -1,7 +1,7 @@
 import {Card, CardBody, CardHeader, Flex, Heading, Stack} from "@chakra-ui/react"
 import React from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {PaymentExpensesRange, VaultResponse} from "@/components/api"
+import {TransactionExpensesRange, VaultResponse} from "@/components/api"
 import {ExpensesCardItem} from "@/components/analytics/expenses/ExpensesCardItem"
 
 interface ExpensesStatisticCardProperties {
@@ -22,10 +22,10 @@ export const ExpensesCard = ({ vault }: ExpensesStatisticCardProperties) => {
       </CardHeader>
       <CardBody>
         <Stack gap={0}>
-          <ExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Day} />
-          <ExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Week} />
-          <ExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Month} />
-          <ExpensesCardItem vault={vault} expensesRange={PaymentExpensesRange.Year} />
+          <ExpensesCardItem vault={vault} expensesRange={TransactionExpensesRange.Day} />
+          <ExpensesCardItem vault={vault} expensesRange={TransactionExpensesRange.Week} />
+          <ExpensesCardItem vault={vault} expensesRange={TransactionExpensesRange.Month} />
+          <ExpensesCardItem vault={vault} expensesRange={TransactionExpensesRange.Year} />
         </Stack>
       </CardBody>
     </Card>

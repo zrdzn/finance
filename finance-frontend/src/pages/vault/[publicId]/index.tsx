@@ -3,7 +3,7 @@ import Head from 'next/head';
 import {Flex, Grid} from "@chakra-ui/react";
 import React from "react";
 import {useRouter} from "next/router"
-import {LastPaymentsCard} from "@/components/payment/LastPaymentsCard"
+import {LastTransactionsCard} from "@/components/transaction/LastTransactionsCard"
 import {ProtectedVault} from "@/components/vault/ProtectedVault"
 import {AnalyticsSummaryCard} from "@/components/analytics/AnalyticsSummaryCard"
 
@@ -24,7 +24,7 @@ export default function Dashboard(): ReactJSXElement {
               templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }}
               gap={4}
               width="full">
-              <LastPaymentsCard vault={vault} permissions={permissions} />
+              <LastTransactionsCard vault={vault} permissions={permissions} />
               <AnalyticsSummaryCard vault={vault} permissions={permissions} />
             </Grid>
           </Flex>

@@ -23,7 +23,7 @@ export const AnalyticsSummaryCard = ({ vault, permissions }: AnalyticsSummaryCar
       </CardHeader>
       <CardBody>
         <Stack gap={0}>
-          <AnalyticsSummaryCardItem vault={vault} statisticType={AnalyticsOverviewStatisticType.TotalPaymentsMade} />
+          <AnalyticsSummaryCardItem vault={vault} statisticType={AnalyticsOverviewStatisticType.TotalTransactionsMade} />
           <AnalyticsSummaryCardItem vault={vault} statisticType={AnalyticsOverviewStatisticType.TotalExpenses} />
           <AnalyticsSummaryCardItem vault={vault} statisticType={AnalyticsOverviewStatisticType.AverageExpenses} />
         </Stack>

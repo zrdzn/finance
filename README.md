@@ -16,7 +16,7 @@ Data is securely stored in a PostgreSQL database.
 ### 🔐 Vault Management
 - A Vault is a central place for managing:
     - Members
-    - Payments
+    - Transactions
     - Products
     - Categories
 - Users can create multiple vaults and automatically become members with owner roles.
@@ -28,7 +28,7 @@ Data is securely stored in a PostgreSQL database.
 - Create detailed payment records, with the ability to:
     - Add existing products to records.
 
-#### 📝 Export Payments to .CSV File
+#### 📝 Export Transactions to .CSV File
 - Easily export payment records to a .CSV file for offline access and analysis.
 
 ### 📊 Statistics and Reporting

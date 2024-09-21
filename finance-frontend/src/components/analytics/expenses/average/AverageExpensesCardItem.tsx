@@ -1,11 +1,11 @@
 import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
-import {PaymentExpensesRange, PaymentExpensesResponse, VaultResponse} from "@/components/api"
+import {TransactionExpensesRange, TransactionExpensesResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 
 interface AverageExpensesCardItemProperties {
   vault: VaultResponse
-  expensesRange: PaymentExpensesRange
+  expensesRange: TransactionExpensesRange
 }
 
 export const AverageExpensesCardItem = ({
@@ -13,7 +13,7 @@ export const AverageExpensesCardItem = ({
   expensesRange
 }: AverageExpensesCardItemProperties) => {
   const api = useApi()
-  const [expenses, setExpenses] = useState<PaymentExpensesResponse>({
+  const [expenses, setExpenses] = useState<TransactionExpensesResponse>({
     amount: 0,
     currency: 'PLN'
   })
@@ -35,10 +35,10 @@ export const AverageExpensesCardItem = ({
                 <Heading size='sm'
                          isTruncated
                          maxWidth={'70%'}>
-                  {expensesRange === PaymentExpensesRange.Day && 'Per day'}
-                  {expensesRange === PaymentExpensesRange.Week && 'Per week'}
-                  {expensesRange === PaymentExpensesRange.Month && 'Per month'}
-                  {expensesRange === PaymentExpensesRange.Year && 'Per year'}
+                  {expensesRange === TransactionExpensesRange.Day && 'Per day'}
+                  {expensesRange === TransactionExpensesRange.Week && 'Per week'}
+                  {expensesRange === TransactionExpensesRange.Month && 'Per month'}
+                  {expensesRange === TransactionExpensesRange.Year && 'Per year'}
                 </Heading>
                 {
                   expenses && expenses.amount > 0 &&
