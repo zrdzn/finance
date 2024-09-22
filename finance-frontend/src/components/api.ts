@@ -5,9 +5,10 @@ export type SelectOptionProperties = {value: string, label: string}
 export type SelectProperties = SingleValue<SelectOptionProperties>
 
 export enum AnalyticsOverviewStatisticType {
-  TotalTransactionsMade = "TOTAL_TRANSACTIONS_MADE",
-  TotalExpenses = "TOTAL_EXPENSES",
-  AverageExpenses = "AVERAGE_EXPENSES",
+  Balance = "BALANCE",
+  Income = "INCOME",
+  Expenses = "EXPENSES",
+  Transactions = "TRANSACTIONS"
 }
 
 // users
@@ -64,6 +65,11 @@ export interface VaultInvitationCreateRequest {
 }
 
 // transactions
+export enum TransactionType {
+  Incoming = "INCOMING",
+  Outgoing = "OUTGOING"
+}
+
 export interface TransactionResponse {
   id: number
   createdAt: number
@@ -106,12 +112,12 @@ export interface TransactionProductCreateRequest {
   quantity: number
 }
 
-export interface TransactionExpensesResponse {
+export interface TransactionFlowsResponse {
   amount: number
   currency: string
 }
 
-export enum TransactionExpensesRange {
+export enum TransactionFlowsRange {
   Day = "DAY",
   Week = "WEEK",
   Month = "MONTH",

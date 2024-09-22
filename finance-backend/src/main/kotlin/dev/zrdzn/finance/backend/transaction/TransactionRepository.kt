@@ -1,6 +1,7 @@
 package dev.zrdzn.finance.backend.transaction
 
 import dev.zrdzn.finance.backend.shared.Price
+import dev.zrdzn.finance.backend.transaction.api.TransactionType
 import dev.zrdzn.finance.backend.vault.VaultId
 import java.time.Instant
 
@@ -18,9 +19,7 @@ interface TransactionRepository {
 
     fun countByVaultId(vaultId: VaultId): Long
 
-    fun sumAndGroupExpensesByVaultId(vaultId: VaultId): List<Price>
-
-    fun sumAndGroupExpensesByVaultId(vaultId: VaultId, start: Instant): List<Price>
+    fun sumAndGroupFlowsByVaultIdAndTransactionType(vaultId: VaultId, transactionType: TransactionType, start: Instant): List<Price>
 
     fun countTotalDaysByVaultId(vaultId: VaultId): Long
 

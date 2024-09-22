@@ -4,6 +4,7 @@ import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.transaction.Transaction
 import dev.zrdzn.finance.backend.transaction.TransactionId
 import dev.zrdzn.finance.backend.transaction.TransactionRepository
+import dev.zrdzn.finance.backend.transaction.api.TransactionType
 import dev.zrdzn.finance.backend.vault.VaultId
 import java.time.Instant
 import org.springframework.data.jpa.repository.Query
@@ -19,23 +20,14 @@ interface JpaTransactionRepository : TransactionRepository, Repository<Transacti
         SELECT NEW dev.zrdzn.finance.backend.shared.Price(SUM(transaction.total), transaction.currency)
         FROM Transaction transaction
         WHERE transaction.vaultId = :vaultId
+        AND transaction.transactionType = :transactionType
+        AND transaction.createdAt >= :start
         GROUP BY transaction.currency
     """
     )
-    override fun sumAndGroupExpensesByVaultId(
-        @Param("vaultId") vaultId: VaultId
-    ): List<Price>
-
-    @Query(
-        """
-        SELECT NEW dev.zrdzn.finance.backend.shared.Price(SUM(transaction.total), transaction.currency)
-        FROM Transaction transaction
-        WHERE transaction.vaultId = :vaultId AND transaction.createdAt >= :start
-        GROUP BY transaction.currency
-    """
-    )
-    override fun sumAndGroupExpensesByVaultId(
+    override fun sumAndGroupFlowsByVaultIdAndTransactionType(
         @Param("vaultId") vaultId: VaultId,
+        @Param("transactionType") transactionType: TransactionType,
         @Param("start") start: Instant
     ): List<Price>
 

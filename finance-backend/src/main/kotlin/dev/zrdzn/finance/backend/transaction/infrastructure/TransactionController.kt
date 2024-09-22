@@ -8,10 +8,9 @@ import dev.zrdzn.finance.backend.transaction.api.TransactionAmountResponse
 import dev.zrdzn.finance.backend.transaction.api.TransactionCreateRequest
 import dev.zrdzn.finance.backend.transaction.api.TransactionCreateResponse
 import dev.zrdzn.finance.backend.transaction.api.TransactionListResponse
+import dev.zrdzn.finance.backend.transaction.api.TransactionType
 import dev.zrdzn.finance.backend.transaction.api.TransactionUpdateRequest
-import dev.zrdzn.finance.backend.transaction.api.expense.TransactionAverageExpensesResponse
-import dev.zrdzn.finance.backend.transaction.api.expense.TransactionExpenseRange
-import dev.zrdzn.finance.backend.transaction.api.expense.TransactionExpensesResponse
+import dev.zrdzn.finance.backend.transaction.api.flow.TransactionFlowsResponse
 import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductCreateRequest
 import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductCreateResponse
 import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductListResponse
@@ -137,32 +136,20 @@ class TransactionController(
     ): TransactionProductListResponse =
         transactionService.getTransactionProducts(userId, transactionId)
 
-    @GetMapping("/{vaultId}/expenses")
+    @GetMapping("/{vaultId}/flows")
     fun getExpensesByVaultId(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable vaultId: VaultId,
+        @RequestParam("transactionType", required = false) transactionType: TransactionType?,
         @RequestParam("currency") currency: Currency,
         @RequestParam("start") start: Instant
-    ): TransactionExpensesResponse =
-        transactionService.getTransactionExpenses(
+    ): TransactionFlowsResponse =
+        transactionService.getTransactionFlows(
             requesterId = userId,
             vaultId = vaultId,
+            transactionType = transactionType,
             currency = currency,
             start = start
-        )
-
-    @GetMapping("/{vaultId}/expenses/average")
-    fun getAverageExpensesByVaultId(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable vaultId: VaultId,
-        @RequestParam("currency") currency: Currency,
-        @RequestParam("range") range: TransactionExpenseRange
-    ): TransactionAverageExpensesResponse =
-        transactionService.getTransactionAverageExpenses(
-            requesterId = userId,
-            vaultId = vaultId,
-            currency = currency,
-            range = range
         )
 
 }

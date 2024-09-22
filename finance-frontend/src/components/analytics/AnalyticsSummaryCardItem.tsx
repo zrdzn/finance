@@ -1,12 +1,13 @@
-import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, Text} from "@chakra-ui/react"
+import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, HStack, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {
   AnalyticsOverviewStatisticType,
-  TransactionExpensesRange,
-  TransactionExpensesResponse,
+  TransactionFlowsRange,
+  TransactionFlowsResponse,
   VaultResponse
 } from "@/components/api"
 import {useApi} from "@/hooks/useApi"
+import exp from "constants"
 
 interface AnalyticsSummaryCardItemProperties {
   vault: VaultResponse
@@ -17,29 +18,35 @@ export const AnalyticsSummaryCardItem = ({
   vault, statisticType
 }: AnalyticsSummaryCardItemProperties) => {
   const api = useApi()
-  const [totalTransactionsMade, setTotalTransactionsMade] = useState<number | undefined>(undefined)
-  const [totalExpenses, setTotalExpenses] = useState<TransactionExpensesResponse | undefined>(undefined)
-  const [averageExpenses, setAverageExpenses] = useState<TransactionExpensesResponse | undefined>(undefined)
+  const [balance, setBalance] = useState<TransactionFlowsResponse | undefined>(undefined)
+  const [income, setIncome] = useState<TransactionFlowsResponse | undefined>(undefined)
+  const [expenses, setExpenses] = useState<TransactionFlowsResponse | undefined>(undefined)
+  const [transactions, setTransactions] = useState<number | undefined>(undefined)
 
   useEffect(() => {
-    if (statisticType === AnalyticsOverviewStatisticType.TotalTransactionsMade) {
+    if (statisticType === AnalyticsOverviewStatisticType.Balance) {
+      api.get(`/transactions/${vault.id}/flows?currency=PLN&start=${new Date(vault.createdAt).toISOString()}`)
+        .then(response => setBalance(response.data.total))
+        .catch(error => console.error(error))
+    }
+
+    if (statisticType === AnalyticsOverviewStatisticType.Income) {
+      api.get(`/transactions/${vault.id}/flows?transactionType=INCOMING&currency=PLN&start=${new Date(vault.createdAt).toISOString()}`)
+        .then(response => setIncome(response.data.total))
+        .catch(error => console.error(error))
+    }
+
+    if (statisticType === AnalyticsOverviewStatisticType.Expenses) {
+      api.get(`/transactions/${vault.id}/flows?transactionType=OUTGOING&currency=PLN&start=${new Date(vault.createdAt).toISOString()}`)
+        .then(response => setExpenses(response.data.total))
+        .catch(error => console.error(error))
+    }
+
+    if (statisticType === AnalyticsOverviewStatisticType.Transactions) {
       api.get(`/transactions/${vault.id}/amount`)
-        .then(response => setTotalTransactionsMade(response.data.amount))
+        .then(response => setTransactions(response.data.amount))
         .catch(error => console.error(error))
     }
-
-    if (statisticType === AnalyticsOverviewStatisticType.TotalExpenses) {
-      api.get(`/transactions/${vault.id}/expenses?currency=PLN&start=${new Date(vault.createdAt).toISOString()}`)
-        .then(response => setTotalExpenses(response.data.total))
-        .catch(error => console.error(error))
-    }
-
-    if (statisticType === AnalyticsOverviewStatisticType.AverageExpenses) {
-      api.get(`/transactions/${vault.id}/expenses/average?currency=PLN&range=${TransactionExpensesRange.Month}`)
-        .then(response => setAverageExpenses(response.data.total))
-        .catch(error => console.error(error))
-    }
-    
   }, [api, statisticType, vault.createdAt, vault.id])
 
   return (
@@ -50,42 +57,110 @@ export const AnalyticsSummaryCardItem = ({
           <AccordionButton width={'full'}>
             <Box width={'full'}>
               <Flex justifyContent={'space-between'}>
-                <Heading size='sm'
-                         isTruncated
-                         maxWidth={'70%'}>
-                  {statisticType === AnalyticsOverviewStatisticType.TotalTransactionsMade && 'Total Transactions Made'}
-                  {statisticType === AnalyticsOverviewStatisticType.TotalExpenses && 'Total Expenses'}
-                  {statisticType === AnalyticsOverviewStatisticType.AverageExpenses && 'Average Expenses (per month)'}
-                </Heading>
+                <Text fontSize='md'
+                      fontWeight={'600'}
+                      isTruncated
+                      maxWidth={'70%'}>
+                  {statisticType === AnalyticsOverviewStatisticType.Balance && 'Balance'}
+                  {statisticType === AnalyticsOverviewStatisticType.Income && 'Income'}
+                  {statisticType === AnalyticsOverviewStatisticType.Expenses && 'Expenses'}
+                  {statisticType === AnalyticsOverviewStatisticType.Transactions && 'Transactions'}
+                </Text>
                 {
-                  totalTransactionsMade &&
-                    <Heading size={'md'}>
-                      {totalTransactionsMade}
-                    </Heading>
+                  balance && balance.amount > 0 &&
+                    <HStack>
+                        <Text fontSize='xl'
+                              fontWeight={'600'}
+                              color={'green'}
+                              isTruncated>
+                          {balance.amount.toFixed(2)}
+                        </Text>
+                        <Text fontSize='md'
+                              fontWeight={'600'}
+                              isTruncated>
+                          {balance.currency}
+                        </Text>
+                    </HStack>
                 }
                 {
-                  totalExpenses && totalExpenses.amount > 0 &&
-                    <Heading size={'md'}>
-                      {totalExpenses.amount.toFixed(2)} {totalExpenses.currency}
-                    </Heading>
+                  balance && balance.amount === 0 &&
+                    <Text fontSize='xl'
+                          fontWeight={'600'}
+                          isTruncated>
+                        0.00 {balance.currency}
+                    </Text>
                 }
                 {
-                  totalExpenses && totalExpenses.amount === 0 &&
-                    <Heading size={'md'}>
-                        0.00 {totalExpenses.currency}
-                    </Heading>
+                  balance && balance.amount < 0 &&
+                    <HStack>
+                        <Text fontSize='xl'
+                              fontWeight={'600'}
+                              color={'crimson'}
+                              isTruncated>
+                          {balance.amount.toFixed(2)}
+                        </Text>
+                        <Text fontSize='md'
+                              fontWeight={'600'}
+                              isTruncated>
+                          {balance.currency}
+                        </Text>
+                    </HStack>
                 }
                 {
-                  averageExpenses && averageExpenses.amount > 0 &&
-                    <Heading size={'md'}>
-                      {averageExpenses.amount.toFixed(2)} {averageExpenses.currency}
-                    </Heading>
+                  income && income.amount > 0 &&
+                    <HStack>
+                        <Text fontSize='xl'
+                              fontWeight={'600'}
+                              color={'green'}
+                              isTruncated>
+                          {income.amount.toFixed(2)}
+                        </Text>
+                        <Text fontSize='md'
+                              fontWeight={'600'}
+                              isTruncated>
+                          {income.currency}
+                        </Text>
+                    </HStack>
                 }
                 {
-                  averageExpenses && averageExpenses.amount === 0 &&
-                    <Heading size={'md'}>
-                        0.00 {averageExpenses.currency}
-                    </Heading>
+                  income && income.amount === 0 &&
+                    <Text fontSize='xl'
+                          fontWeight={'600'}
+                          isTruncated>
+                        0.00 {income.currency}
+                    </Text>
+                }
+                {
+                  expenses && expenses.amount > 0 &&
+                    <HStack>
+                        <Text fontSize='xl'
+                              fontWeight={'600'}
+                              color={'crimson'}
+                              isTruncated>
+                          {expenses.amount.toFixed(2)}
+                        </Text>
+                        <Text fontSize='md'
+                              fontWeight={'600'}
+                              isTruncated>
+                          {expenses.currency}
+                        </Text>
+                    </HStack>
+                }
+                {
+                  expenses && expenses.amount === 0 &&
+                    <Text fontSize='xl'
+                          fontWeight={'600'}
+                          isTruncated>
+                        0.00 {expenses.currency}
+                    </Text>
+                }
+                {
+                  transactions &&
+                    <Text fontSize='xl'
+                          fontWeight={'600'}
+                          isTruncated>
+                      {transactions}
+                    </Text>
                 }
               </Flex>
               <Flex justifyContent={'space-between'}>

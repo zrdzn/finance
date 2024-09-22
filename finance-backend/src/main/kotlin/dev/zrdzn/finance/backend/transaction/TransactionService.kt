@@ -16,9 +16,7 @@ import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
 import dev.zrdzn.finance.backend.transaction.api.TransactionNotFoundException
 import dev.zrdzn.finance.backend.transaction.api.TransactionResponse
 import dev.zrdzn.finance.backend.transaction.api.TransactionType
-import dev.zrdzn.finance.backend.transaction.api.expense.TransactionAverageExpensesResponse
-import dev.zrdzn.finance.backend.transaction.api.expense.TransactionExpenseRange
-import dev.zrdzn.finance.backend.transaction.api.expense.TransactionExpensesResponse
+import dev.zrdzn.finance.backend.transaction.api.flow.TransactionFlowsResponse
 import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductCreateResponse
 import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductListResponse
 import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductWithProductResponse
@@ -287,63 +285,44 @@ open class TransactionService(
     }
 
     @Transactional(readOnly = true)
-    open fun getTransactionExpenses(requesterId: UserId, vaultId: VaultId, currency: Currency, start: Instant): TransactionExpensesResponse {
+    open fun getTransactionFlows(requesterId: UserId, vaultId: VaultId, transactionType: TransactionType?, currency: Currency, start: Instant): TransactionFlowsResponse {
         vaultService.authorizeMember(vaultId, requesterId, VaultPermission.DETAILS_READ)
 
-        return transactionRepository.sumAndGroupExpensesByVaultId(vaultId, start)
+        // if transaction type is not provided, calculate balance
+        if (transactionType == null) {
+            val income = calculateFlowsByType(vaultId, TransactionType.INCOMING, start, currency)
+            val outcome = calculateFlowsByType(vaultId, TransactionType.OUTGOING, start, currency)
+
+            return TransactionFlowsResponse(
+                Price(
+                    amount = income - outcome,
+                    currency = currency
+                )
+            )
+        }
+
+        return TransactionFlowsResponse(
+            Price(
+                amount = calculateFlowsByType(vaultId, transactionType, start, currency),
+                currency = currency
+            )
+        )
+    }
+
+    private fun calculateFlowsByType(
+        vaultId: VaultId,
+        transactionType: TransactionType,
+        start: Instant,
+        targetCurrency: Currency
+    ): BigDecimal {
+        return transactionRepository.sumAndGroupFlowsByVaultIdAndTransactionType(vaultId, transactionType, start)
             .sumOf {
                 exchangeService.convertCurrency(
                     amount = it.amount,
                     source = it.currency,
-                    target = currency
+                    target = targetCurrency
                 ).amount
             }
-            .let {
-                TransactionExpensesResponse(
-                    Price(
-                        amount = it,
-                        currency = currency
-                    )
-                )
-            }
-    }
-
-    @Transactional(readOnly = true)
-    open fun getTransactionAverageExpenses(
-        requesterId: UserId,
-        vaultId: VaultId,
-        currency: Currency,
-        range: TransactionExpenseRange
-    ): TransactionAverageExpensesResponse {
-        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.DETAILS_READ)
-
-        val totalExpenses = transactionRepository.sumAndGroupExpensesByVaultId(vaultId)
-
-        val convertedTotal = totalExpenses.sumOf {
-            exchangeService.convertCurrency(
-                amount = it.amount,
-                source = it.currency,
-                target = currency
-            ).amount
-        }
-
-        val totalDays = transactionRepository.countTotalDaysByVaultId(vaultId).toBigDecimal()
-
-        val dailyAverageAmount = convertedTotal / totalDays
-
-        val averageAmount: BigDecimal = when (range) {
-            TransactionExpenseRange.DAY -> dailyAverageAmount
-            TransactionExpenseRange.WEEK -> dailyAverageAmount / 7.toBigDecimal()
-            TransactionExpenseRange.MONTH -> dailyAverageAmount / 30.toBigDecimal()
-            TransactionExpenseRange.YEAR -> dailyAverageAmount / 365.toBigDecimal()
-        }
-
-        return TransactionAverageExpensesResponse(
-            Price(
-                amount = averageAmount,
-                currency = currency
-            )
-        )
     }
 
 }
