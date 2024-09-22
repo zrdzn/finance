@@ -62,7 +62,6 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
         </Flex>
         <Divider mt={4} />
         <Stack gap={0}>
-          <Accordion allowToggle width={'full'} allowMultiple={false}>
             {
               queriedTransactions.length === 0 && <Text size={'sm'}>There are no transactions</Text>
             }
@@ -79,7 +78,6 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
                   </>
                 )
             }
-          </Accordion>
         </Stack>
       </CardBody>
     </Card>

@@ -69,6 +69,7 @@ export const TransactionsCardItem = ({
   }
 
   return (
+    <Accordion allowToggle width={'full'} allowMultiple={false}>
       <AccordionItem width={'full'}
                      paddingY={4}
                      borderTop={'none'}>
@@ -149,5 +150,6 @@ export const TransactionsCardItem = ({
           </Stack>
         </AccordionPanel>
       </AccordionItem>
+    </Accordion>
   )
 }
