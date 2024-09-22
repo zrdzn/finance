@@ -103,6 +103,7 @@ class TransactionController(
             requesterId = userId,
             transactionId = transactionId,
             transactionMethod = transactionUpdateRequest.transactionMethod,
+            transactionType = transactionUpdateRequest.transactionType,
             description = transactionUpdateRequest.description,
             price = Price(
                 amount = transactionUpdateRequest.total,

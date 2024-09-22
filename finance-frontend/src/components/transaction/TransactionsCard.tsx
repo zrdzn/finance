@@ -1,4 +1,4 @@
-import {Card, CardBody, CardHeader, Divider, Flex, Heading, Stack, Text} from "@chakra-ui/react"
+import {Accordion, Card, CardBody, CardHeader, Divider, Flex, Heading, Stack, Text} from "@chakra-ui/react"
 import {AddTransactionButton} from "@/components/transaction/AddTransactionButton"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
@@ -62,17 +62,24 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
         </Flex>
         <Divider mt={4} />
         <Stack gap={0}>
-          {
-            queriedTransactions.length === 0 && <Text size={'sm'}>There are no transactions</Text>
-          }
-          {
-            queriedTransactions &&
-            queriedTransactions.sort((transaction, nextTransaction) => new Date(nextTransaction.createdAt).getTime() - new Date(transaction.createdAt).getTime())
-              .map(transaction => <TransactionsCardItem key={transaction.id}
-                                                    vaultId={vault.id}
-                                                    transaction={transaction}
-                                                    permissions={permissions} />)
-          }
+          <Accordion allowToggle width={'full'} allowMultiple={false}>
+            {
+              queriedTransactions.length === 0 && <Text size={'sm'}>There are no transactions</Text>
+            }
+            {
+              queriedTransactions &&
+              queriedTransactions.sort((transaction, nextTransaction) => new Date(nextTransaction.createdAt).getTime() - new Date(transaction.createdAt).getTime())
+                .map(transaction =>
+                  <>
+                    <TransactionsCardItem key={transaction.id}
+                                          vaultId={vault.id}
+                                          transaction={transaction}
+                                          permissions={permissions} />
+                    <Divider />
+                  </>
+                )
+            }
+          </Accordion>
         </Stack>
       </CardBody>
     </Card>

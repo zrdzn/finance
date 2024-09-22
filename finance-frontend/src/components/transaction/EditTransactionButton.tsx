@@ -9,7 +9,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  ModalOverlay,
+  ModalOverlay, Radio, RadioGroup, Stack,
   useDisclosure,
 } from '@chakra-ui/react'
 import React, {ChangeEvent, useRef, useState} from "react"
@@ -34,6 +34,7 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [transactionUpdateRequest, setTransactionUpdateRequest] = useState<TransactionUpdateRequest>({
     transactionMethod: transaction.transactionMethod,
+    transactionType: transaction.transactionType,
     description: transaction.description,
     total: transaction.total,
     currency: transaction.currency,
@@ -43,6 +44,10 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
 
   const handleTransactionMethodChange = (transactionMethod: string) => {
     setTransactionUpdateRequest((previous) => ({ ...previous, transactionMethod: transactionMethod }))
+  }
+
+  const handleTransactionTypeChange = (transactionType: string) => {
+    setTransactionUpdateRequest((previous) => ({ ...previous, transactionType: transactionType }))
   }
 
   const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -94,6 +99,16 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
               <FormLabel>Method</FormLabel>
               <TransactionMethodSelect onChange={handleTransactionMethodChange}
                                        defaultValue={transactionUpdateRequest.transactionMethod} />
+            </FormControl>
+
+            <FormControl mt={4}>
+              <FormLabel>Type</FormLabel>
+              <RadioGroup onChange={handleTransactionTypeChange} value={transactionUpdateRequest.transactionType}>
+                <Stack direction='row'>
+                  <Radio value='INCOMING'>Income</Radio>
+                  <Radio value='OUTGOING'>Expense</Radio>
+                </Stack>
+              </RadioGroup>
             </FormControl>
 
             <FormControl mt={4}>

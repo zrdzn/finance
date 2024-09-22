@@ -161,12 +161,14 @@ open class TransactionService(
     }
 
     @Transactional
-    open fun updateTransaction(requesterId: UserId, transactionId: TransactionId, transactionMethod: TransactionMethod, description: String?, price: Price) {
+    open fun updateTransaction(requesterId: UserId, transactionId: TransactionId, transactionMethod: TransactionMethod,
+                               transactionType: TransactionType, description: String?, price: Price) {
         val transaction = transactionRepository.findById(transactionId) ?: throw ProductNotFoundException(transactionId)
 
         vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_UPDATE)
 
         transaction.transactionMethod = transactionMethod
+        transaction.transactionType = transactionType
         transaction.description = description
         transaction.total = price.amount
         transaction.currency = price.currency

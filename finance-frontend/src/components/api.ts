@@ -94,6 +94,7 @@ export interface TransactionCreateRequest {
 
 export interface TransactionUpdateRequest {
   transactionMethod: string
+  transactionType: string
   description: string | null
   total: number
   currency: string
