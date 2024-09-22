@@ -4,9 +4,9 @@ import {Grid} from "@chakra-ui/react";
 import React from "react";
 import {ProtectedVault} from "@/components/vault/ProtectedVault"
 import {useRouter} from "next/router"
-import {ExpensesCard} from "@/components/analytics/expenses/ExpensesCard"
-import {AverageCard} from "@/components/analytics/expenses/average/AverageExpensesCard"
 import {AnalyticsSummaryCard} from "@/components/analytics/AnalyticsSummaryCard"
+import {FlowsHistoryCard} from "@/components/analytics/flows/FlowsHistoryCard"
+import {TransactionType} from "@/components/api"
 
 export default function Statistics(): ReactJSXElement {
   const router = useRouter()
@@ -24,8 +24,8 @@ export default function Statistics(): ReactJSXElement {
             gap={4}
             width="full">
             <AnalyticsSummaryCard vault={vault} permissions={permissions} />
-            <ExpensesCard vault={vault} />
-            <AverageCard vault={vault} />
+            <FlowsHistoryCard vault={vault} transactionType={TransactionType.Incoming} />
+            <FlowsHistoryCard vault={vault} transactionType={TransactionType.Outgoing} />
           </Grid>
         </>
       }

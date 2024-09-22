@@ -41,7 +41,7 @@ class VaultController(
                 ownerId = userId,
                 name = vaultCreateRequest.name,
                 defaultCurrency = vaultCreateRequest.currency,
-                defaultPaymentMethod = vaultCreateRequest.paymentMethod
+                defaultTransactionMethod = vaultCreateRequest.transactionMethod
             )
 
     @PostMapping("/{vaultId}/invitations")
@@ -66,7 +66,7 @@ class VaultController(
             requesterId = userId,
             name = vaultUpdateRequest.name,
             currency = vaultUpdateRequest.currency,
-            paymentMethod = vaultUpdateRequest.paymentMethod
+            transactionMethod = vaultUpdateRequest.transactionMethod
         )
 
     @PostMapping("/invitations/{invitationId}/accept")

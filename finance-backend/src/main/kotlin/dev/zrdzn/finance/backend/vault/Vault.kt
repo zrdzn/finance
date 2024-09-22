@@ -1,7 +1,7 @@
 package dev.zrdzn.finance.backend.vault
 
-import dev.zrdzn.finance.backend.payment.api.PaymentMethod
 import dev.zrdzn.finance.backend.shared.Currency
+import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
 import dev.zrdzn.finance.backend.user.UserId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -39,7 +39,7 @@ data class Vault(
     @Column(name = "currency")
     var currency: Currency,
 
-    @Column(columnDefinition = "payment_method")
+    @Column(columnDefinition = "transaction_method")
     @JdbcType(PostgreSQLEnumJdbcType::class)
-    var paymentMethod: PaymentMethod,
+    var transactionMethod: TransactionMethod,
 )

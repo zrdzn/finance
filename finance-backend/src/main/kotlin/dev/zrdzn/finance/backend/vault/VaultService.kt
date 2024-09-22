@@ -1,8 +1,8 @@
 package dev.zrdzn.finance.backend.vault
 
-import dev.zrdzn.finance.backend.payment.api.PaymentMethod
 import dev.zrdzn.finance.backend.shared.Currency
 import dev.zrdzn.finance.backend.shared.createRandomToken
+import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
 import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.user.UserService
 import dev.zrdzn.finance.backend.vault.api.UserNotMemberOfVaultException
@@ -57,7 +57,7 @@ open class VaultService(
     }
 
     @Transactional
-    open fun createVault(ownerId: UserId, name: String, defaultCurrency: Currency, defaultPaymentMethod: PaymentMethod): VaultCreateResponse =
+    open fun createVault(ownerId: UserId, name: String, defaultCurrency: Currency, defaultTransactionMethod: TransactionMethod): VaultCreateResponse =
         vaultRepository
             .save(
                 Vault(
@@ -67,7 +67,7 @@ open class VaultService(
                     ownerId = ownerId,
                     name = name,
                     currency = defaultCurrency,
-                    paymentMethod = defaultPaymentMethod
+                    transactionMethod = defaultTransactionMethod
                 )
             )
             .let {
@@ -120,14 +120,14 @@ open class VaultService(
     }
 
     @Transactional
-    open fun updateVault(requesterId: UserId, vaultId: VaultId, name: String, currency: Currency, paymentMethod: PaymentMethod) {
+    open fun updateVault(requesterId: UserId, vaultId: VaultId, name: String, currency: Currency, transactionMethod: TransactionMethod) {
         val vault = vaultRepository.findById(vaultId) ?: throw VaultNotFoundException(vaultId)
 
         authorizeMember(vaultId, requesterId, VaultPermission.SETTINGS_UPDATE)
 
         vault.name = name
         vault.currency = currency
-        vault.paymentMethod = paymentMethod
+        vault.transactionMethod = transactionMethod
 
         logger.info("Successfully updated vault: $vault")
     }
@@ -165,7 +165,7 @@ open class VaultService(
                     ownerId = it.ownerId,
                     name = it.name,
                     currency = it.currency,
-                    paymentMethod = it.paymentMethod
+                    transactionMethod = it.transactionMethod
                 )
             }
             ?: throw VaultNotFoundException(vaultId)
@@ -192,7 +192,7 @@ open class VaultService(
                         ownerId = it.ownerId,
                         name = it.name,
                         currency = it.currency,
-                        paymentMethod = it.paymentMethod
+                        transactionMethod = it.transactionMethod
                     )
                 }
                 .toSet()
@@ -210,7 +210,7 @@ open class VaultService(
                     ownerId = it.ownerId,
                     name = it.name,
                     currency = it.currency,
-                    paymentMethod = it.paymentMethod
+                    transactionMethod = it.transactionMethod
                 )
             }
     }

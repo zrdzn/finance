@@ -5,7 +5,7 @@ import {VaultResponse, VaultUpdateRequest} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {useRouter} from "next/router"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
-import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"
+import {TransactionMethodSelect} from "@/components/transaction/TransactionMethodSelect"
 import toast from "react-hot-toast"
 
 interface SettingsCardProperties {
@@ -20,7 +20,7 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
   const [vaultUpdateRequest, setVaultUpdateRequest] = useState<VaultUpdateRequest>({
     name: vault.name,
     currency: vault.currency,
-    paymentMethod: vault.paymentMethod
+    transactionMethod: vault.transactionMethod
   })
 
   const handleVaultFormChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,8 +31,8 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
     setVaultUpdateRequest((previous) => ({ ...previous, currency: currency }))
   }
 
-  const handleDefaultPaymentMethodChange = (paymentMethod: string) => {
-    setVaultUpdateRequest((previous) => ({ ...previous, paymentMethod: paymentMethod }))
+  const handleDefaultTransactionMethodChange = (transactionMethod: string) => {
+    setVaultUpdateRequest((previous) => ({ ...previous, transactionMethod: transactionMethod }))
   }
 
   const handleVaultUpdate = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -104,12 +104,12 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
           </FormControl>
 
           <FormControl mt={4}>
-            <FormLabel>Default payment method</FormLabel>
+            <FormLabel>Default transaction method</FormLabel>
             {
-              vault.paymentMethod !== undefined &&
-                <PaymentMethodSelect onChange={handleDefaultPaymentMethodChange}
-                                     defaultValue={vaultUpdateRequest.paymentMethod}
-                                     isDisabled={!permissions.includes("SETTINGS_UPDATE")} />
+              vault.transactionMethod !== undefined &&
+                <TransactionMethodSelect onChange={handleDefaultTransactionMethodChange}
+                                         defaultValue={vaultUpdateRequest.transactionMethod}
+                                         isDisabled={!permissions.includes("SETTINGS_UPDATE")} />
             }
           </FormControl>
 

@@ -20,7 +20,7 @@ import {useTheme} from "@/hooks/useTheme"
 import {useAuthentication} from "@/hooks/useAuthentication"
 import {VaultCreateRequest} from "@/components/api"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
-import {PaymentMethodSelect} from "@/components/payment/PaymentMethodSelect"
+import {TransactionMethodSelect} from "@/components/transaction/TransactionMethodSelect"
 import toast from "react-hot-toast"
 
 export default function SetupVault(): ReactJSXElement {
@@ -31,9 +31,8 @@ export default function SetupVault(): ReactJSXElement {
   const [vaultCreateRequest, setVaultCreateRequest] = useState<VaultCreateRequest>({
     name: '',
     currency: 'PLN',
-    paymentMethod: 'BLIK'
+    transactionMethod: 'BLIK'
   })
-  const [nameError, setNameError] = useState<string | null>(null)
 
   useEffect(() => {
     if (authenticationDetails === null) {
@@ -47,14 +46,14 @@ export default function SetupVault(): ReactJSXElement {
 
   const handleVaultFormChange = (event: ChangeEvent<HTMLInputElement>) => {
     setVaultCreateRequest({ ...vaultCreateRequest, [event.target.name]: event.target.value });
-  };
+  }
 
   const handleDefaultCurrencyChange = (currency: string) => {
     setVaultCreateRequest((previous) => ({ ...previous, currency: currency }))
   }
 
-  const handleDefaultPaymentMethodChange = (paymentMethod: string) => {
-    setVaultCreateRequest((previous) => ({ ...previous, paymentMethod: paymentMethod }))
+  const handleDefaultTransactionMethodChange = (transactionMethod: string) => {
+    setVaultCreateRequest((previous) => ({ ...previous, transactionMethod: transactionMethod }))
   }
 
   const handleVaultSetup = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -98,14 +97,13 @@ export default function SetupVault(): ReactJSXElement {
           </CardHeader>
           <CardBody>
             <Stack spacing='4'>
-              <FormControl isRequired isInvalid={!!nameError}>
+              <FormControl isRequired>
                 <FormLabel>Name</FormLabel>
                 <Input
                   name={'name'}
                   onChange={handleVaultFormChange}
                   placeholder='Choose name'
                 />
-                {nameError && <FormErrorMessage>{nameError}</FormErrorMessage>}
               </FormControl>
 
               <FormControl mt={4}>
@@ -114,8 +112,8 @@ export default function SetupVault(): ReactJSXElement {
               </FormControl>
 
               <FormControl mt={4}>
-                <FormLabel>Default payment method</FormLabel>
-                <PaymentMethodSelect onChange={handleDefaultPaymentMethodChange} />
+                <FormLabel>Default transaction method</FormLabel>
+                <TransactionMethodSelect onChange={handleDefaultTransactionMethodChange} />
               </FormControl>
 
               <Flex mt={2} justifyContent={'space-between'} gap={3}>
