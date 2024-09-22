@@ -8,6 +8,7 @@ import dev.zrdzn.finance.backend.transaction.TransactionRepository
 import dev.zrdzn.finance.backend.transaction.TransactionService
 import dev.zrdzn.finance.backend.user.UserService
 import dev.zrdzn.finance.backend.vault.VaultService
+import java.time.Clock
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -19,7 +20,8 @@ class TransactionApplicationConfiguration(
     private val exchangeService: ExchangeService,
     private val vaultService: VaultService,
     private val userService: UserService,
-    private val auditService: AuditService
+    private val auditService: AuditService,
+    private val clock: Clock
 ) {
 
     @Bean
@@ -31,7 +33,8 @@ class TransactionApplicationConfiguration(
             exchangeService = exchangeService,
             vaultService = vaultService,
             userService = userService,
-            auditService = auditService
+            auditService = auditService,
+            clock = clock
         )
 
 }

@@ -2,6 +2,7 @@ package dev.zrdzn.finance.backend.transaction
 
 import dev.zrdzn.finance.backend.shared.Currency
 import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
+import dev.zrdzn.finance.backend.transaction.api.TransactionType
 import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.vault.VaultId
 import jakarta.persistence.Column
@@ -37,6 +38,10 @@ data class Transaction(
     @Column(columnDefinition = "transaction_method")
     @JdbcType(PostgreSQLEnumJdbcType::class)
     var transactionMethod: TransactionMethod,
+
+    @Column(columnDefinition = "transaction_type")
+    @JdbcType(PostgreSQLEnumJdbcType::class)
+    var transactionType: TransactionType,
 
     @Column(name = "description")
     var description: String?,

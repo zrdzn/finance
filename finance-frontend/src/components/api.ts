@@ -68,6 +68,7 @@ export interface TransactionResponse {
   id: number
   createdAt: number
   transactionMethod: string
+  transactionType: string
   description: string | null
   totalInVaultCurrency: number
   total: number
@@ -85,6 +86,7 @@ export interface TransactionProductWithProductResponse {
 export interface TransactionCreateRequest {
   vaultId: number
   transactionMethod: string
+  transactionType: string
   description: string | null
   price: number
   currency: string

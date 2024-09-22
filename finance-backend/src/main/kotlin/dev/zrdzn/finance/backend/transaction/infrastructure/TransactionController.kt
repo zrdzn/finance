@@ -71,6 +71,7 @@ class TransactionController(
                 requesterId = userId,
                 vaultId = transactionCreateRequest.vaultId,
                 transactionMethod = transactionCreateRequest.transactionMethod,
+                transactionType = transactionCreateRequest.transactionType,
                 description = transactionCreateRequest.description,
                 price = Price(
                     amount = transactionCreateRequest.price,

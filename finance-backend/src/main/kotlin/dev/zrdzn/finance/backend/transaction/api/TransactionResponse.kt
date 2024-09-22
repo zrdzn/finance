@@ -13,6 +13,7 @@ data class TransactionResponse(
     val userId: UserId,
     val vaultId: VaultId,
     val transactionMethod: TransactionMethod,
+    val transactionType: TransactionType,
     val description: String?,
     val totalInVaultCurrency: BigDecimal,
     val total: BigDecimal,

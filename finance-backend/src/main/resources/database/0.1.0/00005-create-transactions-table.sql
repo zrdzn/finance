@@ -7,6 +7,7 @@ create table "transactions"
     "user_id"            int not null,
     "vault_id"           int not null,
     "transaction_method" transaction_method not null,
+    "transaction_type"   transaction_type not null,
     "description"        text,
     "total"              numeric(10, 2) not null,
     "currency"           varchar(3) not null,

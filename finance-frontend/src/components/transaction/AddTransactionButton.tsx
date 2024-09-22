@@ -9,7 +9,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  ModalOverlay,
+  ModalOverlay, Radio, RadioGroup, Stack,
   useDisclosure,
 } from '@chakra-ui/react'
 import React, {ChangeEvent, useRef, useState} from "react"
@@ -36,6 +36,7 @@ export const AddTransactionButton = ({ vault, onCreate }: AddTransactionButtonPr
   const [transactionCreateForm, setTransactionCreateForm] = useState<TransactionCreateRequest>({
     vaultId: 0,
     transactionMethod: vault.transactionMethod,
+    transactionType: "",
     description: null,
     price: 0,
     currency: vault.currency
@@ -45,6 +46,10 @@ export const AddTransactionButton = ({ vault, onCreate }: AddTransactionButtonPr
 
   const handleTransactionMethodChange = (transactionMethod: string) => {
     setTransactionCreateForm((previous) => ({ ...previous, transactionMethod: transactionMethod }))
+  }
+
+  const handleTransactionTypeChange = (transactionType: string) => {
+    setTransactionCreateForm((previous) => ({ ...previous, transactionType: transactionType }))
   }
 
   const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -65,6 +70,7 @@ export const AddTransactionButton = ({ vault, onCreate }: AddTransactionButtonPr
     api.post("/transactions/create", {
       vaultId: vault.id,
       transactionMethod: transactionCreateForm.transactionMethod,
+      transactionType: transactionCreateForm.transactionType,
       description: transactionCreateForm.description,
       price: transactionCreateForm.price,
       currency: transactionCreateForm.currency
@@ -105,12 +111,22 @@ export const AddTransactionButton = ({ vault, onCreate }: AddTransactionButtonPr
               <FormLabel>Description</FormLabel>
               <Input onChange={handleDescriptionChange}
                      ref={initialRef}
-                     placeholder='What did you pay for?' />
+                     placeholder='Freelance work / Groceries at a local store' />
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Transaction method</FormLabel>
               <TransactionMethodSelect onChange={handleTransactionMethodChange} defaultValue={transactionCreateForm.transactionMethod} />
+            </FormControl>
+
+            <FormControl mt={4}>
+              <FormLabel>Transaction type</FormLabel>
+              <RadioGroup onChange={handleTransactionTypeChange} value={transactionCreateForm.transactionType}>
+                <Stack direction='row'>
+                  <Radio value='INCOMING'>Income</Radio>
+                  <Radio value='OUTGOING'>Expense</Radio>
+                </Stack>
+              </RadioGroup>
             </FormControl>
 
             <FormControl mt={4}>

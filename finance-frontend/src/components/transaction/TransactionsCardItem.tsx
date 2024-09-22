@@ -6,7 +6,7 @@ import {
   Box,
   Divider,
   Flex,
-  Heading,
+  Heading, HStack,
   Stack,
   Text
 } from "@chakra-ui/react"
@@ -20,6 +20,9 @@ import {TransactionProductsCardItem} from "@/components/transaction/product/Tran
 import {EditTransactionButton} from "@/components/transaction/EditTransactionButton"
 import {DeleteButton} from "@/components/shared/DeleteButton"
 import toast from "react-hot-toast"
+import {FaCircleCheck} from "react-icons/fa6"
+import {FaCaretDown, FaCaretUp} from "react-icons/fa"
+import {useDateFormatter} from "@/hooks/useDateFormatter"
 
 interface TransactionsCardItemProperties {
   vaultId: number
@@ -34,6 +37,7 @@ export const TransactionsCardItem = ({
 }: TransactionsCardItemProperties) => {
   const api = useApi()
   const router = useRouter()
+  const { formatDate } = useDateFormatter()
   const [transactionProducts, setTransactionProducts] = useState<TransactionProductWithProductResponse[]>([])
   const [queriedTransactionProducts, setQueriedTransactionProducts] = useState<TransactionProductWithProductResponse[]>([])
 
@@ -72,20 +76,35 @@ export const TransactionsCardItem = ({
           <AccordionButton width={'full'}>
             <Box width={'full'}>
               <Flex justifyContent={'space-between'}>
-                <Heading size='sm'
-                         isTruncated
-                         maxWidth={'70%'}>
-                  {transaction.description}
-                </Heading>
-                <Heading size={'md'}>
-                  {transaction.total.toFixed(2)} {transaction.currency}
-                </Heading>
+                <HStack width="70%">
+                  <Text fontSize={{ base: 'lg', md: 'xl' }}>
+                    {
+                      transaction.transactionType === 'INCOMING' ? <FaCaretUp color="green" /> : <FaCaretDown color="crimson" />
+                    }
+                  </Text>
+                  <Text fontSize='md'
+                        isTruncated
+                        fontWeight={'600'}
+                        maxWidth={'70%'}>
+                    {transaction.description}
+                  </Text>
+                </HStack>
+                <HStack>
+                  {
+                    transaction.transactionType === 'INCOMING' ?
+                      <Text fontSize={'xl'} fontWeight={'600'} color={'green'}>{transaction.total.toFixed(2)}</Text> :
+                      <Text fontSize={'xl'} fontWeight={'600'} color={'crimson'}>{transaction.total.toFixed(2)}</Text>
+                  }
+                  <Text fontSize={'xl'} fontWeight={'600'}>
+                    {transaction.currency}
+                  </Text>
+                </HStack>
               </Flex>
               <Flex justifyContent={'space-between'}>
                 <Text color={'dimgray'}
                       fontSize={'sm'}
                       letterSpacing={0.2}>
-                  {new Date(transaction.createdAt * 1000).toLocaleDateString()}
+                  {formatDate(transaction.createdAt, true)}
                 </Text>
                 <Text color={'dimgray'}
                       fontSize={'sm'}

@@ -15,6 +15,7 @@ import dev.zrdzn.finance.backend.transaction.api.TransactionListResponse
 import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
 import dev.zrdzn.finance.backend.transaction.api.TransactionNotFoundException
 import dev.zrdzn.finance.backend.transaction.api.TransactionResponse
+import dev.zrdzn.finance.backend.transaction.api.TransactionType
 import dev.zrdzn.finance.backend.transaction.api.expense.TransactionAverageExpensesResponse
 import dev.zrdzn.finance.backend.transaction.api.expense.TransactionExpenseRange
 import dev.zrdzn.finance.backend.transaction.api.expense.TransactionExpensesResponse
@@ -28,6 +29,7 @@ import dev.zrdzn.finance.backend.vault.VaultService
 import dev.zrdzn.finance.backend.vault.api.VaultPermission
 import java.io.StringWriter
 import java.math.BigDecimal
+import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -41,7 +43,8 @@ open class TransactionService(
     private val exchangeService: ExchangeService,
     private val vaultService: VaultService,
     private val userService: UserService,
-    private val auditService: AuditService
+    private val auditService: AuditService,
+    private val clock: Clock
 ) {
 
     private val logger = LoggerFactory.getLogger(TransactionService::class.java)
@@ -91,6 +94,7 @@ open class TransactionService(
         requesterId: UserId,
         vaultId: VaultId,
         transactionMethod: TransactionMethod,
+        transactionType: TransactionType,
         description: String?,
         price: Price
     ): TransactionCreateResponse {
@@ -102,8 +106,9 @@ open class TransactionService(
                     id = null,
                     userId = requesterId,
                     vaultId = vaultId,
-                    createdAt = Instant.now(),
+                    createdAt = Instant.now(clock),
                     transactionMethod = transactionMethod,
+                    transactionType = transactionType,
                     description = description,
                     total = price.amount,
                     currency = price.currency
@@ -206,6 +211,7 @@ open class TransactionService(
                     vaultId = it.vaultId,
                     createdAt = it.createdAt,
                     transactionMethod = it.transactionMethod,
+                    transactionType = it.transactionType,
                     description = it.description,
                     totalInVaultCurrency = exchangeService.convertCurrency(
                         amount = it.total,
@@ -233,6 +239,7 @@ open class TransactionService(
                     vaultId = it.vaultId,
                     createdAt = it.createdAt,
                     transactionMethod = it.transactionMethod,
+                    transactionType = it.transactionType,
                     description = it.description,
                     totalInVaultCurrency = exchangeService.convertCurrency(
                         amount = it.total,

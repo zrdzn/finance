@@ -193,13 +193,13 @@ const DesktopView = (
           { href: `/vault/${vault.publicId}/audits`, icon: FaHistory, label: 'Audit Logs' },
           { href: `/vault/${vault.publicId}/settings`, icon: FaGears, label: 'Settings' }
         ].map(({ href, icon: Icon, label, isDisabled }) => (
-          <Link key={href} href={href} style={{ width: "100%" }} backgroundColor={isCollapsed && router.asPath === href ? theme.secondaryColor : theme.backgroundColor}>
+          <Link key={href} href={href} style={{ width: "100%" }} backgroundColor={isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}>
             <Button
               variant="ghost"
               width="100%"
               justifyContent={isCollapsed ? "center" : "flex-start"}
               leftIcon={<Icon />}
-              backgroundColor={!isCollapsed && router.asPath === href ? theme.secondaryColor : theme.backgroundColor}
+              backgroundColor={!isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}
               isDisabled={isDisabled}
             >
               {!isCollapsed && label}
