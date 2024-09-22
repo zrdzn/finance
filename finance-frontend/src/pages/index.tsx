@@ -56,7 +56,7 @@ export default function Main(): ReactJSXElement {
               alignItems={'center'}
               direction={'column'}
               mt={6}>
-          <Heading size={'lg'}>Your vaults</Heading>
+          <Text fontSize='xl' fontWeight={'600'}>Your vaults</Text>
           {
             yourVaults.length === 0 && <Text fontSize={'lg'}>You are not in any vault</Text>
           }
@@ -84,7 +84,7 @@ export default function Main(): ReactJSXElement {
               direction={'column'}
               gap={4}
               mt={6}>
-          <Heading size={'lg'}>Invitations</Heading>
+          <Text fontSize='xl' fontWeight={'600'}>Invitations</Text>
           {
             vaultInvitations.length === 0 && <Text fontSize={'lg'}>You do not have any invitations</Text>
           }

@@ -1,4 +1,15 @@
-import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, HStack, Tag, TagLabel} from "@chakra-ui/react"
+import {
+  Accordion,
+  AccordionButton,
+  AccordionItem,
+  Box,
+  Flex,
+  Heading,
+  HStack,
+  Tag,
+  TagLabel,
+  Text
+} from "@chakra-ui/react"
 import React from "react"
 import {VaultInvitationResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
@@ -44,10 +55,10 @@ export const InvitationsCardItem = ({
                 <Flex w={'full'}
                       gap={3}
                       alignItems={'center'}>
-                  <Heading size='sm'
+                  <Text fontSize='md' fontWeight={'600'}
                            maxWidth={'70%'}>
                     {invitation.userEmail}
-                  </Heading>
+                  </Text>
                   <HStack spacing={4}>
                     <Tag size={'sm'} colorScheme='red'>
                       <TagLabel>Expires {new Date(invitation.expiresAt * 1000).toLocaleDateString()}</TagLabel>

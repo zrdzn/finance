@@ -38,7 +38,7 @@ export const MembersCard = ({ vault, permissions }: MembersCardProperties) => {
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Heading size='sm' textTransform={'uppercase'}>Members</Heading>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>Members</Text>
         </Flex>
       </CardHeader>
       <CardBody>

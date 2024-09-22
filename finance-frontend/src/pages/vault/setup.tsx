@@ -11,7 +11,7 @@ import {
   FormLabel,
   Heading,
   Input,
-  Stack
+  Stack, Text
 } from "@chakra-ui/react";
 import React, {ChangeEvent, useEffect, useState} from "react";
 import {useApi} from "@/hooks/useApi"
@@ -92,7 +92,7 @@ export default function SetupVault(): ReactJSXElement {
         >
           <CardHeader backgroundColor={theme.secondaryColor}>
             <Flex alignItems={'center'} justifyContent={'space-between'}>
-              <Heading size='md'>Setup new vault</Heading>
+              <Text fontSize='md' fontWeight={'600'}>Setup new vault</Text>
             </Flex>
           </CardHeader>
           <CardBody>

@@ -37,7 +37,7 @@ export const CategoriesCard = ({ vault, permissions }: CategoriesCardProperties)
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Heading size='sm' textTransform={'uppercase'}>Categories</Heading>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>Categories</Text>
         </Flex>
       </CardHeader>
       <CardBody>

@@ -1,4 +1,16 @@
-import {Button, Card, CardBody, CardHeader, Flex, FormControl, FormLabel, Heading, Input, Stack} from "@chakra-ui/react"
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Stack,
+  Text
+} from "@chakra-ui/react"
 import React, {useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
 import {VaultResponse, VaultUpdateRequest} from "@/components/api"
@@ -77,7 +89,7 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Heading size='sm' textTransform={'uppercase'}>General</Heading>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>General</Text>
         </Flex>
       </CardHeader>
       <CardBody>

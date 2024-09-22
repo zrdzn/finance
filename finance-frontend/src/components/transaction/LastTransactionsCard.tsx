@@ -27,7 +27,7 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Heading size='sm' textTransform={'uppercase'}>Last transactions</Heading>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>Last transactions</Text>
         </Flex>
       </CardHeader>
       <CardBody>

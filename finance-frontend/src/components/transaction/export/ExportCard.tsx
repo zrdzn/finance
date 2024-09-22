@@ -67,7 +67,7 @@ export const ExportCard = ({ vault, permissions }: ExportCardProperties) => {
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Heading size='sm' textTransform={'uppercase'}>Export Transactions</Heading>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>Export Transactions</Text>
         </Flex>
       </CardHeader>
       <CardBody>

@@ -49,7 +49,7 @@ export const VaultInvitationCard = ({ invitation }: VaultInvitationCardPropertie
           mt={8}>
       <CardBody>
         <Stack mt='6' spacing='3'>
-          <Heading size='md'>{invitation.vault.name}</Heading>
+          <Text fontSize='md' fontWeight={'600'}>{invitation.vault.name}</Text>
           <Text color={'dimgray'}>
             Created by {username?.username || 'Unknown'}
           </Text>

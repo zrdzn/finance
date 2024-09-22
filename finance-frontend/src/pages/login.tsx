@@ -10,7 +10,7 @@ import {
   FormLabel,
   Heading,
   Input,
-  Stack
+  Stack, Text
 } from "@chakra-ui/react";
 import React, {ChangeEvent, useEffect, useState} from "react";
 import {useRouter} from "next/router"
@@ -78,7 +78,7 @@ export default function Login(): ReactJSXElement {
         >
           <CardHeader backgroundColor={theme.secondaryColor}>
             <Flex alignItems={'center'} justifyContent={'space-between'}>
-              <Heading size='md'>Sign in</Heading>
+              <Text fontSize='md' fontWeight={'600'}>Sign in</Text>
             </Flex>
           </CardHeader>
           <CardBody>

@@ -10,7 +10,7 @@ import {
   FormLabel,
   Heading,
   Input,
-  Stack
+  Stack, Text
 } from "@chakra-ui/react";
 import React, {ChangeEvent, useEffect, useState} from "react";
 import {useApi} from "@/hooks/useApi"
@@ -114,7 +114,7 @@ export default function Register(): ReactJSXElement {
         >
           <CardHeader backgroundColor={theme.secondaryColor}>
             <Flex alignItems={'center'} justifyContent={'space-between'}>
-              <Heading size='md'>Register your account</Heading>
+              <Text fontSize='md' fontWeight={'600'}>Register your account</Text>
             </Flex>
           </CardHeader>
           <CardBody>

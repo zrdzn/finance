@@ -38,15 +38,15 @@ export const TransactionProductsCardItem = ({
             <Box width={'full'}>
               <Flex justifyContent={'space-between'}
                     alignItems={'center'}>
-                <Heading size='sm'
+                <Text fontSize='md' fontWeight={'600'}
                          textTransform='uppercase'
                          isTruncated
                          maxWidth={'70%'}>
                   {transactionProduct.product.name}
-                </Heading>
-                <Heading size={'md'}>
+                </Text>
+                <Text fontSize='md' fontWeight={'600'}>
                   {(transactionProduct.unitAmount * transactionProduct.quantity).toFixed(2)}
-                </Heading>
+                </Text>
               </Flex>
               <Flex justifyContent={'space-between'}>
                 <Text color={'dimgray'}

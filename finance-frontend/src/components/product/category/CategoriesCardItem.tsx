@@ -41,11 +41,11 @@ export const CategoriesCardItem = ({
           <Box width={'full'}>
             <Flex justifyContent={'space-between'}
                   alignItems={'center'}>
-              <Heading size='sm'
+              <Text fontSize='md' fontWeight={'600'}
                        isTruncated
                        maxWidth={'70%'}>
                 {category.name}
-              </Heading>
+              </Text>
               {
                 permissions.includes("CATEGORY_DELETE") && <DeleteButton onClick={handleCategoryDelete} />
               }

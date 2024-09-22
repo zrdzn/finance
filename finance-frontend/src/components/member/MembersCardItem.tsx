@@ -55,10 +55,10 @@ export const MembersCardItem = ({
                 <Flex w={'full'}
                       gap={3}
                       alignItems={'center'}>
-                  <Heading size='sm'
+                  <Text fontSize='md' fontWeight={'600'}
                            maxWidth={'70%'}>
                     {member.user.username}
-                  </Heading>
+                  </Text>
                   <HStack spacing={4}>
                     {
                       member.role === 'OWNER' &&

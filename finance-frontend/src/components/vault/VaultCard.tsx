@@ -37,7 +37,7 @@ export const VaultCard = ({ publicId, ownerId, name }: VaultCardProperties) => {
           mt={8}>
       <CardBody>
         <Stack mt='6' spacing='3'>
-          <Heading size='md'>{name}</Heading>
+          <Text fontSize='md' fontWeight={'600'}>{name}</Text>
           <Text color={'dimgray'}>
             Created by {username?.username || 'Unknown'}
           </Text>

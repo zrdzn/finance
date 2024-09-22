@@ -39,7 +39,7 @@ export const  InvitationsCard = ({ vault, permissions }: InvitationsCardProperti
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Heading size='sm' textTransform={'uppercase'}>Invitations</Heading>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>Invitations</Text>
         </Flex>
       </CardHeader>
       <CardBody>

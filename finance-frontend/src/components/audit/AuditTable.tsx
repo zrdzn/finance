@@ -47,7 +47,7 @@ export const AuditTable = ({ vault, permissions }: AuditTableProperties) => {
     <Card margin={2}>
       <CardHeader backgroundColor={theme.secondaryColor} color={theme.textColor}>
         <Flex alignItems={'center'} justifyContent={'space-between'}>
-          <Heading size='sm' textTransform={'uppercase'}>Audit Logs</Heading>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>Audit Logs</Text>
         </Flex>
       </CardHeader>
       <CardBody>

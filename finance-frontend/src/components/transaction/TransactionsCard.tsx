@@ -38,7 +38,7 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Heading size='sm' textTransform={'uppercase'}>Transactions</Heading>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>Transactions</Text>
         </Flex>
       </CardHeader>
       <CardBody>

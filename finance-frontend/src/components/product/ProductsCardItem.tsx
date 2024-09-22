@@ -1,4 +1,15 @@
-import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, HStack, Tag, TagLabel} from "@chakra-ui/react"
+import {
+  Accordion,
+  AccordionButton,
+  AccordionItem,
+  Box,
+  Flex,
+  Heading,
+  HStack,
+  Tag,
+  TagLabel,
+  Text
+} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {ProductResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
@@ -49,10 +60,10 @@ export const ProductsCardItem = ({
                 <Flex w={'full'}
                       gap={3}
                       alignItems={'center'}>
-                  <Heading size='sm'
+                  <Text fontSize='md' fontWeight={'600'}
                            maxWidth={'70%'}>
                     {product.name}
-                  </Heading>
+                  </Text>
                   <HStack spacing={4}>
                     {
                       category !== undefined &&
