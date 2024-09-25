@@ -22,6 +22,7 @@ import {VaultCreateRequest} from "@/components/api"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
 import {TransactionMethodSelect} from "@/components/transaction/TransactionMethodSelect"
 import toast from "react-hot-toast"
+import {Layout} from "@/components/Layout"
 
 export default function SetupVault(): ReactJSXElement {
   const { authenticationDetails } = useAuthentication()
@@ -80,54 +81,56 @@ export default function SetupVault(): ReactJSXElement {
 
   return (
     <>
-      <Head>
-        <title>Finance - Vault Setup</title>
-      </Head>
+      <Layout>
+        <Head>
+          <title>Finance - Vault Setup</title>
+        </Head>
 
-      <Flex justifyContent="center" p={4}>
-        <Card
-          width={{ base: 'full', sm: '90%', md: '80%', lg: '60%' }}
-          maxWidth="600px"
-          margin={2}
-        >
-          <CardHeader backgroundColor={theme.secondaryColor}>
-            <Flex alignItems={'center'} justifyContent={'space-between'}>
-              <Text fontSize='md' fontWeight={'600'}>Setup new vault</Text>
-            </Flex>
-          </CardHeader>
-          <CardBody>
-            <Stack spacing='4'>
-              <FormControl isRequired>
-                <FormLabel>Name</FormLabel>
-                <Input
-                  name={'name'}
-                  onChange={handleVaultFormChange}
-                  placeholder='Choose name'
-                />
-              </FormControl>
-
-              <FormControl mt={4}>
-                <FormLabel>Default currency</FormLabel>
-                <CurrencySelect onChange={handleDefaultCurrencyChange} />
-              </FormControl>
-
-              <FormControl mt={4}>
-                <FormLabel>Default transaction method</FormLabel>
-                <TransactionMethodSelect onChange={handleDefaultTransactionMethodChange} />
-              </FormControl>
-
-              <Flex mt={2} justifyContent={'space-between'} gap={3}>
-                <Button
-                  backgroundColor={theme.primaryColor}
-                  onClick={handleVaultSetup}
-                >
-                  Setup
-                </Button>
+        <Flex justifyContent="center" p={4}>
+          <Card
+            width={{ base: 'full', sm: '90%', md: '80%', lg: '60%' }}
+            maxWidth="600px"
+            margin={2}
+          >
+            <CardHeader backgroundColor={theme.secondaryColor}>
+              <Flex alignItems={'center'} justifyContent={'space-between'}>
+                <Text fontSize='md' fontWeight={'600'}>Setup new vault</Text>
               </Flex>
-            </Stack>
-          </CardBody>
-        </Card>
-      </Flex>
+            </CardHeader>
+            <CardBody>
+              <Stack spacing='4'>
+                <FormControl isRequired>
+                  <FormLabel>Name</FormLabel>
+                  <Input
+                    name={'name'}
+                    onChange={handleVaultFormChange}
+                    placeholder='Choose name'
+                  />
+                </FormControl>
+
+                <FormControl mt={4}>
+                  <FormLabel>Default currency</FormLabel>
+                  <CurrencySelect onChange={handleDefaultCurrencyChange} />
+                </FormControl>
+
+                <FormControl mt={4}>
+                  <FormLabel>Default transaction method</FormLabel>
+                  <TransactionMethodSelect onChange={handleDefaultTransactionMethodChange} />
+                </FormControl>
+
+                <Flex mt={2} justifyContent={'space-between'} gap={3}>
+                  <Button
+                    backgroundColor={theme.primaryColor}
+                    onClick={handleVaultSetup}
+                  >
+                    Setup
+                  </Button>
+                </Flex>
+              </Stack>
+            </CardBody>
+          </Card>
+        </Flex>
+      </Layout>
     </>
   );
 }

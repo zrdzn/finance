@@ -9,6 +9,7 @@ import {useRouter} from "next/router"
 import {useAuthentication} from "@/hooks/useAuthentication"
 import {VaultInvitationCard} from "@/components/vault/VaultInvitationCard"
 import {VaultInvitationResponse} from "@/components/api"
+import { Layout } from "@/components/Layout";
 
 interface VaultResponse {
   id: number
@@ -47,61 +48,63 @@ export default function Main(): ReactJSXElement {
 
   return (
     <>
-      <Head>
-        <title>Finance - Manage Vaults</title>
-      </Head>
-      <Flex direction={'column'}
-            gap={16}>
-        <Flex justifyContent={'center'}
-              alignItems={'center'}
-              direction={'column'}
-              mt={6}>
-          <Text fontSize='xl' fontWeight={'600'}>Your vaults</Text>
-          {
-            yourVaults.length === 0 && <Text fontSize={'lg'}>You are not in any vault</Text>
-          }
-          {
-            yourVaults &&
-              <>
-                  <Flex wrap={"wrap"}
-                        columnGap={4}
-                        justifyContent={'center'}>
-                    {yourVaults.map((vault) =>
-                      <VaultCard key={vault.id} publicId={vault.publicId} ownerId={vault.ownerId} name={vault.name} />
-                    )}
-                  </Flex>
-              </>
-          }
-          <HStack mt={8}>
-            <Button backgroundColor={theme.primaryColor}
-                    color={theme.textColor}>
-              <Link href={'/vault/setup'}>Create new</Link>
-            </Button>
-          </HStack>
+      <Layout>
+        <Head>
+          <title>Finance - Manage Vaults</title>
+        </Head>
+        <Flex direction={'column'}
+              gap={16}>
+          <Flex justifyContent={'center'}
+                alignItems={'center'}
+                direction={'column'}
+                mt={6}>
+            <Text fontSize='xl' fontWeight={'600'}>Your vaults</Text>
+            {
+              yourVaults.length === 0 && <Text fontSize={'lg'}>You aren&apos;t added to any vault!</Text>
+            }
+            {
+              yourVaults &&
+                <>
+                    <Flex wrap={"wrap"}
+                          columnGap={4}
+                          justifyContent={'center'}>
+                      {yourVaults.map((vault) =>
+                        <VaultCard key={vault.id} publicId={vault.publicId} ownerId={vault.ownerId} name={vault.name} />
+                      )}
+                    </Flex>
+                </>
+            }
+            <HStack mt={8}>
+              <Button backgroundColor={theme.primaryColor}
+                      color={theme.textColor}>
+                <Link href={'/vault/setup'}>Create new</Link>
+              </Button>
+            </HStack>
+          </Flex>
+          <Flex justifyContent={'center'}
+                alignItems={'center'}
+                direction={'column'}
+                gap={4}
+                mt={6}>
+            <Text fontSize='xl' fontWeight={'600'}>Invitations</Text>
+            {
+              vaultInvitations.length === 0 && <Text fontSize={'lg'}>You don&apos;t have any invitations!</Text>
+            }
+            {
+              vaultInvitations &&
+                <>
+                    <Flex wrap={"wrap"}
+                          columnGap={4}
+                          justifyContent={'center'}>
+                      {vaultInvitations.map((invitation) =>
+                        <VaultInvitationCard key={invitation.id} invitation={invitation} />
+                      )}
+                    </Flex>
+                </>
+            }
+          </Flex>
         </Flex>
-        <Flex justifyContent={'center'}
-              alignItems={'center'}
-              direction={'column'}
-              gap={4}
-              mt={6}>
-          <Text fontSize='xl' fontWeight={'600'}>Invitations</Text>
-          {
-            vaultInvitations.length === 0 && <Text fontSize={'lg'}>You do not have any invitations</Text>
-          }
-          {
-            vaultInvitations &&
-              <>
-                  <Flex wrap={"wrap"}
-                        columnGap={4}
-                        justifyContent={'center'}>
-                    {vaultInvitations.map((invitation) =>
-                      <VaultInvitationCard key={invitation.id} invitation={invitation} />
-                    )}
-                  </Flex>
-              </>
-          }
-        </Flex>
-      </Flex>
+      </Layout>
     </>
   )
 }

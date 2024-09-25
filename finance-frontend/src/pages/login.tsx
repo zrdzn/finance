@@ -17,6 +17,7 @@ import {useRouter} from "next/router"
 import {useTheme} from "@/hooks/useTheme"
 import {useAuthentication} from "@/hooks/useAuthentication"
 import toast from "react-hot-toast"
+import {Layout} from "@/components/Layout"
 
 interface LoginForm {
   email: string;
@@ -66,50 +67,52 @@ export default function Login(): ReactJSXElement {
 
   return (
     <>
-      <Head>
-        <title>Finance - Login</title>
-      </Head>
+      <Layout>
+        <Head>
+          <title>Finance - Login</title>
+        </Head>
 
-      <Flex justifyContent="center" p={4}>
-        <Card
-          width={{ base: 'full', sm: '80%', md: '60%', lg: '50%' }}
-          maxWidth="500px"
-          margin={2}
-        >
-          <CardHeader backgroundColor={theme.secondaryColor}>
-            <Flex alignItems={'center'} justifyContent={'space-between'}>
-              <Text fontSize='md' fontWeight={'600'}>Sign in</Text>
-            </Flex>
-          </CardHeader>
-          <CardBody>
-            <Stack spacing='4'>
-              <FormControl isRequired>
-                <FormLabel>Email</FormLabel>
-                <Input
-                  name={'email'}
-                  onChange={handleLoginFormUpdate}
-                  placeholder='Enter your email address'
-                />
-              </FormControl>
-
-              <FormControl isRequired>
-                <FormLabel>Password</FormLabel>
-                <Input
-                  type={'password'}
-                  name={'password'}
-                  onChange={handleLoginFormUpdate}
-                  placeholder='Enter your password'
-                />
-              </FormControl>
-
-              <Flex mt={2} justifyContent={'space-between'} gap={3}>
-                <Button onClick={() => router.push("/register")}>Do not have an account?</Button>
-                <Button backgroundColor={theme.primaryColor} onClick={handleLogin}>Sign in</Button>
+        <Flex justifyContent="center" p={4}>
+          <Card
+            width={{ base: 'full', sm: '80%', md: '60%', lg: '50%' }}
+            maxWidth="500px"
+            margin={2}
+          >
+            <CardHeader backgroundColor={theme.secondaryColor}>
+              <Flex alignItems={'center'} justifyContent={'space-between'}>
+                <Text fontSize='md' fontWeight={'600'}>Sign in</Text>
               </Flex>
-            </Stack>
-          </CardBody>
-        </Card>
-      </Flex>
+            </CardHeader>
+            <CardBody>
+              <Stack spacing='4'>
+                <FormControl isRequired>
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                    name={'email'}
+                    onChange={handleLoginFormUpdate}
+                    placeholder='Enter your email address'
+                  />
+                </FormControl>
+
+                <FormControl isRequired>
+                  <FormLabel>Password</FormLabel>
+                  <Input
+                    type={'password'}
+                    name={'password'}
+                    onChange={handleLoginFormUpdate}
+                    placeholder='Enter your password'
+                  />
+                </FormControl>
+
+                <Flex mt={2} justifyContent={'space-between'} gap={3}>
+                  <Button onClick={() => router.push("/register")}>Don&apos;t have an account?</Button>
+                  <Button backgroundColor={theme.primaryColor} onClick={handleLogin}>Sign in</Button>
+                </Flex>
+              </Stack>
+            </CardBody>
+          </Card>
+        </Flex>
+      </Layout>
     </>
   );
 }

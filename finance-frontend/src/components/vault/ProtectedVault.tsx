@@ -6,6 +6,7 @@ import {useRouter} from "next/router"
 import {useVault} from "@/hooks/useVault"
 import {VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
+import {Box} from "@chakra-ui/react"
 
 interface ProtectedVaultProperties {
   publicId: string | string[] | undefined
@@ -69,9 +70,14 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
   return (
     <>
       <VaultSidebar vault={vault} isCollapsed={isCollapsed} toggleCollapse={() => setIsCollapsed(!isCollapsed)} />
-      <Layout isCollapsed={isCollapsed}>
-        {children(vault, permissions)}
-      </Layout>
+      <Box
+        ml={{ base: 0, md: isCollapsed ? '80px' : '250px' }}
+        transition="margin-left 0.3s"
+      >
+        <Layout>
+          {children(vault, permissions)}
+        </Layout>
+      </Box>
     </>
   );
 };

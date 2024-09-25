@@ -43,8 +43,7 @@ const SidebarLogo = ({ vault, isCollapsed }: { vault: VaultResponse, isCollapsed
   >
 
     <Link href={`/vault/${vault.publicId}`}>
-      {isCollapsed && <Text>F</Text>}
-      {!isCollapsed && <Text>Finance</Text>}
+      {!isCollapsed && <Text>{vault.name}</Text>}
     </Link>
   </Flex>
 );
@@ -62,32 +61,32 @@ const BaseView = ({ vault }: VaultSidebarProperties) => {
 
   return (
     <>
-      <Flex justifyContent={'space-between'}
-            alignItems={'center'}
-            width={'full'}
-            backgroundColor={theme.secondaryColor}>
-        <Flex padding={4}>
-          <SidebarLogo vault={vault} />
-        </Flex>
-        <Flex padding={2}>
-          <Button padding={3} variant={'unstyled'} onClick={onOpen} leftIcon={<FaBars />} />
-        </Flex>
-      </Flex>
+      <Button
+        position="fixed"
+        bottom="20px"
+        right="20px"
+        zIndex={1}
+        onClick={onOpen}
+        variant="unstyled"
+        aria-label="Open Menu"
+        width={12}
+        height={12}
+        backgroundColor={theme.primaryColor}
+        borderRadius="full"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <FaBars />
+      </Button>
+
       <Drawer placement={'left'} onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
         <DrawerContent color={theme.textColor}>
           <DrawerHeader backgroundColor={theme.primaryColor}>
             <Flex justifyContent={'space-between'} width={'full'} alignItems={'center'}>
-              <Flex>
-                <SidebarLogo vault={vault} />
-              </Flex>
-              <Flex>
-                <Button backgroundColor={theme.primaryColor}
-                        padding={3.5}
-                        variant={'unstyled'}
-                        onClick={onClose}
-                        leftIcon={<FaX />} />
-              </Flex>
+              <SidebarLogo vault={vault} isCollapsed={false} />
+              <Button backgroundColor={theme.primaryColor} padding={3.5} variant={'unstyled'} onClick={onClose} leftIcon={<FaX />} />
             </Flex>
           </DrawerHeader>
           <DrawerBody padding={0}>
@@ -104,11 +103,13 @@ const BaseView = ({ vault }: VaultSidebarProperties) => {
               ].map(({ href, icon: Icon, label, isDisabled }) => (
                 <Flex key={href} width={'full'} marginY={3}>
                   <Link href={href} style={{ width: 'inherit' }}>
-                    <Button backgroundColor={router.asPath === href ? theme.secondaryColor : theme.backgroundColor}
-                            onClick={onClose}
-                            width={'full'}
-                            borderRadius={0}
-                            isDisabled={isDisabled}>
+                    <Button
+                      backgroundColor={router.asPath === href ? theme.secondaryColor : theme.backgroundColor}
+                      onClick={onClose}
+                      width={'full'}
+                      borderRadius={0}
+                      isDisabled={isDisabled}
+                    >
                       <Flex alignItems={'center'} width={'full'} columnGap={2}>
                         <Icon />
                         <Box>{label}</Box>
@@ -117,22 +118,6 @@ const BaseView = ({ vault }: VaultSidebarProperties) => {
                   </Link>
                 </Flex>
               ))}
-              <Divider borderColor={theme.secondaryColor} />
-              {authenticationDetails && (
-                <Flex width={'full'} marginY={3}>
-                  <Menu>
-                    <MenuButton as={Button} width={'full'} backgroundColor={theme.backgroundColor}>
-                      <Flex alignItems={'center'} width={'full'} columnGap={2}>
-                        <FaUser />
-                        <Box>{authenticationDetails.username}</Box>
-                      </Flex>
-                    </MenuButton>
-                    <MenuList>
-                      <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                    </MenuList>
-                  </Menu>
-                </Flex>
-              )}
             </Flex>
           </DrawerBody>
         </DrawerContent>
@@ -148,7 +133,6 @@ const DesktopView = (
 ) => {
   const theme = useTheme();
   const router = useRouter()
-  const { authenticationDetails, logout } = useAuthentication();
 
   return (
     <Flex
@@ -206,25 +190,6 @@ const DesktopView = (
             </Button>
           </Link>
         ))}
-      </Flex>
-      <Flex
-        justifyContent={isCollapsed ? "center" : "flex-start"}
-        padding="4"
-        borderTop={`1px solid ${theme.secondaryColor}`}
-      >
-        {authenticationDetails && (
-          <Menu>
-            <MenuButton as={Button} width={'full'} backgroundColor={theme.backgroundColor}>
-              <Flex alignItems={'center'} width={'full'} columnGap={2}>
-                <FaUser />
-                {!isCollapsed && <Box>{authenticationDetails.username}</Box>}
-              </Flex>
-            </MenuButton>
-            <MenuList>
-              <MenuItem onClick={logout}>Logout</MenuItem>
-            </MenuList>
-          </Menu>
-        )}
       </Flex>
     </Flex>
   );

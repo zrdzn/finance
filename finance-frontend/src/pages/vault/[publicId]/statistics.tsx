@@ -1,6 +1,6 @@
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
-import {Grid} from "@chakra-ui/react";
+import {Flex, Grid} from "@chakra-ui/react";
 import React from "react";
 import {ProtectedVault} from "@/components/vault/ProtectedVault"
 import {useRouter} from "next/router"
@@ -19,14 +19,16 @@ export default function Statistics(): ReactJSXElement {
           <Head>
             <title>Finance - Settings</title>
           </Head>
-          <Grid
-            templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }}
-            gap={4}
-            width="full">
-            <AnalyticsSummaryCard vault={vault} permissions={permissions} />
-            <FlowsHistoryCard vault={vault} transactionType={TransactionType.Incoming} />
-            <FlowsHistoryCard vault={vault} transactionType={TransactionType.Outgoing} />
-          </Grid>
+          <Flex justifyContent="center" p={4}>
+            <Grid
+              templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }}
+              gap={4}
+              width="full">
+              <AnalyticsSummaryCard vault={vault} permissions={permissions} />
+              <FlowsHistoryCard vault={vault} transactionType={TransactionType.Incoming} />
+              <FlowsHistoryCard vault={vault} transactionType={TransactionType.Outgoing} />
+            </Grid>
+          </Flex>
         </>
       }
     </ProtectedVault>
