@@ -54,7 +54,7 @@ open class TransactionService(
         val writer = StringWriter()
         val csvWriter = CSVWriter(writer)
 
-        val headers = arrayOf("Payer Email", "Vault Name", "Transaction Date", "Transaction Method", "Description", "Total", "Currency")
+        val headers = arrayOf("Payer Email", "Vault Name", "Transaction Date", "Transaction Method", "Transaction Type", "Description", "Total", "Currency")
         csvWriter.writeNext(headers)
 
         transactions.forEach {
@@ -67,6 +67,7 @@ open class TransactionService(
                 vaultService.getVault(vaultId = vaultId, requesterId = requesterId).name,
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(createdAtLocalDateTime),
                 it.transactionMethod.toString(),
+                it.transactionType.toString(),
                 it.description ?: "",
                 it.total.toString(),
                 it.currency
