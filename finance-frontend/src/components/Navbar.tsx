@@ -62,9 +62,7 @@ export const Navbar = () => {
               </HStack>
             </MenuButton>
             <MenuList>
-              <MenuItem>
-                <Link href="/account/settings">Settings</Link>
-              </MenuItem>
+              <MenuItem as={Link} href={'/account/settings'}>Settings</MenuItem>
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </MenuList>
           </Menu>
