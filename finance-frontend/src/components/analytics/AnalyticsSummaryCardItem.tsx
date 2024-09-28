@@ -155,12 +155,11 @@ export const AnalyticsSummaryCardItem = ({
                     </Text>
                 }
                 {
-                  transactions &&
-                    <Text fontSize='xl'
-                          fontWeight={'600'}
-                          isTruncated>
-                      {transactions}
+                  transactions !== undefined && (
+                    <Text fontSize='xl' fontWeight='600' isTruncated>
+                      {transactions.toLocaleString()}
                     </Text>
+                  )
                 }
               </Flex>
               <Flex justifyContent={'space-between'}>
