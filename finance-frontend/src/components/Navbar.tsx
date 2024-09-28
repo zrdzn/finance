@@ -47,25 +47,27 @@ export const Navbar = () => {
         </Link>
       </Flex>
       <Flex alignItems="center" gap={8}>
-        <Link href="/">
-          <HStack alignItems={'center'} width={'full'} gap={2}>
-            <FaLayerGroup />
-            <Box>Vaults</Box>
-          </HStack>
-        </Link>
         {authenticationDetails && (
-          <Menu>
-            <MenuButton>
+          <>
+            <Link href="/">
               <HStack alignItems={'center'} width={'full'} gap={2}>
-                <FaUser />
-                <Box>{isMobile ? null : <Text>{authenticationDetails.username}</Text>}</Box>
+                <FaLayerGroup />
+                <Box>{isMobile ? null : <Text>Vaults</Text>}</Box>
               </HStack>
-            </MenuButton>
-            <MenuList>
-              <MenuItem as={Link} href={'/account/settings'}>Settings</MenuItem>
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
-            </MenuList>
-          </Menu>
+            </Link>
+            <Menu>
+              <MenuButton>
+                <HStack alignItems={'center'} width={'full'} gap={2}>
+                  <FaUser />
+                  <Box>{isMobile ? null : <Text>{authenticationDetails.username}</Text>}</Box>
+                </HStack>
+              </MenuButton>
+              <MenuList>
+                <MenuItem as={Link} href={'/account/settings'}>Settings</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              </MenuList>
+            </Menu>
+          </>
         )}
         {
           !authenticationDetails &&
@@ -73,13 +75,13 @@ export const Navbar = () => {
                 <Link href="/login">
                     <HStack alignItems={'center'} width={'full'} gap={2}>
                         <FaArrowRightToBracket />
-                        <Box>Sign in</Box>
+                        <Box>{isMobile ? null : <Text>Sign in</Text>}</Box>
                     </HStack>
                 </Link>
                 <Link href="/register">
                     <HStack alignItems={'center'} width={'full'} gap={2}>
                         <FaUserPlus />
-                        <Box>Sign up</Box>
+                        <Box>{isMobile ? null : <Text>Sign up</Text>}</Box>
                     </HStack>
                 </Link>
             </HStack>
