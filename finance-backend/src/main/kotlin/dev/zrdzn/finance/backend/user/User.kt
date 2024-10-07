@@ -19,12 +19,12 @@ data class User(
     val id: UserId?,
 
     @Column(name = "email")
-    val email: String,
+    var email: String,
 
     @Column(name = "username")
-    val username: String,
+    var username: String,
 
     @Column(name = "password")
     @Size(max = 100)
-    val password: String,
+    var password: String,
 )

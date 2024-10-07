@@ -3,10 +3,12 @@ package dev.zrdzn.finance.backend
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
 @EnableJpaRepositories
 @EnableTransactionManagement
+@EnableAsync
 class FinanceApplication

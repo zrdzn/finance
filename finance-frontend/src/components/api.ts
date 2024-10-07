@@ -11,6 +11,11 @@ export enum AnalyticsOverviewStatisticType {
   Transactions = "TRANSACTIONS"
 }
 
+export enum AccountUpdateType {
+  Email = "EMAIL",
+  Password = "PASSWORD"
+}
+
 // users
 export interface UserResponse {
   id: number
@@ -19,6 +24,21 @@ export interface UserResponse {
 }
 
 export interface UsernameResponse {
+  username: string
+}
+
+export interface UserEmailUpdateRequest {
+  securityCode: string
+  email: string
+}
+
+export interface UserPasswordUpdateRequest {
+  securityCode: string
+  oldPassword: string
+  newPassword: string
+}
+
+export interface UserProfileUpdateRequest {
   username: string
 }
 
