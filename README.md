@@ -67,7 +67,12 @@ Data is securely stored in a PostgreSQL database.
 - `DATABASE_URL` - Database JDBC URL
 - `DATABASE_USERNAME` - Database username
 - `DATABASE_PASSWORD` - Database password
-- `NEXT_PUBLIC_BACKEND_URL` - Backend URL
+- `NEXT_PUBLIC_API_URL` - Backend URL
+- `MAIL_HOST` - SMTP server host
+- `MAIL_PORT` - SMTP server port
+- `MAIL_USERNAME` - SMTP server username
+- `MAIL_PASSWORD` - SMTP server password
+- `MAIL_FROM` - Email address from which emails will be sent
 ## 🚀 Installation
 ### 🐳 Docker
 **1.** Pull images from Docker Hub

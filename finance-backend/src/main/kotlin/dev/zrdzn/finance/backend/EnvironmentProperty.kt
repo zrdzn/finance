@@ -10,6 +10,7 @@ enum class EnvironmentProperty {
     MAIL_HOST,
     MAIL_PORT,
     MAIL_USERNAME,
-    MAIL_PASSWORD
+    MAIL_PASSWORD,
+    MAIL_FROM
 
 }

@@ -22,8 +22,12 @@ spring:
     properties:
       mail:
         smtp:
-          auth: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+          auth: false
           starttls:
-            enable: true
+            enable: false
+    from: ${MAIL_FROM}
 client:
   url: ${CLIENT_URL}
