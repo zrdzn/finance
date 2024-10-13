@@ -32,10 +32,11 @@ import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"
 
 interface RequestAccountUpdateButtonProperties {
+  text?: string;
   accountUpdateType: AccountUpdateType;
 }
 
-export const RequestAccountUpdateButton = ({ accountUpdateType }: RequestAccountUpdateButtonProperties) => {
+export const RequestAccountUpdateButton = ({ text, accountUpdateType }: RequestAccountUpdateButtonProperties) => {
   const theme = useTheme();
   const api = useApi();
   const router = useRouter();
@@ -88,6 +89,12 @@ export const RequestAccountUpdateButton = ({ accountUpdateType }: RequestAccount
       .catch(error => console.error(error));
   };
 
+  const handleSecurityCodeUpdate = (securityCode: string) => {
+    setSecurityCode(securityCode);
+    setUserEmailUpdateRequest((previous) => ({ ...previous, securityCode: securityCode }));
+    setUserPasswordUpdateRequest((previous) => ({ ...previous, securityCode: securityCode }));
+  }
+
   const handleUserEmailUpdate = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
@@ -118,8 +125,9 @@ export const RequestAccountUpdateButton = ({ accountUpdateType }: RequestAccount
 
   return authenticationDetails && (
     <>
-      <Button backgroundColor={theme.primaryColor} onClick={requestOnOpen}>
+      <Button backgroundColor={theme.primaryColor} onClick={requestOnOpen} gap={1}>
         <FaPencil />
+        {text && text}
       </Button>
 
       <Modal
@@ -184,7 +192,7 @@ export const RequestAccountUpdateButton = ({ accountUpdateType }: RequestAccount
                     ref={initialRef}
                     placeholder="Enter your security code"
                     value={securityCode}
-                    onChange={(event) => setSecurityCode(event.target.value)}
+                    onChange={(event) => handleSecurityCodeUpdate(event.target.value)}
                   />
                 </FormControl>
               )}
@@ -197,7 +205,6 @@ export const RequestAccountUpdateButton = ({ accountUpdateType }: RequestAccount
                     value={userEmailUpdateRequest.email}
                     onChange={(event) => setUserEmailUpdateRequest({
                       ...userEmailUpdateRequest,
-                      securityCode: securityCode,
                       email: event.target.value,
                     })}
                   />
@@ -214,7 +221,6 @@ export const RequestAccountUpdateButton = ({ accountUpdateType }: RequestAccount
                       value={userPasswordUpdateRequest.oldPassword}
                       onChange={(event) => setUserPasswordUpdateRequest({
                         ...userPasswordUpdateRequest,
-                        securityCode: securityCode,
                         oldPassword: event.target.value,
                       })}
                     />

@@ -94,44 +94,50 @@ export default function AccountSettings(): ReactJSXElement {
               {
                 authenticationDetails &&
                   <Stack spacing='4'>
-                      <FormControl isRequired>
-                          <FormLabel>Email</FormLabel>
-                          <HStack>
-                              <Input
-                                  name={'email'}
-                                  defaultValue={authenticationDetails.email}
-                                  isDisabled
-                              />
-                              <RequestAccountUpdateButton accountUpdateType={AccountUpdateType.Email} />
-                          </HStack>
-                      </FormControl>
-                      <FormControl isRequired>
-                          <FormLabel>Username</FormLabel>
-                          <HStack>
-                              <Input
-                                  name={'username'}
-                                  onChange={(event) => handleUsernameChange(event.target.value)}
-                                  placeholder='Enter your new username'
-                                  defaultValue={authenticationDetails.username}
-                                  isDisabled={!isEditingUsername}
-                              />
-                              <Button
-                                  backgroundColor={theme.primaryColor}
-                                  onClick={(event) => {
-                                    if (isEditingUsername) {
-                                      handleUserProfileUpdate(event)
-                                    }
+                    <FormControl isRequired>
+                      <FormLabel>Email</FormLabel>
+                      <HStack>
+                        <Input
+                            name={'email'}
+                            defaultValue={authenticationDetails.email}
+                            isDisabled
+                        />
+                        <RequestAccountUpdateButton accountUpdateType={AccountUpdateType.Email} />
+                      </HStack>
+                    </FormControl>
+                    <FormControl isRequired>
+                      <FormLabel>Username</FormLabel>
+                      <HStack>
+                        <Input
+                            name={'username'}
+                            onChange={(event) => handleUsernameChange(event.target.value)}
+                            placeholder='Enter your new username'
+                            defaultValue={authenticationDetails.username}
+                            isDisabled={!isEditingUsername}
+                        />
+                        <Button
+                            backgroundColor={theme.primaryColor}
+                            onClick={(event) => {
+                              if (isEditingUsername) {
+                                handleUserProfileUpdate(event)
+                              }
 
-                                    setIsEditingUsername(!isEditingUsername)}
-                                  }
-                                  size={'md'}
-                              >
-                                {
-                                  isEditingUsername ? <FaSave /> : <FaPencil />
-                                }
-                              </Button>
-                          </HStack>
-                      </FormControl>
+                              setIsEditingUsername(!isEditingUsername)}
+                        }
+                            size={'md'}
+                        >
+                          {
+                            isEditingUsername ? <FaSave /> : <FaPencil />
+                          }
+                        </Button>
+                      </HStack>
+                    </FormControl>
+                    <FormControl isRequired>
+                      <FormLabel>Password</FormLabel>
+                      <HStack>
+                        <RequestAccountUpdateButton text={'Update'} accountUpdateType={AccountUpdateType.Password} />
+                      </HStack>
+                    </FormControl>
                   </Stack>
               }
             </CardBody>

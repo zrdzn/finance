@@ -14,6 +14,7 @@ fun main(args: Array<String>) {
     val mailPort = System.getenv("MAIL_PORT")?.toInt() ?: 587
     val mailUsername = System.getenv("MAIL_USERNAME") ?: ""
     val mailPassword = System.getenv("MAIL_PASSWORD") ?: ""
+    val mailFrom = System.getenv("MAIL_FROM") ?: "tester@test.com"
 
     FinanceLauncher().launchApplication(
         serverPort = serverPort,
@@ -24,7 +25,8 @@ fun main(args: Array<String>) {
         mailHost = mailHost,
         mailPort = mailPort,
         mailUsername = mailUsername,
-        mailPassword = mailPassword
+        mailPassword = mailPassword,
+        mailFrom = mailFrom
     )
 }
 
@@ -40,7 +42,8 @@ class FinanceLauncher {
         mailHost: String,
         mailPort: Int,
         mailUsername: String,
-        mailPassword: String
+        mailPassword: String,
+        mailFrom: String
     ): ConfigurableApplicationContext {
         val application = SpringApplication(FinanceApplication::class.java)
 
@@ -53,7 +56,8 @@ class FinanceLauncher {
             EnvironmentProperty.MAIL_HOST.name to mailHost,
             EnvironmentProperty.MAIL_PORT.name to mailPort,
             EnvironmentProperty.MAIL_USERNAME.name to mailUsername,
-            EnvironmentProperty.MAIL_PASSWORD.name to mailPassword
+            EnvironmentProperty.MAIL_PASSWORD.name to mailPassword,
+            EnvironmentProperty.MAIL_FROM.name to mailFrom
         )
 
         properties.forEach { logger.info("Setting property ${it.key} -> ${it.value}") }
