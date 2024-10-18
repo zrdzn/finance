@@ -21,6 +21,7 @@ export interface UserResponse {
   id: number
   email: string
   username: string
+  verified: boolean
 }
 
 export interface UsernameResponse {
@@ -179,6 +180,7 @@ export interface CategoryCreateRequest {
 export interface AuthenticationDetails {
   email: string
   username: string
+  verified: boolean
 }
 
 // audits

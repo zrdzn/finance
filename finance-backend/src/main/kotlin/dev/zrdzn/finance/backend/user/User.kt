@@ -27,4 +27,7 @@ data class User(
     @Column(name = "password")
     @Size(max = 100)
     var password: String,
+
+    @Column(name = "verified")
+    var verified: Boolean
 )

@@ -32,11 +32,12 @@ import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"
 
 interface RequestAccountUpdateButtonProperties {
+  icon?: React.ReactNode;
   text?: string;
   accountUpdateType: AccountUpdateType;
 }
 
-export const RequestAccountUpdateButton = ({ text, accountUpdateType }: RequestAccountUpdateButtonProperties) => {
+export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: RequestAccountUpdateButtonProperties) => {
   const theme = useTheme();
   const api = useApi();
   const router = useRouter();
@@ -49,12 +50,12 @@ export const RequestAccountUpdateButton = ({ text, accountUpdateType }: RequestA
   const [userEmailUpdateRequest, setUserEmailUpdateRequest] = useState<UserEmailUpdateRequest>({
     securityCode: "",
     email: ""
-  });
+  })
   const [userPasswordUpdateRequest, setUserPasswordUpdateRequest] = useState<UserPasswordUpdateRequest>({
     securityCode: "",
     oldPassword: "",
     newPassword: ""
-  });
+  })
 
   const steps = [
     { title: 'Enter Security Code', description: 'Security code sent to your email' },
@@ -126,7 +127,7 @@ export const RequestAccountUpdateButton = ({ text, accountUpdateType }: RequestA
   return authenticationDetails && (
     <>
       <Button backgroundColor={theme.primaryColor} onClick={requestOnOpen} gap={1}>
-        <FaPencil />
+        {icon && icon}
         {text && text}
       </Button>
 
