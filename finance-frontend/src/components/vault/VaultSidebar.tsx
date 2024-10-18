@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Divider,
   Drawer,
   DrawerBody,
   DrawerContent,
@@ -9,10 +8,6 @@ import {
   DrawerOverlay,
   Flex,
   Link,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Text,
   useDisclosure,
   useMediaQuery
@@ -22,12 +17,12 @@ import {useTheme} from "@/hooks/useTheme"
 import React from "react"
 import {FaAngleLeft, FaAngleRight, FaBars, FaBook, FaHistory, FaTags, FaUser} from "react-icons/fa"
 import {FaCalendarDays, FaChartSimple, FaGears, FaHouse, FaX} from "react-icons/fa6"
-import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"
 import {VaultResponse} from "@/components/api"
 
 interface VaultSidebarProperties {
   vault: VaultResponse;
+  permissions: string[];
   isCollapsed?: boolean;
   toggleCollapse?: () => void;
 }
@@ -48,16 +43,27 @@ const SidebarLogo = ({ vault, isCollapsed }: { vault: VaultResponse, isCollapsed
   </Flex>
 );
 
-const BaseView = ({ vault }: VaultSidebarProperties) => {
-  const { authenticationDetails, logout } = useAuthentication();
+const getAvailableEndpoints = (vault: VaultResponse, permissions: string[]) => {
+  const navItems = [
+    { href: `/vault/${vault.publicId}`, icon: FaHouse, label: 'Overview' },
+    { href: `/vault/${vault.publicId}/transactions`, icon: FaBook, label: 'Transactions', requireAtLeast: ['TRANSACTION_READ'] },
+    { href: `/vault/${vault.publicId}/products`, icon: FaTags, label: 'Products', requireAtLeast: ['PRODUCT_READ', 'CATEGORY_READ'] },
+    { href: `/vault/${vault.publicId}/statistics`, icon: FaChartSimple, label: 'Statistics' },
+    { href: `/vault/${vault.publicId}/schedules`, icon: FaCalendarDays, label: 'Schedules', isDisabled: true },
+    { href: `/vault/${vault.publicId}/members`, icon: FaUser, label: 'Members', requireAtLeast: ['MEMBER_READ', 'MEMBER_INVITE_READ'] },
+    { href: `/vault/${vault.publicId}/audits`, icon: FaHistory, label: 'Audit Logs', requireAtLeast: ['AUDIT_READ'] },
+    { href: `/vault/${vault.publicId}/settings`, icon: FaGears, label: 'Settings', requireAtLeast: ['SETTINGS_READ'] }
+  ]
+
+  return navItems.filter(({ requireAtLeast }) => {
+    return !requireAtLeast || requireAtLeast.some(permission => permissions.includes(permission));
+  })
+}
+
+const BaseView = ({ vault, permissions }: VaultSidebarProperties) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const theme = useTheme();
   const router = useRouter();
-
-  const handleLogout = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    logout().then(() => router.push("/"));
-  };
 
   return (
     <>
@@ -91,32 +97,23 @@ const BaseView = ({ vault }: VaultSidebarProperties) => {
           </DrawerHeader>
           <DrawerBody padding={0}>
             <Flex direction={'column'} mt={5}>
-              {[
-                { href: `/vault/${vault.publicId}`, icon: FaHouse, label: 'Overview' },
-                { href: `/vault/${vault.publicId}/transactions`, icon: FaBook, label: 'Transactions' },
-                { href: `/vault/${vault.publicId}/products`, icon: FaTags, label: 'Products' },
-                { href: `/vault/${vault.publicId}/statistics`, icon: FaChartSimple, label: 'Statistics' },
-                { href: `/vault/${vault.publicId}/schedules`, icon: FaCalendarDays, label: 'Schedules', isDisabled: true },
-                { href: `/vault/${vault.publicId}/members`, icon: FaUser, label: 'Members' },
-                { href: `/vault/${vault.publicId}/audits`, icon: FaHistory, label: 'Audit Logs' },
-                { href: `/vault/${vault.publicId}/settings`, icon: FaGears, label: 'Settings' }
-              ].map(({ href, icon: Icon, label, isDisabled }) => (
-                <Flex key={href} width={'full'} marginY={3}>
-                  <Link href={href} style={{ width: 'inherit' }}>
-                    <Button
-                      backgroundColor={router.asPath === href ? theme.secondaryColor : theme.backgroundColor}
-                      onClick={onClose}
-                      width={'full'}
-                      borderRadius={0}
-                      isDisabled={isDisabled}
-                    >
-                      <Flex alignItems={'center'} width={'full'} columnGap={2}>
-                        <Icon />
-                        <Box>{label}</Box>
-                      </Flex>
-                    </Button>
-                  </Link>
-                </Flex>
+              {getAvailableEndpoints(vault, permissions).map(({ href, icon: Icon, label, isDisabled }) => (
+                  <Flex key={href} width={'full'} marginY={3}>
+                    <Link href={href} style={{ width: 'inherit' }}>
+                      <Button
+                          backgroundColor={router.asPath === href ? theme.secondaryColor : theme.backgroundColor}
+                          onClick={() => router.push(href)}
+                          width={'full'}
+                          borderRadius={0}
+                          isDisabled={isDisabled}
+                      >
+                        <Flex alignItems={'center'} width={'full'} columnGap={2}>
+                          <Icon />
+                          <Box>{label}</Box>
+                        </Flex>
+                      </Button>
+                    </Link>
+                  </Flex>
               ))}
             </Flex>
           </DrawerBody>
@@ -128,7 +125,7 @@ const BaseView = ({ vault }: VaultSidebarProperties) => {
 
 const DesktopView = (
   {
-    vault, isCollapsed = false, toggleCollapse,
+    vault, permissions, isCollapsed = false, toggleCollapse,
   }: VaultSidebarProperties
 ) => {
   const theme = useTheme();
@@ -167,28 +164,19 @@ const DesktopView = (
         alignItems={isCollapsed ? "center" : "flex-start"}
         flexGrow={1}
       >
-        {[
-          { href: `/vault/${vault.publicId}`, icon: FaHouse, label: 'Overview' },
-          { href: `/vault/${vault.publicId}/transactions`, icon: FaBook, label: 'Transactions' },
-          { href: `/vault/${vault.publicId}/products`, icon: FaTags, label: 'Products' },
-          { href: `/vault/${vault.publicId}/statistics`, icon: FaChartSimple, label: 'Statistics' },
-          { href: `/vault/${vault.publicId}/schedules`, icon: FaCalendarDays, label: 'Schedules', isDisabled: true },
-          { href: `/vault/${vault.publicId}/members`, icon: FaUser, label: 'Members' },
-          { href: `/vault/${vault.publicId}/audits`, icon: FaHistory, label: 'Audit Logs' },
-          { href: `/vault/${vault.publicId}/settings`, icon: FaGears, label: 'Settings' }
-        ].map(({ href, icon: Icon, label, isDisabled }) => (
-          <Link key={href} href={href} style={{ width: "100%" }} backgroundColor={isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}>
-            <Button
-              variant="ghost"
-              width="100%"
-              justifyContent={isCollapsed ? "center" : "flex-start"}
-              leftIcon={<Icon />}
-              backgroundColor={!isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}
-              isDisabled={isDisabled}
-            >
-              {!isCollapsed && label}
-            </Button>
-          </Link>
+        {getAvailableEndpoints(vault, permissions).map(({ href, icon: Icon, label, isDisabled }) => (
+            <Link key={href} href={href} style={{ width: "100%" }} backgroundColor={isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}>
+              <Button
+                  variant="ghost"
+                  width="100%"
+                  justifyContent={isCollapsed ? "center" : "flex-start"}
+                  leftIcon={<Icon />}
+                  backgroundColor={!isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}
+                  isDisabled={isDisabled}
+              >
+                {!isCollapsed && label}
+              </Button>
+            </Link>
         ))}
       </Flex>
     </Flex>
@@ -197,14 +185,14 @@ const DesktopView = (
 
 export const VaultSidebar = (
   {
-    vault, isCollapsed = false, toggleCollapse,
+    vault, permissions, isCollapsed = false, toggleCollapse,
   }: VaultSidebarProperties
 ): ReactJSXElement => {
   const [isMobile] = useMediaQuery("(max-width: 768px)");
 
   if (isMobile) {
-    return <BaseView vault={vault} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />;
+    return <BaseView vault={vault} permissions={permissions} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />;
   } else {
-    return <DesktopView vault={vault} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />;
+    return <DesktopView vault={vault} permissions={permissions} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />;
   }
 };
