@@ -69,7 +69,7 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
 
   return (
     <>
-      <VaultSidebar vault={vault} isCollapsed={isCollapsed} toggleCollapse={() => setIsCollapsed(!isCollapsed)} />
+      <VaultSidebar vault={vault} permissions={permissions} isCollapsed={isCollapsed} toggleCollapse={() => setIsCollapsed(!isCollapsed)} />
       <Box
         ml={{ base: 0, md: isCollapsed ? '80px' : '250px' }}
         transition="margin-left 0.3s"
