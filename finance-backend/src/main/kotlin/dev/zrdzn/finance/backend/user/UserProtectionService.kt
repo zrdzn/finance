@@ -15,14 +15,23 @@ class UserProtectionService(
     private val digest = MessageDigest.getInstance("SHA-256")
     private val activeCodes = mutableMapOf<String, Pair<UserId, Instant>>()
 
-    fun requestProtectedResources(userId: UserId, userEmail: String) {
-        val securityCode = createRandomNumberToken(6)
-        activeCodes[hashCode(securityCode)] = Pair(userId, Instant.now(clock).plus(10, ChronoUnit.MINUTES))
+    fun sendUserUpdateCode(userId: UserId, userEmail: String) {
+        val securityCode = prepareSecurityCode(userId)
 
         mailService.sendMail(
             userEmail,
-            "Access code",
-            "Your access code is: $securityCode"
+            "Account Update Code",
+            "Security code to update your account is: $securityCode"
+        )
+    }
+
+    fun sendUserVerificationLink(userId: UserId, userEmail: String, verificationLink: String) {
+        val securityCode = prepareSecurityCode(userId)
+
+        mailService.sendMail(
+            userEmail,
+            "Account Verification Link",
+            "Link to verify your account: $verificationLink?securityCode=$securityCode"
         )
     }
 
@@ -40,6 +49,12 @@ class UserProtectionService(
         }
 
         return true
+    }
+
+    private fun prepareSecurityCode(userId: UserId): String {
+        val securityCode = createRandomNumberToken(6)
+        activeCodes[hashCode(securityCode)] = Pair(userId, Instant.now(clock).plus(10, ChronoUnit.MINUTES))
+        return securityCode
     }
 
     private fun hashCode(rawCode: String): String {

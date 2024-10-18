@@ -21,9 +21,10 @@ import {useAuthentication} from "@/hooks/useAuthentication"
 import {AccountUpdateType, UserProfileUpdateRequest} from "@/components/api"
 import toast from "react-hot-toast"
 import {Layout} from "@/components/Layout"
-import {FaSave} from "react-icons/fa"
+import {FaEdit, FaEnvelope, FaKey, FaLock, FaSave, FaShieldAlt} from "react-icons/fa"
 import {FaPencil} from "react-icons/fa6"
 import {RequestAccountUpdateButton} from "@/components/account/RequestAccountUpdateButton"
+import {RequestAccountVerificationButton} from "@/components/account/RequestAccountVerificationButton";
 
 export default function AccountSettings(): ReactJSXElement {
   const { authenticationDetails } = useAuthentication()
@@ -102,7 +103,7 @@ export default function AccountSettings(): ReactJSXElement {
                             defaultValue={authenticationDetails.email}
                             isDisabled
                         />
-                        <RequestAccountUpdateButton accountUpdateType={AccountUpdateType.Email} />
+                        <RequestAccountUpdateButton icon={<FaEdit />} accountUpdateType={AccountUpdateType.Email} />
                       </HStack>
                     </FormControl>
                     <FormControl isRequired>
@@ -135,7 +136,16 @@ export default function AccountSettings(): ReactJSXElement {
                     <FormControl isRequired>
                       <FormLabel>Password</FormLabel>
                       <HStack>
-                        <RequestAccountUpdateButton text={'Update'} accountUpdateType={AccountUpdateType.Password} />
+                        <RequestAccountUpdateButton icon={<FaKey />} text={'Change password'} accountUpdateType={AccountUpdateType.Password} />
+                      </HStack>
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Verify Account</FormLabel>
+                      <HStack>
+                        {authenticationDetails.verified && <Text fontSize={'sm'} color={'green'}>Your account is verified</Text>}
+                        {!authenticationDetails.verified && (
+                            <RequestAccountVerificationButton icon={<FaEnvelope />} text={'Send link'} />
+                        )}
                       </HStack>
                     </FormControl>
                   </Stack>

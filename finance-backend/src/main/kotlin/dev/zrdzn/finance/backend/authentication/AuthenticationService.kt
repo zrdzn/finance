@@ -34,7 +34,8 @@ class AuthenticationService(
             .let {
                 AuthenticationDetailsResponse(
                     email = it.email,
-                    username = it.username
+                    username = it.username,
+                    verified = it.verified
                 )
             }
 

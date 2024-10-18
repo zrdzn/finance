@@ -28,7 +28,8 @@ open class UserService(
                     id = null,
                     email = userCreateRequest.email,
                     username = userCreateRequest.username,
-                    password = passwordEncoder.encode(userCreateRequest.password)
+                    password = passwordEncoder.encode(userCreateRequest.password),
+                    verified = false
                 )
             )
             .let { UserCreateResponse(it.id!!) }
@@ -37,7 +38,14 @@ open class UserService(
     open fun requestUserUpdate(requesterId: UserId) {
         val user = userRepository.findById(requesterId) ?: throw UserNotFoundException(requesterId)
 
-        userProtectionService.requestProtectedResources(user.id!!, user.email)
+        userProtectionService.sendUserUpdateCode(user.id!!, user.email)
+    }
+
+    @Transactional
+    open fun requestUserVerification(requesterId: UserId, verificationLink: String) {
+        val user = userRepository.findById(requesterId) ?: throw UserNotFoundException(requesterId)
+
+        userProtectionService.sendUserVerificationLink(user.id!!, user.email, verificationLink)
     }
 
     @Transactional
@@ -79,6 +87,19 @@ open class UserService(
         logger.info("User with id $requesterId updated username to $username")
     }
 
+    @Transactional
+    open fun verifyUser(requesterId: UserId, securityCode: String) {
+        val user = userRepository.findById(requesterId) ?: throw UserNotFoundException(requesterId)
+
+        if (!userProtectionService.isAccessGranted(userId = user.id!!, securityCode = securityCode)) {
+            throw UserAccessDeniedException(requesterId)
+        }
+
+        user.verified = true
+
+        logger.info("User with id $requesterId has verified his account")
+    }
+
     @Transactional(readOnly = true)
     open fun getUserById(id: UserId): UserResponse =
         userRepository.findById(id)
@@ -86,7 +107,8 @@ open class UserService(
                 UserResponse(
                     id = it.id!!,
                     email = it.email,
-                    username = it.username
+                    username = it.username,
+                    verified = it.verified
                 )
             }
             ?: throw UserNotFoundException(id)
@@ -104,7 +126,8 @@ open class UserService(
                     id = it.id!!,
                     email = it.email,
                     username = it.username,
-                    password = it.password
+                    password = it.password,
+                    verified = it.verified
                 )
             }
             ?: throw UserNotFoundByEmailException(email)
