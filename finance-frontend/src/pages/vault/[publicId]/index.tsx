@@ -13,7 +13,7 @@ export default function Dashboard(): ReactJSXElement {
 
   return (
     <ProtectedVault publicId={publicId}>
-      { (vault, permissions) =>
+      { (vault, vaultRole) =>
         <>
           <Head>
             <title>Finance - Overview ({vault.name})</title>
@@ -24,8 +24,8 @@ export default function Dashboard(): ReactJSXElement {
               templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }}
               gap={4}
               width="full">
-              <LastTransactionsCard vault={vault} permissions={permissions} />
-              <AnalyticsSummaryCard vault={vault} permissions={permissions} />
+              <LastTransactionsCard vault={vault} permissions={vaultRole.permissions} />
+              <AnalyticsSummaryCard vault={vault} permissions={vaultRole.permissions} />
             </Grid>
           </Flex>
         </>

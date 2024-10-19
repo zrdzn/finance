@@ -12,7 +12,7 @@ export default function Audits(): ReactJSXElement {
 
   return (
     <ProtectedVault publicId={publicId}>
-      { (vault, permissions) =>
+      { (vault, vaultRole) =>
         <>
           <Head>
             <title>Finance - Audit Logs</title>
@@ -24,8 +24,8 @@ export default function Audits(): ReactJSXElement {
               maxWidth={'1400px'}
               minWidth={{ xl: '1200px' }}
               justifyContent="center">
-              {permissions.includes("AUDIT_READ") && (
-                <AuditTable vault={vault} permissions={permissions} />
+              {vaultRole.permissions.includes("AUDIT_READ") && (
+                <AuditTable vault={vault} permissions={vaultRole.permissions} />
               )}
             </Flex>
           </Flex>

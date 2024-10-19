@@ -13,7 +13,7 @@ export default function Products(): ReactJSXElement {
 
   return (
     <ProtectedVault publicId={publicId}>
-      { (vault, permissions) =>
+      { (vault, vaultRole) =>
         <>
           <Head>
             <title>Finance - Products</title>
@@ -23,11 +23,11 @@ export default function Products(): ReactJSXElement {
               templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
               gap={4}
               width="full">
-              {permissions.includes("PRODUCT_READ") && (
-                <ProductsCard vault={vault} permissions={permissions} />
+              {vaultRole.permissions.includes("PRODUCT_READ") && (
+                <ProductsCard vault={vault} permissions={vaultRole.permissions} />
               )}
-              {permissions.includes("CATEGORY_READ") && (
-                <CategoriesCard vault={vault} permissions={permissions} />
+              {vaultRole.permissions.includes("CATEGORY_READ") && (
+                <CategoriesCard vault={vault} permissions={vaultRole.permissions} />
               )}
             </Grid>
           </Flex>

@@ -18,11 +18,11 @@ import React from "react"
 import {FaAngleLeft, FaAngleRight, FaBars, FaBook, FaHistory, FaTags, FaUser} from "react-icons/fa"
 import {FaCalendarDays, FaChartSimple, FaGears, FaHouse, FaX} from "react-icons/fa6"
 import {useRouter} from "next/router"
-import {VaultResponse} from "@/components/api"
+import {VaultResponse, VaultRoleResponse} from "@/components/api"
 
 interface VaultSidebarProperties {
   vault: VaultResponse;
-  permissions: string[];
+  vaultRole: VaultRoleResponse;
   isCollapsed?: boolean;
   toggleCollapse?: () => void;
 }
@@ -60,7 +60,7 @@ const getAvailableEndpoints = (vault: VaultResponse, permissions: string[]) => {
   })
 }
 
-const BaseView = ({ vault, permissions }: VaultSidebarProperties) => {
+const BaseView = ({ vault, vaultRole }: VaultSidebarProperties) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const theme = useTheme();
   const router = useRouter();
@@ -97,7 +97,7 @@ const BaseView = ({ vault, permissions }: VaultSidebarProperties) => {
           </DrawerHeader>
           <DrawerBody padding={0}>
             <Flex direction={'column'} mt={5}>
-              {getAvailableEndpoints(vault, permissions).map(({ href, icon: Icon, label, isDisabled }) => (
+              {getAvailableEndpoints(vault, vaultRole.permissions).map(({ href, icon: Icon, label, isDisabled }) => (
                   <Flex key={href} width={'full'} marginY={3}>
                     <Link href={href} style={{ width: 'inherit' }}>
                       <Button
@@ -125,7 +125,7 @@ const BaseView = ({ vault, permissions }: VaultSidebarProperties) => {
 
 const DesktopView = (
   {
-    vault, permissions, isCollapsed = false, toggleCollapse,
+    vault, vaultRole, isCollapsed = false, toggleCollapse,
   }: VaultSidebarProperties
 ) => {
   const theme = useTheme();
@@ -164,7 +164,7 @@ const DesktopView = (
         alignItems={isCollapsed ? "center" : "flex-start"}
         flexGrow={1}
       >
-        {getAvailableEndpoints(vault, permissions).map(({ href, icon: Icon, label, isDisabled }) => (
+        {getAvailableEndpoints(vault, vaultRole.permissions).map(({ href, icon: Icon, label, isDisabled }) => (
             <Link key={href} href={href} style={{ width: "100%" }} backgroundColor={isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}>
               <Button
                   variant="ghost"
@@ -185,14 +185,14 @@ const DesktopView = (
 
 export const VaultSidebar = (
   {
-    vault, permissions, isCollapsed = false, toggleCollapse,
+    vault, vaultRole, isCollapsed = false, toggleCollapse,
   }: VaultSidebarProperties
 ): ReactJSXElement => {
   const [isMobile] = useMediaQuery("(max-width: 768px)");
 
   if (isMobile) {
-    return <BaseView vault={vault} permissions={permissions} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />;
+    return <BaseView vault={vault} vaultRole={vaultRole} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />;
   } else {
-    return <DesktopView vault={vault} permissions={permissions} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />;
+    return <DesktopView vault={vault} vaultRole={vaultRole} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />;
   }
 };

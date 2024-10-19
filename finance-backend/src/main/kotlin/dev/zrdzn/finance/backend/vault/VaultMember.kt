@@ -1,7 +1,7 @@
 package dev.zrdzn.finance.backend.vault
 
 import dev.zrdzn.finance.backend.user.UserId
-import dev.zrdzn.finance.backend.vault.api.VaultRole
+import dev.zrdzn.finance.backend.vault.api.authority.VaultRole
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue

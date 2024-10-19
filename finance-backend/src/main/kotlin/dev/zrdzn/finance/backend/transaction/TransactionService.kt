@@ -24,7 +24,7 @@ import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.user.UserService
 import dev.zrdzn.finance.backend.vault.VaultId
 import dev.zrdzn.finance.backend.vault.VaultService
-import dev.zrdzn.finance.backend.vault.api.VaultPermission
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission
 import java.io.StringWriter
 import java.math.BigDecimal
 import java.time.Clock

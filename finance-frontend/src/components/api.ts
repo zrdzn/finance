@@ -54,11 +54,15 @@ export interface VaultResponse {
   transactionMethod: string
 }
 
+export interface VaultMemberUpdateRequest {
+  vaultRole: string
+}
+
 export interface VaultMemberResponse {
   id: number
   vaultId: number
   user: UserResponse
-  role: string
+  vaultRole: string
 }
 
 export interface VaultInvitationResponse {
@@ -83,6 +87,12 @@ export interface VaultUpdateRequest {
 export interface VaultInvitationCreateRequest {
   vaultId: number
   userEmail: string
+}
+
+export interface VaultRoleResponse {
+  name: string
+  weight: number
+  permissions: string[]
 }
 
 // transactions

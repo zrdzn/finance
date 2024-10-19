@@ -13,7 +13,7 @@ export default function Members(): ReactJSXElement {
 
   return (
     <ProtectedVault publicId={publicId}>
-      { (vault, permissions) =>
+      { (vault, vaultRole) =>
         <>
           <Head>
             <title>Finance - Members</title>
@@ -23,11 +23,11 @@ export default function Members(): ReactJSXElement {
               templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
               gap={4}
               width="full">
-              {permissions.includes("MEMBER_READ") && (
-                <MembersCard vault={vault} permissions={permissions} />
+              {vaultRole.permissions.includes("MEMBER_READ") && (
+                <MembersCard vault={vault} vaultRole={vaultRole} />
               )}
-              {permissions.includes("MEMBER_INVITE_READ") && (
-                <InvitationsCard vault={vault} permissions={permissions} />
+              {vaultRole.permissions.includes("MEMBER_INVITE_READ") && (
+                <InvitationsCard vault={vault} permissions={vaultRole.permissions} />
               )}
             </Grid>
           </Flex>

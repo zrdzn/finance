@@ -7,13 +7,14 @@ import dev.zrdzn.finance.backend.vault.VaultPublicId
 import dev.zrdzn.finance.backend.vault.VaultService
 import dev.zrdzn.finance.backend.vault.api.VaultCreateRequest
 import dev.zrdzn.finance.backend.vault.api.VaultCreateResponse
-import dev.zrdzn.finance.backend.vault.api.VaultInvitationCreateRequest
-import dev.zrdzn.finance.backend.vault.api.VaultInvitationListResponse
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationCreateRequest
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationListResponse
 import dev.zrdzn.finance.backend.vault.api.VaultListResponse
-import dev.zrdzn.finance.backend.vault.api.VaultMemberListResponse
-import dev.zrdzn.finance.backend.vault.api.VaultPermissionListResponse
+import dev.zrdzn.finance.backend.vault.api.member.VaultMemberListResponse
+import dev.zrdzn.finance.backend.vault.api.authority.VaultRoleResponse
 import dev.zrdzn.finance.backend.vault.api.VaultResponse
 import dev.zrdzn.finance.backend.vault.api.VaultUpdateRequest
+import dev.zrdzn.finance.backend.vault.api.member.VaultMemberUpdateRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -69,6 +70,19 @@ class VaultController(
             transactionMethod = vaultUpdateRequest.transactionMethod
         )
 
+    @PatchMapping("/{vaultId}/members/{userId}")
+    fun updateVaultMember(
+        @AuthenticationPrincipal requesterId: UserId,
+        @PathVariable vaultId: VaultId,
+        @PathVariable userId: UserId,
+        @RequestBody vaultMemberUpdateRequest: VaultMemberUpdateRequest
+    ): Unit = vaultService.updateVaultMember(
+        vaultId = vaultId,
+        requesterId = requesterId,
+        vaultMemberId = userId,
+        vaultRole = vaultMemberUpdateRequest.vaultRole
+    )
+
     @PostMapping("/invitations/{invitationId}/accept")
     fun acceptVaultInvitation(
         @AuthenticationPrincipal userId: UserId,
@@ -113,13 +127,13 @@ class VaultController(
         userEmail = userEmail
     )
 
-    @GetMapping("/{vaultId}/permissions")
+    @GetMapping("/{vaultId}/role")
     fun getVaultRole(
-        @AuthenticationPrincipal userId: UserId,
+        @AuthenticationPrincipal requesterId: UserId,
         @PathVariable vaultId: VaultId
-    ): VaultPermissionListResponse = vaultService.getVaultPermissions(
+    ): VaultRoleResponse = vaultService.getVaultRole(
         vaultId = vaultId,
-        userId = userId
+        requesterId = requesterId
     )
 
     @DeleteMapping("/{vaultId}")

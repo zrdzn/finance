@@ -13,7 +13,7 @@ export default function Transactions(): ReactJSXElement {
 
   return (
     <ProtectedVault publicId={publicId}>
-      { (vault, permissions) =>
+      { (vault, vaultRole) =>
         <>
           <Head>
             <title>Finance - Transactions</title>
@@ -23,11 +23,11 @@ export default function Transactions(): ReactJSXElement {
               templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
               gap={4}
               width="full">
-              {permissions.includes("TRANSACTION_READ") && (
-                <TransactionsCard vault={vault} permissions={permissions} />
+              {vaultRole.permissions.includes("TRANSACTION_READ") && (
+                <TransactionsCard vault={vault} permissions={vaultRole.permissions} />
               )}
-              {permissions.includes("TRANSACTION_READ") && (
-                <ExportCard vault={vault} permissions={permissions} />
+              {vaultRole.permissions.includes("TRANSACTION_READ") && (
+                <ExportCard vault={vault} permissions={vaultRole.permissions} />
               )}
             </Grid>
           </Flex>

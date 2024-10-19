@@ -9,7 +9,7 @@ import dev.zrdzn.finance.backend.category.api.CategoryResponse
 import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.vault.VaultId
 import dev.zrdzn.finance.backend.vault.VaultService
-import dev.zrdzn.finance.backend.vault.api.VaultPermission
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission
 import org.slf4j.LoggerFactory
 
 class CategoryService(

@@ -11,23 +11,27 @@ import {
   Text
 } from "@chakra-ui/react"
 import React from "react"
-import {VaultMemberResponse} from "@/components/api"
+import {VaultMemberResponse, VaultRoleResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
 import toast from "react-hot-toast"
+import {EditProductButton} from "@/components/product/EditProductButton";
+import {EditMemberButton} from "@/components/member/EditMemberButton";
+import {useAuthentication} from "@/hooks/useAuthentication";
 
 interface MembersCardItemProperties {
   member: VaultMemberResponse
-  permissions: string[]
+  vaultRole: VaultRoleResponse
 }
 
 export const MembersCardItem = ({
   member,
-  permissions
+  vaultRole
 }: MembersCardItemProperties) => {
   const api = useApi()
   const router = useRouter()
+  const { authenticationDetails } = useAuthentication()
 
   const handleMemberDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -61,19 +65,19 @@ export const MembersCardItem = ({
                   </Text>
                   <HStack spacing={4}>
                     {
-                      member.role === 'OWNER' &&
+                      member.vaultRole === 'OWNER' &&
                         <Tag size={'sm'} colorScheme='red'>
                             <TagLabel>Owner</TagLabel>
                         </Tag>
                     }
                     {
-                      member.role === 'MANAGER' &&
+                      member.vaultRole === 'MANAGER' &&
                         <Tag size={'sm'} colorScheme='purple'>
                             <TagLabel>Manager</TagLabel>
                         </Tag>
                     }
                     {
-                      member.role === 'MEMBER' &&
+                      member.vaultRole === 'MEMBER' &&
                         <Tag size={'sm'} colorScheme='green'>
                             <TagLabel>Member</TagLabel>
                         </Tag>
@@ -82,8 +86,14 @@ export const MembersCardItem = ({
                 </Flex>
                 <HStack spacing={2}>
                   {
-                    member.role !== 'OWNER' &&
-                    permissions.includes("MEMBER_REMOVE") &&
+                      member.vaultRole !== 'OWNER' &&
+                      member.user.email !== authenticationDetails?.email &&
+                      vaultRole.permissions.includes("MEMBER_UPDATE") && <EditMemberButton member={member} />
+                  }
+                  {
+                    member.vaultRole !== 'OWNER' &&
+                    member.user.email !== authenticationDetails?.email &&
+                    vaultRole.permissions.includes("MEMBER_REMOVE") &&
                     <DeleteButton onClick={handleMemberDelete} />
                   }
                 </HStack>
