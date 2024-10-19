@@ -5,22 +5,15 @@ import dev.zrdzn.finance.backend.shared.createRandomToken
 import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
 import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.user.UserService
-import dev.zrdzn.finance.backend.vault.api.UserNotMemberOfVaultException
-import dev.zrdzn.finance.backend.vault.api.VaultCreateResponse
-import dev.zrdzn.finance.backend.vault.api.VaultInsufficientPermissionException
-import dev.zrdzn.finance.backend.vault.api.VaultInvitationListResponse
-import dev.zrdzn.finance.backend.vault.api.VaultInvitationNotFoundException
-import dev.zrdzn.finance.backend.vault.api.VaultInvitationNotOwnedException
-import dev.zrdzn.finance.backend.vault.api.VaultInvitationResponse
-import dev.zrdzn.finance.backend.vault.api.VaultListResponse
-import dev.zrdzn.finance.backend.vault.api.VaultMemberListResponse
-import dev.zrdzn.finance.backend.vault.api.VaultMemberResponse
-import dev.zrdzn.finance.backend.vault.api.VaultNotFoundByPublicIdException
-import dev.zrdzn.finance.backend.vault.api.VaultNotFoundException
-import dev.zrdzn.finance.backend.vault.api.VaultPermission
-import dev.zrdzn.finance.backend.vault.api.VaultPermissionListResponse
-import dev.zrdzn.finance.backend.vault.api.VaultResponse
-import dev.zrdzn.finance.backend.vault.api.VaultRole
+import dev.zrdzn.finance.backend.vault.api.*
+import dev.zrdzn.finance.backend.vault.api.authority.*
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationListResponse
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationNotFoundException
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationNotOwnedException
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationResponse
+import dev.zrdzn.finance.backend.vault.api.member.VaultMemberListResponse
+import dev.zrdzn.finance.backend.vault.api.member.VaultMemberNotFoundException
+import dev.zrdzn.finance.backend.vault.api.member.VaultMemberResponse
 import java.time.Clock
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -45,12 +38,12 @@ open class VaultService(
                     id = it.id!!,
                     vaultId = vaultId,
                     user = userService.getUserById(it.userId),
-                    role = it.vaultRole
+                    vaultRole = it.vaultRole
                 )
             } ?: throw UserNotMemberOfVaultException(vaultId, userId)
 
         when {
-            !member.role.hasPermission(requiredPermission) -> throw VaultInsufficientPermissionException(vaultId, userId, requiredPermission)
+            !member.vaultRole.hasPermission(requiredPermission) -> throw VaultInsufficientPermissionException(vaultId, userId, requiredPermission)
         }
 
         return member
@@ -130,6 +123,26 @@ open class VaultService(
         vault.transactionMethod = transactionMethod
 
         logger.info("Successfully updated vault: $vault")
+    }
+
+    @Transactional
+    open fun updateVaultMember(requesterId: UserId, vaultId: VaultId, vaultMemberId: VaultMemberId, vaultRole: VaultRole) {
+        val vault = getVault(vaultId, requesterId)
+        val requester = authorizeMember(vaultId, requesterId, VaultPermission.MEMBER_UPDATE)
+        val vaultMember = vaultMemberRepository.findById(vaultMemberId) ?: throw VaultMemberNotFoundException(vaultMemberId)
+
+        // check if the requester has higher role than the user he wants to update
+        if (!requester.vaultRole.isHigherThan(vaultMember.vaultRole)) {
+            throw VaultCannotUpdateMemberException(vaultId, requesterId, vaultMemberId)
+        }
+
+        if (vaultRole.isOwner()) {
+            throw VaultCannotUpdateMemberException(vaultId, requesterId, vaultMemberId)
+        }
+
+        vaultMember.vaultRole = vaultRole
+
+        logger.info("Successfully updated member with id: $vaultMemberId in vault: ${vault.name}")
     }
 
     @Transactional
@@ -235,7 +248,7 @@ open class VaultService(
                         id = it.id!!,
                         vaultId = it.vaultId,
                         user = userService.getUserById(it.userId),
-                        role = it.vaultRole
+                        vaultRole = it.vaultRole
                     )
                 }
                 .toSet()
@@ -283,12 +296,17 @@ open class VaultService(
     }
 
     @Transactional(readOnly = true)
-    open fun getVaultPermissions(vaultId: VaultId, userId: UserId): VaultPermissionListResponse {
-        return vaultMemberRepository.findByVaultIdAndUserId(vaultId, userId)
+    open fun getVaultRole(vaultId: VaultId, requesterId: UserId): VaultRoleResponse {
+        return vaultMemberRepository.findByVaultIdAndUserId(vaultId, requesterId)
             ?.vaultRole
-            ?.getPermissions()
-            ?.let { VaultPermissionListResponse(it) }
-            ?: throw UserNotMemberOfVaultException(vaultId, userId)
+            ?.let {
+                VaultRoleResponse(
+                    name = it.name,
+                    weight = it.weight,
+                    permissions = it.permissions
+                )
+            }
+            ?: throw UserNotMemberOfVaultException(vaultId, requesterId)
     }
 
     @Transactional

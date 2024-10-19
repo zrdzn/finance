@@ -1,4 +1,4 @@
-package dev.zrdzn.finance.backend.vault.api
+package dev.zrdzn.finance.backend.vault.api.invitation
 
 import dev.zrdzn.finance.backend.vault.VaultId
 

@@ -12,7 +12,7 @@ export default function Settings(): ReactJSXElement {
 
   return (
     <ProtectedVault publicId={publicId}>
-      { (vault, permissions) =>
+      { (vault, vaultRole) =>
         <>
           <Head>
             <title>Finance - Settings</title>
@@ -23,8 +23,8 @@ export default function Settings(): ReactJSXElement {
               width={{ base: 'full', md: '80%', lg: '60%' }}
               maxWidth="800px"
               justifyContent="center">
-              {permissions.includes("SETTINGS_READ") && (
-                <SettingsCard vault={vault} permissions={permissions} />
+              {vaultRole.permissions.includes("SETTINGS_READ") && (
+                <SettingsCard vault={vault} permissions={vaultRole.permissions} />
               )}
             </Flex>
           </Flex>

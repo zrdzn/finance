@@ -4,13 +4,13 @@ import {Layout} from "@/components/Layout"
 import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"
 import {useVault} from "@/hooks/useVault"
-import {VaultResponse} from "@/components/api"
+import {VaultResponse, VaultRoleResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {Box} from "@chakra-ui/react"
 
 interface ProtectedVaultProperties {
   publicId: string | string[] | undefined
-  children: (vault: VaultResponse, permissions: string[]) => React.ReactNode
+  children: (vault: VaultResponse, vaultRole: VaultRoleResponse) => React.ReactNode
 }
 
 export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties) => {
@@ -18,7 +18,7 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
   const api = useApi();
   const { authenticationDetails } = useAuthentication();
   const vault = useVault({ publicId });
-  const [permissions, setPermissions] = useState<string[]>([]);
+  const [vaultRole, setVaultRole] = useState<VaultRoleResponse>();
   const [isCollapsed, setIsCollapsed] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
@@ -40,10 +40,9 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
 
   useEffect(() => {
     if (vault && authenticationDetails) {
-      api.get(`/vaults/${vault.id}/permissions`)
+      api.get(`/vaults/${vault.id}/role`)
         .then((response) => {
-          setPermissions(response.data.vaultPermissions);
-          console.info("Available permissions: ", response.data.vaultPermissions);
+          setVaultRole(response.data);
         })
         .catch((error) => console.error(error));
     }
@@ -63,19 +62,19 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
     return <>Vault not found</>;
   }
 
-  if (authenticationDetails === null || permissions === undefined) {
+  if (authenticationDetails === null || vaultRole === undefined) {
     return <>You must be authenticated</>;
   }
 
   return (
     <>
-      <VaultSidebar vault={vault} permissions={permissions} isCollapsed={isCollapsed} toggleCollapse={() => setIsCollapsed(!isCollapsed)} />
+      <VaultSidebar vault={vault} vaultRole={vaultRole} isCollapsed={isCollapsed} toggleCollapse={() => setIsCollapsed(!isCollapsed)} />
       <Box
         ml={{ base: 0, md: isCollapsed ? '80px' : '250px' }}
         transition="margin-left 0.3s"
       >
         <Layout>
-          {children(vault, permissions)}
+          {children(vault, vaultRole)}
         </Layout>
       </Box>
     </>

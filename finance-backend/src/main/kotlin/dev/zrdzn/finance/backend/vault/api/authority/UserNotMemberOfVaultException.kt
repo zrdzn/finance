@@ -1,4 +1,4 @@
-package dev.zrdzn.finance.backend.vault.api
+package dev.zrdzn.finance.backend.vault.api.authority
 
 import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.vault.VaultId

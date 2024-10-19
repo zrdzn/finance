@@ -1,4 +1,4 @@
-package dev.zrdzn.finance.backend.vault.api
+package dev.zrdzn.finance.backend.vault.api.authority
 
 enum class VaultPermission {
 
@@ -26,6 +26,7 @@ enum class VaultPermission {
     CATEGORY_DELETE,
 
     MEMBER_READ,
+    MEMBER_UPDATE,
     MEMBER_REMOVE,
 
     MEMBER_INVITE_CREATE,

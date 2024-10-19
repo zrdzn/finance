@@ -14,7 +14,7 @@ export default function Statistics(): ReactJSXElement {
 
   return (
     <ProtectedVault publicId={publicId}>
-      { (vault, permissions) =>
+      { (vault, vaultRole) =>
         <>
           <Head>
             <title>Finance - Settings</title>
@@ -24,7 +24,7 @@ export default function Statistics(): ReactJSXElement {
               templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }}
               gap={4}
               width="full">
-              <AnalyticsSummaryCard vault={vault} permissions={permissions} />
+              <AnalyticsSummaryCard vault={vault} permissions={vaultRole.permissions} />
               <FlowsHistoryCard vault={vault} transactionType={TransactionType.Incoming} />
               <FlowsHistoryCard vault={vault} transactionType={TransactionType.Outgoing} />
             </Grid>

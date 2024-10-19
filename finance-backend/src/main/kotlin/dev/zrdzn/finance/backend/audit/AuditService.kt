@@ -10,7 +10,7 @@ import dev.zrdzn.finance.backend.user.api.UserNotFoundException
 import dev.zrdzn.finance.backend.vault.VaultId
 import dev.zrdzn.finance.backend.vault.VaultService
 import dev.zrdzn.finance.backend.vault.api.VaultNotFoundException
-import dev.zrdzn.finance.backend.vault.api.VaultPermission
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission
 import java.time.Clock
 import java.time.Instant
 import org.slf4j.LoggerFactory
@@ -51,8 +51,8 @@ class AuditService(
                 AuditResponse(
                     id = it.id!!,
                     createdAt = it.createdAt,
-                    vault = vaultService.getVault(vaultId = it.vaultId, requesterId = requesterId) ?: throw VaultNotFoundException(vaultId),
-                    user = userService.getUserById(it.userId) ?: throw UserNotFoundException(it.userId),
+                    vault = vaultService.getVault(vaultId = it.vaultId, requesterId = requesterId),
+                    user = userService.getUserById(it.userId),
                     auditAction = it.auditAction,
                     description = it.description
                 )

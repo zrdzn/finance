@@ -2,12 +2,13 @@ package dev.zrdzn.finance.backend.vault.infrastructure
 
 import dev.zrdzn.finance.backend.shared.ErrorResponse
 import dev.zrdzn.finance.backend.shared.toResponse
-import dev.zrdzn.finance.backend.vault.api.UserNotMemberOfVaultException
-import dev.zrdzn.finance.backend.vault.api.VaultInsufficientPermissionException
-import dev.zrdzn.finance.backend.vault.api.VaultInvitationNotFoundException
-import dev.zrdzn.finance.backend.vault.api.VaultInvitationNotOwnedException
-import dev.zrdzn.finance.backend.vault.api.VaultMemberNotFoundException
+import dev.zrdzn.finance.backend.vault.api.authority.UserNotMemberOfVaultException
+import dev.zrdzn.finance.backend.vault.api.authority.VaultInsufficientPermissionException
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationNotFoundException
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationNotOwnedException
+import dev.zrdzn.finance.backend.vault.api.member.VaultMemberNotFoundException
 import dev.zrdzn.finance.backend.vault.api.VaultNotFoundException
+import dev.zrdzn.finance.backend.vault.api.authority.VaultCannotUpdateMemberException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -44,6 +45,11 @@ class VaultExceptionHandler {
     @ExceptionHandler(UserNotMemberOfVaultException::class)
     fun handleUserNotMemberOfVaultException(
         exception: UserNotMemberOfVaultException
+    ): ResponseEntity<ErrorResponse> = exception.toResponse(HttpStatus.FORBIDDEN)
+
+    @ExceptionHandler(VaultCannotUpdateMemberException::class)
+    fun handleVaultCannotUpdateMemberException(
+        exception: VaultCannotUpdateMemberException
     ): ResponseEntity<ErrorResponse> = exception.toResponse(HttpStatus.FORBIDDEN)
 
 }

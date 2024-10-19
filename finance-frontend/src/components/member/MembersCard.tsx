@@ -1,7 +1,7 @@
 import {Card, CardBody, CardHeader, Divider, Flex, Heading, Stack, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {VaultMemberResponse, VaultResponse} from "@/components/api"
+import {VaultMemberResponse, VaultResponse, VaultRoleResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {SearchBar} from "@/components/shared/SearchBar"
 import {useRouter} from "next/router"
@@ -9,10 +9,10 @@ import {MembersCardItem} from "@/components/member/MembersCardItem"
 
 interface MembersCardProperties {
   vault: VaultResponse
-  permissions: string[]
+  vaultRole: VaultRoleResponse
 }
 
-export const MembersCard = ({ vault, permissions }: MembersCardProperties) => {
+export const MembersCard = ({ vault, vaultRole }: MembersCardProperties) => {
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
@@ -67,7 +67,7 @@ export const MembersCard = ({ vault, permissions }: MembersCardProperties) => {
             queriedMembers &&
             queriedMembers.map(member => <MembersCardItem key={member.id}
                                                           member={member}
-                                                          permissions={permissions} />)
+                                                          vaultRole={vaultRole} />)
           }
         </Stack>
       </CardBody>
