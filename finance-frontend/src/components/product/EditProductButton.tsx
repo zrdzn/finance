@@ -19,6 +19,7 @@ import {CategoryResponse, ProductResponse, ProductUpdateRequest} from "@/compone
 import {CategorySelect} from "@/components/product/category/CategorySelect"
 import {useRouter} from 'next/router'
 import toast from "react-hot-toast"
+import {useTranslations} from "next-intl";
 
 interface EditProductButtonProperties {
   product: ProductResponse
@@ -28,6 +29,7 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
+  const t = useTranslations("Products")
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [productUpdateRequest, setProductUpdateRequest] = useState<ProductUpdateRequest>({
     categoryId: product.categoryId
@@ -45,7 +47,7 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
     api.patch(`/products/${product.id}`, productUpdateRequest)
       .then(() => onClose())
       .then(() => {
-        toast.success('Product updated')
+        toast.success(t('product-updated-success'))
         setTimeout(() => router.reload(), 1000)
       })
       .catch(error => console.error(error))
@@ -66,11 +68,11 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Update product</ModalHeader>
+          <ModalHeader>{t('update-modal.title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl mt={4}>
-              <FormLabel>Category</FormLabel>
+              <FormLabel>{t('update-modal.category-label')}</FormLabel>
               <CategorySelect vaultId={product.vaultId}
                               onChange={handleCategoryChange}
                               defaultValue={{
@@ -85,9 +87,9 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
             <Button onClick={handleProductUpdate}
                     backgroundColor={theme.primaryColor}
                     mr={3}>
-              Save
+              {t('update-modal.submit')}
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose}>{t('update-modal.cancel')}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

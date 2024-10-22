@@ -19,6 +19,7 @@ import {FaAngleLeft, FaAngleRight, FaBars, FaBook, FaHistory, FaTags, FaUser} fr
 import {FaCalendarDays, FaChartSimple, FaGears, FaHouse, FaX} from "react-icons/fa6"
 import {useRouter} from "next/router"
 import {VaultResponse, VaultRoleResponse} from "@/components/api"
+import {useTranslations} from "next-intl";
 
 interface VaultSidebarProperties {
   vault: VaultResponse;
@@ -43,16 +44,18 @@ const SidebarLogo = ({ vault, isCollapsed }: { vault: VaultResponse, isCollapsed
   </Flex>
 );
 
-const getAvailableEndpoints = (vault: VaultResponse, permissions: string[]) => {
+const GetAvailableEndpoints = (vault: VaultResponse, permissions: string[]) => {
+  const t = useTranslations("VaultSidebar")
+
   const navItems = [
-    { href: `/vault/${vault.publicId}`, icon: FaHouse, label: 'Overview' },
-    { href: `/vault/${vault.publicId}/transactions`, icon: FaBook, label: 'Transactions', requireAtLeast: ['TRANSACTION_READ'] },
-    { href: `/vault/${vault.publicId}/products`, icon: FaTags, label: 'Products', requireAtLeast: ['PRODUCT_READ', 'CATEGORY_READ'] },
-    { href: `/vault/${vault.publicId}/statistics`, icon: FaChartSimple, label: 'Statistics' },
-    { href: `/vault/${vault.publicId}/schedules`, icon: FaCalendarDays, label: 'Schedules', isDisabled: true },
-    { href: `/vault/${vault.publicId}/members`, icon: FaUser, label: 'Members', requireAtLeast: ['MEMBER_READ', 'MEMBER_INVITE_READ'] },
-    { href: `/vault/${vault.publicId}/audits`, icon: FaHistory, label: 'Audit Logs', requireAtLeast: ['AUDIT_READ'] },
-    { href: `/vault/${vault.publicId}/settings`, icon: FaGears, label: 'Settings', requireAtLeast: ['SETTINGS_READ'] }
+    { href: `/vault/${vault.publicId}`, icon: FaHouse, label: t('overview') },
+    { href: `/vault/${vault.publicId}/transactions`, icon: FaBook, label: t('transactions'), requireAtLeast: ['TRANSACTION_READ'] },
+    { href: `/vault/${vault.publicId}/products`, icon: FaTags, label: t('products'), requireAtLeast: ['PRODUCT_READ', 'CATEGORY_READ'] },
+    { href: `/vault/${vault.publicId}/statistics`, icon: FaChartSimple, label: t('statistics') },
+    { href: `/vault/${vault.publicId}/schedules`, icon: FaCalendarDays, label: t('schedules'), isDisabled: true },
+    { href: `/vault/${vault.publicId}/members`, icon: FaUser, label: t('members'), requireAtLeast: ['MEMBER_READ', 'MEMBER_INVITE_READ'] },
+    { href: `/vault/${vault.publicId}/audits`, icon: FaHistory, label: t('audits'), requireAtLeast: ['AUDIT_READ'] },
+    { href: `/vault/${vault.publicId}/settings`, icon: FaGears, label: t('settings'), requireAtLeast: ['SETTINGS_READ'] }
   ]
 
   return navItems.filter(({ requireAtLeast }) => {
@@ -97,7 +100,7 @@ const BaseView = ({ vault, vaultRole }: VaultSidebarProperties) => {
           </DrawerHeader>
           <DrawerBody padding={0}>
             <Flex direction={'column'} mt={5}>
-              {getAvailableEndpoints(vault, vaultRole.permissions).map(({ href, icon: Icon, label, isDisabled }) => (
+              {GetAvailableEndpoints(vault, vaultRole.permissions).map(({ href, icon: Icon, label, isDisabled }) => (
                   <Flex key={href} width={'full'} marginY={3}>
                     <Link href={href} style={{ width: 'inherit' }}>
                       <Button
@@ -164,7 +167,7 @@ const DesktopView = (
         alignItems={isCollapsed ? "center" : "flex-start"}
         flexGrow={1}
       >
-        {getAvailableEndpoints(vault, vaultRole.permissions).map(({ href, icon: Icon, label, isDisabled }) => (
+        {GetAvailableEndpoints(vault, vaultRole.permissions).map(({ href, icon: Icon, label, isDisabled }) => (
             <Link key={href} href={href} style={{ width: "100%" }} backgroundColor={isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}>
               <Button
                   variant="ghost"

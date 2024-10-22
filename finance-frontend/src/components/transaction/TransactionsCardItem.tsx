@@ -23,6 +23,7 @@ import toast from "react-hot-toast"
 import {FaCircleCheck} from "react-icons/fa6"
 import {FaCaretDown, FaCaretUp} from "react-icons/fa"
 import {useDateFormatter} from "@/hooks/useDateFormatter"
+import {useTranslations} from "next-intl";
 
 interface TransactionsCardItemProperties {
   vaultId: number
@@ -38,6 +39,7 @@ export const TransactionsCardItem = ({
   const api = useApi()
   const router = useRouter()
   const { formatDate } = useDateFormatter()
+  const t = useTranslations("Transactions")
   const [transactionProducts, setTransactionProducts] = useState<TransactionProductWithProductResponse[]>([])
   const [queriedTransactionProducts, setQueriedTransactionProducts] = useState<TransactionProductWithProductResponse[]>([])
 
@@ -59,12 +61,12 @@ export const TransactionsCardItem = ({
 
     api.delete(`/transactions/${transaction.id}`)
       .then(() => {
-        toast.success('Transaction deleted')
+        toast.success(t('transaction-deleted-success'))
         setTimeout(() => router.reload(), 1000)
       })
       .catch(error => {
         console.error(error)
-        toast.error('Failed to delete transaction')
+        toast.error(t('transaction-deleted-error'))
       })
   }
 
@@ -127,7 +129,7 @@ export const TransactionsCardItem = ({
                 mt={4}
                 gap={4}>
             <SearchBar
-              placeholder="Search products"
+              placeholder={t('product.search-placeholder')}
               content={transactionProducts}
               onSearch={handleSearchResults}
               filter={(transactionProduct, query) => transactionProduct.product.name.toLowerCase().includes(query.toLowerCase())}
@@ -140,7 +142,7 @@ export const TransactionsCardItem = ({
               queriedTransactionProducts.length === 0 &&
                 <Flex justifyContent={'center'}
                       mt={4}>
-                    <Text size={'sm'}>There are no products added</Text>
+                    <Text size={'sm'}>{t('product.no-products')}</Text>
                 </Flex>
             }
             {

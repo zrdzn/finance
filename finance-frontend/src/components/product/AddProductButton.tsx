@@ -19,6 +19,7 @@ import {useApi} from "@/hooks/useApi"
 import {CategoryResponse, ProductCreateRequest, ProductResponse} from "@/components/api"
 import {CategorySelect} from "@/components/product/category/CategorySelect"
 import toast from "react-hot-toast"
+import {useTranslations} from "next-intl";
 
 interface AddProductButtonProperties {
   vaultId: number
@@ -29,6 +30,7 @@ export const AddProductButton = ({ vaultId, onCreate }: AddProductButtonProperti
   const theme = useTheme()
   const api = useApi()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const t = useTranslations("Products")
   const [productCreateRequest, setProductCreateRequest] = useState<ProductCreateRequest>({
     name: '',
     vaultId: vaultId,
@@ -50,7 +52,7 @@ export const AddProductButton = ({ vaultId, onCreate }: AddProductButtonProperti
 
     api.post("/products/create", productCreateRequest)
       .then(response => {
-        toast.success(`Product ${productCreateRequest.name} has been created`)
+        toast.success(t('product-created-success').replace("%name%", productCreateRequest.name))
         setTimeout(() => {
           onClose()
           onCreate?.(response.data)
@@ -74,19 +76,19 @@ export const AddProductButton = ({ vaultId, onCreate }: AddProductButtonProperti
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add a new product</ModalHeader>
+          <ModalHeader>{t('create-modal.title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t('create-modal.name-label')}</FormLabel>
               <Input name="name"
                      onChange={handleProductCreateRequestChange}
                      ref={initialRef}
-                     placeholder='Name of the product' />
+                     placeholder={t('create-modal.name-placeholder')} />
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Category</FormLabel>
+              <FormLabel>{t('create-modal.category-label')}</FormLabel>
               <CategorySelect vaultId={vaultId} onChange={handleProductChange} />
             </FormControl>
           </ModalBody>
@@ -95,9 +97,9 @@ export const AddProductButton = ({ vaultId, onCreate }: AddProductButtonProperti
             <Button onClick={handleProductCreate}
                     backgroundColor={theme.primaryColor}
                     mr={3}>
-              Add
+              {t('create-modal.submit')}
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose}>{t('create-modal.cancel')}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

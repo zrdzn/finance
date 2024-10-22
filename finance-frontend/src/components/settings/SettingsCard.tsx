@@ -19,6 +19,7 @@ import {useRouter} from "next/router"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
 import {TransactionMethodSelect} from "@/components/transaction/TransactionMethodSelect"
 import toast from "react-hot-toast"
+import {useTranslations} from "next-intl";
 
 interface SettingsCardProperties {
   vault: VaultResponse
@@ -29,6 +30,7 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
+  const t = useTranslations("VaultSettings")
   const [vaultUpdateRequest, setVaultUpdateRequest] = useState<VaultUpdateRequest>({
     name: vault.name,
     currency: vault.currency,
@@ -51,18 +53,18 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
     event.preventDefault()
 
     if (vaultUpdateRequest.name === '') {
-      toast.error('You need to provide a name')
+      toast.error(t('form.validation.missing-name'))
       return
     }
 
     api.patch(`/vaults/${vault.id}`, vaultUpdateRequest)
       .then(() => {
-        toast.success('Vault updated')
+        toast.success(t('vault-updated-success'))
         setTimeout(() => router.reload(), 1000)
       })
       .catch(error => {
         console.error(error)
-        toast.error('Failed to update vault')
+        toast.error(t('vault-updated-error'))
       })
   }
 
@@ -77,9 +79,9 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
       })
 
     toast.promise(vaultDeleteResult, {
-      loading: 'Deleting vault',
-      success: 'Vault deleted',
-      error: 'Failed to delete vault'
+      loading: t('vault-deleted-loading'),
+      success: t('vault-deleted-success'),
+      error: t('vault-deleted-error')
     })
   }
 
@@ -89,24 +91,24 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>General</Text>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>{t('card.title')}</Text>
         </Flex>
       </CardHeader>
       <CardBody>
         <Stack spacing='4'>
           <FormControl isRequired>
-            <FormLabel>Name</FormLabel>
+            <FormLabel>{t('form.name-label')}</FormLabel>
             <Input
               name={'name'}
               onChange={handleVaultFormChange}
-              placeholder='Change vault name'
+              placeholder={t('form.name-placeholder')}
               value={vaultUpdateRequest.name}
               isDisabled={!permissions.includes("SETTINGS_UPDATE")}
             />
           </FormControl>
 
           <FormControl mt={4}>
-            <FormLabel>Default currency</FormLabel>
+            <FormLabel>{t('form.default-currency-label')}</FormLabel>
             {
               vault.currency !== undefined &&
                 <CurrencySelect onChange={handleDefaultCurrencyChange}
@@ -116,7 +118,7 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
           </FormControl>
 
           <FormControl mt={4}>
-            <FormLabel>Default transaction method</FormLabel>
+            <FormLabel>{t('form.default-transaction-method-label')}</FormLabel>
             {
               vault.transactionMethod !== undefined &&
                 <TransactionMethodSelect onChange={handleDefaultTransactionMethodChange}
@@ -131,7 +133,7 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
                 <Button
                     backgroundColor={'red.300'}
                     onClick={handleVaultDelete}>
-                    Delete vault
+                  {t('vault-delete-button')}
                 </Button>
             }
             {
@@ -139,7 +141,7 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
                 <Button
                     backgroundColor={theme.primaryColor}
                     onClick={handleVaultUpdate}>
-                    Save
+                  {t('form.submit')}
                 </Button>
             }
           </Flex>

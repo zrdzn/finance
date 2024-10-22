@@ -19,6 +19,7 @@ import toast from "react-hot-toast"
 import {EditProductButton} from "@/components/product/EditProductButton";
 import {EditMemberButton} from "@/components/member/EditMemberButton";
 import {useAuthentication} from "@/hooks/useAuthentication";
+import {useTranslations} from "next-intl";
 
 interface MembersCardItemProperties {
   member: VaultMemberResponse
@@ -32,18 +33,19 @@ export const MembersCardItem = ({
   const api = useApi()
   const router = useRouter()
   const { authenticationDetails } = useAuthentication()
+  const t = useTranslations("Members")
 
   const handleMemberDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
     api.delete(`/vaults/${member.vaultId}/members/${member.id}`)
       .then(() => {
-        toast.success(`Member ${member.user.username} has been deleted`)
+        toast.success(t('member-deleted-success').replace("%username%", member.user.username))
         setTimeout(() => router.reload(), 1000)
       })
       .catch(error => {
         console.error(error)
-        toast.error(`Failed to delete member ${member.user.username}`)
+        toast.error(t('member-deleted-error').replace("%username%", member.user.username))
       })
   }
 
@@ -67,19 +69,19 @@ export const MembersCardItem = ({
                     {
                       member.vaultRole === 'OWNER' &&
                         <Tag size={'sm'} colorScheme='red'>
-                            <TagLabel>Owner</TagLabel>
+                            <TagLabel>{t('card.roles.owner')}</TagLabel>
                         </Tag>
                     }
                     {
                       member.vaultRole === 'MANAGER' &&
                         <Tag size={'sm'} colorScheme='purple'>
-                            <TagLabel>Manager</TagLabel>
+                            <TagLabel>{t('card.roles.manager')}</TagLabel>
                         </Tag>
                     }
                     {
                       member.vaultRole === 'MEMBER' &&
                         <Tag size={'sm'} colorScheme='green'>
-                            <TagLabel>Member</TagLabel>
+                            <TagLabel>{t('card.roles.member')}</TagLabel>
                         </Tag>
                     }
                   </HStack>

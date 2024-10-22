@@ -16,6 +16,8 @@ import {useApi} from "@/hooks/useApi"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
 import toast from "react-hot-toast"
+import {useTranslations} from "next-intl";
+import {useDateFormatter} from "@/hooks/useDateFormatter";
 
 interface InvitationsCardItemProperties {
   invitation: VaultInvitationResponse
@@ -28,18 +30,20 @@ export const InvitationsCardItem = ({
 }: InvitationsCardItemProperties) => {
   const api = useApi()
   const router = useRouter()
+  const t = useTranslations("Invitations")
+  const {formatDate} = useDateFormatter()
 
   const handleInvitationDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
     api.delete(`/vaults/${invitation.vault.id}/invitations/${invitation.userEmail}`)
       .then(() => {
-        toast.success(`Invitation for ${invitation.userEmail} has been deleted`)
+        toast.success(t('invitation-deleted-success').replace("%email%", invitation.userEmail))
         setTimeout(() => router.reload(), 1000)
       })
       .catch(error => {
         console.error(error)
-        toast.error(`Failed to delete invitation for ${invitation.userEmail}`)
+        toast.error(t('invitation-deleted-error').replace("%email%", invitation.userEmail))
       })
   }
 
@@ -61,7 +65,7 @@ export const InvitationsCardItem = ({
                   </Text>
                   <HStack spacing={4}>
                     <Tag size={'sm'} colorScheme='red'>
-                      <TagLabel>Expires {new Date(invitation.expiresAt * 1000).toLocaleDateString()}</TagLabel>
+                      <TagLabel>{t('expires-tag').replace("%date%", formatDate(invitation.expiresAt, false))}</TagLabel>
                     </Tag>
                   </HStack>
                 </Flex>

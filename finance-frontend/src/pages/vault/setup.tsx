@@ -23,11 +23,14 @@ import {CurrencySelect} from "@/components/shared/CurrencySelect"
 import {TransactionMethodSelect} from "@/components/transaction/TransactionMethodSelect"
 import toast from "react-hot-toast"
 import {Layout} from "@/components/Layout"
+import {GetStaticPropsContext} from "next";
+import {useTranslations} from "next-intl";
 
 export default function SetupVault(): ReactJSXElement {
   const { authenticationDetails } = useAuthentication()
   const api = useApi()
   const router = useRouter()
+  const t = useTranslations("VaultSetup")
   const theme = useTheme()
   const [vaultCreateRequest, setVaultCreateRequest] = useState<VaultCreateRequest>({
     name: '',
@@ -61,7 +64,7 @@ export default function SetupVault(): ReactJSXElement {
     event.preventDefault()
 
     if (vaultCreateRequest.name === '') {
-      toast.error('You need to provide a name')
+      toast.error(t("form.validation.missing-name"))
       return
     }
 
@@ -73,9 +76,9 @@ export default function SetupVault(): ReactJSXElement {
       })
 
     toast.promise(vaultCreateResult, {
-      loading: 'Creating vault',
-      success: 'Vault has been created',
-      error: 'An error occurred while creating vault'
+      loading: t("form.submit-loading"),
+      success: t("form.submit-success"),
+      error: t("form.submit-error")
     })
   }
 
@@ -83,7 +86,7 @@ export default function SetupVault(): ReactJSXElement {
     <>
       <Layout>
         <Head>
-          <title>Finance - Vault Setup</title>
+          <title>{t('title')}</title>
         </Head>
 
         <Flex justifyContent="center" p={4}>
@@ -94,27 +97,27 @@ export default function SetupVault(): ReactJSXElement {
           >
             <CardHeader backgroundColor={theme.secondaryColor}>
               <Flex alignItems={'center'} justifyContent={'space-between'}>
-                <Text fontSize='md' fontWeight={'600'}>Setup new vault</Text>
+                <Text fontSize='md' fontWeight={'600'}>{t('form.title')}</Text>
               </Flex>
             </CardHeader>
             <CardBody>
               <Stack spacing='4'>
                 <FormControl isRequired>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t('form.name-label')}</FormLabel>
                   <Input
                     name={'name'}
                     onChange={handleVaultFormChange}
-                    placeholder='Choose name'
+                    placeholder={t('form.name-placeholder')}
                   />
                 </FormControl>
 
                 <FormControl mt={4}>
-                  <FormLabel>Default currency</FormLabel>
+                  <FormLabel>{t('form.default-currency-label')}</FormLabel>
                   <CurrencySelect onChange={handleDefaultCurrencyChange} />
                 </FormControl>
 
                 <FormControl mt={4}>
-                  <FormLabel>Default transaction method</FormLabel>
+                  <FormLabel>{t('form.default-transaction-method-label')}</FormLabel>
                   <TransactionMethodSelect onChange={handleDefaultTransactionMethodChange} />
                 </FormControl>
 
@@ -123,7 +126,7 @@ export default function SetupVault(): ReactJSXElement {
                     backgroundColor={theme.primaryColor}
                     onClick={handleVaultSetup}
                   >
-                    Setup
+                    {t('form.submit')}
                   </Button>
                 </Flex>
               </Stack>
@@ -133,4 +136,12 @@ export default function SetupVault(): ReactJSXElement {
       </Layout>
     </>
   );
+}
+
+export async function getStaticProps(context: GetStaticPropsContext) {
+  return {
+    props: {
+      messages: (await import(`../../locales/${context.locale}.json`)).default
+    }
+  }
 }

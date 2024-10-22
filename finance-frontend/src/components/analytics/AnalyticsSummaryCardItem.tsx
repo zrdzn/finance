@@ -8,6 +8,7 @@ import {
 } from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import exp from "constants"
+import {useTranslations} from "next-intl";
 
 interface AnalyticsSummaryCardItemProperties {
   vault: VaultResponse
@@ -18,6 +19,7 @@ export const AnalyticsSummaryCardItem = ({
   vault, statisticType
 }: AnalyticsSummaryCardItemProperties) => {
   const api = useApi()
+  const t = useTranslations("Analytics")
   const [balance, setBalance] = useState<TransactionFlowsResponse | undefined>(undefined)
   const [income, setIncome] = useState<TransactionFlowsResponse | undefined>(undefined)
   const [expenses, setExpenses] = useState<TransactionFlowsResponse | undefined>(undefined)
@@ -61,10 +63,10 @@ export const AnalyticsSummaryCardItem = ({
                       fontWeight={'600'}
                       isTruncated
                       maxWidth={'70%'}>
-                  {statisticType === AnalyticsOverviewStatisticType.Balance && 'Balance'}
-                  {statisticType === AnalyticsOverviewStatisticType.Income && 'Income'}
-                  {statisticType === AnalyticsOverviewStatisticType.Expenses && 'Expenses'}
-                  {statisticType === AnalyticsOverviewStatisticType.Transactions && 'Transactions'}
+                  {statisticType === AnalyticsOverviewStatisticType.Balance && t('summary.balance')}
+                  {statisticType === AnalyticsOverviewStatisticType.Income && t('summary.income')}
+                  {statisticType === AnalyticsOverviewStatisticType.Expenses && t('summary.expenses')}
+                  {statisticType === AnalyticsOverviewStatisticType.Transactions && t('summary.transactions')}
                 </Text>
                 {
                   balance && balance.amount > 0 &&

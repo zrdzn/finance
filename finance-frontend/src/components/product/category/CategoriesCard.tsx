@@ -6,6 +6,7 @@ import {useApi} from "@/hooks/useApi"
 import {CategoriesCardItem} from "@/components/product/category/CategoriesCardItem"
 import {AddCategoryButton} from "@/components/product/category/AddCategoryButton"
 import {SearchBar} from "@/components/shared/SearchBar"
+import {useTranslations} from "next-intl";
 
 interface CategoriesCardProperties {
   vault: VaultResponse
@@ -15,6 +16,7 @@ interface CategoriesCardProperties {
 export const CategoriesCard = ({ vault, permissions }: CategoriesCardProperties) => {
   const theme = useTheme()
   const api = useApi()
+  const t = useTranslations("Categories")
   const [categories, setCategories] = useState<ProductResponse[]>([])
   const [queriedCategories, setQueriedCategories] = useState<ProductResponse[]>([])
 
@@ -37,14 +39,14 @@ export const CategoriesCard = ({ vault, permissions }: CategoriesCardProperties)
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>Categories</Text>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>{t('card.title')}</Text>
         </Flex>
       </CardHeader>
       <CardBody>
         <Flex justifyContent={'space-between'}
               gap={4}>
           <SearchBar
-            placeholder="Search categories"
+            placeholder={t('card.search-placeholder')}
             content={categories}
             onSearch={handleSearchResults}
             filter={(category, query) => category.name.toLowerCase().includes(query.toLowerCase())}
@@ -59,7 +61,7 @@ export const CategoriesCard = ({ vault, permissions }: CategoriesCardProperties)
             queriedCategories.length === 0 &&
               <Flex justifyContent={'center'}
                     mt={4}>
-                  <Text size={'sm'}>There are no categories</Text>
+                  <Text size={'sm'}>{t('card.no-categories')}</Text>
               </Flex>
           }
           {

@@ -1,0 +1,368 @@
+{
+  "Homepage": {
+    "title": "Finance - Manage Vaults",
+    "your-vaults": "Your vaults",
+    "no-vaults": "You aren't added to any vault!",
+    "create-vault": "Create new",
+    "invitations": "Invitations",
+    "no-invitations": "You don't have any invitations!"
+  },
+  "Navbar": {
+    "logo": "Finance",
+    "vaults": "Vaults",
+    "settings": "Settings",
+    "logout": "Logout",
+    "login": "Sign in",
+    "register": "Sign up"
+  },
+  "Login": {
+    "title": "Finance - Login",
+    "form": {
+      "title": "Sign in",
+      "email-label": "E-mail",
+      "email-placeholder": "Enter your e-mail address",
+      "password-label": "Password",
+      "password-placeholder": "Enter your password",
+      "register-redirect": "Don't have an account?",
+      "submit": "Sign in",
+      "validation": {
+        "missing-email": "You need to provide an e-mail",
+        "missing-password": "You need to provide a password"
+      }
+    }
+  },
+  "Register": {
+    "title": "Finance - Register",
+    "form": {
+      "title": "Register your account",
+      "email-label": "E-mail",
+      "email-placeholder": "What is your e-mail address?",
+      "username-label": "Username",
+      "username-placeholder": "Pick your username",
+      "password-label": "Password",
+      "password-placeholder": "Pick your password",
+      "confirm-password-label": "Confirm password",
+      "confirm-password-placeholder": "Confirm your password",
+      "login-redirect": "Already have an account?",
+      "submit": "Sign up",
+      "submit-loading": "Signing up",
+      "submit-success": "You've successfully signed up",
+      "submit-error": "An error occurred while signing up",
+      "validation": {
+        "missing-email": "You need to provide an e-mail",
+        "missing-username": "You need to provide a username",
+        "missing-password": "You need to provide a password",
+        "missing-confirm-password": "You need to confirm your password",
+        "passwords-not-match": "Passwords don't match"
+      }
+    }
+  },
+  "VaultSetup": {
+    "title": "Finance - Vault Setup",
+    "form": {
+      "title": "Setup new vault",
+      "name-label": "Name",
+      "name-placeholder": "Choose name",
+      "default-currency-label": "Default currency",
+      "default-transaction-method-label": "Default transaction method",
+      "submit": "Setup",
+      "submit-loading": "Creating vault",
+      "submit-success": "Vault has been created",
+      "submit-error": "An error occurred while creating vault",
+      "validation": {
+        "missing-name": "You need to provide a name"
+      }
+    }
+  },
+  "Audits": {
+    "title": "Finance - Audit Logs",
+    "card": {
+      "title": "Audit Logs",
+      "no-audits": "No logs yet"
+    }
+  },
+  "Overview": {
+    "title": "Finance - Overview (%vault_name%)",
+    "vault-loading": "Accessing vault...",
+    "vault-not-found": "Vault not found",
+    "not-authenticated": "You must be authenticated",
+    "welcome": "Welcome back %username%!",
+    "invitation-accepted": "Welcome to %vault_name%!",
+    "invitation-cancelled-success": "Invitation cancelled",
+    "vault-card": {
+      "created-by": "Created by %username%",
+      "redirect": "Go"
+    },
+    "invitation-card": {
+      "created-by": "Created by %username%",
+      "join": "Join",
+      "cancel": "Cancel"
+    }
+  },
+  "VaultSidebar": {
+    "overview": "Overview",
+    "transactions": "Transactions",
+    "products": "Products",
+    "statistics": "Statistics",
+    "schedules": "Schedules",
+    "members": "Members",
+    "audits": "Audit Logs",
+    "settings": "Settings"
+  },
+  "Transactions": {
+    "title": "Finance - Transactions",
+    "transaction-created-success": "Transaction has been added",
+    "transaction-created-error": "Failed to add a transaction",
+    "transaction-updated-success": "Transaction updated",
+    "transaction-updated-error": "Failed to update transaction",
+    "transaction-deleted-success": "Transaction deleted",
+    "transaction-deleted-error": "Failed to delete transaction",
+    "card": {
+      "title": "Transactions",
+      "no-transactions": "There are no transactions",
+      "search-placeholder": "Search transactions"
+    },
+    "update-modal": {
+      "title": "Update transaction",
+      "transaction-method-label": "Method",
+      "transaction-type-label": "Type",
+      "transaction-type-incoming": "Income",
+      "transaction-type-outgoing": "Expense",
+      "description-label": "Description",
+      "description-placeholder": "What did you pay for?",
+      "price-label": "Total",
+      "currency-label": "Currency",
+      "submit": "Save",
+      "cancel": "Cancel"
+    },
+    "create-modal": {
+      "title": "Add a new transaction",
+      "description-label": "Description",
+      "description-placeholder": "Freelance work / Groceries at a local store",
+      "transaction-method-label": "Transaction method",
+      "transaction-type-label": "Transaction type",
+      "transaction-type-incoming": "Income",
+      "transaction-type-outgoing": "Expense",
+      "price-label": "Total",
+      "currency-label": "Currency",
+      "submit": "Add",
+      "cancel": "Cancel"
+    },
+    "export": {
+      "requested-export-success": "Requested transactions export",
+      "requested-export-error": "Failed to export transactions",
+      "card": {
+        "title": "Export transactions",
+        "export-type-label": "Choose export type",
+        "export-type-option-csv": "Export to CSV file",
+        "export-range-label": "Choose date range",
+        "export-range-start": "Start date",
+        "export-range-end": "End date",
+        "submit": "Export"
+      }
+    },
+    "product": {
+      "no-products": "There are no products added",
+      "search-placeholder": "Search products",
+      "product-added-success": "Product has been added to the transaction",
+      "product-added-error": "Failed to add product to the transaction",
+      "create-modal": {
+        "title": "Add a product",
+        "product-label": "Product",
+        "price-label": "Price per unit",
+        "quantity-label": "Quantity",
+        "submit": "Add",
+        "cancel": "Cancel"
+      }
+    },
+    "recent": {
+      "card": {
+        "title": "Last transactions",
+        "no-transactions": "There are no transactions",
+        "view-all": "View all"
+      }
+    }
+  },
+  "Members": {
+    "title": "Finance - Members",
+    "member-deleted-success": "Member %username% has been deleted",
+    "member-deleted-error": "Failed to delete member %username%",
+    "member-updated-success": "Member updated",
+    "member-updated-error": "Failed to update member",
+    "update-modal": {
+      "title": "Update member",
+      "role-label": "Vault role",
+      "submit": "Save",
+      "cancel": "Cancel"
+    },
+    "card": {
+      "title": "Members",
+      "no-members": "There are no members",
+      "search-placeholder": "Search members",
+      "roles": {
+        "owner": "Owner",
+        "manager": "Manager",
+        "member": "Member"
+      }
+    }
+  },
+  "Invitations": {
+    "invitation-deleted-success": "Invitation for %email% has been deleted",
+    "invitation-deleted-error": "Failed to invite for %email%",
+    "invitation-created-success": "Successfully invited user %email%",
+    "invitation-created-error": "Failed to invite user %email%",
+    "expires-tag": "Expires %date%",
+    "create-modal": {
+      "title": "Create a new invitation",
+      "email-label": "E-mail",
+      "email-placeholder": "Who do you want to invite?",
+      "submit": "Add",
+      "cancel": "Cancel"
+    },
+    "card": {
+      "title": "Invitations",
+      "no-invitations": "There are no invitations",
+      "search-placeholder": "Search invitations"
+    }
+  },
+  "Products": {
+    "title": "Finance - Products",
+    "product-created-success": "Product %name% has been created",
+    "product-updated-success": "Product updated",
+    "product-deleted-success": "Product deleted",
+    "card": {
+      "title": "Products",
+      "no-products": "There are no products",
+      "search-placeholder": "Search products"
+    },
+    "create-modal": {
+      "title": "Add a new product",
+      "name-label": "Name",
+      "name-placeholder": "Name of the product",
+      "category-label": "Category",
+      "submit": "Add",
+      "cancel": "Cancel"
+    },
+    "update-modal": {
+      "title": "Update product",
+      "category-label": "Category",
+      "submit": "Save",
+      "cancel": "Cancel"
+    }
+  },
+  "Categories": {
+    "category-created-success": "Category %name% has been created",
+    "category-created-error": "Failed to create a category",
+    "category-deleted-success": "Category deleted",
+    "category-deleted-error": "Failed to delete category",
+    "create-modal": {
+      "title": "Add a new category",
+      "name-label": "Name",
+      "name-placeholder": "Name of the category",
+      "submit": "Create",
+      "cancel": "Cancel"
+    },
+    "card": {
+      "title": "Categories",
+      "no-categories": "There are no categories",
+      "search-placeholder": "Search categories"
+    }
+  },
+  "VaultSettings": {
+    "title": "Finance - Settings",
+    "vault-updated-success": "Vault updated",
+    "vault-updated-error": "Failed to update vault",
+    "vault-deleted-loading": "Deleting vault",
+    "vault-deleted-success": "Vault deleted",
+    "vault-deleted-error": "Failed to delete vault",
+    "vault-delete-button": "Delete vault",
+    "card": {
+      "title": "General"
+    },
+    "form": {
+      "name-label": "Name",
+      "name-placeholder": "Change vault name",
+      "default-currency-label": "Default currency",
+      "default-transaction-method-label": "Default currency",
+      "validation": {
+        "missing-name": "You need to provide a name"
+      },
+      "submit": "Save"
+    }
+  },
+  "Statistics": {
+    "title": "Finance - Statistics"
+  },
+  "Analytics": {
+    "summary": {
+      "title": "Summary",
+      "balance": "Balance",
+      "income": "Income",
+      "expenses": "Expenses",
+      "transactions": "Transactions"
+    },
+    "history": {
+      "income-title": "Income",
+      "expenses-title": "Expenses",
+      "day": "Last 24 hours",
+      "week": "Last week",
+      "month": "Last month",
+      "year": "Last year"
+    }
+  },
+  "AccountSettings": {
+    "title": "Finance - Account Settings",
+    "profile-card": {
+      "title": "Your profile",
+      "email-label": "E-mail",
+      "username-label": "Username",
+      "username-placeholder": "Enter your new username",
+      "password-label": "Password",
+      "password-placeholder": "Change password",
+      "verify-label": "Verify Account",
+      "already-verified": "Your account is verified",
+      "verify-link": "Send link",
+      "updated-success": "Profile has been updated",
+      "updated-error": "Failed to update your profile",
+      "security-code-sent": "Security code has been sent to your e-mail inbox"
+    },
+    "profile-modal": {
+      "steps": {
+        "back-button": "Back",
+        "next-button": "Next",
+        "submit-button": "Submit",
+        "cancel-button": "Cancel",
+        "verify": {
+          "title": "Verify your e-mail address",
+          "description": "You have to verify your current e-mail address %email% in order to proceed further.",
+          "submit": "Send code",
+          "cancel": "Cancel",
+          "link-sent": "Verification link has been sent"
+        },
+        "security": {
+          "title": "Enter Security Code",
+          "description": "Security code sent to your e-mail",
+          "enter-code-placeholder": "Enter your security code"
+        },
+        "email": {
+          "title": "Change E-mail",
+          "description": "Update your e-mail",
+          "new-email-label": "New e-mail",
+          "new-email-placeholder": "New e-mail"
+        },
+        "password": {
+          "title": "Change Password",
+          "description": "Update your password",
+          "old-password-label": "Old password",
+          "old-password-placeholder": "Old password",
+          "new-password-label": "New password",
+          "new-password-placeholder": "New password"
+        }
+      },
+      "email-updated-success": "E-mail has been updated",
+      "email-updated-error": "Failed to update e-mail",
+      "password-updated-success": "Password has been updated",
+      "password-updated-error": "Failed to update password"
+    }
+  }
+}

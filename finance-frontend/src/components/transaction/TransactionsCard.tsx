@@ -7,6 +7,7 @@ import {useApi} from "@/hooks/useApi"
 import {TransactionsCardItem} from "@/components/transaction/TransactionsCardItem"
 import {SearchBar} from "@/components/shared/SearchBar"
 import {useRouter} from "next/router"
+import {useTranslations} from "next-intl";
 
 interface TransactionsCardProperties {
   vault: VaultResponse
@@ -16,6 +17,7 @@ interface TransactionsCardProperties {
 export const TransactionsCard = ({ vault, permissions }: TransactionsCardProperties) => {
   const theme = useTheme()
   const api = useApi()
+  const t = useTranslations("Transactions")
   const [transactions, setTransactions] = useState<TransactionResponse[]>([])
   const [queriedTransactions, setQueriedTransactions] = useState<TransactionResponse[]>([])
 
@@ -38,14 +40,14 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>Transactions</Text>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>{t('card.title')}</Text>
         </Flex>
       </CardHeader>
       <CardBody>
         <Flex justifyContent={'space-between'}
               gap={4}>
           <SearchBar
-            placeholder="Search transactions"
+            placeholder={t('card.search-placeholder')}
             content={transactions}
             onSearch={handleSearchResults}
             filter={(transaction, query) => {
@@ -63,7 +65,7 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
         <Divider mt={4} />
         <Stack gap={0}>
             {
-              queriedTransactions.length === 0 && <Text size={'sm'}>There are no transactions</Text>
+              queriedTransactions.length === 0 && <Text size={'sm'}>{t('card.no-transactions')}</Text>
             }
             {
               queriedTransactions &&

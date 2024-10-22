@@ -27,6 +27,7 @@ import {useRouter} from 'next/router'
 import toast from "react-hot-toast"
 import {VaultRoleSelect} from "@/components/vault/VaultRoleSelect";
 import {useAuthentication} from "@/hooks/useAuthentication";
+import {useTranslations} from "next-intl";
 
 interface EditMemberButtonProperties {
   member: VaultMemberResponse
@@ -37,6 +38,7 @@ export const EditMemberButton = ({ member }: EditMemberButtonProperties) => {
   const api = useApi()
   const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const t = useTranslations("Members")
   const [vaultMemberUpdateRequest, setVaultMemberUpdateRequest] = useState<VaultMemberUpdateRequest>({
     vaultRole: member.vaultRole
   })
@@ -53,11 +55,11 @@ export const EditMemberButton = ({ member }: EditMemberButtonProperties) => {
     api.patch(`/vaults/${member.vaultId}/members/${member.id}`, vaultMemberUpdateRequest)
       .then(() => onClose())
       .then(() => {
-        toast.success('Member updated')
+        toast.success(t('member-updated-success'))
         setTimeout(() => router.reload(), 1000)
       })
       .catch(error => {
-        toast.error('Failed to update member')
+        toast.error(t('member-updated-error'))
         console.error(error)
       })
   }
@@ -77,11 +79,11 @@ export const EditMemberButton = ({ member }: EditMemberButtonProperties) => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Update member</ModalHeader>
+          <ModalHeader>{t('update-modal.title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl mt={4}>
-              <FormLabel>Vault role</FormLabel>
+              <FormLabel>{t('update-modal.role-label')}</FormLabel>
               <VaultRoleSelect onChange={handleVaultRoleChange}
                                defaultValue={member.vaultRole} />
             </FormControl>
@@ -91,9 +93,9 @@ export const EditMemberButton = ({ member }: EditMemberButtonProperties) => {
             <Button onClick={handleMemberUpdate}
                     backgroundColor={theme.primaryColor}
                     mr={3}>
-              Save
+              {t('update-modal.submit')}
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose}>{t('update-modal.cancel')}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

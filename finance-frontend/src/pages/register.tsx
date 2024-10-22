@@ -19,6 +19,8 @@ import {useTheme} from "@/hooks/useTheme"
 import {useAuthentication} from "@/hooks/useAuthentication"
 import toast from "react-hot-toast"
 import { Layout } from "@/components/Layout";
+import {GetStaticPropsContext} from "next";
+import {useTranslations} from "next-intl";
 
 interface RegistrationForm {
   email: string;
@@ -31,6 +33,7 @@ export default function Register(): ReactJSXElement {
   const { authenticationDetails, login } = useAuthentication()
   const api = useApi()
   const router = useRouter()
+  const t = useTranslations("Register")
   const theme = useTheme()
   const [registrationForm, setRegistrationForm] = useState<RegistrationForm>({
     email: '',
@@ -57,27 +60,27 @@ export default function Register(): ReactJSXElement {
     event.preventDefault()
 
     if (registrationForm.email === '') {
-      toast.error('You need to provide an email')
+      toast.error(t('form.validation.missing-email'))
       return
     }
 
     if (registrationForm.username === '') {
-      toast.error('You need to provide a username')
+      toast.error(t('form.validation.missing-username'))
       return
     }
 
     if (registrationForm.password === '') {
-      toast.error('You need to provide a password')
+      toast.error(t('form.validation.missing-password'))
       return
     }
 
     if (registrationForm.confirmPassword === '') {
-      toast.error('You need to confirm your password')
+      toast.error(t('form.validation.missing-confirm-password'))
       return
     }
 
     if (registrationForm.password !== registrationForm.confirmPassword) {
-      toast.error("Passwords don't match")
+      toast.error(t('form.validation.passwords-not-match'))
       return
     }
 
@@ -95,9 +98,9 @@ export default function Register(): ReactJSXElement {
       })
 
     toast.promise(registerResult, {
-      loading: 'Signing up',
-      success: "You\'ve successfully signed up",
-      error: "An error occurred while signing up",
+      loading: t('form.submit-loading'),
+      success: t('form.submit-success'),
+      error: t('form.submit-error'),
     })
   }
 
@@ -105,7 +108,7 @@ export default function Register(): ReactJSXElement {
     <>
       <Layout>
         <Head>
-          <title>Finance - Register</title>
+          <title>{t('title')}</title>
         </Head>
 
         <Flex justifyContent="center" p={4}>
@@ -116,52 +119,52 @@ export default function Register(): ReactJSXElement {
           >
             <CardHeader backgroundColor={theme.secondaryColor}>
               <Flex alignItems={'center'} justifyContent={'space-between'}>
-                <Text fontSize='md' fontWeight={'600'}>Register your account</Text>
+                <Text fontSize='md' fontWeight={'600'}>{t('form.title')}</Text>
               </Flex>
             </CardHeader>
             <CardBody>
               <Stack spacing='4'>
                 <FormControl isRequired>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t('form.email-label')}</FormLabel>
                   <Input
                     name={'email'}
                     onChange={handleRegistrationFormUpdate}
-                    placeholder='What is your email address?'
+                    placeholder={t('form.email-placeholder')}
                   />
                 </FormControl>
 
                 <FormControl isRequired>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>{t('form.username-label')}</FormLabel>
                   <Input
                     name={'username'}
                     onChange={handleRegistrationFormUpdate}
-                    placeholder='Pick your username'
+                    placeholder={t('form.username-placeholder')}
                   />
                 </FormControl>
 
                 <FormControl isRequired>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{t('form.password-label')}</FormLabel>
                   <Input
                     type={'password'}
                     name={'password'}
                     onChange={handleRegistrationFormUpdate}
-                    placeholder='Pick your password'
+                    placeholder={t('form.password-placeholder')}
                   />
                 </FormControl>
 
                 <FormControl isRequired>
-                  <FormLabel>Confirm Password</FormLabel>
+                  <FormLabel>{t('form.confirm-password-label')}</FormLabel>
                   <Input
                     type={'password'}
                     name={'confirmPassword'}
                     onChange={handleRegistrationFormUpdate}
-                    placeholder='Confirm your password'
+                    placeholder={t('form.confirm-password-placeholder')}
                   />
                 </FormControl>
 
                 <Flex mt={2} justifyContent={'space-between'} gap={3}>
-                  <Button onClick={() => router.push("/login")}>Already have an account?</Button>
-                  <Button backgroundColor={theme.primaryColor} onClick={handleRegistration}>Sign up</Button>
+                  <Button onClick={() => router.push("/login")}>{t('form.login-redirect')}</Button>
+                  <Button backgroundColor={theme.primaryColor} onClick={handleRegistration}>{t('form.submit')}</Button>
                 </Flex>
               </Stack>
             </CardBody>
@@ -170,4 +173,12 @@ export default function Register(): ReactJSXElement {
       </Layout>
     </>
   )
+}
+
+export async function getStaticProps(context: GetStaticPropsContext) {
+  return {
+    props: {
+      messages: (await import(`../locales/${context.locale}.json`)).default
+    }
+  }
 }

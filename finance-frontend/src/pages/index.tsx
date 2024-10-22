@@ -10,6 +10,8 @@ import {useAuthentication} from "@/hooks/useAuthentication"
 import {VaultInvitationCard} from "@/components/vault/VaultInvitationCard"
 import {VaultInvitationResponse} from "@/components/api"
 import { Layout } from "@/components/Layout";
+import {GetStaticPropsContext} from "next";
+import {useTranslations} from "next-intl";
 
 interface VaultResponse {
   id: number
@@ -18,12 +20,13 @@ interface VaultResponse {
   name: string
 }
 
-export default function Main(): ReactJSXElement {
+export default function Homepage(): ReactJSXElement {
   const api = useApi()
   const theme = useTheme()
   const [yourVaults, setYourVaults] = useState<VaultResponse[]>([])
   const [vaultInvitations, setVaultInvitations] = useState<VaultInvitationResponse[]>([])
   const router = useRouter();
+  const t = useTranslations('Homepage')
   const { authenticationDetails } = useAuthentication()
 
   useEffect(() => {
@@ -50,7 +53,7 @@ export default function Main(): ReactJSXElement {
     <>
       <Layout>
         <Head>
-          <title>Finance - Manage Vaults</title>
+          <title>{t('title')}</title>
         </Head>
         <Flex direction={'column'}
               gap={16}>
@@ -58,9 +61,9 @@ export default function Main(): ReactJSXElement {
                 alignItems={'center'}
                 direction={'column'}
                 mt={6}>
-            <Text fontSize='xl' fontWeight={'600'}>Your vaults</Text>
+            <Text fontSize='xl' fontWeight={'600'}>{t('your-vaults')}</Text>
             {
-              yourVaults.length === 0 && <Text fontSize={'lg'}>You aren&apos;t added to any vault!</Text>
+              yourVaults.length === 0 && <Text fontSize={'lg'}>{t('no-vaults')}</Text>
             }
             {
               yourVaults &&
@@ -77,7 +80,7 @@ export default function Main(): ReactJSXElement {
             <HStack mt={8}>
               <Button backgroundColor={theme.primaryColor}
                       color={theme.textColor}>
-                <Link href={'/vault/setup'}>Create new</Link>
+                <Link href={'/vault/setup'}>{t('create-vault')}</Link>
               </Button>
             </HStack>
           </Flex>
@@ -86,9 +89,9 @@ export default function Main(): ReactJSXElement {
                 direction={'column'}
                 gap={4}
                 mt={6}>
-            <Text fontSize='xl' fontWeight={'600'}>Invitations</Text>
+            <Text fontSize='xl' fontWeight={'600'}>{t('invitations')}</Text>
             {
-              vaultInvitations.length === 0 && <Text fontSize={'lg'}>You don&apos;t have any invitations!</Text>
+              vaultInvitations.length === 0 && <Text fontSize={'lg'}>{t('no-invitations')}</Text>
             }
             {
               vaultInvitations &&
@@ -107,4 +110,12 @@ export default function Main(): ReactJSXElement {
       </Layout>
     </>
   )
+}
+
+export async function getStaticProps(context: GetStaticPropsContext) {
+  return {
+    props: {
+      messages: (await import(`../locales/${context.locale}.json`)).default
+    }
+  }
 }

@@ -30,6 +30,7 @@ import toast from "react-hot-toast"
 import {FaPencil} from "react-icons/fa6"
 import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"
+import {useTranslations} from "next-intl";
 
 interface RequestAccountUpdateButtonProperties {
   icon?: React.ReactNode;
@@ -46,6 +47,7 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
   const { isOpen: verificationIsOpen, onOpen: verificationOnOpen, onClose: verificationOnClose } = useDisclosure();
   const initialRef = useRef(null);
   const finalRef = useRef(null);
+  const t = useTranslations("AccountSettings")
   const [securityCode, setSecurityCode] = useState("");
   const [userEmailUpdateRequest, setUserEmailUpdateRequest] = useState<UserEmailUpdateRequest>({
     securityCode: "",
@@ -58,9 +60,9 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
   })
 
   const steps = [
-    { title: 'Enter Security Code', description: 'Security code sent to your email' },
-    { title: accountUpdateType === AccountUpdateType.Email ? 'Change Email' : 'Change Password',
-      description: accountUpdateType === AccountUpdateType.Email ? 'Update your email' : 'Update your password' },
+    { title: t('profile-modal.steps.security.title'), description: t('profile-modal.steps.security.description') },
+    { title: accountUpdateType === AccountUpdateType.Email ? t('profile-modal.steps.email.title') : t('profile-modal.steps.password.title'),
+      description: accountUpdateType === AccountUpdateType.Email ? t('profile-modal.steps.email.description') : t('profile-modal.steps.password.description') },
   ];
 
   const { activeStep, setActiveStep } = useSteps({
@@ -81,7 +83,7 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
 
     api.get("/users/update/request")
       .then(response => {
-        toast.success(`Security code has been sent to your e-mail`);
+        toast.success(t('profile-card.security-code-sent'));
         setTimeout(() => {
           requestOnClose();
           verificationOnOpen();
@@ -101,12 +103,12 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
 
     api.patch("/users/update/email", userEmailUpdateRequest)
       .then(() => {
-        toast.success(`E-mail has been updated`);
+        toast.success(t('profile-modal.email-updated-success'));
         setTimeout(() => router.reload(), 1000);
       })
       .catch(error => {
         console.error(error);
-        toast.error(`Failed to update e-mail`);
+        toast.error(t('profile-modal.email-updated-error'));
       });
   };
 
@@ -115,12 +117,12 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
 
     api.patch("/users/update/password", userPasswordUpdateRequest)
       .then(() => {
-        toast.success(`Password has been updated`);
+        toast.success(t('profile-modal.password-updated-success'));
         setTimeout(() => router.reload(), 1000);
       })
       .catch(error => {
         console.error(error);
-        toast.error(`Failed to update password`);
+        toast.error(t('profile-modal.password-updated-error'));
       });
   };
 
@@ -139,13 +141,11 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Verify your e-mail address</ModalHeader>
+          <ModalHeader>{t('profile-modal.steps.verify.title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <Text>
-              You have to verify your current e-mail address{' '}
-              <Text as={'span'} fontWeight={'600'}>{authenticationDetails.email}</Text>{' '}
-              in order to proceed further.
+              {t('profile-modal.steps.verify.description').replace("%email%", authenticationDetails.email)}
             </Text>
           </ModalBody>
 
@@ -155,9 +155,9 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
               backgroundColor={theme.primaryColor}
               mr={3}
             >
-              Send code
+              {t('profile-modal.steps.verify.submit')}
             </Button>
-            <Button onClick={requestOnClose}>Cancel</Button>
+            <Button onClick={requestOnClose}>{t('profile-modal.steps.verify.cancel')}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -191,7 +191,7 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
                 <FormControl isRequired>
                   <Input
                     ref={initialRef}
-                    placeholder="Enter your security code"
+                    placeholder={t('profile-modal.steps.security.enter-code-placeholder')}
                     value={securityCode}
                     onChange={(event) => handleSecurityCodeUpdate(event.target.value)}
                   />
@@ -200,9 +200,9 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
 
               {activeStep === 1 && accountUpdateType === AccountUpdateType.Email && (
                 <FormControl isRequired>
-                  <FormLabel>New Email</FormLabel>
+                  <FormLabel>{t('profile-modal.steps.email.new-email-label')}</FormLabel>
                   <Input
-                    placeholder="New email"
+                    placeholder={t('profile-modal.steps.email.new-email-placeholder')}
                     value={userEmailUpdateRequest.email}
                     onChange={(event) => setUserEmailUpdateRequest({
                       ...userEmailUpdateRequest,
@@ -215,10 +215,10 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
               {activeStep === 1 && accountUpdateType === AccountUpdateType.Password && (
                 <>
                   <FormControl isRequired>
-                    <FormLabel>Old Password</FormLabel>
+                    <FormLabel>{t('profile-modal.steps.password.old-password-label')}</FormLabel>
                     <Input
                       type="password"
-                      placeholder="Old password"
+                      placeholder={t('profile-modal.steps.password.old-password-placeholder')}
                       value={userPasswordUpdateRequest.oldPassword}
                       onChange={(event) => setUserPasswordUpdateRequest({
                         ...userPasswordUpdateRequest,
@@ -228,10 +228,10 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
                   </FormControl>
 
                   <FormControl isRequired>
-                    <FormLabel>New Password</FormLabel>
+                    <FormLabel>{t('profile-modal.steps.password.new-password-label')}</FormLabel>
                     <Input
                       type="password"
-                      placeholder="New password"
+                      placeholder={t('profile-modal.steps.password.new-password-placeholder')}
                       value={userPasswordUpdateRequest.newPassword}
                       onChange={(event) => setUserPasswordUpdateRequest({
                         ...userPasswordUpdateRequest,
@@ -250,7 +250,7 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
                 onClick={handlePreviousStep}
                 mr={3}
               >
-                Back
+                {t('profile-modal.steps.back-button')}
               </Button>
             )}
             {activeStep < steps.length - 1 ? (
@@ -259,7 +259,7 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
                 onClick={handleNextStep}
                 mr={3}
               >
-                Next
+                {t('profile-modal.steps.next-button')}
               </Button>
             ) : (
               <Button
@@ -270,10 +270,10 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
                 }
                 mr={3}
               >
-                Submit
+                {t('profile-modal.steps.submit-button')}
               </Button>
             )}
-            <Button onClick={verificationOnClose}>Cancel</Button>
+            <Button onClick={verificationOnClose}>{t('profile-modal.steps.cancel-button')}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

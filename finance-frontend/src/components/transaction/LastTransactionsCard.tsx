@@ -4,6 +4,7 @@ import {useTheme} from "@/hooks/useTheme"
 import {TransactionResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {TransactionsCardItem} from "@/components/transaction/TransactionsCardItem"
+import {useTranslations} from "next-intl";
 
 interface LastTransactionsCardProperties {
   vault: VaultResponse
@@ -13,6 +14,7 @@ interface LastTransactionsCardProperties {
 export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCardProperties) => {
   const theme = useTheme()
   const api = useApi()
+  const t = useTranslations("Transactions")
   const [transactions, setTransactions] = useState<TransactionResponse[]>([])
 
   useEffect(() => {
@@ -27,13 +29,13 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>Last transactions</Text>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>{t('recent.card.title')}</Text>
         </Flex>
       </CardHeader>
       <CardBody>
         <Stack gap={0}>
           {
-            transactions.length === 0 && <Text size={'sm'}>There are no transactions</Text>
+            transactions.length === 0 && <Text size={'sm'}>{t('recent.card.no-transactions')}</Text>
           }
           {
             transactions &&
@@ -51,7 +53,7 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
                     fontSize={'sm'}
                     href={`/vault/${vault.publicId}/transactions`}
                     letterSpacing={0.5}>
-                View All
+                {t('recent.card.view-all')}
               </Link>
             </Flex>
           </Box>

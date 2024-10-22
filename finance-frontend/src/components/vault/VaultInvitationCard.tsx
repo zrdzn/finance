@@ -5,6 +5,7 @@ import {useApi} from "@/hooks/useApi"
 import {UsernameResponse, VaultInvitationResponse} from "@/components/api"
 import {useRouter} from "next/router"
 import toast from "react-hot-toast"
+import {useTranslations} from "next-intl";
 
 interface VaultInvitationCardProperties {
   invitation: VaultInvitationResponse
@@ -14,6 +15,7 @@ export const VaultInvitationCard = ({ invitation }: VaultInvitationCardPropertie
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
+  const t = useTranslations("Overview")
   const [username, setUsername] = useState<UsernameResponse | undefined>(undefined)
 
   useEffect(() => {
@@ -27,7 +29,7 @@ export const VaultInvitationCard = ({ invitation }: VaultInvitationCardPropertie
 
     api.post(`/vaults/invitations/${invitation.id}/accept`)
       .then(() => {
-        toast.success(`Welcome to ${invitation.vault.name}!`)
+        toast.success(t('invitation-accepted').replace("%vault_name%", invitation.vault.name))
         setTimeout(() => router.push(`/vault/${invitation.vault.publicId}`), 1000)
       })
       .catch((error) => console.error(error))
@@ -38,7 +40,7 @@ export const VaultInvitationCard = ({ invitation }: VaultInvitationCardPropertie
 
     api.delete(`/vaults/${invitation.vault.id}/invitations/${invitation.userEmail}`)
       .then(() => {
-        toast.success(`Invitation cancelled`)
+        toast.success(t('invitation-cancelled-success'))
         setTimeout(() => router.reload(), 1000)
       })
       .catch(error => console.error(error))
@@ -51,7 +53,7 @@ export const VaultInvitationCard = ({ invitation }: VaultInvitationCardPropertie
         <Stack mt='6' spacing='3'>
           <Text fontSize='md' fontWeight={'600'}>{invitation.vault.name}</Text>
           <Text color={'dimgray'}>
-            Created by {username?.username || 'Unknown'}
+              {t('invitation-card.created-by').replace("%username%", username?.username ?? "Unknown")}
           </Text>
         </Stack>
       </CardBody>
@@ -61,12 +63,12 @@ export const VaultInvitationCard = ({ invitation }: VaultInvitationCardPropertie
         <Button backgroundColor={theme.primaryColor}
                 color={theme.textColor}
                 onClick={handleJoin}>
-          Join
+            {t('invitation-card.join')}
         </Button>
         <Button backgroundColor={'red.400'}
                 color={theme.textColor}
                 onClick={handleCancel}>
-          Cancel
+            {t('invitation-card.cancel')}
         </Button>
       </CardFooter>
     </Card>

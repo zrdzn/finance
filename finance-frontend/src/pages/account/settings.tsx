@@ -25,12 +25,15 @@ import {FaEdit, FaEnvelope, FaKey, FaLock, FaSave, FaShieldAlt} from "react-icon
 import {FaPencil} from "react-icons/fa6"
 import {RequestAccountUpdateButton} from "@/components/account/RequestAccountUpdateButton"
 import {RequestAccountVerificationButton} from "@/components/account/RequestAccountVerificationButton";
+import {GetStaticPropsContext} from "next";
+import {useTranslations} from "next-intl";
 
 export default function AccountSettings(): ReactJSXElement {
   const { authenticationDetails } = useAuthentication()
   const api = useApi()
   const router = useRouter()
   const theme = useTheme()
+  const t = useTranslations("AccountSettings")
   const [userProfileUpdateRequest, setUserProfileUpdateRequest] = useState<UserProfileUpdateRequest>({
     username: ''
   })
@@ -64,12 +67,12 @@ export default function AccountSettings(): ReactJSXElement {
 
     api.patch("/users/profile", userProfileUpdateRequest)
       .then(() => {
-        toast.success(`Profile has been updated`)
+        toast.success(t('profile-card.updated-success'))
         setTimeout(() => router.reload(), 1000)
       })
       .catch(error => {
         console.error(error)
-        toast.error(`Failed to update user profile`)
+        toast.error(t('profile-card.updated-error'))
       })
   }
 
@@ -77,7 +80,7 @@ export default function AccountSettings(): ReactJSXElement {
     <>
       <Layout>
         <Head>
-          <title>Finance - Account Settings</title>
+          <title>{t('title')}</title>
         </Head>
 
         <Flex justifyContent="center" p={4}>
@@ -88,7 +91,7 @@ export default function AccountSettings(): ReactJSXElement {
           >
             <CardHeader backgroundColor={theme.secondaryColor}>
               <Flex alignItems={'center'} justifyContent={'space-between'}>
-                <Text fontSize='md' fontWeight={'600'}>Your profile</Text>
+                <Text fontSize='md' fontWeight={'600'}>{t('profile-card.title')}</Text>
               </Flex>
             </CardHeader>
             <CardBody>
@@ -96,7 +99,7 @@ export default function AccountSettings(): ReactJSXElement {
                 authenticationDetails &&
                   <Stack spacing='4'>
                     <FormControl isRequired>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>{t('profile-card.email-label')}</FormLabel>
                       <HStack>
                         <Input
                             name={'email'}
@@ -107,12 +110,12 @@ export default function AccountSettings(): ReactJSXElement {
                       </HStack>
                     </FormControl>
                     <FormControl isRequired>
-                      <FormLabel>Username</FormLabel>
+                      <FormLabel>{t('profile-card.username-label')}</FormLabel>
                       <HStack>
                         <Input
                             name={'username'}
                             onChange={(event) => handleUsernameChange(event.target.value)}
-                            placeholder='Enter your new username'
+                            placeholder={t('profile-card.username-placeholder')}
                             defaultValue={authenticationDetails.username}
                             isDisabled={!isEditingUsername}
                         />
@@ -134,17 +137,17 @@ export default function AccountSettings(): ReactJSXElement {
                       </HStack>
                     </FormControl>
                     <FormControl isRequired>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>{t('profile-card.password-label')}</FormLabel>
                       <HStack>
-                        <RequestAccountUpdateButton icon={<FaKey />} text={'Change password'} accountUpdateType={AccountUpdateType.Password} />
+                        <RequestAccountUpdateButton icon={<FaKey />} text={t('profile-card.password-placeholder')} accountUpdateType={AccountUpdateType.Password} />
                       </HStack>
                     </FormControl>
                     <FormControl>
-                      <FormLabel>Verify Account</FormLabel>
+                      <FormLabel>{t('profile-card.verify-label')}</FormLabel>
                       <HStack>
-                        {authenticationDetails.verified && <Text fontSize={'sm'} color={'green'}>Your account is verified</Text>}
+                        {authenticationDetails.verified && <Text fontSize={'sm'} color={'green'}>{t('profile-card.already-verified')}</Text>}
                         {!authenticationDetails.verified && (
-                            <RequestAccountVerificationButton icon={<FaEnvelope />} text={'Send link'} />
+                            <RequestAccountVerificationButton icon={<FaEnvelope />} text={t('profile-card.verify-link')} />
                         )}
                       </HStack>
                     </FormControl>
@@ -156,4 +159,12 @@ export default function AccountSettings(): ReactJSXElement {
       </Layout>
     </>
   );
+}
+
+export async function getStaticProps(context: GetStaticPropsContext) {
+  return {
+    props: {
+      messages: (await import(`../../locales/${context.locale}.json`)).default
+    }
+  }
 }

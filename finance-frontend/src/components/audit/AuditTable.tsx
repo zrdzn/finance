@@ -22,6 +22,7 @@ import {useDateFormatter} from "@/hooks/useDateFormatter"
 import {FaClock, FaUser} from "react-icons/fa"
 import {FaCircleCheck} from "react-icons/fa6"
 import {useAuditActionFormatter} from "@/hooks/useAuditActionFormatter"
+import {useTranslations} from "next-intl";
 
 interface AuditTableProperties {
   vault: VaultResponse
@@ -33,6 +34,7 @@ export const AuditTable = ({ vault, permissions }: AuditTableProperties) => {
   const api = useApi()
   const [audits, setAudits] = useState<AuditResponse[]>([])
   const { formatDate } = useDateFormatter()
+  const t = useTranslations("Audits")
   const { formatAuditAction } = useAuditActionFormatter()
 
   useEffect(() => {
@@ -47,13 +49,13 @@ export const AuditTable = ({ vault, permissions }: AuditTableProperties) => {
     <Card margin={2}>
       <CardHeader backgroundColor={theme.secondaryColor} color={theme.textColor}>
         <Flex alignItems={'center'} justifyContent={'space-between'}>
-          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>Audit Logs</Text>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>{t('card.title')}</Text>
         </Flex>
       </CardHeader>
       <CardBody>
         <Accordion allowToggle width={'full'}>
           {audits.length === 0 ? (
-            <Text textAlign={'center'}>No audit logs available</Text>
+            <Text textAlign={'center'}>{t('card.no-audits')}</Text>
           ) : (
             audits.sort((audit, nextAudit) => new Date(nextAudit.createdAt).getTime() - new Date(audit.createdAt).getTime())
               .map((audit) => (
