@@ -22,6 +22,7 @@ import {TransactionMethodSelect} from "@/components/transaction/TransactionMetho
 import {PriceInput} from "@/components/shared/PriceInput"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
 import toast from "react-hot-toast"
+import {useTranslations} from "next-intl";
 
 interface EditTransactionButtonProperties {
   transaction: TransactionResponse
@@ -31,6 +32,7 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
+  const t = useTranslations("Transactions")
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [transactionUpdateRequest, setTransactionUpdateRequest] = useState<TransactionUpdateRequest>({
     transactionMethod: transaction.transactionMethod,
@@ -68,12 +70,12 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
     api.patch(`/transactions/${transaction.id}`, transactionUpdateRequest)
       .then(() => onClose())
       .then(() => {
-        toast.success(`Transaction updated`)
+        toast.success(t('transaction-updated-success'))
         setTimeout(() => router.reload(), 1000)
       })
       .catch(error => {
         console.error(error)
-        toast.error(`Failed to update transaction`)
+        toast.error(t('transaction-updated-error'))
       })
   }
 
@@ -92,41 +94,41 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Update transaction</ModalHeader>
+          <ModalHeader>{t('update-modal.title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl mt={4}>
-              <FormLabel>Method</FormLabel>
+              <FormLabel>{t('update-modal.transaction-method-label')}</FormLabel>
               <TransactionMethodSelect onChange={handleTransactionMethodChange}
                                        defaultValue={transactionUpdateRequest.transactionMethod} />
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Type</FormLabel>
+              <FormLabel>{t('update-modal.transaction-type-label')}</FormLabel>
               <RadioGroup onChange={handleTransactionTypeChange} value={transactionUpdateRequest.transactionType}>
                 <Stack direction='row'>
-                  <Radio value='INCOMING'>Income</Radio>
-                  <Radio value='OUTGOING'>Expense</Radio>
+                  <Radio value='INCOMING'>{t('update-modal.transaction-type-incoming')}</Radio>
+                  <Radio value='OUTGOING'>{t('update-modal.transaction-type-outgoing')}</Radio>
                 </Stack>
               </RadioGroup>
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t('update-modal.description-label')}</FormLabel>
               <Input onChange={handleDescriptionChange}
                      ref={initialRef}
                      value={transactionUpdateRequest.description ?? ""}
-                     placeholder='What did you pay for?' />
+                     placeholder={t('update-modal.description-placeholder')} />
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Total</FormLabel>
+              <FormLabel>{t('update-modal.price-label')}</FormLabel>
               <PriceInput onChange={handleTotalChange}
                           defaultValue={transactionUpdateRequest.total} />
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Currency</FormLabel>
+              <FormLabel>{t('update-modal.currency-label')}</FormLabel>
               <CurrencySelect onChange={handleCurrencyChange}
                               defaultValue={transactionUpdateRequest.currency} />
             </FormControl>
@@ -136,9 +138,9 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
             <Button onClick={handleProductUpdate}
                     backgroundColor={theme.primaryColor}
                     mr={3}>
-              Save
+              {t('update-modal.submit')}
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose}>{t('update-modal.cancel')}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

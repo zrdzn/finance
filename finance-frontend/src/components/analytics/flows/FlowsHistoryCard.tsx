@@ -3,6 +3,7 @@ import React from "react"
 import {useTheme} from "@/hooks/useTheme"
 import {TransactionFlowsRange, TransactionType, VaultResponse} from "@/components/api"
 import {FlowsHistoryCardItem} from "@/components/analytics/flows/FlowsHistoryCardItem"
+import {useTranslations} from "next-intl";
 
 interface FlowsHistoryCardProperties {
   vault: VaultResponse
@@ -11,6 +12,7 @@ interface FlowsHistoryCardProperties {
 
 export const FlowsHistoryCard = ({ vault, transactionType }: FlowsHistoryCardProperties) => {
   const theme = useTheme()
+  const t = useTranslations("Analytics")
 
   return (
     <Card margin={2}>
@@ -20,10 +22,10 @@ export const FlowsHistoryCard = ({ vault, transactionType }: FlowsHistoryCardPro
               justifyContent={'space-between'}>
           <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>
             {
-              transactionType === TransactionType.Incoming && 'Income'
+              transactionType === TransactionType.Incoming && t('history.income-title')
             }
             {
-              transactionType === TransactionType.Outgoing && 'Expenses'
+              transactionType === TransactionType.Outgoing && t('history.expenses-title')
             }
           </Text>
         </Flex>

@@ -22,6 +22,7 @@ import {PriceInput} from "@/components/shared/PriceInput"
 import {TransactionMethodSelect} from "@/components/transaction/TransactionMethodSelect"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
 import toast from "react-hot-toast"
+import {useTranslations} from "next-intl";
 
 interface AddTransactionButtonProperties {
   vault: VaultResponse
@@ -33,6 +34,7 @@ export const AddTransactionButton = ({ vault, onCreate }: AddTransactionButtonPr
   const api = useApi()
   const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const t = useTranslations("Transactions")
   const [transactionCreateForm, setTransactionCreateForm] = useState<TransactionCreateRequest>({
     vaultId: 0,
     transactionMethod: vault.transactionMethod,
@@ -80,12 +82,12 @@ export const AddTransactionButton = ({ vault, onCreate }: AddTransactionButtonPr
         onCreate?.(response.data)
       })
       .then(() => {
-        toast.success(`Transaction has been added`)
+        toast.success(t('transaction-created-success'))
         setTimeout(() => router.reload(), 1000)
       })
       .catch(error => {
         console.error(error)
-        toast.error(`Failed to add transaction`)
+        toast.error(t('transaction-created-error'))
       })
   }
 
@@ -104,38 +106,38 @@ export const AddTransactionButton = ({ vault, onCreate }: AddTransactionButtonPr
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add a new transaction</ModalHeader>
+          <ModalHeader>{t('create-modal.title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t('create-modal.description-label')}</FormLabel>
               <Input onChange={handleDescriptionChange}
                      ref={initialRef}
-                     placeholder='Freelance work / Groceries at a local store' />
+                     placeholder={t('create-modal.description-placeholder')} />
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Transaction method</FormLabel>
+              <FormLabel>{t('create-modal.transaction-method-label')}</FormLabel>
               <TransactionMethodSelect onChange={handleTransactionMethodChange} defaultValue={transactionCreateForm.transactionMethod} />
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Transaction type</FormLabel>
+              <FormLabel>{t('create-modal.transaction-type-label')}</FormLabel>
               <RadioGroup onChange={handleTransactionTypeChange} value={transactionCreateForm.transactionType}>
                 <Stack direction='row'>
-                  <Radio value='INCOMING'>Income</Radio>
-                  <Radio value='OUTGOING'>Expense</Radio>
+                  <Radio value='INCOMING'>{t('create-modal.transaction-type-incoming')}</Radio>
+                  <Radio value='OUTGOING'>{t('create-modal.transaction-type-outgoing')}</Radio>
                 </Stack>
               </RadioGroup>
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Price</FormLabel>
+              <FormLabel>{t('create-modal.price-label')}</FormLabel>
               <PriceInput onChange={handlePriceChange} />
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Currency</FormLabel>
+              <FormLabel>{t('create-modal.currency-label')}</FormLabel>
               <CurrencySelect onChange={handleCurrencyChange} defaultValue={transactionCreateForm.currency} />
             </FormControl>
           </ModalBody>
@@ -144,9 +146,9 @@ export const AddTransactionButton = ({ vault, onCreate }: AddTransactionButtonPr
             <Button onClick={handleTransactionCreate}
                     backgroundColor={theme.primaryColor}
                     mr={3}>
-              Add
+              {t('create-modal.submit')}
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose}>{t('create-modal.cancel')}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

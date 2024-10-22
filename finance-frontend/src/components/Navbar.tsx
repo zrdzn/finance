@@ -16,11 +16,13 @@ import {FaLayerGroup, FaUser, FaUserPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/useTheme"
 import React from "react"
 import {FaArrowRightToBracket} from "react-icons/fa6"
+import {useTranslations} from "next-intl";
 
 export const Navbar = () => {
   const { authenticationDetails, logout } = useAuthentication();
   const theme = useTheme();
   const router = useRouter();
+  const t = useTranslations("Navbar")
   const [isMobile] = useMediaQuery("(max-width: 768px)");
 
   const handleLogout = () => {
@@ -42,7 +44,7 @@ export const Navbar = () => {
       <Flex alignItems="center">
         <Link href="/">
           <Text fontSize="2xl" fontWeight="600">
-            Finance
+            {t('logo')}
           </Text>
         </Link>
       </Flex>
@@ -52,7 +54,7 @@ export const Navbar = () => {
             <Link href="/">
               <HStack alignItems={'center'} width={'full'} gap={2}>
                 <FaLayerGroup />
-                <Box>{isMobile ? null : <Text>Vaults</Text>}</Box>
+                <Box>{isMobile ? null : <Text>{t('vaults')}</Text>}</Box>
               </HStack>
             </Link>
             <Menu>
@@ -63,8 +65,8 @@ export const Navbar = () => {
                 </HStack>
               </MenuButton>
               <MenuList>
-                <MenuItem as={Link} href={'/account/settings'}>Settings</MenuItem>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                <MenuItem as={Link} href={'/account/settings'}>{t('settings')}</MenuItem>
+                <MenuItem onClick={handleLogout}>{t('logout')}</MenuItem>
               </MenuList>
             </Menu>
           </>
@@ -75,13 +77,13 @@ export const Navbar = () => {
                 <Link href="/login">
                     <HStack alignItems={'center'} width={'full'} gap={2}>
                         <FaArrowRightToBracket />
-                        <Box>{isMobile ? null : <Text>Sign in</Text>}</Box>
+                        <Box>{isMobile ? null : <Text>{t('login')}</Text>}</Box>
                     </HStack>
                 </Link>
                 <Link href="/register">
                     <HStack alignItems={'center'} width={'full'} gap={2}>
                         <FaUserPlus />
-                        <Box>{isMobile ? null : <Text>Sign up</Text>}</Box>
+                        <Box>{isMobile ? null : <Text>{t('register')}</Text>}</Box>
                     </HStack>
                 </Link>
             </HStack>

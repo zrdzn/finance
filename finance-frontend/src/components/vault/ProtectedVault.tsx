@@ -7,6 +7,7 @@ import {useVault} from "@/hooks/useVault"
 import {VaultResponse, VaultRoleResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {Box} from "@chakra-ui/react"
+import {useTranslations} from "next-intl";
 
 interface ProtectedVaultProperties {
   publicId: string | string[] | undefined
@@ -18,6 +19,7 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
   const api = useApi();
   const { authenticationDetails } = useAuthentication();
   const vault = useVault({ publicId });
+  const t = useTranslations("Overview")
   const [vaultRole, setVaultRole] = useState<VaultRoleResponse>();
   const [isCollapsed, setIsCollapsed] = useState<boolean | undefined>(undefined);
 
@@ -55,15 +57,15 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
   }, [isCollapsed]);
 
   if (vault === undefined) {
-    return <>Loading vault...</>;
+    return <>{t('vault-loading')}</>;
   }
 
   if (vault === null) {
-    return <>Vault not found</>;
+    return <>{t('vault-not-found')}</>;
   }
 
   if (authenticationDetails === null || vaultRole === undefined) {
-    return <>You must be authenticated</>;
+    return <>{t('not-authenticated')}</>;
   }
 
   return (

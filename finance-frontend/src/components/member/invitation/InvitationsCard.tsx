@@ -7,6 +7,7 @@ import {SearchBar} from "@/components/shared/SearchBar"
 import {useRouter} from "next/router"
 import {InvitationsCardItem} from "@/components/member/invitation/InvitationsCardItem"
 import {InvitationCreateButton} from "@/components/member/invitation/InvitationCreateButton"
+import {useTranslations} from "next-intl";
 
 interface InvitationsCardProperties {
   vault: VaultResponse
@@ -17,6 +18,7 @@ export const  InvitationsCard = ({ vault, permissions }: InvitationsCardProperti
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
+  const t = useTranslations("Invitations")
   const [invitations, setInvitations] = useState<VaultInvitationResponse[]>([])
   const [queriedInvitations, setQueriedInvitations] = useState<VaultInvitationResponse[]>([])
 
@@ -39,14 +41,14 @@ export const  InvitationsCard = ({ vault, permissions }: InvitationsCardProperti
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>Invitations</Text>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>{t('card.title')}</Text>
         </Flex>
       </CardHeader>
       <CardBody>
         <Flex justifyContent={'space-between'}
               gap={4}>
           <SearchBar
-            placeholder="Search invitations"
+            placeholder={t('card.search-placeholder')}
             content={invitations}
             onSearch={handleSearchResults}
             filter={(invitation, query) => {
@@ -63,7 +65,7 @@ export const  InvitationsCard = ({ vault, permissions }: InvitationsCardProperti
             queriedInvitations.length === 0 &&
               <Flex justifyContent={'center'}
                     mt={4}>
-                  <Text size={'sm'}>There are no invitations</Text>
+                  <Text size={'sm'}>{t('card.no-invitations')}</Text>
               </Flex>
           }
           {

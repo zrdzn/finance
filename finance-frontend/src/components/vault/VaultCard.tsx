@@ -5,6 +5,7 @@ import {useApi} from "@/hooks/useApi"
 import {UsernameResponse} from "@/components/api"
 import {useRouter} from "next/router"
 import toast from "react-hot-toast"
+import {useTranslations} from "next-intl";
 
 interface VaultCardProperties {
   publicId: string
@@ -15,6 +16,7 @@ interface VaultCardProperties {
 export const VaultCard = ({ publicId, ownerId, name }: VaultCardProperties) => {
   const theme = useTheme()
   const api = useApi()
+  const t = useTranslations("Overview")
   const router = useRouter()
   const [username, setUsername] = useState<UsernameResponse | undefined>(undefined)
 
@@ -28,7 +30,7 @@ export const VaultCard = ({ publicId, ownerId, name }: VaultCardProperties) => {
     event.preventDefault()
 
     router.push(`/vault/${publicId}`)
-      .then(() => toast.success(`Welcome back ${username?.username}!`))
+      .then(() => toast.success(t('welcome').replace("%username%", username?.username ?? "Unknown")))
       .catch((error) => console.error(error))
   }
 
@@ -39,7 +41,7 @@ export const VaultCard = ({ publicId, ownerId, name }: VaultCardProperties) => {
         <Stack mt='6' spacing='3'>
           <Text fontSize='md' fontWeight={'600'}>{name}</Text>
           <Text color={'dimgray'}>
-            Created by {username?.username || 'Unknown'}
+            {t('vault-card.created-by').replace("%username%", username?.username ?? "Unknown")}
           </Text>
         </Stack>
       </CardBody>
@@ -48,7 +50,7 @@ export const VaultCard = ({ publicId, ownerId, name }: VaultCardProperties) => {
         <Button backgroundColor={theme.primaryColor}
                 color={theme.textColor}
                 onClick={handleRedirect}>
-          Go
+          {t('vault-card.redirect')}
         </Button>
       </CardFooter>
     </Card>

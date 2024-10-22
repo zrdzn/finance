@@ -17,6 +17,7 @@ import {EditProductButton} from "@/components/product/EditProductButton"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
 import toast from "react-hot-toast"
+import {useTranslations} from "next-intl";
 
 interface ProductsCardItemProperties {
   product: ProductResponse
@@ -29,6 +30,7 @@ export const ProductsCardItem = ({
 }: ProductsCardItemProperties) => {
   const api = useApi()
   const router = useRouter()
+  const t = useTranslations("Products")
   const [category, setCategory] = useState<ProductResponse | undefined>(undefined)
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export const ProductsCardItem = ({
 
     api.delete(`/products/${product.id}`)
       .then(() => {
-        toast.success('Product deleted')
+        toast.success(t('product-deleted-success'))
         setTimeout(() => router.reload(), 1000)
       })
       .catch(error => console.error(error))

@@ -7,17 +7,20 @@ import {useRouter} from "next/router"
 import {AnalyticsSummaryCard} from "@/components/analytics/AnalyticsSummaryCard"
 import {FlowsHistoryCard} from "@/components/analytics/flows/FlowsHistoryCard"
 import {TransactionType} from "@/components/api"
+import {GetStaticPropsContext} from "next";
+import {useTranslations} from "next-intl";
 
 export default function Statistics(): ReactJSXElement {
   const router = useRouter()
   const publicId = router.query.publicId
+  const t = useTranslations("Statistics")
 
   return (
     <ProtectedVault publicId={publicId}>
       { (vault, vaultRole) =>
         <>
           <Head>
-            <title>Finance - Settings</title>
+            <title>{t('title')}</title>
           </Head>
           <Flex justifyContent="center" p={4}>
             <Grid
@@ -33,4 +36,19 @@ export default function Statistics(): ReactJSXElement {
       }
     </ProtectedVault>
   );
+}
+
+export async function getStaticProps(context: GetStaticPropsContext) {
+  return {
+    props: {
+      messages: (await import(`../../../locales/${context.locale}.json`)).default
+    }
+  }
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking'
+  }
 }

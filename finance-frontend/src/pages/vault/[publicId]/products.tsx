@@ -6,17 +6,20 @@ import {useRouter} from "next/router"
 import {ProtectedVault} from "@/components/vault/ProtectedVault"
 import {ProductsCard} from "@/components/product/ProductsCard"
 import {CategoriesCard} from "@/components/product/category/CategoriesCard"
+import {GetStaticPropsContext} from "next";
+import {useTranslations} from "next-intl";
 
 export default function Products(): ReactJSXElement {
   const router = useRouter()
   const publicId = router.query.publicId
+  const t = useTranslations("Products")
 
   return (
     <ProtectedVault publicId={publicId}>
       { (vault, vaultRole) =>
         <>
           <Head>
-            <title>Finance - Products</title>
+            <title>{t('title')}</title>
           </Head>
           <Flex justifyContent="center" p={4}>
             <Grid
@@ -35,4 +38,19 @@ export default function Products(): ReactJSXElement {
       }
     </ProtectedVault>
   );
+}
+
+export async function getStaticProps(context: GetStaticPropsContext) {
+  return {
+    props: {
+      messages: (await import(`../../../locales/${context.locale}.json`)).default
+    }
+  }
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking'
+  }
 }

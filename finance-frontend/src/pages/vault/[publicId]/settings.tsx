@@ -5,17 +5,20 @@ import React from "react";
 import {ProtectedVault} from "@/components/vault/ProtectedVault"
 import {SettingsCard} from "@/components/settings/SettingsCard"
 import {useRouter} from "next/router"
+import {GetStaticPropsContext} from "next";
+import {useTranslations} from "next-intl";
 
 export default function Settings(): ReactJSXElement {
   const router = useRouter()
   const publicId = router.query.publicId
+  const t = useTranslations("VaultSettings")
 
   return (
     <ProtectedVault publicId={publicId}>
       { (vault, vaultRole) =>
         <>
           <Head>
-            <title>Finance - Settings</title>
+            <title>{t('title')}</title>
           </Head>
           <Flex justifyContent="center" p={4}>
             <Flex
@@ -32,4 +35,19 @@ export default function Settings(): ReactJSXElement {
       }
     </ProtectedVault>
   );
+}
+
+export async function getStaticProps(context: GetStaticPropsContext) {
+  return {
+    props: {
+      messages: (await import(`../../../locales/${context.locale}.json`)).default
+    }
+  }
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking'
+  }
 }

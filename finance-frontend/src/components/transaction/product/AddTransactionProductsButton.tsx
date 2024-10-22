@@ -25,6 +25,7 @@ import {useRouter} from 'next/router'
 import {PriceInput} from "@/components/shared/PriceInput"
 import {ProductSelectWithAddButton} from "@/components/product/ProductSelectWithAddButton"
 import toast from "react-hot-toast"
+import {useTranslations} from "next-intl";
 
 interface AddTransactionProductsButtonProperties {
   vaultId: number
@@ -36,6 +37,7 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId }: AddTran
   const api = useApi()
   const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const t = useTranslations("Transactions")
   const [transactionProductCreateRequest, setTransactionProductCreateRequest] = useState<TransactionProductCreateRequest>({
     productId: 0,
     unitAmount: 0,
@@ -58,12 +60,12 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId }: AddTran
     api.post(`/transactions/${transactionId}/products/create`, transactionProductCreateRequest)
       .then(() => onClose())
       .then(() => {
-        toast.success(`Product has been added to the transaction`)
+        toast.success(t('product.product-added-success'))
         setTimeout(() => router.reload(), 1000)
       })
       .catch(error => {
         console.error(error)
-        toast.error(`Failed to add product to the transaction`)
+        toast.error(t('product.product-added-error'))
       })
   }
 
@@ -82,21 +84,21 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId }: AddTran
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add a product</ModalHeader>
+          <ModalHeader>{t('product.create-modal.title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
-              <FormLabel>Product</FormLabel>
+              <FormLabel>{t('product.create-modal.product-label')}</FormLabel>
               <ProductSelectWithAddButton vaultId={vaultId} onChange={handleProductChange} />
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Price per unit</FormLabel>
+              <FormLabel>{t('product.create-modal.price-label')}</FormLabel>
               <PriceInput onChange={handlePriceChange} />
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Quantity</FormLabel>
+              <FormLabel>{t('product.create-modal.quantity-label')}</FormLabel>
               <NumberInput
                 onChange={(valueString) => setTransactionProductCreateRequest(
                   { ...transactionProductCreateRequest, quantity: parseInt(valueString) }
@@ -117,9 +119,9 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId }: AddTran
             <Button onClick={handleTransactionProductCreate}
                     backgroundColor={theme.primaryColor}
                     mr={3}>
-              Add
+              {t('product.create-modal.submit')}
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose}>{t('product.create-modal.cancel')}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

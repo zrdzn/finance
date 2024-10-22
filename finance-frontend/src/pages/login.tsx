@@ -18,6 +18,8 @@ import {useTheme} from "@/hooks/useTheme"
 import {useAuthentication} from "@/hooks/useAuthentication"
 import toast from "react-hot-toast"
 import {Layout} from "@/components/Layout"
+import {GetStaticPropsContext} from "next";
+import {useTranslations} from "next-intl";
 
 interface LoginForm {
   email: string;
@@ -28,6 +30,7 @@ export default function Login(): ReactJSXElement {
   const { authenticationDetails, login } = useAuthentication()
   const router = useRouter()
   const theme = useTheme()
+  const t = useTranslations('Login')
   const [loginForm, setLoginForm] = useState<LoginForm>({
     email: '',
     password: ''
@@ -51,12 +54,12 @@ export default function Login(): ReactJSXElement {
     event.preventDefault()
 
     if (loginForm.email === '') {
-      toast.error('You need to provide an email')
+      toast.error(t('form.validation.missing-email'))
       return
     }
 
     if (loginForm.password === '') {
-      toast.error('You need to provide a password')
+      toast.error(t('form.validation.missing-password'))
       return
     }
 
@@ -69,7 +72,7 @@ export default function Login(): ReactJSXElement {
     <>
       <Layout>
         <Head>
-          <title>Finance - Login</title>
+          <title>{t('title')}</title>
         </Head>
 
         <Flex justifyContent="center" p={4}>
@@ -80,33 +83,33 @@ export default function Login(): ReactJSXElement {
           >
             <CardHeader backgroundColor={theme.secondaryColor}>
               <Flex alignItems={'center'} justifyContent={'space-between'}>
-                <Text fontSize='md' fontWeight={'600'}>Sign in</Text>
+                <Text fontSize='md' fontWeight={'600'}>{t('form.title')}</Text>
               </Flex>
             </CardHeader>
             <CardBody>
               <Stack spacing='4'>
                 <FormControl isRequired>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t('form.email-label')}</FormLabel>
                   <Input
                     name={'email'}
                     onChange={handleLoginFormUpdate}
-                    placeholder='Enter your email address'
+                    placeholder={t('form.email-placeholder')}
                   />
                 </FormControl>
 
                 <FormControl isRequired>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{t('form.password-label')}</FormLabel>
                   <Input
                     type={'password'}
                     name={'password'}
                     onChange={handleLoginFormUpdate}
-                    placeholder='Enter your password'
+                    placeholder={t('form.password-placeholder')}
                   />
                 </FormControl>
 
                 <Flex mt={2} justifyContent={'space-between'} gap={3}>
-                  <Button onClick={() => router.push("/register")}>Don&apos;t have an account?</Button>
-                  <Button backgroundColor={theme.primaryColor} onClick={handleLogin}>Sign in</Button>
+                  <Button onClick={() => router.push("/register")}>{t('form.register-redirect')}</Button>
+                  <Button backgroundColor={theme.primaryColor} onClick={handleLogin}>{t('form.submit')}</Button>
                 </Flex>
               </Stack>
             </CardBody>
@@ -115,4 +118,12 @@ export default function Login(): ReactJSXElement {
       </Layout>
     </>
   );
+}
+
+export async function getStaticProps(context: GetStaticPropsContext) {
+  return {
+    props: {
+      messages: (await import(`../locales/${context.locale}.json`)).default
+    }
+  }
 }

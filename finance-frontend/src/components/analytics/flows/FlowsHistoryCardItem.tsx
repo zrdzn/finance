@@ -2,6 +2,7 @@ import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, Text} fro
 import React, {useEffect, useState} from "react"
 import {TransactionFlowsRange, TransactionFlowsResponse, TransactionType, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
+import {useTranslations} from "next-intl";
 
 interface FlowsHistoryCardItemProperties {
   vault: VaultResponse
@@ -15,6 +16,7 @@ export const FlowsHistoryCardItem = ({
   flowsRange
 }: FlowsHistoryCardItemProperties) => {
   const api = useApi()
+  const t = useTranslations("Analytics")
   const [flows, setFlows] = useState<TransactionFlowsResponse>({
     amount: 0,
     currency: 'PLN'
@@ -44,10 +46,10 @@ export const FlowsHistoryCardItem = ({
                       fontWeight={'600'}
                       isTruncated
                       maxWidth={'70%'}>
-                  {flowsRange === TransactionFlowsRange.Day && 'Last 24 hours'}
-                  {flowsRange === TransactionFlowsRange.Week && 'Last 7 days'}
-                  {flowsRange === TransactionFlowsRange.Month && 'Last 30 days'}
-                  {flowsRange === TransactionFlowsRange.Year && 'Last 365 days'}
+                  {flowsRange === TransactionFlowsRange.Day && t('history.day')}
+                  {flowsRange === TransactionFlowsRange.Week && t('history.week')}
+                  {flowsRange === TransactionFlowsRange.Month && t('history.month')}
+                  {flowsRange === TransactionFlowsRange.Year && t('history.year')}
                 </Text>
                 {
                   flows && flows.amount > 0 &&

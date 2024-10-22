@@ -3,6 +3,7 @@ import React from "react"
 import {useTheme} from "@/hooks/useTheme"
 import {AnalyticsOverviewStatisticType, VaultResponse} from "@/components/api"
 import {AnalyticsSummaryCardItem} from "@/components/analytics/AnalyticsSummaryCardItem"
+import {useTranslations} from "next-intl";
 
 interface AnalyticsSummaryCardProperties {
   vault: VaultResponse
@@ -11,6 +12,7 @@ interface AnalyticsSummaryCardProperties {
 
 export const AnalyticsSummaryCard = ({ vault, permissions }: AnalyticsSummaryCardProperties) => {
   const theme = useTheme()
+  const t = useTranslations("Analytics")
 
   return (
     <Card margin={2}>
@@ -18,7 +20,7 @@ export const AnalyticsSummaryCard = ({ vault, permissions }: AnalyticsSummaryCar
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>Summary</Text>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>{t('summary.title')}</Text>
         </Flex>
       </CardHeader>
       <CardBody>

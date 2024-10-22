@@ -19,6 +19,7 @@ import {useApi} from "@/hooks/useApi"
 import {VaultInvitationCreateRequest} from "@/components/api"
 import {useRouter} from 'next/router'
 import toast from "react-hot-toast"
+import {useTranslations} from "next-intl";
 
 interface InvitationCreateButtonProperties {
   vaultId: number
@@ -33,6 +34,7 @@ export const InvitationCreateButton = ({ vaultId }: InvitationCreateButtonProper
     vaultId: 0,
     userEmail: '',
   })
+  const t = useTranslations("Invitations")
   const initialRef = useRef(null)
   const finalRef = useRef(null)
 
@@ -48,12 +50,12 @@ export const InvitationCreateButton = ({ vaultId }: InvitationCreateButtonProper
     })
       .then(() => onClose())
       .then(() => {
-        toast.success(`Successfully invited user ${vaultInvitationCreateRequest.userEmail}`)
+        toast.success(t('invitation-created-success').replace("%email%", vaultInvitationCreateRequest.userEmail))
         setTimeout(() => router.reload(), 1000)
       })
       .catch(error => {
         console.error(error)
-        toast.error(`Failed to invite user ${vaultInvitationCreateRequest.userEmail}`)
+        toast.error(t('invitation-created-error').replace("%email%", vaultInvitationCreateRequest.userEmail))
       })
   }
 
@@ -72,14 +74,14 @@ export const InvitationCreateButton = ({ vaultId }: InvitationCreateButtonProper
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create a new invitation</ModalHeader>
+          <ModalHeader>{t('create-modal.title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
-              <FormLabel>E-Mail</FormLabel>
+              <FormLabel>{t('create-modal.email-label')}</FormLabel>
               <Input onChange={handleUserEmailChange}
                      ref={initialRef}
-                     placeholder='Who do you want to invite?' />
+                     placeholder={t('create-modal.email-placeholder')} />
             </FormControl>
           </ModalBody>
 
@@ -87,9 +89,9 @@ export const InvitationCreateButton = ({ vaultId }: InvitationCreateButtonProper
             <Button onClick={handleInvitationCreate}
                     backgroundColor={theme.primaryColor}
                     mr={3}>
-              Add
+              {t('create-modal.submit')}
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose}>{t('create-modal.cancel')}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

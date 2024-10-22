@@ -5,6 +5,7 @@ import {useApi} from "@/hooks/useApi"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
 import toast from "react-hot-toast"
+import {useTranslations} from "next-intl";
 
 interface CategoriesCardItemProperties {
   category: ProductResponse
@@ -17,18 +18,19 @@ export const CategoriesCardItem = ({
 }: CategoriesCardItemProperties) => {
   const api = useApi()
   const router = useRouter()
+  const t = useTranslations("Categories")
 
   const handleCategoryDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
     api.delete(`/categories/${category.id}`)
       .then(() => {
-        toast.success(`Category deleted`)
+        toast.success(t('category-deleted-success'))
         setTimeout(() => router.reload(), 1000)
       })
       .catch(error => {
         console.error(error)
-        toast.error('Failed to delete category')
+        toast.error(t('category-deleted-error'))
       })
   }
 

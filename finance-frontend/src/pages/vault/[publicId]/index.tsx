@@ -6,17 +6,20 @@ import {useRouter} from "next/router"
 import {LastTransactionsCard} from "@/components/transaction/LastTransactionsCard"
 import {ProtectedVault} from "@/components/vault/ProtectedVault"
 import {AnalyticsSummaryCard} from "@/components/analytics/AnalyticsSummaryCard"
+import {GetStaticPropsContext} from "next";
+import {useTranslations} from "next-intl";
 
 export default function Dashboard(): ReactJSXElement {
   const router = useRouter()
   const publicId = router.query.publicId
+  const t = useTranslations("Overview")
 
   return (
     <ProtectedVault publicId={publicId}>
       { (vault, vaultRole) =>
         <>
           <Head>
-            <title>Finance - Overview ({vault.name})</title>
+            <title>{t('title').replace("%vault_name%", vault.name)}</title>
           </Head>
           <Flex justifyContent="center"
                 p={4}>
@@ -32,4 +35,19 @@ export default function Dashboard(): ReactJSXElement {
       }
     </ProtectedVault>
   );
+}
+
+export async function getStaticProps(context: GetStaticPropsContext) {
+  return {
+    props: {
+      messages: (await import(`../../../locales/${context.locale}.json`)).default
+    }
+  }
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking'
+  }
 }

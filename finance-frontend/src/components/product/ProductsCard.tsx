@@ -7,6 +7,7 @@ import {AddProductButton} from "@/components/product/AddProductButton"
 import {ProductsCardItem} from "@/components/product/ProductsCardItem"
 import {SearchBar} from "@/components/shared/SearchBar"
 import {useRouter} from "next/router"
+import {useTranslations} from "next-intl";
 
 interface ProductsCardProperties {
   vault: VaultResponse
@@ -17,6 +18,7 @@ export const ProductsCard = ({ vault, permissions }: ProductsCardProperties) => 
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
+  const t = useTranslations("Products")
   const [products, setProducts] = useState<ProductResponse[]>([])
   const [queriedProducts, setQueriedProducts] = useState<ProductResponse[]>([])
 
@@ -43,14 +45,14 @@ export const ProductsCard = ({ vault, permissions }: ProductsCardProperties) => 
                   color={theme.textColor}>
         <Flex alignItems={'center'}
               justifyContent={'space-between'}>
-          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>Products</Text>
+          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>{t('card.title')}</Text>
         </Flex>
       </CardHeader>
       <CardBody>
         <Flex justifyContent={'space-between'}
               gap={4}>
           <SearchBar
-            placeholder="Search products"
+            placeholder={t('card.search-placeholder')}
             content={products}
             onSearch={handleSearchResults}
             filter={(product, query) => product.name.toLowerCase().includes(query.toLowerCase())}
@@ -65,7 +67,7 @@ export const ProductsCard = ({ vault, permissions }: ProductsCardProperties) => 
             queriedProducts.length === 0 &&
               <Flex justifyContent={'center'}
                     mt={4}>
-                  <Text size={'sm'}>There are no products</Text>
+                  <Text size={'sm'}>{t('card.no-products')}</Text>
               </Flex>
           }
           {
