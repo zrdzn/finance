@@ -4,7 +4,7 @@ const nextConfig = {
     reactStrictMode: true,
     staticPageGenerationTimeout: 180,
     i18n: {
-        locales: ['en', 'pl'],
+        locales: ['en'],
         defaultLocale: 'en',
         localeDetection: false,
     }
