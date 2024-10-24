@@ -2,10 +2,13 @@ import {Button, Card, CardBody, CardFooter, Divider, Heading, Stack, Text,} from
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
-import {UsernameResponse, VaultInvitationResponse} from "@/components/api"
 import {useRouter} from "next/router"
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type VaultInvitationResponse = Components.Schemas.VaultInvitationResponse;
+type UsernameResponse = Components.Schemas.UsernameResponse;
 
 interface VaultInvitationCardProperties {
   invitation: VaultInvitationResponse
@@ -19,31 +22,37 @@ export const VaultInvitationCard = ({ invitation }: VaultInvitationCardPropertie
   const [username, setUsername] = useState<UsernameResponse | undefined>(undefined)
 
   useEffect(() => {
-    api.get(`/users/${invitation.vault.ownerId}/username`)
-      .then((response) => setUsername({ username: response.data.username }))
-      .catch(error => console.error(error))
+    api
+        .then(client => client.getUsernameByUserId({ userId: invitation.vault.ownerId })
+            .then(response => setUsername(response.data)))
+        .catch(error => console.error(error))
   }, [api, invitation.vault.ownerId]);
 
   const handleJoin = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.post(`/vaults/invitations/${invitation.id}/accept`)
-      .then(() => {
-        toast.success(t('invitation-accepted').replace("%vault_name%", invitation.vault.name))
-        setTimeout(() => router.push(`/vault/${invitation.vault.publicId}`), 1000)
-      })
-      .catch((error) => console.error(error))
+    api
+        .then(client => client.acceptVaultInvitation({ invitationId: invitation.id }))
+        .then(() => {
+            toast.success(t('invitation-accepted').replace("%vault_name%", invitation.vault.name))
+            setTimeout(() => router.push(`/vault/${invitation.vault.publicId}`), 1000)
+        })
+        .catch((error) => console.error(error))
   }
 
   const handleCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.delete(`/vaults/${invitation.vault.id}/invitations/${invitation.userEmail}`)
-      .then(() => {
-        toast.success(t('invitation-cancelled-success'))
-        setTimeout(() => router.reload(), 1000)
-      })
-      .catch(error => console.error(error))
+    api
+        .then(client => client.removeVaultInvitation({
+            vaultId: invitation.vault.id,
+            userEmail: invitation.userEmail
+        }))
+        .then(() => {
+            toast.success(t('invitation-cancelled-success'))
+            setTimeout(() => router.reload(), 1000)
+        })
+        .catch(error => console.error(error))
   }
 
   return (

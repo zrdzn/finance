@@ -1,9 +1,8 @@
 import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, Text} from "@chakra-ui/react"
 import React from "react"
-import {TransactionProductWithProductResponse} from "@/components/api"
-import {useApi} from "@/hooks/useApi"
-import {useRouter} from "next/router"
-import toast from "react-hot-toast"
+import {Components} from "@/api/api";
+
+type TransactionProductWithProductResponse = Components.Schemas.TransactionProductWithProductResponse;
 
 interface TransactionProductsCardItemProperties {
   transactionProduct: TransactionProductWithProductResponse

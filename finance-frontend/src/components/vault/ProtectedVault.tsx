@@ -4,10 +4,13 @@ import {Layout} from "@/components/Layout"
 import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"
 import {useVault} from "@/hooks/useVault"
-import {VaultResponse, VaultRoleResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {Box} from "@chakra-ui/react"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type VaultResponse = Components.Schemas.VaultResponse;
+type VaultRoleResponse = Components.Schemas.VaultRoleResponse;
 
 interface ProtectedVaultProperties {
   publicId: string | string[] | undefined
@@ -42,11 +45,10 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
 
   useEffect(() => {
     if (vault && authenticationDetails) {
-      api.get(`/vaults/${vault.id}/role`)
-        .then((response) => {
-          setVaultRole(response.data);
-        })
-        .catch((error) => console.error(error));
+      api
+          .then(client => client.getVaultRole({ vaultId: vault.id })
+              .then(response => setVaultRole(response.data)))
+            .catch(error => console.error(error))
     }
   }, [api, authenticationDetails, vault]);
 

@@ -1,8 +1,12 @@
 import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
-import {TransactionFlowsRange, TransactionFlowsResponse, TransactionType, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+import {TransactionFlowsRange, TransactionType} from "@/api/types";
+
+type VaultResponse = Components.Schemas.VaultResponse;
+type Price = Components.Schemas.Price;
 
 interface FlowsHistoryCardItemProperties {
   vault: VaultResponse
@@ -17,21 +21,27 @@ export const FlowsHistoryCardItem = ({
 }: FlowsHistoryCardItemProperties) => {
   const api = useApi()
   const t = useTranslations("Analytics")
-  const [flows, setFlows] = useState<TransactionFlowsResponse>({
+  const [flows, setFlows] = useState<Price>({
     amount: 0,
     currency: 'PLN'
   })
 
   useEffect(() => {
     const startDate = new Date()
-    if (flowsRange === TransactionFlowsRange.Day) startDate.setDate(startDate.getDate() - 1)
-    if (flowsRange === TransactionFlowsRange.Week) startDate.setDate(startDate.getDate() - 7)
-    if (flowsRange === TransactionFlowsRange.Month) startDate.setMonth(startDate.getMonth() - 1)
-    if (flowsRange === TransactionFlowsRange.Year) startDate.setFullYear(startDate.getFullYear() - 1)
+    if (flowsRange === 'DAY') startDate.setDate(startDate.getDate() - 1)
+    if (flowsRange === 'WEEK') startDate.setDate(startDate.getDate() - 7)
+    if (flowsRange === 'MONTH') startDate.setMonth(startDate.getMonth() - 1)
+    if (flowsRange === 'YEAR') startDate.setFullYear(startDate.getFullYear() - 1)
 
-    api.get(`/transactions/${vault.id}/flows?transactionType=${transactionType}&currency=PLN&start=${startDate.toISOString()}`)
-      .then(response => setFlows(response.data.total))
-      .catch(error => console.error(error))
+    api
+        .then(client => client.getExpensesByVaultId({
+          vaultId: vault.id,
+          transactionType: transactionType,
+          currency: 'PLN',
+          start: startDate.toISOString()
+        })
+            .then(response => setFlows(response.data.total)))
+        .catch(error => console.error(error))
   }, [api, transactionType, flowsRange, vault.id])
 
   return (
@@ -46,10 +56,10 @@ export const FlowsHistoryCardItem = ({
                       fontWeight={'600'}
                       isTruncated
                       maxWidth={'70%'}>
-                  {flowsRange === TransactionFlowsRange.Day && t('history.day')}
-                  {flowsRange === TransactionFlowsRange.Week && t('history.week')}
-                  {flowsRange === TransactionFlowsRange.Month && t('history.month')}
-                  {flowsRange === TransactionFlowsRange.Year && t('history.year')}
+                  {flowsRange === 'DAY' && t('history.day')}
+                  {flowsRange === 'WEEK' && t('history.week')}
+                  {flowsRange === 'MONTH' && t('history.month')}
+                  {flowsRange === 'YEAR' && t('history.year')}
                 </Text>
                 {
                   flows && flows.amount > 0 &&

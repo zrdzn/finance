@@ -55,10 +55,8 @@ class AuthenticationController(
             ?.also { invalidateAuthenticationCookie(response) }
 
     @GetMapping("/details")
-    fun getDetails(@AuthenticationPrincipal userId: UserId): ResponseEntity<AuthenticationDetailsResponse> =
+    fun getAuthenticationDetails(@AuthenticationPrincipal userId: UserId): AuthenticationDetailsResponse =
         authenticationService.getAuthenticationDetailsByUserId(userId)
-            ?.let { ResponseEntity.ok(it) }
-            ?: ResponseEntity.notFound().build()
 
     private fun addAuthenticationCookie(response: HttpServletResponse, token: String) {
         val cookie = Cookie(TOKEN_COOKIE_NAME, token)

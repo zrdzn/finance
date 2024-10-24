@@ -1,9 +1,11 @@
-import {Card, CardBody, CardHeader, Flex, Heading, Text, Stack} from "@chakra-ui/react"
+import {Card, CardBody, CardHeader, Flex, Text, Stack} from "@chakra-ui/react"
 import React from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {AnalyticsOverviewStatisticType, VaultResponse} from "@/components/api"
 import {AnalyticsSummaryCardItem} from "@/components/analytics/AnalyticsSummaryCardItem"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type VaultResponse = Components.Schemas.VaultResponse;
 
 interface AnalyticsSummaryCardProperties {
   vault: VaultResponse
@@ -25,10 +27,10 @@ export const AnalyticsSummaryCard = ({ vault, permissions }: AnalyticsSummaryCar
       </CardHeader>
       <CardBody>
         <Stack gap={0}>
-          <AnalyticsSummaryCardItem vault={vault} statisticType={AnalyticsOverviewStatisticType.Balance} />
-          <AnalyticsSummaryCardItem vault={vault} statisticType={AnalyticsOverviewStatisticType.Income} />
-          <AnalyticsSummaryCardItem vault={vault} statisticType={AnalyticsOverviewStatisticType.Expenses} />
-          <AnalyticsSummaryCardItem vault={vault} statisticType={AnalyticsOverviewStatisticType.Transactions} />
+          <AnalyticsSummaryCardItem vault={vault} statisticType={'BALANCE'} />
+          <AnalyticsSummaryCardItem vault={vault} statisticType={'INCOME'} />
+          <AnalyticsSummaryCardItem vault={vault} statisticType={'EXPENSES'} />
+          <AnalyticsSummaryCardItem vault={vault} statisticType={'TRANSACTIONS'} />
         </Stack>
       </CardBody>
     </Card>

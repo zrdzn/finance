@@ -21,13 +21,12 @@ export const RequestAccountVerificationButton = ({ icon, text }: RequestAccountV
   const t = useTranslations("AccountSettings")
 
   const handleVerificationLinkSend = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    api.get("/users/verify/request")
-      .then(() => {
-        toast.success(t('profile-modal.steps.verify.link-sent'))
-      })
-      .catch(error => console.error(error));
+    api
+      .then(client => client.requestUserVerification())
+      .then(() => toast.success(t('profile-modal.steps.verify.link-sent')))
+      .catch(error => console.error(error))
   }
 
   return authenticationDetails && (

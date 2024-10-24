@@ -1,11 +1,18 @@
-import axios, {Axios} from "axios"
+import definition from '../api/openapi.json'
+import {OpenAPIClientAxios, OpenAPIV3_1} from "openapi-client-axios";
+import {Client} from "@/api/api";
 
-const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true
-});
+const api = new OpenAPIClientAxios({
+  definition: definition as OpenAPIV3_1.Document
+})
 
-export const useApi = (): Axios => api;
+api.init<Client>()
+
+const client = api.getClient<Client>()
+
+client.then(apiClient => {
+  apiClient.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL
+  apiClient.defaults.withCredentials = true
+})
+
+export const useApi = (): Promise<Client> => client;

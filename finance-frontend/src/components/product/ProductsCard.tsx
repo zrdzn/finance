@@ -1,13 +1,16 @@
 import {Card, CardBody, CardHeader, Divider, Flex, Heading, Stack, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {ProductResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {AddProductButton} from "@/components/product/AddProductButton"
 import {ProductsCardItem} from "@/components/product/ProductsCardItem"
 import {SearchBar} from "@/components/shared/SearchBar"
 import {useRouter} from "next/router"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type VaultResponse = Components.Schemas.VaultResponse;
+type ProductResponse = Components.Schemas.ProductResponse;
 
 interface ProductsCardProperties {
   vault: VaultResponse
@@ -23,12 +26,13 @@ export const ProductsCard = ({ vault, permissions }: ProductsCardProperties) => 
   const [queriedProducts, setQueriedProducts] = useState<ProductResponse[]>([])
 
   useEffect(() => {
-    api.get(`/products/${vault.id}`)
-      .then(response => {
-        setProducts(response.data.products)
-        setQueriedProducts(response.data.products)
-      })
-      .catch(error => console.error(error))
+    api
+        .then(client => client.getProductsByVaultId({ vaultId: vault.id })
+            .then(response => {
+              setProducts(response.data.products)
+              setQueriedProducts(response.data.products)
+            }))
+        .catch(error => console.error(error))
   }, [api, vault.id]);
 
   const handleSearchResults = (results: ProductResponse[]) => {

@@ -1,11 +1,13 @@
-import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, Text} from "@chakra-ui/react"
+import {Accordion, AccordionButton, AccordionItem, Box, Flex, Text} from "@chakra-ui/react"
 import React from "react"
-import {ProductResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type ProductResponse = Components.Schemas.ProductResponse;
 
 interface CategoriesCardItemProperties {
   category: ProductResponse
@@ -23,7 +25,8 @@ export const CategoriesCardItem = ({
   const handleCategoryDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.delete(`/categories/${category.id}`)
+    api
+      .then(client => client.deleteCategory({ categoryId: category.id }))
       .then(() => {
         toast.success(t('category-deleted-success'))
         setTimeout(() => router.reload(), 1000)

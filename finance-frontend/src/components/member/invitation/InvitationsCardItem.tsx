@@ -4,20 +4,21 @@ import {
   AccordionItem,
   Box,
   Flex,
-  Heading,
   HStack,
   Tag,
   TagLabel,
   Text
 } from "@chakra-ui/react"
 import React from "react"
-import {VaultInvitationResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
 import {useDateFormatter} from "@/hooks/useDateFormatter";
+import {Components} from "@/api/api";
+
+type VaultInvitationResponse = Components.Schemas.VaultInvitationResponse;
 
 interface InvitationsCardItemProperties {
   invitation: VaultInvitationResponse
@@ -36,7 +37,8 @@ export const InvitationsCardItem = ({
   const handleInvitationDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.delete(`/vaults/${invitation.vault.id}/invitations/${invitation.userEmail}`)
+    api
+      .then(client => client.removeVaultInvitation({ vaultId: invitation.vault.id, userEmail: invitation.userEmail }))
       .then(() => {
         toast.success(t('invitation-deleted-success').replace("%email%", invitation.userEmail))
         setTimeout(() => router.reload(), 1000)
@@ -65,7 +67,7 @@ export const InvitationsCardItem = ({
                   </Text>
                   <HStack spacing={4}>
                     <Tag size={'sm'} colorScheme='red'>
-                      <TagLabel>{t('expires-tag').replace("%date%", formatDate(invitation.expiresAt, false))}</TagLabel>
+                      <TagLabel>{t('expires-tag').replace("%date%", formatDate(invitation.expiresAt, true))}</TagLabel>
                     </Tag>
                   </HStack>
                 </Flex>

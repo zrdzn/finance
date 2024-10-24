@@ -1,10 +1,13 @@
 import {Box, Card, CardBody, CardHeader, Flex, Heading, Link, Stack, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {TransactionResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {TransactionsCardItem} from "@/components/transaction/TransactionsCardItem"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type VaultResponse = Components.Schemas.VaultResponse;
+type TransactionResponse = Components.Schemas.TransactionResponse;
 
 interface LastTransactionsCardProperties {
   vault: VaultResponse
@@ -18,9 +21,10 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
   const [transactions, setTransactions] = useState<TransactionResponse[]>([])
 
   useEffect(() => {
-    api.get(`/transactions/${vault.id}`)
-      .then(response => setTransactions(response.data.transactions))
-      .catch(error => console.error(error))
+    api
+        .then(client => client.getTransactionsByVaultId({ vaultId: vault.id })
+            .then(response => setTransactions(response.data.transactions)))
+        .catch(error => console.error(error))
   }, [api, vault.id]);
 
   return (

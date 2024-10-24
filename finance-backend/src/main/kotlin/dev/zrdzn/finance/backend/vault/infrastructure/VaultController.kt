@@ -119,7 +119,7 @@ class VaultController(
     ): VaultInvitationListResponse = vaultService.getVaultInvitations(vaultId, userId)
 
     @GetMapping("/invitations/{userEmail}")
-    fun getVaultInvitation(
+    fun getVaultInvitationsByUserEmail(
         @AuthenticationPrincipal authenticatedUserId: UserId,
         @PathVariable userEmail: String
     ): VaultInvitationListResponse = vaultService.getVaultInvitations(

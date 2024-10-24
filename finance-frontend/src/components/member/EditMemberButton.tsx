@@ -15,19 +15,15 @@ import React, {useRef, useState} from "react"
 import {FaEdit} from "react-icons/fa"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
-import {
-  CategoryResponse,
-  ProductResponse,
-  ProductUpdateRequest,
-  VaultMemberResponse,
-  VaultMemberUpdateRequest
-} from "@/components/api"
-import {CategorySelect} from "@/components/product/category/CategorySelect"
 import {useRouter} from 'next/router'
 import toast from "react-hot-toast"
 import {VaultRoleSelect} from "@/components/vault/VaultRoleSelect";
-import {useAuthentication} from "@/hooks/useAuthentication";
 import {useTranslations} from "next-intl";
+import {VaultRole} from "@/api/types";
+import {Components} from "@/api/api";
+
+type VaultMemberResponse = Components.Schemas.VaultMemberResponse;
+type VaultMemberUpdateRequest = Components.Schemas.VaultMemberUpdateRequest;
 
 interface EditMemberButtonProperties {
   member: VaultMemberResponse
@@ -45,22 +41,23 @@ export const EditMemberButton = ({ member }: EditMemberButtonProperties) => {
   const initialRef = useRef(null)
   const finalRef = useRef(null)
 
-  const handleVaultRoleChange = (vaultRole: string | null) => {
+  const handleVaultRoleChange = (vaultRole: VaultRole) => {
     setVaultMemberUpdateRequest({ ...vaultMemberUpdateRequest, vaultRole: vaultRole ?? member.vaultRole });
   }
 
   const handleMemberUpdate = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.patch(`/vaults/${member.vaultId}/members/${member.id}`, vaultMemberUpdateRequest)
+    api
+      .then(client => client.updateVaultMember({ vaultId: member.vaultId, userId: member.id }, vaultMemberUpdateRequest))
       .then(() => onClose())
       .then(() => {
         toast.success(t('member-updated-success'))
         setTimeout(() => router.reload(), 1000)
       })
       .catch(error => {
-        toast.error(t('member-updated-error'))
         console.error(error)
+        toast.error(t('member-updated-error'))
       })
   }
 

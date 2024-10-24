@@ -1,11 +1,9 @@
 import Select from "react-select"
 import React, {useState} from "react"
-import {
-  SelectProperties,
-} from "@/components/api"
+import {SelectProperties, VaultRole} from "@/api/types";
 
 interface VaultRoleSelectProperties {
-  onChange: (vaultRole: string | null) => void
+  onChange: (vaultRole: VaultRole) => void
   defaultValue?: string
 }
 
@@ -29,11 +27,11 @@ export const VaultRoleSelect = ({ onChange, defaultValue }: VaultRoleSelectPrope
 
     const role = options.find(role => role.value.toString() === newValue.value)
     if (!role) {
-      onChange(null)
+      onChange(null as unknown as VaultRole)
       return
     }
 
-    onChange(role.value)
+    onChange(role.value as VaultRole)
   }
 
   return (

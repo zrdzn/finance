@@ -16,10 +16,12 @@ import React, {ChangeEvent, useRef, useState} from "react"
 import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
-import {VaultInvitationCreateRequest} from "@/components/api"
 import {useRouter} from 'next/router'
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type VaultInvitationCreateRequest = Components.Schemas.VaultInvitationCreateRequest;
 
 interface InvitationCreateButtonProperties {
   vaultId: number
@@ -45,9 +47,8 @@ export const InvitationCreateButton = ({ vaultId }: InvitationCreateButtonProper
   const handleInvitationCreate = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.post(`/vaults/${vaultId}/invitations`, {
-      userEmail: vaultInvitationCreateRequest.userEmail,
-    })
+    api
+      .then(client => client.createVaultInvitation({ vaultId: vaultId }, vaultInvitationCreateRequest))
       .then(() => onClose())
       .then(() => {
         toast.success(t('invitation-created-success').replace("%email%", vaultInvitationCreateRequest.userEmail))

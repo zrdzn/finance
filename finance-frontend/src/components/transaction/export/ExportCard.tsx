@@ -16,12 +16,14 @@ import {
 } from "@chakra-ui/react"
 import React, {useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {FaFileCsv} from "react-icons/fa"
 import moment from "moment"
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type VaultResponse = Components.Schemas.VaultResponse;
 
 interface ExportCardProperties {
   vault: VaultResponse
@@ -32,35 +34,38 @@ export const ExportCard = ({ vault, permissions }: ExportCardProperties) => {
   const theme = useTheme()
   const api = useApi()
   const [fileType, setFileType] = useState('CSV')
-  const [startDate, setStartDate] = useState(new Date(vault.createdAt * 1000).toISOString().slice(0, 16));
-  const [endDate, setEndDate] = useState(moment().local().format('YYYY-MM-DDTHH:mm'));
+  const [startDate, setStartDate] = useState(new Date(Number(vault.createdAt) * 1000).toISOString().slice(0, 16))
+  const [endDate, setEndDate] = useState(moment().local().format('YYYY-MM-DDTHH:mm'))
   const t = useTranslations("Transactions")
 
   const handleExport = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.get(`/transactions/${vault.id}/export?startDate=${new Date(startDate).toISOString()}&endDate=${new Date(endDate).toISOString()}`, {
-      responseType: 'blob'
-    })
-      .then(response => {
-        const url = window.URL.createObjectURL(new Blob([response.data], { type: 'text/csv' }))
+    api
+        .then(client => client.exportTransactions({
+          vaultId: vault.id,
+          startDate: new Date(startDate).toISOString(),
+          endDate: new Date(endDate).toISOString()
+        }, null, { responseType: 'blob' }))
+        .then(response => {
+          const url = window.URL.createObjectURL(new Blob([response.data], { type: 'text/csv' }))
 
-        const link = document.createElement('a')
-        link.href = url;
-        link.setAttribute('download', 'transactions.csv')
+          const link = document.createElement('a')
+          link.href = url;
+          link.setAttribute('download', 'transactions.csv')
 
-        document.body.appendChild(link)
-        link.click()
+          document.body.appendChild(link)
+          link.click()
 
-        link.parentNode?.removeChild(link)
-        window.URL.revokeObjectURL(url)
+          link.parentNode?.removeChild(link)
+          window.URL.revokeObjectURL(url)
 
-        toast.success(t('export.requested-export-success'))
-      })
-      .catch(error => {
-        console.error(error)
-        toast.error(t('export.requested-export-error'))
-      })
+          toast.success(t('export.requested-export-success'))
+        })
+        .catch(error => {
+          console.error(error)
+          toast.error(t('export.requested-export-error'))
+        })
   }
 
   return (

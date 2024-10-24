@@ -16,13 +16,17 @@ import React, {ChangeEvent, useRef, useState} from "react"
 import {FaEdit} from "react-icons/fa"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
-import {TransactionResponse, TransactionUpdateRequest} from "@/components/api"
 import {useRouter} from 'next/router'
 import {TransactionMethodSelect} from "@/components/transaction/TransactionMethodSelect"
 import {PriceInput} from "@/components/shared/PriceInput"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
+import {TransactionMethod, TransactionType} from "@/api/types";
+import {Components} from "@/api/api";
+
+type TransactionUpdateRequest = Components.Schemas.TransactionUpdateRequest;
+type TransactionResponse = Components.Schemas.TransactionResponse;
 
 interface EditTransactionButtonProperties {
   transaction: TransactionResponse
@@ -44,11 +48,11 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
   const initialRef = useRef(null)
   const finalRef = useRef(null)
 
-  const handleTransactionMethodChange = (transactionMethod: string) => {
+  const handleTransactionMethodChange = (transactionMethod: TransactionMethod) => {
     setTransactionUpdateRequest((previous) => ({ ...previous, transactionMethod: transactionMethod }))
   }
 
-  const handleTransactionTypeChange = (transactionType: string) => {
+  const handleTransactionTypeChange = (transactionType: TransactionType) => {
     setTransactionUpdateRequest((previous) => ({ ...previous, transactionType: transactionType }))
   }
 
@@ -67,16 +71,17 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
   const handleProductUpdate = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.patch(`/transactions/${transaction.id}`, transactionUpdateRequest)
-      .then(() => onClose())
-      .then(() => {
-        toast.success(t('transaction-updated-success'))
-        setTimeout(() => router.reload(), 1000)
-      })
-      .catch(error => {
-        console.error(error)
-        toast.error(t('transaction-updated-error'))
-      })
+    api
+        .then(client => client.updateTransaction({ transactionId: transaction.id }, transactionUpdateRequest))
+        .then(() => onClose())
+        .then(() => {
+            toast.success(t('transaction-updated-success'))
+            setTimeout(() => router.reload(), 1000)
+        })
+        .catch(error => {
+            console.error(error)
+            toast.error(t('transaction-updated-error'))
+        })
   }
 
   return (

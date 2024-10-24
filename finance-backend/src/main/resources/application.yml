@@ -31,3 +31,8 @@ spring:
     from: ${MAIL_FROM}
 client:
   url: ${CLIENT_URL}
+springdoc:
+  swagger-ui:
+    path: "/swagger.html"
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json

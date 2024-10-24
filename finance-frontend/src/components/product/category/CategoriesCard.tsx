@@ -1,12 +1,15 @@
 import {Card, CardBody, CardHeader, Divider, Flex, Heading, Stack, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {ProductResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {CategoriesCardItem} from "@/components/product/category/CategoriesCardItem"
 import {AddCategoryButton} from "@/components/product/category/AddCategoryButton"
 import {SearchBar} from "@/components/shared/SearchBar"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type ProductResponse = Components.Schemas.ProductResponse;
+type VaultResponse = Components.Schemas.VaultResponse;
 
 interface CategoriesCardProperties {
   vault: VaultResponse
@@ -21,11 +24,12 @@ export const CategoriesCard = ({ vault, permissions }: CategoriesCardProperties)
   const [queriedCategories, setQueriedCategories] = useState<ProductResponse[]>([])
 
   useEffect(() => {
-    api.get(`/categories/vault/${vault.id}`)
-      .then(response => {
-        setCategories(response.data.categories)
-        setQueriedCategories(response.data.categories)
-      })
+    api
+      .then(client => client.getCategoriesByVaultId({ vaultId: vault.id })
+        .then(response => {
+          setCategories(response.data.categories)
+          setQueriedCategories(response.data.categories)
+        }))
       .catch(error => console.error(error))
   }, [api, vault.id]);
 

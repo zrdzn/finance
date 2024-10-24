@@ -8,10 +8,12 @@ import {useTheme} from "@/hooks/useTheme"
 import {useRouter} from "next/router"
 import {useAuthentication} from "@/hooks/useAuthentication"
 import {VaultInvitationCard} from "@/components/vault/VaultInvitationCard"
-import {VaultInvitationResponse} from "@/components/api"
 import { Layout } from "@/components/Layout";
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type VaultInvitationResponse = Components.Schemas.VaultInvitationResponse;
 
 interface VaultResponse {
   id: number
@@ -36,13 +38,25 @@ export default function Homepage(): ReactJSXElement {
   }, [authenticationDetails, router]);
 
   useEffect(() => {
-    api.get('/vaults')
-      .then(response => {
-        setYourVaults(response.data.vaults)
-        return api.get(`/vaults/invitations/${authenticationDetails?.email}`)
-      })
-      .then(response => setVaultInvitations(response.data.vaultInvitations))
-      .catch((error) => console.error(error))
+    api
+        .then(client => client.getVaults()
+            .then(response => {
+                setYourVaults(response.data.vaults)
+              if (authenticationDetails?.email) {
+                return client.getVaultInvitationsByUserEmail(authenticationDetails.email);
+              }
+
+              return null
+            })
+          .then(response => {
+            if (response && response.data) {
+              setVaultInvitations(response.data.vaultInvitations)
+            } else {
+              setVaultInvitations([])
+            }
+          })
+        )
+        .catch(error => console.error(error))
   }, [api, authenticationDetails]);
 
   if (!authenticationDetails) {

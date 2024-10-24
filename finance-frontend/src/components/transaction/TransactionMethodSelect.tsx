@@ -1,9 +1,9 @@
 import React, {useState} from "react"
 import Select from "react-select"
-import {SelectProperties} from "@/components/api"
+import {SelectProperties, TransactionMethod} from "@/api/types";
 
 interface TransactionMethodSelectProperties {
-  onChange: (transactionMethod: string) => void
+  onChange: (transactionMethod: TransactionMethod) => void
   defaultValue?: string
   isDisabled?: boolean
 }

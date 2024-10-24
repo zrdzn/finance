@@ -93,7 +93,7 @@ class TransactionController(
         )
 
     @PatchMapping("/{transactionId}")
-    fun updateTransactions(
+    fun updateTransaction(
         @AuthenticationPrincipal userId: UserId,
         @PathVariable transactionId: TransactionId,
         @RequestBody transactionUpdateRequest: TransactionUpdateRequest

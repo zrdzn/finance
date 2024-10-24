@@ -18,13 +18,16 @@ import {useApi} from "@/hooks/useApi"
 import {useRouter} from "next/router"
 import {useTheme} from "@/hooks/useTheme"
 import {useAuthentication} from "@/hooks/useAuthentication"
-import {VaultCreateRequest} from "@/components/api"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
 import {TransactionMethodSelect} from "@/components/transaction/TransactionMethodSelect"
 import toast from "react-hot-toast"
 import {Layout} from "@/components/Layout"
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+import {TransactionMethod} from "@/api/types";
+
+type VaultCreateRequest = Components.Schemas.VaultCreateRequest;
 
 export default function SetupVault(): ReactJSXElement {
   const { authenticationDetails } = useAuthentication()
@@ -56,7 +59,7 @@ export default function SetupVault(): ReactJSXElement {
     setVaultCreateRequest((previous) => ({ ...previous, currency: currency }))
   }
 
-  const handleDefaultTransactionMethodChange = (transactionMethod: string) => {
+  const handleDefaultTransactionMethodChange = (transactionMethod: TransactionMethod) => {
     setVaultCreateRequest((previous) => ({ ...previous, transactionMethod: transactionMethod }))
   }
 
@@ -68,12 +71,13 @@ export default function SetupVault(): ReactJSXElement {
       return
     }
 
-    const vaultCreateResult = api.post("/vaults/create", vaultCreateRequest)
-      .then(response => router.push(`/vault/${response.data.publicId}`))
-      .catch(error => {
-        console.error(error)
-        throw error
-      })
+    const vaultCreateResult = api
+        .then(client => client.createVault(null, vaultCreateRequest)
+            .then(response => router.push(`/vault/${response.data.publicId}`)))
+        .catch(error => {
+            console.error(error)
+            throw error
+        })
 
     toast.promise(vaultCreateResult, {
       loading: t("form.submit-loading"),

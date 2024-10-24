@@ -31,6 +31,7 @@ class FinanceSecurityConfiguration(
                     .requestMatchers("/api/authentication/register").permitAll()
                     .requestMatchers("/api/authentication/login").permitAll()
                     .requestMatchers("/swagger").permitAll()
+                    .requestMatchers("/swagger-ui.html").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/v3/api-docs").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()

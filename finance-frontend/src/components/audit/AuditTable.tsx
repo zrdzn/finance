@@ -1,4 +1,3 @@
-import {AuditResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
@@ -12,7 +11,6 @@ import {
   CardHeader,
   Divider,
   Flex,
-  Heading,
   HStack,
   Tag,
   TagLabel,
@@ -23,6 +21,10 @@ import {FaClock, FaUser} from "react-icons/fa"
 import {FaCircleCheck} from "react-icons/fa6"
 import {useAuditActionFormatter} from "@/hooks/useAuditActionFormatter"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type VaultResponse = Components.Schemas.VaultResponse;
+type AuditResponse = Components.Schemas.AuditResponse;
 
 interface AuditTableProperties {
   vault: VaultResponse
@@ -38,10 +40,9 @@ export const AuditTable = ({ vault, permissions }: AuditTableProperties) => {
   const { formatAuditAction } = useAuditActionFormatter()
 
   useEffect(() => {
-    api.get(`/audits/${vault.id}`)
-      .then(response => {
-        setAudits(response.data.audits)
-      })
+    api
+      .then(client => client.getAudits({ vaultId: vault.id })
+        .then(response => setAudits(response.data.audits)))
       .catch(error => console.error(error))
   }, [api, vault.id]);
 
@@ -94,7 +95,7 @@ export const AuditTable = ({ vault, permissions }: AuditTableProperties) => {
                               <TagLabel>
                                 <HStack>
                                   <FaClock />
-                                  <Text fontSize={{ base: 'xs', md: 'sm' }}>{formatDate(audit.createdAt, false)}</Text>
+                                  <Text fontSize={{ base: 'xs', md: 'sm' }}>{formatDate(audit.createdAt, true)}</Text>
                                 </HStack>
                               </TagLabel>
                             </Tag>
