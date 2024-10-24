@@ -15,11 +15,15 @@ import React, {useRef, useState} from "react"
 import {FaEdit} from "react-icons/fa"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
-import {CategoryResponse, ProductResponse, ProductUpdateRequest} from "@/components/api"
 import {CategorySelect} from "@/components/product/category/CategorySelect"
 import {useRouter} from 'next/router'
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type ProductResponse = Components.Schemas.ProductResponse;
+type ProductUpdateRequest = Components.Schemas.ProductUpdateRequest;
+type CategoryResponse = Components.Schemas.CategoryResponse;
 
 interface EditProductButtonProperties {
   product: ProductResponse
@@ -38,19 +42,20 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
   const finalRef = useRef(null)
 
   const handleCategoryChange = (category: CategoryResponse | null) => {
-    setProductUpdateRequest({ ...productUpdateRequest, categoryId: category?.id ?? null });
+    setProductUpdateRequest({ ...productUpdateRequest, categoryId: category?.id });
   }
 
   const handleProductUpdate = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.patch(`/products/${product.id}`, productUpdateRequest)
-      .then(() => onClose())
-      .then(() => {
-        toast.success(t('product-updated-success'))
-        setTimeout(() => router.reload(), 1000)
-      })
-      .catch(error => console.error(error))
+    api
+        .then(client => client.updateProduct({ productId: product.id }, productUpdateRequest))
+        .then(() => onClose())
+        .then(() => {
+          toast.success(t('product-updated-success'))
+          setTimeout(() => router.reload(), 1000)
+        })
+        .catch(error => console.error(error))
   }
 
   return (

@@ -16,10 +16,12 @@ import React, {ChangeEvent, useRef, useState} from "react"
 import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
-import {CategoryCreateRequest} from "@/components/api"
 import {useRouter} from 'next/router'
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type CategoryCreateRequest = Components.Schemas.CategoryCreateRequest;
 
 interface AddCategoryButtonProperties {
   vaultId: number
@@ -45,7 +47,8 @@ export const AddCategoryButton = ({ vaultId }: AddCategoryButtonProperties) => {
   const handleCategoryCreate = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.post("/categories/create", categoryCreateRequest)
+    api
+      .then(client => client.createCategory(null, categoryCreateRequest))
       .then(() => onClose())
       .then(() => {
         toast.success(t('category-created-success').replace("%name%", categoryCreateRequest.name))

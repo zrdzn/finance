@@ -89,5 +89,21 @@ docker pull zrdzn/finance-frontend:latest
 docker-compose up backend -d
 docker-compose up frontend -d
 ```
+## 🧑‍💻 Developers
+### 📜 API Documentation
+- You can access the **Swagger** UI for detailed API documentation at `<backend-url>/swagger-ui.html`.
+- Additionally, an **OpenAPI** specification is available at `<backend-url>/v3/api-docs` for integration and development purposes.
+### 🏗️ Building from Source
+To build the backend from source, you can follow these simple steps:
+
+1. Clone the repository:
+```bash
+git clone https://github.com/zrdzn/finance.git
+cd finance/finance-backend
+```
+2. Build the backend using Gradle:
+```bash
+./gradlew bootJar
+```
 ## 📄 License
 - This project is licensed under the MIT License - see the [LICENSE](LICENSE)

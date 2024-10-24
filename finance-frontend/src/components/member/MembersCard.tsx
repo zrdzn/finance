@@ -1,12 +1,15 @@
-import {Card, CardBody, CardHeader, Divider, Flex, Heading, Stack, Text} from "@chakra-ui/react"
+import {Card, CardBody, CardHeader, Divider, Flex, Stack, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {VaultMemberResponse, VaultResponse, VaultRoleResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {SearchBar} from "@/components/shared/SearchBar"
-import {useRouter} from "next/router"
 import {MembersCardItem} from "@/components/member/MembersCardItem"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type VaultResponse = Components.Schemas.VaultResponse;
+type VaultRoleResponse = Components.Schemas.VaultRoleResponse;
+type VaultMemberResponse = Components.Schemas.VaultMemberResponse;
 
 interface MembersCardProperties {
   vault: VaultResponse
@@ -16,17 +19,17 @@ interface MembersCardProperties {
 export const MembersCard = ({ vault, vaultRole }: MembersCardProperties) => {
   const theme = useTheme()
   const api = useApi()
-  const router = useRouter()
   const t = useTranslations("Members")
   const [members, setMembers] = useState<VaultMemberResponse[]>([])
   const [queriedMembers, setQueriedMembers] = useState<VaultMemberResponse[]>([])
 
   useEffect(() => {
-    api.get(`/vaults/${vault.id}/members`)
-      .then(response => {
-        setMembers(response.data.vaultMembers)
-        setQueriedMembers(response.data.vaultMembers)
-      })
+    api
+      .then(client => client.getVaultMembers({ vaultId: vault.id })
+        .then(response => {
+          setMembers(response.data.vaultMembers)
+          setQueriedMembers(response.data.vaultMembers)
+        }))
       .catch(error => console.error(error))
   }, [api, vault.id]);
 

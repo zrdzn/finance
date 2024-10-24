@@ -4,20 +4,21 @@ import {
   AccordionItem,
   Box,
   Flex,
-  Heading,
   HStack,
   Tag,
   TagLabel,
   Text
 } from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
-import {ProductResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {EditProductButton} from "@/components/product/EditProductButton"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type ProductResponse = Components.Schemas.ProductResponse;
 
 interface ProductsCardItemProperties {
   product: ProductResponse
@@ -34,15 +35,17 @@ export const ProductsCardItem = ({
   const [category, setCategory] = useState<ProductResponse | undefined>(undefined)
 
   useEffect(() => {
-    api.get(`/categories/${product.categoryId}`)
-      .then(response => setCategory(response.data))
+    api
+      .then(client => client.getCategoryById({ id: product.categoryId ?? 0 })
+        .then(response => setCategory(response.data)))
       .catch(error => console.error(error))
   }, [api, product.categoryId]);
 
   const handleProductDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.delete(`/products/${product.id}`)
+    api
+      .then(client => client.deleteProduct({ productId: product.id }))
       .then(() => {
         toast.success(t('product-deleted-success'))
         setTimeout(() => router.reload(), 1000)

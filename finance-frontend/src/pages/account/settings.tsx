@@ -18,7 +18,6 @@ import {useApi} from "@/hooks/useApi"
 import {useRouter} from "next/router"
 import {useTheme} from "@/hooks/useTheme"
 import {useAuthentication} from "@/hooks/useAuthentication"
-import {AccountUpdateType, UserProfileUpdateRequest} from "@/components/api"
 import toast from "react-hot-toast"
 import {Layout} from "@/components/Layout"
 import {FaEdit, FaEnvelope, FaKey, FaLock, FaSave, FaShieldAlt} from "react-icons/fa"
@@ -27,6 +26,9 @@ import {RequestAccountUpdateButton} from "@/components/account/RequestAccountUpd
 import {RequestAccountVerificationButton} from "@/components/account/RequestAccountVerificationButton";
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type UserProfileUpdateRequest = Components.Schemas.UserProfileUpdateRequest;
 
 export default function AccountSettings(): ReactJSXElement {
   const { authenticationDetails } = useAuthentication()
@@ -65,15 +67,16 @@ export default function AccountSettings(): ReactJSXElement {
       return
     }
 
-    api.patch("/users/profile", userProfileUpdateRequest)
-      .then(() => {
-        toast.success(t('profile-card.updated-success'))
-        setTimeout(() => router.reload(), 1000)
-      })
-      .catch(error => {
-        console.error(error)
-        toast.error(t('profile-card.updated-error'))
-      })
+    api
+        .then(client => client.updateUserProfile(null, userProfileUpdateRequest)
+            .then(() => {
+                toast.success(t('profile-card.updated-success'))
+                setTimeout(() => router.reload(), 1000)
+            }))
+        .catch(error => {
+                console.error(error)
+                toast.error(t('profile-card.updated-error'))
+        })
   }
 
   return (
@@ -106,7 +109,7 @@ export default function AccountSettings(): ReactJSXElement {
                             defaultValue={authenticationDetails.email}
                             isDisabled
                         />
-                        <RequestAccountUpdateButton icon={<FaEdit />} accountUpdateType={AccountUpdateType.Email} />
+                        <RequestAccountUpdateButton icon={<FaEdit />} accountUpdateType={'EMAIL'} />
                       </HStack>
                     </FormControl>
                     <FormControl isRequired>
@@ -139,7 +142,7 @@ export default function AccountSettings(): ReactJSXElement {
                     <FormControl isRequired>
                       <FormLabel>{t('profile-card.password-label')}</FormLabel>
                       <HStack>
-                        <RequestAccountUpdateButton icon={<FaKey />} text={t('profile-card.password-placeholder')} accountUpdateType={AccountUpdateType.Password} />
+                        <RequestAccountUpdateButton icon={<FaKey />} text={t('profile-card.password-placeholder')} accountUpdateType={'PASSWORD'} />
                       </HStack>
                     </FormControl>
                     <FormControl>

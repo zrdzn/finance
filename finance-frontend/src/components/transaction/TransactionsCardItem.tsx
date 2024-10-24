@@ -11,7 +11,6 @@ import {
   Text
 } from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
-import {TransactionProductWithProductResponse, TransactionResponse,} from "@/components/api"
 import {SearchBar} from "@/components/shared/SearchBar"
 import {useApi} from "@/hooks/useApi"
 import {useRouter} from "next/router"
@@ -24,6 +23,10 @@ import {FaCircleCheck} from "react-icons/fa6"
 import {FaCaretDown, FaCaretUp} from "react-icons/fa"
 import {useDateFormatter} from "@/hooks/useDateFormatter"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type TransactionResponse = Components.Schemas.TransactionResponse;
+type TransactionProductWithProductResponse = Components.Schemas.TransactionProductWithProductResponse;
 
 interface TransactionsCardItemProperties {
   vaultId: number
@@ -44,12 +47,13 @@ export const TransactionsCardItem = ({
   const [queriedTransactionProducts, setQueriedTransactionProducts] = useState<TransactionProductWithProductResponse[]>([])
 
   useEffect(() => {
-    api.get(`/transactions/${transaction.id}/products`)
-      .then(response => {
-        setTransactionProducts(response.data.products)
-        setQueriedTransactionProducts(response.data.products)
-      })
-      .catch(error => console.error(error))
+    api
+        .then(client => client.getTransactionProducts({ transactionId: transaction.id })
+            .then(response => {
+                setTransactionProducts(response.data.products)
+                setQueriedTransactionProducts(response.data.products)
+            }))
+        .catch(error => console.error(error))
   }, [api, transaction.id]);
 
   const handleSearchResults = (results: TransactionProductWithProductResponse[]) => {
@@ -59,15 +63,16 @@ export const TransactionsCardItem = ({
   const handleTransactionDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.delete(`/transactions/${transaction.id}`)
-      .then(() => {
-        toast.success(t('transaction-deleted-success'))
-        setTimeout(() => router.reload(), 1000)
-      })
-      .catch(error => {
-        console.error(error)
-        toast.error(t('transaction-deleted-error'))
-      })
+    api
+        .then(client => client.deleteTransaction({ transactionId: transaction.id }))
+        .then(() => {
+            toast.success(t('transaction-deleted-success'))
+            setTimeout(() => router.reload(), 1000)
+        })
+        .catch(error => {
+            console.error(error)
+            toast.error(t('transaction-deleted-error'))
+        })
   }
 
   return (

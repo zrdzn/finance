@@ -18,8 +18,11 @@ import React from "react"
 import {FaAngleLeft, FaAngleRight, FaBars, FaBook, FaHistory, FaTags, FaUser} from "react-icons/fa"
 import {FaCalendarDays, FaChartSimple, FaGears, FaHouse, FaX} from "react-icons/fa6"
 import {useRouter} from "next/router"
-import {VaultResponse, VaultRoleResponse} from "@/components/api"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type VaultResponse = Components.Schemas.VaultResponse;
+type VaultRoleResponse = Components.Schemas.VaultRoleResponse;
 
 interface VaultSidebarProperties {
   vault: VaultResponse;

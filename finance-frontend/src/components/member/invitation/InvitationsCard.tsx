@@ -1,13 +1,15 @@
-import {Card, CardBody, CardHeader, Divider, Flex, Heading, Stack, Text} from "@chakra-ui/react"
+import {Card, CardBody, CardHeader, Divider, Flex, Stack, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {VaultInvitationResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {SearchBar} from "@/components/shared/SearchBar"
-import {useRouter} from "next/router"
 import {InvitationsCardItem} from "@/components/member/invitation/InvitationsCardItem"
 import {InvitationCreateButton} from "@/components/member/invitation/InvitationCreateButton"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type VaultResponse = Components.Schemas.VaultResponse;
+type VaultInvitationResponse = Components.Schemas.VaultInvitationResponse;
 
 interface InvitationsCardProperties {
   vault: VaultResponse
@@ -17,13 +19,13 @@ interface InvitationsCardProperties {
 export const  InvitationsCard = ({ vault, permissions }: InvitationsCardProperties) => {
   const theme = useTheme()
   const api = useApi()
-  const router = useRouter()
   const t = useTranslations("Invitations")
   const [invitations, setInvitations] = useState<VaultInvitationResponse[]>([])
   const [queriedInvitations, setQueriedInvitations] = useState<VaultInvitationResponse[]>([])
 
   useEffect(() => {
-    api.get(`/vaults/${vault.id}/invitations`)
+    api
+      .then(client => client.getVaultInvitations({ vaultId: vault.id }))
       .then(response => {
         setInvitations(response.data.vaultInvitations)
         setQueriedInvitations(response.data.vaultInvitations)

@@ -1,6 +1,9 @@
 import Select from "react-select"
 import React, {useEffect, useState} from "react"
-import {ProductResponse, SelectOptionProperties, SelectProperties} from "@/components/api"
+import {Components} from "@/api/api";
+import {SelectOptionProperties, SelectProperties} from "@/api/types";
+
+type ProductResponse = Components.Schemas.ProductResponse;
 
 interface ProductSelectProperties {
   vaultId: number
@@ -10,7 +13,7 @@ interface ProductSelectProperties {
 
 const noneProduct = { value: 'none', label: 'None' }
 
-export const ProductSelect = ({ vaultId, products, onChange }: ProductSelectProperties) => {
+export const ProductSelect = ({products, onChange }: ProductSelectProperties) => {
   const [selectedProduct, setSelectedProduct] = useState<SelectProperties>(noneProduct)
   const [options, setOptions] = useState<SelectOptionProperties[]>([{ value: selectedProduct?.value ?? '', label: selectedProduct?.label ?? '' }])
 

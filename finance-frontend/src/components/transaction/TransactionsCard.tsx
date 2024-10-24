@@ -2,12 +2,14 @@ import {Accordion, Card, CardBody, CardHeader, Divider, Flex, Heading, Stack, Te
 import {AddTransactionButton} from "@/components/transaction/AddTransactionButton"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {TransactionResponse, VaultResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {TransactionsCardItem} from "@/components/transaction/TransactionsCardItem"
 import {SearchBar} from "@/components/shared/SearchBar"
-import {useRouter} from "next/router"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type VaultResponse = Components.Schemas.VaultResponse;
+type TransactionResponse = Components.Schemas.TransactionResponse;
 
 interface TransactionsCardProperties {
   vault: VaultResponse
@@ -22,12 +24,13 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
   const [queriedTransactions, setQueriedTransactions] = useState<TransactionResponse[]>([])
 
   useEffect(() => {
-    api.get(`/transactions/${vault.id}`)
-      .then(response => {
-        setTransactions(response.data.transactions)
-        setQueriedTransactions(response.data.transactions)
-      })
-      .catch(error => console.error(error))
+      api
+          .then(client => client.getTransactionsByVaultId({ vaultId: vault.id })
+            .then(response => {
+                setTransactions(response.data.transactions)
+                setQueriedTransactions(response.data.transactions)
+            }))
+          .catch(error => console.error(error))
   }, [api, vault.id]);
 
   const handleSearchResults = (results: TransactionResponse[]) => {
@@ -51,7 +54,7 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
             content={transactions}
             onSearch={handleSearchResults}
             filter={(transaction, query) => {
-              if (transaction.description === null) {
+              if (transaction.description === undefined) {
                 return false
               }
 

@@ -2,10 +2,12 @@ import {Button, Card, CardBody, CardFooter, Divider, Heading, Stack, Text,} from
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
-import {UsernameResponse} from "@/components/api"
 import {useRouter} from "next/router"
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
+import { Components } from '@/api/api'
+
+type UsernameResponse = Components.Schemas.UsernameResponse;
 
 interface VaultCardProperties {
   publicId: string
@@ -21,10 +23,11 @@ export const VaultCard = ({ publicId, ownerId, name }: VaultCardProperties) => {
   const [username, setUsername] = useState<UsernameResponse | undefined>(undefined)
 
   useEffect(() => {
-    api.get(`/users/${ownerId}/username`)
-      .then((response) => setUsername({ username: response.data.username }))
-      .catch((error) => console.error(error))
-  }, [api, ownerId]);
+    api
+        .then(client => client.getUsernameByUserId({ userId: ownerId })
+            .then(response => setUsername(response.data)))
+        .catch(error => console.error(error))
+  }, [api, ownerId])
 
   const handleRedirect = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()

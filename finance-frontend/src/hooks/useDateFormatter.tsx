@@ -1,13 +1,14 @@
 import {useCallback} from "react"
 
 export const useDateFormatter = () => {
-  const formatDate = useCallback((timestamp: number, showTime: boolean) => {
-    const date = new Date(timestamp * 1000)
+  const formatDate = useCallback((instantString: string, showTime: boolean) => {
+    const timestamp = Number(instantString) * 1000
+    const date = new Date(timestamp)
 
     const formattedDate = date.toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
     })
 
     const formattedTime = date.toLocaleTimeString('en-US', {

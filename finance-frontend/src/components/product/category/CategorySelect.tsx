@@ -1,7 +1,11 @@
 import Select from "react-select"
 import React, {useEffect, useState} from "react"
-import {CategoryResponse, ProductResponse, SelectOptionProperties, SelectProperties} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
+import {Components} from "@/api/api";
+import {SelectOptionProperties, SelectProperties} from "@/api/types";
+
+type CategoryResponse = Components.Schemas.CategoryResponse;
+type ProductResponse = Components.Schemas.ProductResponse;
 
 interface ProductCategorySelectProperties {
   vaultId: number
@@ -19,19 +23,20 @@ export const CategorySelect = ({ vaultId, onChange, defaultValue }: ProductCateg
   const [options, setOptions] = useState<SelectOptionProperties[]>([{ value: selectedCategory?.value ?? '', label: selectedCategory?.label ?? '' }])
 
   useEffect(() => {
-    api.get(`/categories/vault/${vaultId}`)
-      .then(response => {
-        setCategories(response.data.categories)
+    api
+      .then(client => client.getCategoriesByVaultId(vaultId)
+        .then(response => {
+          setCategories(response.data.categories)
 
-        const newOptions = response.data.categories
-          .map((category: ProductResponse) => ({
-            value: category.id.toString(),
-            label: category.name
-          }))
-          .concat({ value: 'None', label: 'None' });
+          const newOptions = response.data.categories
+            .map((category: ProductResponse) => ({
+              value: category.id.toString(),
+              label: category.name
+            }))
+            .concat({ value: 'None', label: 'None' });
 
-        setOptions(newOptions)
-      })
+          setOptions(newOptions)
+        }))
       .catch(error => console.error(error))
   }, [api, vaultId]);
 

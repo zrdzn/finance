@@ -1,10 +1,12 @@
 import {Flex,} from '@chakra-ui/react'
 import React, {useEffect, useState} from "react"
 import {useApi} from "@/hooks/useApi"
-import {ProductResponse} from "@/components/api"
 import {ProductSelect} from "@/components/product/ProductSelect"
 import {AddProductButton} from "@/components/product/AddProductButton"
 import {Axios} from "axios"
+import {Client, Components} from "@/api/api";
+
+type ProductResponse = Components.Schemas.ProductResponse;
 
 interface ProductSelectWithAddButtonProperties {
   vaultId: number
@@ -19,9 +21,10 @@ export const ProductSelectWithAddButton = ({ vaultId, onChange }: ProductSelectW
     updateProducts(api, vaultId)
   }, [vaultId, api]);
 
-  const updateProducts = (api: Axios, vaultId: number) => {
-    api.get(`/products/${vaultId}`)
-      .then(response => setProducts(response.data.products))
+  const updateProducts = (api: Promise<Client>, vaultId: number) => {
+    api
+      .then(client => client.getProductsByVaultId({ vaultId: vaultId })
+        .then(response => setProducts(response.data.products)))
       .catch(error => console.error(error))
   }
 

@@ -20,12 +20,15 @@ import React, {useRef, useState} from "react"
 import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
-import {TransactionProductCreateRequest, ProductResponse} from "@/components/api"
 import {useRouter} from 'next/router'
 import {PriceInput} from "@/components/shared/PriceInput"
 import {ProductSelectWithAddButton} from "@/components/product/ProductSelectWithAddButton"
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type TransactionProductCreateRequest = Components.Schemas.TransactionProductCreateRequest;
+type ProductResponse = Components.Schemas.ProductResponse;
 
 interface AddTransactionProductsButtonProperties {
   vaultId: number
@@ -57,16 +60,17 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId }: AddTran
   const handleTransactionProductCreate = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.post(`/transactions/${transactionId}/products/create`, transactionProductCreateRequest)
-      .then(() => onClose())
-      .then(() => {
-        toast.success(t('product.product-added-success'))
-        setTimeout(() => router.reload(), 1000)
-      })
-      .catch(error => {
-        console.error(error)
-        toast.error(t('product.product-added-error'))
-      })
+    api
+        .then(client => client.createTransactionProduct({ transactionId: transactionId }, transactionProductCreateRequest))
+        .then(() => onClose())
+        .then(() => {
+          toast.success(t('product.product-added-success'))
+          setTimeout(() => router.reload(), 1000)
+        })
+        .catch(error => {
+            console.error(error)
+            toast.error(t('product.product-added-error'))
+        })
   }
 
   return (

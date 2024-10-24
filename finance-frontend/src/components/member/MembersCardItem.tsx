@@ -4,22 +4,23 @@ import {
   AccordionItem,
   Box,
   Flex,
-  Heading,
   HStack,
   Tag,
   TagLabel,
   Text
 } from "@chakra-ui/react"
 import React from "react"
-import {VaultMemberResponse, VaultRoleResponse} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {useRouter} from "next/router"
 import {DeleteButton} from "@/components/shared/DeleteButton"
 import toast from "react-hot-toast"
-import {EditProductButton} from "@/components/product/EditProductButton";
 import {EditMemberButton} from "@/components/member/EditMemberButton";
 import {useAuthentication} from "@/hooks/useAuthentication";
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+
+type VaultMemberResponse = Components.Schemas.VaultMemberResponse;
+type VaultRoleResponse = Components.Schemas.VaultRoleResponse;
 
 interface MembersCardItemProperties {
   member: VaultMemberResponse
@@ -38,7 +39,8 @@ export const MembersCardItem = ({
   const handleMemberDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    api.delete(`/vaults/${member.vaultId}/members/${member.id}`)
+    api
+      .then(client => client.removeVaultMember({ vaultId: member.vaultId, userId: member.id }))
       .then(() => {
         toast.success(t('member-deleted-success').replace("%username%", member.user.username))
         setTimeout(() => router.reload(), 1000)

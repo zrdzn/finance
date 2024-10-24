@@ -1,10 +1,12 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {useApi} from "@/hooks/useApi"
-import {AuthenticationDetails} from "@/components/api"
 import toast from "react-hot-toast"
+import {Components} from "@/api/api";
+
+type AuthenticationDetailsResponse = Components.Schemas.AuthenticationDetailsResponse;
 
 interface AuthenticationContext {
-  authenticationDetails: AuthenticationDetails | null | undefined;
+  authenticationDetails: AuthenticationDetailsResponse | null | undefined;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>
 }
@@ -16,34 +18,36 @@ const DefaultAuthenticationContext = createContext<AuthenticationContext>({
 });
 
 export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const api = useApi();
-  const [authenticationDetails, setAuthenticationDetails] = useState<AuthenticationDetails | null | undefined>(undefined);
+  const api = useApi()
+  const [authenticationDetails, setAuthenticationDetails] = useState<AuthenticationDetailsResponse | null | undefined>(undefined);
 
   useEffect(() => {
     if (authenticationDetails === undefined) {
       updateAuthenticationDetails()
     }
-  });
+  })
 
   const updateAuthenticationDetails = () => {
-    api.get("/authentication/details")
-      .then(response => setAuthenticationDetails(response.data))
-      .catch(error => {
-        setAuthenticationDetails(null)
-        console.error(error)
-      })
+    api
+        .then(client => client.getAuthenticationDetails()
+            .then(response => setAuthenticationDetails(response.data)))
+        .catch(error => {
+            setAuthenticationDetails(null)
+            console.error(error)
+        })
   }
 
   const login = async (email: string, password: string): Promise<void> => {
-    const loginResult = api.post("/authentication/login", {
-      email: email,
-      password: password
-    })
-      .then(() => updateAuthenticationDetails())
-      .catch(error => {
-        console.error(error)
-        throw error
-      })
+    const loginResult = api
+        .then(client => client.login(null, {
+          email: email,
+          password: password
+        }))
+        .then(() => updateAuthenticationDetails())
+        .catch(error => {
+            console.error(error)
+            throw error
+        })
 
     await toast.promise(loginResult, {
       loading: 'Logging in',
@@ -53,9 +57,10 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
   };
 
   const logout = async (): Promise<void> => {
-    const logoutResult = api.post("/authentication/logout")
-      .then(() => setAuthenticationDetails(null))
-      .catch(error => console.error(error))
+    const logoutResult = api
+        .then(client => client.logout())
+        .then(() => setAuthenticationDetails(null))
+        .catch(error => console.error(error))
 
     await toast.promise(logoutResult, {
       loading: 'Logging out',

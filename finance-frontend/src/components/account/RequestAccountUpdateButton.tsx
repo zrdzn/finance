@@ -15,22 +15,18 @@ import {
   Stack,
 } from '@chakra-ui/react'
 import React, {ChangeEvent, useRef, useState} from "react"
-import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
-import {
-  AccountUpdateType,
-  CategoryResponse,
-  ProductCreateRequest,
-  ProductResponse,
-  UserEmailUpdateRequest, UserPasswordUpdateRequest
-} from "@/components/api"
-import {CategorySelect} from "@/components/product/category/CategorySelect"
 import toast from "react-hot-toast"
 import {FaPencil} from "react-icons/fa6"
 import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"
 import {useTranslations} from "next-intl";
+import {AccountUpdateType} from "@/api/types";
+import {Components} from "@/api/api";
+
+type UserEmailUpdateRequest = Components.Schemas.UserEmailUpdateRequest;
+type UserPasswordUpdateRequest = Components.Schemas.UserPasswordUpdateRequest;
 
 interface RequestAccountUpdateButtonProperties {
   icon?: React.ReactNode;
@@ -61,8 +57,8 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
 
   const steps = [
     { title: t('profile-modal.steps.security.title'), description: t('profile-modal.steps.security.description') },
-    { title: accountUpdateType === AccountUpdateType.Email ? t('profile-modal.steps.email.title') : t('profile-modal.steps.password.title'),
-      description: accountUpdateType === AccountUpdateType.Email ? t('profile-modal.steps.email.description') : t('profile-modal.steps.password.description') },
+    { title: accountUpdateType === 'EMAIL' ? t('profile-modal.steps.email.title') : t('profile-modal.steps.password.title'),
+      description: accountUpdateType === 'EMAIL' ? t('profile-modal.steps.email.description') : t('profile-modal.steps.password.description') },
   ];
 
   const { activeStep, setActiveStep } = useSteps({
@@ -79,52 +75,55 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
   };
 
   const handleSecurityCodeSend = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    api.get("/users/update/request")
-      .then(response => {
-        toast.success(t('profile-card.security-code-sent'));
-        setTimeout(() => {
-          requestOnClose();
-          verificationOnOpen();
-        }, 1000);
-      })
-      .catch(error => console.error(error));
-  };
+    api
+        .then(client => client.requestUserUpdate())
+        .then(() => {
+          toast.success(t('profile-card.security-code-sent'))
+          setTimeout(() => {
+            requestOnClose()
+            verificationOnOpen()
+          }, 1000)
+        })
+        .catch(error => console.error(error))
+  }
 
   const handleSecurityCodeUpdate = (securityCode: string) => {
-    setSecurityCode(securityCode);
+    setSecurityCode(securityCode)
     setUserEmailUpdateRequest((previous) => ({ ...previous, securityCode: securityCode }));
     setUserPasswordUpdateRequest((previous) => ({ ...previous, securityCode: securityCode }));
   }
 
   const handleUserEmailUpdate = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    api.patch("/users/update/email", userEmailUpdateRequest)
-      .then(() => {
-        toast.success(t('profile-modal.email-updated-success'));
-        setTimeout(() => router.reload(), 1000);
-      })
-      .catch(error => {
-        console.error(error);
-        toast.error(t('profile-modal.email-updated-error'));
-      });
-  };
+    api
+        .then(client => client.updateUserEmail(null, userEmailUpdateRequest))
+        .then(() => {
+          toast.success(t('profile-modal.email-updated-success'))
+          setTimeout(() => router.reload(), 1000)
+        })
+        .catch(error => {
+          console.error(error)
+          toast.error(t('profile-modal.email-updated-error'))
+        })
+  }
 
   const handleUserPasswordUpdate = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    api.patch("/users/update/password", userPasswordUpdateRequest)
-      .then(() => {
-        toast.success(t('profile-modal.password-updated-success'));
-        setTimeout(() => router.reload(), 1000);
-      })
-      .catch(error => {
-        console.error(error);
-        toast.error(t('profile-modal.password-updated-error'));
-      });
-  };
+    api
+        .then(client => client.updateUserPassword(null, userPasswordUpdateRequest))
+        .then(() => {
+          toast.success(t('profile-modal.password-updated-success'))
+          setTimeout(() => router.reload(), 1000)
+        })
+        .catch(error => {
+          console.error(error)
+          toast.error(t('profile-modal.password-updated-error'))
+        })
+  }
 
   return authenticationDetails && (
     <>
@@ -198,7 +197,7 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
                 </FormControl>
               )}
 
-              {activeStep === 1 && accountUpdateType === AccountUpdateType.Email && (
+              {activeStep === 1 && accountUpdateType === 'EMAIL' && (
                 <FormControl isRequired>
                   <FormLabel>{t('profile-modal.steps.email.new-email-label')}</FormLabel>
                   <Input
@@ -212,7 +211,7 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
                 </FormControl>
               )}
 
-              {activeStep === 1 && accountUpdateType === AccountUpdateType.Password && (
+              {activeStep === 1 && accountUpdateType === 'PASSWORD' && (
                 <>
                   <FormControl isRequired>
                     <FormLabel>{t('profile-modal.steps.password.old-password-label')}</FormLabel>
@@ -264,7 +263,7 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
             ) : (
               <Button
                 backgroundColor={theme.primaryColor}
-                onClick={accountUpdateType === AccountUpdateType.Email
+                onClick={accountUpdateType === 'EMAIL'
                   ? handleUserEmailUpdate
                   : handleUserPasswordUpdate
                 }

@@ -1,14 +1,12 @@
-import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, HStack, Text} from "@chakra-ui/react"
+import {Accordion, AccordionButton, AccordionItem, Box, Flex, HStack, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
-import {
-  AnalyticsOverviewStatisticType,
-  TransactionFlowsRange,
-  TransactionFlowsResponse,
-  VaultResponse
-} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
-import exp from "constants"
 import {useTranslations} from "next-intl";
+import {AnalyticsOverviewStatisticType} from "@/api/types";
+import {Components} from "@/api/api";
+
+type VaultResponse = Components.Schemas.VaultResponse;
+type Price = Components.Schemas.Price;
 
 interface AnalyticsSummaryCardItemProperties {
   vault: VaultResponse
@@ -20,33 +18,51 @@ export const AnalyticsSummaryCardItem = ({
 }: AnalyticsSummaryCardItemProperties) => {
   const api = useApi()
   const t = useTranslations("Analytics")
-  const [balance, setBalance] = useState<TransactionFlowsResponse | undefined>(undefined)
-  const [income, setIncome] = useState<TransactionFlowsResponse | undefined>(undefined)
-  const [expenses, setExpenses] = useState<TransactionFlowsResponse | undefined>(undefined)
+  const [balance, setBalance] = useState<Price | undefined>(undefined)
+  const [income, setIncome] = useState<Price | undefined>(undefined)
+  const [expenses, setExpenses] = useState<Price | undefined>(undefined)
   const [transactions, setTransactions] = useState<number | undefined>(undefined)
 
   useEffect(() => {
-    if (statisticType === AnalyticsOverviewStatisticType.Balance) {
-      api.get(`/transactions/${vault.id}/flows?currency=PLN&start=${new Date(vault.createdAt).toISOString()}`)
-        .then(response => setBalance(response.data.total))
+    if (statisticType === 'BALANCE') {
+      api
+        .then(client => client.getExpensesByVaultId({
+          vaultId: vault.id,
+          currency: 'PLN',
+          start: new Date(vault.createdAt).toISOString()
+        })
+          .then(response => setBalance(response.data.total)))
         .catch(error => console.error(error))
     }
 
-    if (statisticType === AnalyticsOverviewStatisticType.Income) {
-      api.get(`/transactions/${vault.id}/flows?transactionType=INCOMING&currency=PLN&start=${new Date(vault.createdAt).toISOString()}`)
-        .then(response => setIncome(response.data.total))
+    if (statisticType === 'INCOME') {
+      api
+        .then(client => client.getExpensesByVaultId({
+          vaultId: vault.id,
+          transactionType: 'INCOMING',
+          currency: 'PLN',
+          start: new Date(vault.createdAt).toISOString()
+        })
+          .then(response => setIncome(response.data.total)))
         .catch(error => console.error(error))
     }
 
-    if (statisticType === AnalyticsOverviewStatisticType.Expenses) {
-      api.get(`/transactions/${vault.id}/flows?transactionType=OUTGOING&currency=PLN&start=${new Date(vault.createdAt).toISOString()}`)
-        .then(response => setExpenses(response.data.total))
+    if (statisticType === 'EXPENSES') {
+      api
+        .then(client => client.getExpensesByVaultId({
+          vaultId: vault.id,
+          transactionType: 'OUTGOING',
+          currency: 'PLN',
+          start: new Date(vault.createdAt).toISOString()
+        })
+          .then(response => setExpenses(response.data.total)))
         .catch(error => console.error(error))
     }
 
-    if (statisticType === AnalyticsOverviewStatisticType.Transactions) {
-      api.get(`/transactions/${vault.id}/amount`)
-        .then(response => setTransactions(response.data.amount))
+    if (statisticType === 'TRANSACTIONS') {
+      api
+        .then(client => client.getTransactionsAmountByVaultId({ vaultId: vault.id })
+          .then(response => setTransactions(response.data.amount)))
         .catch(error => console.error(error))
     }
   }, [api, statisticType, vault.createdAt, vault.id])
@@ -63,10 +79,10 @@ export const AnalyticsSummaryCardItem = ({
                       fontWeight={'600'}
                       isTruncated
                       maxWidth={'70%'}>
-                  {statisticType === AnalyticsOverviewStatisticType.Balance && t('summary.balance')}
-                  {statisticType === AnalyticsOverviewStatisticType.Income && t('summary.income')}
-                  {statisticType === AnalyticsOverviewStatisticType.Expenses && t('summary.expenses')}
-                  {statisticType === AnalyticsOverviewStatisticType.Transactions && t('summary.transactions')}
+                  {statisticType === 'BALANCE' && t('summary.balance')}
+                  {statisticType === 'INCOME' && t('summary.income')}
+                  {statisticType === 'EXPENSES' && t('summary.expenses')}
+                  {statisticType === 'TRANSACTIONS' && t('summary.transactions')}
                 </Text>
                 {
                   balance && balance.amount > 0 &&
@@ -86,11 +102,18 @@ export const AnalyticsSummaryCardItem = ({
                 }
                 {
                   balance && balance.amount === 0 &&
-                    <Text fontSize='xl'
-                          fontWeight={'600'}
-                          isTruncated>
-                        0.00 {balance.currency}
-                    </Text>
+                    <HStack>
+                        <Text fontSize='xl'
+                              fontWeight={'600'}
+                              isTruncated>
+                            0.00
+                        </Text>
+                        <Text fontSize={'md'}
+                              fontWeight={'600'}
+                              isTruncated>
+                          {balance.currency}
+                        </Text>
+                    </HStack>
                 }
                 {
                   balance && balance.amount < 0 &&
@@ -126,11 +149,18 @@ export const AnalyticsSummaryCardItem = ({
                 }
                 {
                   income && income.amount === 0 &&
-                    <Text fontSize='xl'
-                          fontWeight={'600'}
-                          isTruncated>
-                        0.00 {income.currency}
-                    </Text>
+                    <HStack>
+                        <Text fontSize='xl'
+                              fontWeight={'600'}
+                              isTruncated>
+                            0.00
+                        </Text>
+                        <Text fontSize={'md'}
+                              fontWeight={'600'}
+                              isTruncated>
+                          {income.currency}
+                        </Text>
+                    </HStack>
                 }
                 {
                   expenses && expenses.amount > 0 &&
@@ -150,11 +180,18 @@ export const AnalyticsSummaryCardItem = ({
                 }
                 {
                   expenses && expenses.amount === 0 &&
-                    <Text fontSize='xl'
-                          fontWeight={'600'}
-                          isTruncated>
-                        0.00 {expenses.currency}
-                    </Text>
+                    <HStack>
+                        <Text fontSize='xl'
+                              fontWeight={'600'}
+                              isTruncated>
+                            0.00
+                        </Text>
+                        <Text fontSize={'md'}
+                              fontWeight={'600'}
+                              isTruncated>
+                          {expenses.currency}
+                        </Text>
+                    </HStack>
                 }
                 {
                   transactions !== undefined && (

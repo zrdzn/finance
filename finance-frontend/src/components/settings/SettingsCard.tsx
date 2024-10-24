@@ -13,13 +13,17 @@ import {
 } from "@chakra-ui/react"
 import React, {useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
-import {VaultResponse, VaultUpdateRequest} from "@/components/api"
 import {useApi} from "@/hooks/useApi"
 import {useRouter} from "next/router"
 import {CurrencySelect} from "@/components/shared/CurrencySelect"
 import {TransactionMethodSelect} from "@/components/transaction/TransactionMethodSelect"
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+import {TransactionMethod} from "@/api/types";
+
+type VaultUpdateRequest = Components.Schemas.VaultUpdateRequest;
+type VaultResponse = Components.Schemas.VaultResponse;
 
 interface SettingsCardProperties {
   vault: VaultResponse
@@ -45,7 +49,7 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
     setVaultUpdateRequest((previous) => ({ ...previous, currency: currency }))
   }
 
-  const handleDefaultTransactionMethodChange = (transactionMethod: string) => {
+  const handleDefaultTransactionMethodChange = (transactionMethod: TransactionMethod) => {
     setVaultUpdateRequest((previous) => ({ ...previous, transactionMethod: transactionMethod }))
   }
 
@@ -57,26 +61,28 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
       return
     }
 
-    api.patch(`/vaults/${vault.id}`, vaultUpdateRequest)
-      .then(() => {
-        toast.success(t('vault-updated-success'))
-        setTimeout(() => router.reload(), 1000)
-      })
-      .catch(error => {
-        console.error(error)
-        toast.error(t('vault-updated-error'))
-      })
+    api
+        .then(client => client.updateVault({ vaultId: vault.id }, vaultUpdateRequest))
+        .then(() => {
+            toast.success(t('vault-updated-success'))
+            setTimeout(() => router.reload(), 1000)
+        })
+        .catch(error => {
+            console.error(error)
+            toast.error(t('vault-updated-error'))
+        })
   }
 
   const handleVaultDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    const vaultDeleteResult = api.delete(`/vaults/${vault.id}`)
-      .then(() => router.push('/'))
-      .catch(error => {
-        console.error(error)
-        throw error
-      })
+    const vaultDeleteResult = api
+        .then(client => client.removeVault({ vaultId: vault.id }))
+        .then(() => router.push('/'))
+        .catch(error => {
+          console.error(error)
+          throw error
+        })
 
     toast.promise(vaultDeleteResult, {
       loading: t('vault-deleted-loading'),

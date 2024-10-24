@@ -6,7 +6,6 @@ import {ProtectedVault} from "@/components/vault/ProtectedVault"
 import {useRouter} from "next/router"
 import {AnalyticsSummaryCard} from "@/components/analytics/AnalyticsSummaryCard"
 import {FlowsHistoryCard} from "@/components/analytics/flows/FlowsHistoryCard"
-import {TransactionType} from "@/components/api"
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
 
@@ -28,8 +27,8 @@ export default function Statistics(): ReactJSXElement {
               gap={4}
               width="full">
               <AnalyticsSummaryCard vault={vault} permissions={vaultRole.permissions} />
-              <FlowsHistoryCard vault={vault} transactionType={TransactionType.Incoming} />
-              <FlowsHistoryCard vault={vault} transactionType={TransactionType.Outgoing} />
+              <FlowsHistoryCard vault={vault} transactionType={'INCOMING'} />
+              <FlowsHistoryCard vault={vault} transactionType={'OUTGOING'} />
             </Grid>
           </Flex>
         </>

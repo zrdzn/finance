@@ -5,7 +5,6 @@ import {themeExtension} from '@/hooks/useTheme';
 import {AuthenticationProvider} from "@/hooks/useAuthentication"
 import {Inter} from "next/font/google"
 import {Toaster} from "react-hot-toast"
-import {appWithTranslation} from "next-i18next";
 import {NextIntlClientProvider} from "next-intl";
 import {useRouter} from "next/router";
 

@@ -1,6 +1,8 @@
 import {useApi} from "@/hooks/useApi"
 import {useEffect, useState} from "react"
-import {VaultResponse} from "@/components/api"
+import {Components} from "@/api/api";
+
+type VaultResponse = Components.Schemas.VaultResponse;
 
 interface VaultAccessorProperties {
   publicId: string | string[] | undefined
@@ -16,9 +18,10 @@ export const useVault = ({ publicId }: VaultAccessorProperties) => {
       return;
     }
 
-    api.get(`/vaults/${publicId}`)
-      .then(response => setVault(response.data))
-      .catch(error => console.error(error));
+    api
+        .then(client => client.getVaultByPublicId({ vaultPublicId: publicId as string })
+            .then(response => setVault(response.data)))
+        .catch(error => console.error(error))
   }, [api, publicId]);
 
   if (!vault) {
