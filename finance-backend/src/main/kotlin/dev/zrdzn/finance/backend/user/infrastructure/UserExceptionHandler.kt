@@ -3,6 +3,7 @@ package dev.zrdzn.finance.backend.user.infrastructure
 import dev.zrdzn.finance.backend.shared.ErrorResponse
 import dev.zrdzn.finance.backend.shared.toResponse
 import dev.zrdzn.finance.backend.user.api.UserAccessDeniedException
+import dev.zrdzn.finance.backend.user.api.UserEmailAlreadyTakenException
 import dev.zrdzn.finance.backend.user.api.UserNotFoundByEmailException
 import dev.zrdzn.finance.backend.user.api.UserNotFoundException
 import org.springframework.http.HttpStatus
@@ -27,5 +28,10 @@ class UserExceptionHandler {
     fun handleUserAccessDeniedException(
         exception: UserAccessDeniedException
     ): ResponseEntity<ErrorResponse> = exception.toResponse(HttpStatus.FORBIDDEN)
+
+    @ExceptionHandler(UserEmailAlreadyTakenException::class)
+    fun handleUserEmailAlreadyTakenException(
+        exception: UserEmailAlreadyTakenException
+    ): ResponseEntity<ErrorResponse> = exception.toResponse(HttpStatus.CONFLICT)
 
 }

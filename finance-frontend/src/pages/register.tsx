@@ -84,24 +84,26 @@ export default function Register(): ReactJSXElement {
       return
     }
 
-    const registerResult = api
-        .then(client => client.register(null, {
-          email: registrationForm.email,
-          username: registrationForm.username,
-          password: registrationForm.password
-        })
-        .then(() => login(registrationForm.email, registrationForm.password)
-            .then(() => router.push("/")).catch(error => {
-                console.error(error)
-                throw error
-            })
-    ))
-
-    toast.promise(registerResult, {
-      loading: t('form.submit-loading'),
-      success: t('form.submit-success'),
-      error: t('form.submit-error'),
-    })
+    api
+      .then(client => client.register(null, {
+        email: registrationForm.email,
+        username: registrationForm.username,
+        password: registrationForm.password
+      })
+      .then(() => login(registrationForm.email, registrationForm.password)
+          .then(() => {
+            toast.success(t('form.submit-success'))
+            router.push("/")
+          })
+          .catch(error => {
+            console.error(error)
+            throw error
+          })
+      ))
+      .catch(error => {
+        const errorMessage = error.response?.data?.message || t('form.submit-error')
+        toast.error(errorMessage)
+      })
   }
 
   return (
