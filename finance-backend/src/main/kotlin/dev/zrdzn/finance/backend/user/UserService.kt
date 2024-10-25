@@ -1,13 +1,6 @@
 package dev.zrdzn.finance.backend.user
 
-import dev.zrdzn.finance.backend.user.api.UserAccessDeniedException
-import dev.zrdzn.finance.backend.user.api.UserCreateRequest
-import dev.zrdzn.finance.backend.user.api.UserCreateResponse
-import dev.zrdzn.finance.backend.user.api.UserNotFoundByEmailException
-import dev.zrdzn.finance.backend.user.api.UserNotFoundException
-import dev.zrdzn.finance.backend.user.api.UserResponse
-import dev.zrdzn.finance.backend.user.api.UserWithPasswordResponse
-import dev.zrdzn.finance.backend.user.api.UsernameResponse
+import dev.zrdzn.finance.backend.user.api.*
 import org.slf4j.LoggerFactory
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.transaction.annotation.Transactional
@@ -21,8 +14,12 @@ open class UserService(
     private val logger = LoggerFactory.getLogger(UserService::class.java)
 
     @Transactional
-    open fun createUser(userCreateRequest: UserCreateRequest): UserCreateResponse =
-        userRepository
+    open fun createUser(userCreateRequest: UserCreateRequest): UserCreateResponse {
+        if (getUserWithPasswordByEmail(userCreateRequest.email).email == userCreateRequest.email) {
+            throw UserEmailAlreadyTakenException()
+        }
+
+        return userRepository
             .save(
                 User(
                     id = null,
@@ -33,6 +30,7 @@ open class UserService(
                 )
             )
             .let { UserCreateResponse(it.id!!) }
+    }
 
     @Transactional
     open fun requestUserUpdate(requesterId: UserId) {

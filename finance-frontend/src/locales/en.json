@@ -45,7 +45,6 @@
       "confirm-password-placeholder": "Confirm your password",
       "login-redirect": "Already have an account?",
       "submit": "Sign up",
-      "submit-loading": "Signing up",
       "submit-success": "You've successfully signed up",
       "submit-error": "An error occurred while signing up",
       "validation": {
