@@ -6,6 +6,8 @@ import dev.zrdzn.finance.backend.user.api.security.UserAccessDeniedException
 import dev.zrdzn.finance.backend.user.api.UserEmailAlreadyTakenException
 import dev.zrdzn.finance.backend.user.api.UserNotFoundByEmailException
 import dev.zrdzn.finance.backend.user.api.UserNotFoundException
+import dev.zrdzn.finance.backend.user.api.security.TwoFactorAlreadyEnabledException
+import dev.zrdzn.finance.backend.user.api.security.TwoFactorNotEnabledException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -28,6 +30,16 @@ class UserExceptionHandler {
     fun handleUserAccessDeniedException(
         exception: UserAccessDeniedException
     ): ResponseEntity<ErrorResponse> = exception.toResponse(HttpStatus.FORBIDDEN)
+
+    @ExceptionHandler(TwoFactorAlreadyEnabledException::class)
+    fun handleTwoFactorAlreadyEnabledException(
+        exception: TwoFactorAlreadyEnabledException
+    ): ResponseEntity<ErrorResponse> = exception.toResponse(HttpStatus.CONFLICT)
+
+    @ExceptionHandler(TwoFactorNotEnabledException::class)
+    fun handleTwoFactorNotEnabledException(
+        exception: TwoFactorNotEnabledException
+    ): ResponseEntity<ErrorResponse> = exception.toResponse(HttpStatus.CONFLICT)
 
     @ExceptionHandler(UserEmailAlreadyTakenException::class)
     fun handleUserEmailAlreadyTakenException(

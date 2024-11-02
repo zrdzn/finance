@@ -1,4 +1,4 @@
-package dev.zrdzn.finance.backend.category.infrastructure
+package dev.zrdzn.finance.backend.audit.infrastructure
 
 import dev.zrdzn.finance.backend.audit.AuditService
 import dev.zrdzn.finance.backend.audit.api.AuditListResponse

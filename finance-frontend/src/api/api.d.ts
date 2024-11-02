@@ -35,6 +35,7 @@ declare namespace Components {
         export interface AuthenticationLoginRequest {
             email: string;
             password: string;
+            oneTimePassword?: string;
         }
         export interface AuthenticationRegisterResponse {
             userId: number; // int32

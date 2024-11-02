@@ -4,7 +4,6 @@ import dev.samstevens.totp.code.CodeVerifier
 import dev.zrdzn.finance.backend.user.api.*
 import dev.zrdzn.finance.backend.user.api.security.TwoFactorSetupResponse
 import dev.zrdzn.finance.backend.user.api.security.TwoFactorAlreadyEnabledException
-import dev.zrdzn.finance.backend.user.api.security.TwoFactorNotEnabledException
 import dev.zrdzn.finance.backend.user.api.security.UserAccessDeniedException
 import org.slf4j.LoggerFactory
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -80,6 +79,11 @@ open class UserService(
         user.totpSecret = secret
 
         logger.info("User with id $requesterId has enabled two-factor authentication")
+    }
+
+    @Transactional(readOnly = true)
+    open fun verifyUserTwoFactorCode(secret: String, oneTimePassword: String): Boolean {
+        return codeVerifier.isValidCode(secret, oneTimePassword)
     }
 
     @Transactional
@@ -166,7 +170,8 @@ open class UserService(
                     email = it.email,
                     username = it.username,
                     password = it.password,
-                    verified = it.verified
+                    verified = it.verified,
+                    totpSecret = it.totpSecret
                 )
             }
             ?: throw UserNotFoundByEmailException(email)

@@ -39,10 +39,14 @@ class AuthenticationController(
     @PostMapping("/login")
     fun login(
         @RequestBody authenticationLoginRequest: AuthenticationLoginRequest,
+        request: HttpServletRequest,
         response: HttpServletResponse
-    ): AccessTokenResponse =
-        authenticationService.authenticate(authenticationLoginRequest)
+    ): AccessTokenResponse {
+        val ipAddress = request.getHeader("X-Forwarded-For") ?: request.remoteAddr
+
+        return authenticationService.authenticate(authenticationLoginRequest, ipAddress = ipAddress)
             .also { addAuthenticationCookie(response, it.value) }
+    }
 
     @PostMapping("/logout")
     fun logout(

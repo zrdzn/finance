@@ -7,9 +7,9 @@ import org.springframework.context.ConfigurableApplicationContext
 fun main(args: Array<String>) {
     val serverPort = System.getenv("SERVER_PORT")?.toInt() ?: 8080
     val clientUrl = System.getenv("CLIENT_URL") ?: "http://localhost:3000"
-    val databaseUrl = System.getenv("DATABASE_URL") ?: "jdbc:postgresql://localhost:5432/finance"
-    val databaseUsername = System.getenv("DATABASE_USERNAME") ?: "finance"
-    val databasePassword = System.getenv("DATABASE_PASSWORD") ?: "finance"
+    val databaseUrl = System.getenv("DATABASE_URL")!!
+    val databaseUsername = System.getenv("DATABASE_USERNAME")!!
+    val databasePassword = System.getenv("DATABASE_PASSWORD")!!
     val mailHost = System.getenv("MAIL_HOST") ?: "smtp.gmail.com"
     val mailPort = System.getenv("MAIL_PORT")?.toInt() ?: 587
     val mailUsername = System.getenv("MAIL_USERNAME") ?: ""

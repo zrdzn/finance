@@ -41,3 +41,6 @@ totp:
     length: 16
   code:
     length: 6
+logging:
+  level:
+    org.springframework.orm.jpa.JpaTransactionManager: DEBUG
