@@ -165,8 +165,8 @@ export default function Register(): ReactJSXElement {
                 </FormControl>
 
                 <Flex mt={2} justifyContent={'space-between'} gap={3}>
-                  <Button onClick={() => router.push("/login")}>{t('form.login-redirect')}</Button>
-                  <Button backgroundColor={theme.primaryColor} onClick={handleRegistration}>{t('form.submit')}</Button>
+                  <Button color={'#f8f8f8'} fontWeight={'400'} onClick={() => router.push("/login")}>{t('form.login-redirect')}</Button>
+                  <Button color={'#f8f8f8'} fontWeight={'400'} backgroundColor={theme.primaryColor} onClick={handleRegistration}>{t('form.submit')}</Button>
                 </Flex>
               </Stack>
             </CardBody>

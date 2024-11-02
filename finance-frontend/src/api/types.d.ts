@@ -1,4 +1,4 @@
-export type AccountUpdateType = "EMAIL" | "PASSWORD"
+export type AccountUpdateType = "EMAIL" | "PASSWORD" | "TWO_FACTOR"
 
 export type VaultRole = "OWNER" | "MANAGER" | "MEMBER"
 

@@ -87,6 +87,7 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
   return (
     <>
       <Button backgroundColor={theme.primaryColor}
+              color={'#f8f8f8'} fontWeight={'400'}
               onClick={(event) => { event.preventDefault(); onOpen() } }>
         <FaEdit />
       </Button>
@@ -142,6 +143,7 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
           <ModalFooter>
             <Button onClick={handleProductUpdate}
                     backgroundColor={theme.primaryColor}
+                    color={'#f8f8f8'} fontWeight={'400'}
                     mr={3}>
               {t('update-modal.submit')}
             </Button>

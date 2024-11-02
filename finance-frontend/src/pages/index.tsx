@@ -93,7 +93,7 @@ export default function Homepage(): ReactJSXElement {
             }
             <HStack mt={8}>
               <Button backgroundColor={theme.primaryColor}
-                      color={theme.textColor}>
+                      color={'#f8f8f8'} fontWeight={'400'}>
                 <Link href={'/vault/setup'}>{t('create-vault')}</Link>
               </Button>
             </HStack>

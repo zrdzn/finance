@@ -36,3 +36,8 @@ springdoc:
     path: "/swagger.html"
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+totp:
+  secret:
+    length: 16
+  code:
+    length: 6

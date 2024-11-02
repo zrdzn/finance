@@ -35,7 +35,8 @@ class AuthenticationService(
                 AuthenticationDetailsResponse(
                     email = it.email,
                     username = it.username,
-                    verified = it.verified
+                    verified = it.verified,
+                    isTwoFactorEnabled = it.isTwoFactorEnabled
                 )
             }
 

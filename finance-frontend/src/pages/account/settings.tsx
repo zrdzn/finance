@@ -21,7 +21,7 @@ import {useAuthentication} from "@/hooks/useAuthentication"
 import toast from "react-hot-toast"
 import {Layout} from "@/components/Layout"
 import {FaEdit, FaEnvelope, FaKey, FaLock, FaSave, FaShieldAlt} from "react-icons/fa"
-import {FaPencil} from "react-icons/fa6"
+import {FaPencil, FaShield} from "react-icons/fa6"
 import {RequestAccountUpdateButton} from "@/components/account/RequestAccountUpdateButton"
 import {RequestAccountVerificationButton} from "@/components/account/RequestAccountVerificationButton";
 import {GetStaticPropsContext} from "next";
@@ -132,6 +132,7 @@ export default function AccountSettings(): ReactJSXElement {
                               setIsEditingUsername(!isEditingUsername)}
                         }
                             size={'md'}
+                            color={'#f8f8f8'} fontWeight={'400'}
                         >
                           {
                             isEditingUsername ? <FaSave /> : <FaPencil />
@@ -154,6 +155,15 @@ export default function AccountSettings(): ReactJSXElement {
                         )}
                       </HStack>
                     </FormControl>
+                      <FormControl>
+                          <FormLabel>{t('profile-card.two-factor-setup-label')}</FormLabel>
+                          <HStack>
+                            {authenticationDetails.isTwoFactorEnabled && <Text fontSize={'sm'} color={'green'}>{t('profile-card.two-factor-already-enabled')}</Text>}
+                            {!authenticationDetails.isTwoFactorEnabled && (
+                              <RequestAccountUpdateButton icon={<FaLock />} text={t('profile-card.two-factor-setup-button-label')}  accountUpdateType={"TWO_FACTOR"}/>
+                            )}
+                          </HStack>
+                      </FormControl>
                   </Stack>
               }
             </CardBody>

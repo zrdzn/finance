@@ -1,4 +1,4 @@
-package dev.zrdzn.finance.backend.user.api
+package dev.zrdzn.finance.backend.user.api.security
 
 import dev.zrdzn.finance.backend.user.UserId
 

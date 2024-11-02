@@ -29,5 +29,8 @@ data class User(
     var password: String,
 
     @Column(name = "verified")
-    var verified: Boolean
+    var verified: Boolean,
+
+    @Column(name = "totp_secret")
+    var totpSecret: String?
 )

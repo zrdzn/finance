@@ -1,5 +1,6 @@
 package dev.zrdzn.finance.backend
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories

@@ -63,6 +63,7 @@ export const AddCategoryButton = ({ vaultId }: AddCategoryButtonProperties) => {
   return (
     <>
       <Button backgroundColor={theme.primaryColor}
+              color={'#f8f8f8'} fontWeight={'400'}
               onClick={onOpen}>
         <FaPlus />
       </Button>
@@ -90,6 +91,7 @@ export const AddCategoryButton = ({ vaultId }: AddCategoryButtonProperties) => {
           <ModalFooter>
             <Button onClick={handleCategoryCreate}
                     backgroundColor={theme.primaryColor}
+                    color={'#f8f8f8'} fontWeight={'400'}
                     mr={3}>
               {t('create-modal.submit')}
             </Button>
