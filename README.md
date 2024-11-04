@@ -4,8 +4,8 @@
 It allows users to create vaults where they can track payments, 
 manage products, and categorize expenses.
 Users can invite others to their vaults to collaborate.
-The app provides detailed statistics, such as total and average expenses, 
-and allows users to export payment records to a .CSV file.
+The app provides detailed statistics, such as total income and expenses, 
+and allows users to export transactions to a .CSV file.
 With currency conversion and a design optimized for mobile devices,
 **Finance** makes it easy to manage finances on any device.
 The backend is built with Kotlin and offers a REST API, 
@@ -19,35 +19,38 @@ Data is securely stored in a PostgreSQL database.
     - Transactions
     - Products
     - Categories
-- Users can create multiple vaults and automatically become members with owner roles.
+- Users can create multiple vaults and automatically become members with owner roles
 
 ### 🛒 Products and Categories
-- Create and manage products and categories for easy reuse when adding payment records.
+- Create and manage products and categories for easy reuse when adding payment records
+- Each product that has assigned category will have a label next to its name
 
-### 💳 Payment Records
-- Create detailed payment records, with the ability to:
-    - Add existing products to records.
+### 💳 Transactions
+- Create detailed transactions, with the ability to:
+    - Specify description, currency, payment method and type of transaction
+    - Add existing products to transactions
+    - Manage existing transactions
 
 #### 📝 Export Transactions to .CSV File
-- Easily export payment records to a .CSV file for offline access and analysis.
+- Easily export transactions to a .CSV file for offline access and analysis
 
 ### 📊 Statistics and Reporting
 - View various statistics, including:
-    - Average expenses
-    - Total expenses over specific periods.
+    - Total amount of transactions
+    - Total income and expenses over specific periods
 
 ### 👥 User and Member Management
-- Invite new users to vaults.
-- Manage existing vault members and assign roles.
+- Invite new users to vaults
+- Manage existing vault members and assign roles
 
 ### ⚙️ Vault Settings
-- Customize settings for each vault to suit your needs.
+- Customize settings for each vault to suit your needs
 
 ### 💱 Currency Conversion
-- View real exchange rates to display financial data in different currencies.
+- View real exchange rates to display financial data in different currencies
 
 ### 📱 Responsive Design
-- The application follows a mobile-first approach, ensuring full responsiveness and accessibility on all devices.
+- The application follows a mobile-first approach, ensuring full responsiveness and accessibility on all devices
 ## 🛠️ Infrastructure
 ### 💻 Backend
 - The backend provides access to other infrastructure elements, such as the database, and offers a REST API for clients.
