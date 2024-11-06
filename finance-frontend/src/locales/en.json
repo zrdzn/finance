@@ -23,11 +23,14 @@
       "email-placeholder": "Enter your e-mail address",
       "password-label": "Password",
       "password-placeholder": "Enter your password",
+      "totp-label": "Two-factor authentication",
+      "totp-placeholder": "Enter your 2FA code",
       "register-redirect": "Don't have an account?",
       "submit": "Sign in",
       "validation": {
         "missing-email": "You need to provide an e-mail",
-        "missing-password": "You need to provide a password"
+        "missing-password": "You need to provide a password",
+        "missing-totp": "You need to provide a 2FA code"
       }
     }
   },

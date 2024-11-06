@@ -1,5 +1,9 @@
 package dev.zrdzn.finance.backend.authentication.api
 
-data class AuthenticationCredentialsInvalidException(
-    override val cause: Throwable? = null
-) : RuntimeException("Provided credentials are incorrect", cause)
+import dev.zrdzn.finance.backend.api.FinanceApiException
+
+class AuthenticationCredentialsInvalidException : FinanceApiException(
+    status = AuthenticationErrorCode.INVALID_CREDENTIALS.status,
+    code = AuthenticationErrorCode.INVALID_CREDENTIALS.code,
+    description = AuthenticationErrorCode.INVALID_CREDENTIALS.description
+)

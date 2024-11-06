@@ -78,7 +78,7 @@ class TokenService(
         try {
             algorithm.verify(token)
         } catch (exception: Exception) {
-            throw TokenSignatureMismatchException(exception)
+            throw TokenSignatureMismatchException()
         }
 
         return AccessTokenResponse(

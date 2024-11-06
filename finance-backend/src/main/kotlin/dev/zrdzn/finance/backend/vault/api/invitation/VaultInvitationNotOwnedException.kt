@@ -1,8 +1,9 @@
 package dev.zrdzn.finance.backend.vault.api.invitation
 
-import dev.zrdzn.finance.backend.user.UserId
+import dev.zrdzn.finance.backend.api.FinanceApiException
 
-data class VaultInvitationNotOwnedException(
-    val userId: UserId,
-    override val cause: Throwable? = null
-) : RuntimeException("User with id $userId tried to access invitation which was meant for someone else", cause)
+class VaultInvitationNotOwnedException : FinanceApiException(
+    status = VaultInvitationErrorCode.NOT_OWNED.status,
+    code = VaultInvitationErrorCode.NOT_OWNED.code,
+    description = VaultInvitationErrorCode.NOT_OWNED.description
+)

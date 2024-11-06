@@ -40,10 +40,10 @@ open class VaultService(
                     user = userService.getUserById(it.userId),
                     vaultRole = it.vaultRole
                 )
-            } ?: throw UserNotMemberOfVaultException(vaultId, userId)
+            } ?: throw UserNotMemberException()
 
         when {
-            !member.vaultRole.hasPermission(requiredPermission) -> throw VaultInsufficientPermissionException(vaultId, userId, requiredPermission)
+            !member.vaultRole.hasPermission(requiredPermission) -> throw VaultInsufficientPermissionException()
         }
 
         return member
@@ -114,7 +114,7 @@ open class VaultService(
 
     @Transactional
     open fun updateVault(requesterId: UserId, vaultId: VaultId, name: String, currency: Currency, transactionMethod: TransactionMethod) {
-        val vault = vaultRepository.findById(vaultId) ?: throw VaultNotFoundException(vaultId)
+        val vault = vaultRepository.findById(vaultId) ?: throw VaultNotFoundException()
 
         authorizeMember(vaultId, requesterId, VaultPermission.SETTINGS_UPDATE)
 
@@ -129,15 +129,15 @@ open class VaultService(
     open fun updateVaultMember(requesterId: UserId, vaultId: VaultId, vaultMemberId: VaultMemberId, vaultRole: VaultRole) {
         val vault = getVault(vaultId, requesterId)
         val requester = authorizeMember(vaultId, requesterId, VaultPermission.MEMBER_UPDATE)
-        val vaultMember = vaultMemberRepository.findById(vaultMemberId) ?: throw VaultMemberNotFoundException(vaultMemberId)
+        val vaultMember = vaultMemberRepository.findById(vaultMemberId) ?: throw VaultMemberNotFoundException()
 
         // check if the requester has higher role than the user he wants to update
         if (!requester.vaultRole.isHigherThan(vaultMember.vaultRole)) {
-            throw VaultCannotUpdateMemberException(vaultId, requesterId, vaultMemberId)
+            throw VaultCannotUpdateMemberException()
         }
 
         if (vaultRole.isOwner()) {
-            throw VaultCannotUpdateMemberException(vaultId, requesterId, vaultMemberId)
+            throw VaultCannotUpdateMemberException()
         }
 
         vaultMember.vaultRole = vaultRole
@@ -147,14 +147,14 @@ open class VaultService(
 
     @Transactional
     open fun acceptVaultInvitation(requesterId: UserId, invitationId: VaultInvitationId) {
-        val invitation = vaultInvitationRepository.findById(invitationId) ?: throw VaultInvitationNotFoundException(invitationId)
+        val invitation = vaultInvitationRepository.findById(invitationId) ?: throw VaultInvitationNotFoundException()
 
         val vault = getVaultForcefully(invitation.vaultId)
 
         val requester = userService.getUserById(requesterId)
 
         if (requester.email != invitation.userEmail) {
-            throw VaultInvitationNotOwnedException(requesterId)
+            throw VaultInvitationNotOwnedException()
         }
 
         createVaultMemberForcefully(
@@ -181,7 +181,7 @@ open class VaultService(
                     transactionMethod = it.transactionMethod
                 )
             }
-            ?: throw VaultNotFoundException(vaultId)
+            ?: throw VaultNotFoundException()
     }
 
     @Transactional(readOnly = true)
@@ -230,7 +230,7 @@ open class VaultService(
 
     @Transactional(readOnly = true)
     open fun getVaultByPublicId(publicId: VaultPublicId, requesterId: UserId): VaultResponse? {
-        val vault = getVaultByPublicIdForcefully(publicId) ?: throw VaultNotFoundByPublicIdException(publicId)
+        val vault = getVaultByPublicIdForcefully(publicId) ?: throw VaultNotFoundByPublicIdException()
 
         authorizeMember(vault.id, requesterId, VaultPermission.DETAILS_READ)
 
@@ -278,7 +278,7 @@ open class VaultService(
         val requester = userService.getUserById(requesterId)
 
         if (requester.email != userEmail) {
-            throw VaultInvitationNotOwnedException(requesterId)
+            throw VaultInvitationNotOwnedException()
         }
 
         return VaultInvitationListResponse(
@@ -306,7 +306,7 @@ open class VaultService(
                     permissions = it.permissions
                 )
             }
-            ?: throw UserNotMemberOfVaultException(vaultId, requesterId)
+            ?: throw UserNotMemberException()
     }
 
     @Transactional

@@ -162,7 +162,7 @@ open class TransactionService(
     @Transactional
     open fun updateTransaction(requesterId: UserId, transactionId: TransactionId, transactionMethod: TransactionMethod,
                                transactionType: TransactionType, description: String?, price: Price) {
-        val transaction = transactionRepository.findById(transactionId) ?: throw ProductNotFoundException(transactionId)
+        val transaction = transactionRepository.findById(transactionId) ?: throw ProductNotFoundException()
 
         vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_UPDATE)
 
@@ -183,7 +183,7 @@ open class TransactionService(
 
     @Transactional
     open fun deleteTransaction(transactionId: TransactionId) {
-        val transaction = transactionRepository.findById(transactionId) ?: throw ProductNotFoundException(transactionId)
+        val transaction = transactionRepository.findById(transactionId) ?: throw ProductNotFoundException()
 
         vaultService.authorizeMember(transaction.vaultId, transaction.userId, VaultPermission.TRANSACTION_DELETE)
 
@@ -266,7 +266,7 @@ open class TransactionService(
 
     @Transactional(readOnly = true)
     open fun getTransactionProducts(requesterId: UserId, transactionId: TransactionId): TransactionProductListResponse {
-        val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundException(transactionId)
+        val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundException()
 
         vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_READ)
 

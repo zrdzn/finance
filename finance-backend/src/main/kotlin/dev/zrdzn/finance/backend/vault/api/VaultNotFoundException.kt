@@ -1,14 +1,15 @@
 package dev.zrdzn.finance.backend.vault.api
 
-import dev.zrdzn.finance.backend.vault.VaultId
-import dev.zrdzn.finance.backend.vault.VaultPublicId
+import dev.zrdzn.finance.backend.api.FinanceApiException
 
-data class VaultNotFoundException(
-    val vaultId: VaultId,
-    override val cause: Throwable? = null
-) : RuntimeException("Vault with id $vaultId not found", cause)
+class VaultNotFoundException : FinanceApiException(
+    status = VaultErrorCode.NOT_FOUND.status,
+    code = VaultErrorCode.NOT_FOUND.code,
+    description = VaultErrorCode.NOT_FOUND.description
+)
 
-data class VaultNotFoundByPublicIdException(
-    val vaultPublicId: VaultPublicId,
-    override val cause: Throwable? = null
-) : RuntimeException("Vault with public id $vaultPublicId not found", cause)
+class VaultNotFoundByPublicIdException : FinanceApiException(
+    status = VaultErrorCode.NOT_FOUND_BY_PUBLIC_ID.status,
+    code = VaultErrorCode.NOT_FOUND_BY_PUBLIC_ID.code,
+    description = VaultErrorCode.NOT_FOUND_BY_PUBLIC_ID.description
+)

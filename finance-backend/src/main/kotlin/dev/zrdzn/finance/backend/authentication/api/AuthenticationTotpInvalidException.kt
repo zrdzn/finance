@@ -1,5 +1,9 @@
 package dev.zrdzn.finance.backend.authentication.api
 
-data class AuthenticationTotpInvalidException(
-    override val cause: Throwable? = null
-) : RuntimeException("Provided one time password is invalid", cause)
+import dev.zrdzn.finance.backend.api.FinanceApiException
+
+class AuthenticationTotpInvalidException : FinanceApiException(
+    status = AuthenticationErrorCode.TOTP_INVALID.status,
+    code = AuthenticationErrorCode.TOTP_INVALID.code,
+    description = AuthenticationErrorCode.TOTP_INVALID.description
+)
