@@ -70,12 +70,12 @@ export const VaultInvitationCard = ({ invitation }: VaultInvitationCardPropertie
       <CardFooter justifyContent={'end'}
                   gap={2}>
         <Button backgroundColor={theme.primaryColor}
-                color={theme.textColor}
+                color={'#f8f8f8'} fontWeight={'400'}
                 onClick={handleJoin}>
             {t('invitation-card.join')}
         </Button>
         <Button backgroundColor={'red.400'}
-                color={theme.textColor}
+                color={'#f8f8f8'} fontWeight={'400'}
                 onClick={handleCancel}>
             {t('invitation-card.cancel')}
         </Button>

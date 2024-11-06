@@ -7,5 +7,6 @@ data class UserWithPasswordResponse(
     val email: String,
     val username: String,
     val password: String,
-    val verified: Boolean
+    val verified: Boolean,
+    val totpSecret: String?
 )

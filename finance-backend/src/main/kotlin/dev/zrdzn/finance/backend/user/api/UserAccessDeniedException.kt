@@ -1,8 +1,9 @@
 package dev.zrdzn.finance.backend.user.api
 
-import dev.zrdzn.finance.backend.user.UserId
+import dev.zrdzn.finance.backend.api.FinanceApiException
 
-data class UserAccessDeniedException(
-    val userId: UserId,
-    override val cause: Throwable? = null
-) : RuntimeException("Access to user resources denied", cause)
+class UserAccessDeniedException : FinanceApiException(
+    status = UserErrorCode.ACCESS_DENIED.status,
+    code = UserErrorCode.ACCESS_DENIED.code,
+    description = UserErrorCode.ACCESS_DENIED.description
+)

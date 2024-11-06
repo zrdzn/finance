@@ -58,7 +58,7 @@ open class ProductService(
 
     @Transactional
     open fun updateProduct(requesterId: UserId, productId: ProductId, categoryId: CategoryId?) {
-        val product = productRepository.findById(productId) ?: throw ProductNotFoundException(productId)
+        val product = productRepository.findById(productId) ?: throw ProductNotFoundException()
 
         vaultService.authorizeMember(product.vaultId, requesterId, VaultPermission.PRODUCT_UPDATE)
 
@@ -75,7 +75,7 @@ open class ProductService(
 
     @Transactional
     open fun deleteProductById(requesterId: UserId, productId: ProductId) {
-        val product = productRepository.findById(productId) ?: throw ProductNotFoundException(productId)
+        val product = productRepository.findById(productId) ?: throw ProductNotFoundException()
 
         vaultService.authorizeMember(product.vaultId, requesterId, VaultPermission.PRODUCT_DELETE)
 
@@ -122,6 +122,6 @@ open class ProductService(
                     categoryName = it.categoryId?.let { categoryService.getCategoryById(requesterId, it) }?.name
                 )
             }
-            ?: throw ProductNotFoundException(productId)
+            ?: throw ProductNotFoundException()
 
 }

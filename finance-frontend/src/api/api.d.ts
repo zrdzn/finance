@@ -30,10 +30,12 @@ declare namespace Components {
             email: string;
             username: string;
             verified: boolean;
+            isTwoFactorEnabled: boolean;
         }
         export interface AuthenticationLoginRequest {
             email: string;
             password: string;
+            oneTimePassword?: string;
         }
         export interface AuthenticationRegisterResponse {
             userId: number; // int32
@@ -138,6 +140,17 @@ declare namespace Components {
             total: number;
             currency: string;
         }
+        export interface TwoFactorSetupRequest {
+            securityCode: string;
+        }
+        export interface TwoFactorSetupResponse {
+            qrCodeImage: string;
+            secret: string;
+        }
+        export interface TwoFactorVerifyRequest {
+            secret: string;
+            oneTimePassword: string;
+        }
         export interface Unit {
         }
         export interface UserCreateRequest {
@@ -162,6 +175,7 @@ declare namespace Components {
             email: string;
             username: string;
             verified: boolean;
+            isTwoFactorEnabled: boolean;
         }
         export interface UsernameResponse {
             username: string;
@@ -568,6 +582,12 @@ declare namespace Paths {
             }
         }
     }
+    namespace RequestUserTwoFactorSetup {
+        export type RequestBody = Components.Schemas.TwoFactorSetupRequest;
+        namespace Responses {
+            export type $200 = Components.Schemas.TwoFactorSetupResponse;
+        }
+    }
     namespace RequestUserUpdate {
         namespace Responses {
             export interface $200 {
@@ -666,6 +686,13 @@ declare namespace Paths {
             export type $200 = Components.Schemas.Unit;
         }
     }
+    namespace VerifyUserTwoFactorSetup {
+        export type RequestBody = Components.Schemas.TwoFactorVerifyRequest;
+        namespace Responses {
+            export interface $200 {
+            }
+        }
+    }
 }
 
 export interface OperationMethods {
@@ -701,6 +728,22 @@ export interface OperationMethods {
     data?: Paths.CreateVault.RequestBody,
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.CreateVault.Responses.$200>
+  /**
+   * requestUserTwoFactorSetup
+   */
+  'requestUserTwoFactorSetup'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.RequestUserTwoFactorSetup.RequestBody,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.RequestUserTwoFactorSetup.Responses.$200>
+  /**
+   * verifyUserTwoFactorSetup
+   */
+  'verifyUserTwoFactorSetup'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.VerifyUserTwoFactorSetup.RequestBody,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.VerifyUserTwoFactorSetup.Responses.$200>
   /**
    * createTransactionProduct
    */
@@ -1053,6 +1096,26 @@ export interface PathsDictionary {
       data?: Paths.CreateVault.RequestBody,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.CreateVault.Responses.$200>
+  }
+  ['/api/users/2fa/setup']: {
+    /**
+     * requestUserTwoFactorSetup
+     */
+    'post'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: Paths.RequestUserTwoFactorSetup.RequestBody,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.RequestUserTwoFactorSetup.Responses.$200>
+  }
+  ['/api/users/2fa/setup/verify']: {
+    /**
+     * verifyUserTwoFactorSetup
+     */
+    'post'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: Paths.VerifyUserTwoFactorSetup.RequestBody,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.VerifyUserTwoFactorSetup.Responses.$200>
   }
   ['/api/transactions/{transactionId}/products/create']: {
     /**

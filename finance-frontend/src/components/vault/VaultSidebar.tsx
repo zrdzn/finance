@@ -84,6 +84,7 @@ const BaseView = ({ vault, vaultRole }: VaultSidebarProperties) => {
         width={12}
         height={12}
         backgroundColor={theme.primaryColor}
+        color={'#f8f8f8'} fontWeight={'400'}
         borderRadius="full"
         display="flex"
         alignItems="center"
@@ -98,7 +99,7 @@ const BaseView = ({ vault, vaultRole }: VaultSidebarProperties) => {
           <DrawerHeader backgroundColor={theme.primaryColor}>
             <Flex justifyContent={'space-between'} width={'full'} alignItems={'center'}>
               <SidebarLogo vault={vault} isCollapsed={false} />
-              <Button backgroundColor={theme.primaryColor} padding={3.5} variant={'unstyled'} onClick={onClose} leftIcon={<FaX />} />
+              <Button backgroundColor={theme.primaryColor} padding={3.5} variant={'unstyled'} onClick={onClose} leftIcon={<FaX />} color={'#f8f8f8'} fontWeight={'400'} />
             </Flex>
           </DrawerHeader>
           <DrawerBody padding={0}>

@@ -138,6 +138,7 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
               permissions.includes("DELETE") &&
                 <Button
                     backgroundColor={'red.300'}
+                    color={'#f8f8f8'} fontWeight={'400'}
                     onClick={handleVaultDelete}>
                   {t('vault-delete-button')}
                 </Button>
@@ -146,6 +147,7 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
               permissions.includes("SETTINGS_UPDATE") &&
                 <Button
                     backgroundColor={theme.primaryColor}
+                    color={'#f8f8f8'} fontWeight={'400'}
                     onClick={handleVaultUpdate}>
                   {t('form.submit')}
                 </Button>

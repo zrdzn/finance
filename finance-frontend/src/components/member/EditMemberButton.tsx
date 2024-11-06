@@ -64,6 +64,7 @@ export const EditMemberButton = ({ member }: EditMemberButtonProperties) => {
   return (
     <>
       <Button backgroundColor={theme.primaryColor}
+              color={'#f8f8f8'} fontWeight={'400'}
               onClick={(event) => { event.preventDefault(); onOpen() } }>
         <FaEdit />
       </Button>
@@ -89,10 +90,11 @@ export const EditMemberButton = ({ member }: EditMemberButtonProperties) => {
           <ModalFooter>
             <Button onClick={handleMemberUpdate}
                     backgroundColor={theme.primaryColor}
+                    color={'#f8f8f8'} fontWeight={'400'}
                     mr={3}>
               {t('update-modal.submit')}
             </Button>
-            <Button onClick={onClose}>{t('update-modal.cancel')}</Button>
+            <Button onClick={onClose} fontWeight={'400'}>{t('update-modal.cancel')}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

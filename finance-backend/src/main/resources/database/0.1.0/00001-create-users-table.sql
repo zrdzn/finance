@@ -7,5 +7,6 @@ create table "users"
     "username"    text not null,
     "password"    varchar(100) not null,
     "verified"    boolean default false,
+    "totp_secret" varchar(100),
     constraint "pk_users" primary key ("id")
 );

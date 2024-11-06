@@ -4,6 +4,9 @@ import dev.zrdzn.finance.backend.shared.getBaseUrl
 import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.user.UserService
 import dev.zrdzn.finance.backend.user.api.*
+import dev.zrdzn.finance.backend.user.api.security.TwoFactorSetupRequest
+import dev.zrdzn.finance.backend.user.api.security.TwoFactorSetupResponse
+import dev.zrdzn.finance.backend.user.api.security.TwoFactorVerifyRequest
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -12,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -31,6 +35,18 @@ class UserController(
     @GetMapping("/verify/request")
     fun requestUserVerification(@AuthenticationPrincipal userId: UserId, request: HttpServletRequest): Unit =
         userService.requestUserVerification(userId, "${request.getBaseUrl()}/api/users/verify")
+
+    @PostMapping("/2fa/setup")
+    fun requestUserTwoFactorSetup(
+        @AuthenticationPrincipal userId: UserId,
+        @RequestBody twoFactorSetupRequest: TwoFactorSetupRequest
+    ): TwoFactorSetupResponse = userService.requestUserTwoFactorSetup(userId, twoFactorSetupRequest.securityCode)
+
+    @PostMapping("/2fa/setup/verify")
+    fun verifyUserTwoFactorSetup(
+        @AuthenticationPrincipal userId: UserId,
+        @RequestBody twoFactorVerifyRequest: TwoFactorVerifyRequest
+    ): Unit = userService.verifyUserTwoFactorSetup(userId, twoFactorVerifyRequest.secret, twoFactorVerifyRequest.oneTimePassword)
 
     @PatchMapping("/update/email")
     fun updateUserEmail(

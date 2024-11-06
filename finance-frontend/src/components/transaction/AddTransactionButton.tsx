@@ -95,6 +95,7 @@ export const AddTransactionButton = ({ vault }: AddTransactionButtonProperties) 
   return (
     <>
       <Button backgroundColor={theme.primaryColor}
+              color={'#f8f8f8'} fontWeight={'400'}
               onClick={onOpen}>
         <FaPlus />
       </Button>
@@ -146,6 +147,7 @@ export const AddTransactionButton = ({ vault }: AddTransactionButtonProperties) 
           <ModalFooter>
             <Button onClick={handleTransactionCreate}
                     backgroundColor={theme.primaryColor}
+                    color={'#f8f8f8'} fontWeight={'400'}
                     mr={3}>
               {t('create-modal.submit')}
             </Button>

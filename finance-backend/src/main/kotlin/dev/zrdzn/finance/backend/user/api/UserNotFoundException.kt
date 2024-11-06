@@ -1,13 +1,15 @@
 package dev.zrdzn.finance.backend.user.api
 
-import dev.zrdzn.finance.backend.user.UserId
+import dev.zrdzn.finance.backend.api.FinanceApiException
 
-data class UserNotFoundException(
-    val userId: UserId,
-    override val cause: Throwable? = null
-) : RuntimeException("User with id $userId not found", cause)
+class UserNotFoundException : FinanceApiException(
+    status = UserErrorCode.NOT_FOUND.status,
+    code = UserErrorCode.NOT_FOUND.code,
+    description = UserErrorCode.NOT_FOUND.description,
+)
 
-data class UserNotFoundByEmailException(
-    val userEmail: String,
-    override val cause: Throwable? = null
-) : RuntimeException("User with email $userEmail not found", cause)
+class UserNotFoundByEmailException : FinanceApiException(
+    status = UserErrorCode.NOT_FOUND_BY_EMAIL.status,
+    code = UserErrorCode.NOT_FOUND_BY_EMAIL.code,
+    description = UserErrorCode.NOT_FOUND_BY_EMAIL.description
+)

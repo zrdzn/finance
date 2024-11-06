@@ -1,11 +1,9 @@
 package dev.zrdzn.finance.backend.vault.api.authority
 
-import dev.zrdzn.finance.backend.user.UserId
-import dev.zrdzn.finance.backend.vault.VaultId
+import dev.zrdzn.finance.backend.api.FinanceApiException
 
-data class VaultInsufficientPermissionException(
-    val vaultId: VaultId,
-    val userId: UserId,
-    val permission: VaultPermission,
-    override val cause: Throwable? = null
-) : RuntimeException("User with id $userId does not have permission $permission in vault with id $vaultId", cause)
+class VaultInsufficientPermissionException : FinanceApiException(
+    status = VaultAuthorityErrorCode.INSUFFICIENT_PERMISSIONS.status,
+    code = VaultAuthorityErrorCode.INSUFFICIENT_PERMISSIONS.code,
+    description = VaultAuthorityErrorCode.INSUFFICIENT_PERMISSIONS.description
+)

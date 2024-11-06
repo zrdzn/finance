@@ -1,8 +1,9 @@
 package dev.zrdzn.finance.backend.vault.api.invitation
 
-import dev.zrdzn.finance.backend.vault.VaultInvitationId
+import dev.zrdzn.finance.backend.api.FinanceApiException
 
-data class VaultInvitationNotFoundException(
-    val vaultInvitationId: VaultInvitationId,
-    override val cause: Throwable? = null
-) : RuntimeException("Vault invitation with id $vaultInvitationId not found", cause)
+class VaultInvitationNotFoundException : FinanceApiException(
+    status = VaultInvitationErrorCode.NOT_FOUND.status,
+    code = VaultInvitationErrorCode.NOT_FOUND.code,
+    description = VaultInvitationErrorCode.NOT_FOUND.description
+)

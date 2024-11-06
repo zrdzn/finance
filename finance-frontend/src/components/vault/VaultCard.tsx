@@ -51,7 +51,7 @@ export const VaultCard = ({ publicId, ownerId, name }: VaultCardProperties) => {
       <Divider />
       <CardFooter justifyContent={'end'}>
         <Button backgroundColor={theme.primaryColor}
-                color={theme.textColor}
+                color={'#f8f8f8'} fontWeight={'400'}
                 onClick={handleRedirect}>
           {t('vault-card.redirect')}
         </Button>

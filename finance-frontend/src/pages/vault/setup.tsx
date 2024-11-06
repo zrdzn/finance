@@ -129,6 +129,7 @@ export default function SetupVault(): ReactJSXElement {
                   <Button
                     backgroundColor={theme.primaryColor}
                     onClick={handleVaultSetup}
+                    color={'#f8f8f8'} fontWeight={'400'}
                   >
                     {t('form.submit')}
                   </Button>

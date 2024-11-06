@@ -10,8 +10,9 @@ export const DeleteButton = ({
   onClick
 }: DeleteButtonProperties) => {
   return (
-    <Button colorScheme={'red'}
+    <Button backgroundColor={'red'}
             size={'md'}
+            color={'#f8f8f8'} fontWeight={'400'}
             onClick={onClick}>
       <FaTrash />
     </Button>

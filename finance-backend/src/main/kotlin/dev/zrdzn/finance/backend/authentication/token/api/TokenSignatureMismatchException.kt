@@ -1,5 +1,9 @@
 package dev.zrdzn.finance.backend.authentication.token.api
 
-data class TokenSignatureMismatchException(
-    override val cause: Throwable? = null
-) : RuntimeException("There is a signature mismatch for provided access token", cause)
+import dev.zrdzn.finance.backend.api.FinanceApiException
+
+class TokenSignatureMismatchException : FinanceApiException(
+    status = TokenErrorCode.SIGNATURE_MISMATCH.status,
+    code = TokenErrorCode.SIGNATURE_MISMATCH.code,
+    description = TokenErrorCode.SIGNATURE_MISMATCH.description
+)

@@ -7,7 +7,7 @@ type AuthenticationDetailsResponse = Components.Schemas.AuthenticationDetailsRes
 
 interface AuthenticationContext {
   authenticationDetails: AuthenticationDetailsResponse | null | undefined;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, oneTimePassword: string | undefined) => Promise<void>;
   logout: () => Promise<void>
 }
 
@@ -25,36 +25,26 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
     if (authenticationDetails === undefined) {
       updateAuthenticationDetails()
     }
-  })
+  }, [])
 
   const updateAuthenticationDetails = () => {
     api
-        .then(client => client.getAuthenticationDetails()
-            .then(response => setAuthenticationDetails(response.data)))
-        .catch(error => {
-            setAuthenticationDetails(null)
-            console.error(error)
-        })
+      .then(client => client.getAuthenticationDetails())
+      .then(response => setAuthenticationDetails(response.data))
+      .catch(error => {
+        setAuthenticationDetails(null);
+        console.error(error);
+      })
   }
 
-  const login = async (email: string, password: string): Promise<void> => {
-    const loginResult = api
-        .then(client => client.login(null, {
-          email: email,
-          password: password
-        }))
-        .then(() => updateAuthenticationDetails())
-        .catch(error => {
-            console.error(error)
-            throw error
-        })
-
-    await toast.promise(loginResult, {
-      loading: 'Logging in',
-      success: "You\'ve successfully logged in",
-      error: "Credentials you've provided are incorrect",
-    })
-  };
+  const login = (email: string, password: string, oneTimePassword: string | undefined): Promise<void> => {
+    return api
+      .then(client => client.login(null, { email, password, oneTimePassword }))
+      .then(() => {
+        updateAuthenticationDetails()
+        toast.success("You've successfully logged in")
+      })
+  }
 
   const logout = async (): Promise<void> => {
     const logoutResult = api

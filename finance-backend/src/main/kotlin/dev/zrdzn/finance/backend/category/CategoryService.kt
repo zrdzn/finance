@@ -75,7 +75,7 @@ class CategoryService(
                     vaultId = it.vaultId
                 )
             }
-            ?: throw CategoryNotFoundException(categoryId)
+            ?: throw CategoryNotFoundException()
 
     fun getCategoriesByVaultId(requesterId: UserId, vaultId: VaultId): CategoryListResponse =
         categoryRepository.findAllByVaultId(vaultId)

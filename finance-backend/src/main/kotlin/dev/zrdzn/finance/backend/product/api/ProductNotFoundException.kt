@@ -1,8 +1,9 @@
 package dev.zrdzn.finance.backend.product.api
 
-import dev.zrdzn.finance.backend.product.ProductId
+import dev.zrdzn.finance.backend.api.FinanceApiException
 
-data class ProductNotFoundException(
-    val productId: ProductId,
-    override val cause: Throwable? = null
-) : RuntimeException("Product with id $productId not found", cause)
+class ProductNotFoundException : FinanceApiException(
+    status = ProductErrorCode.NOT_FOUND.status,
+    code = ProductErrorCode.NOT_FOUND.code,
+    description = ProductErrorCode.NOT_FOUND.description
+)

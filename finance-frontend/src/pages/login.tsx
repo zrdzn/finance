@@ -8,7 +8,6 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  Heading,
   Input,
   Stack, Text
 } from "@chakra-ui/react";
@@ -20,20 +19,21 @@ import toast from "react-hot-toast"
 import {Layout} from "@/components/Layout"
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
+import {Components} from "@/api/api";
+import axios from "axios";
 
-interface LoginForm {
-  email: string;
-  password: string;
-}
+type AuthenticationLoginRequest = Components.Schemas.AuthenticationLoginRequest;
 
 export default function Login(): ReactJSXElement {
   const { authenticationDetails, login } = useAuthentication()
   const router = useRouter()
   const theme = useTheme()
   const t = useTranslations('Login')
-  const [loginForm, setLoginForm] = useState<LoginForm>({
+  const [totpRequired, setTotpRequired] = useState(false)
+  const [authenticationLoginRequest, setAuthenticationLoginRequest] = useState<AuthenticationLoginRequest>({
     email: '',
-    password: ''
+    password: '',
+    oneTimePassword: undefined
   })
 
   useEffect(() => {
@@ -47,25 +47,40 @@ export default function Login(): ReactJSXElement {
   }
 
   const handleLoginFormUpdate = (event: ChangeEvent<HTMLInputElement>) => {
-    setLoginForm({ ...loginForm, [event.target.name]: event.target.value });
+    setAuthenticationLoginRequest({ ...authenticationLoginRequest, [event.target.name]: event.target.value });
   };
 
-  const handleLogin = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleLogin = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    if (loginForm.email === '') {
+    if (authenticationLoginRequest.email === '') {
       toast.error(t('form.validation.missing-email'))
       return
     }
 
-    if (loginForm.password === '') {
+    if (authenticationLoginRequest.password === '') {
       toast.error(t('form.validation.missing-password'))
       return
     }
 
-    login(loginForm.email, loginForm.password)
+    if (totpRequired && !authenticationLoginRequest.oneTimePassword) {
+      toast.error(t('form.validation.missing-totp'))
+      return
+    }
+
+    login(authenticationLoginRequest.email, authenticationLoginRequest.password, authenticationLoginRequest.oneTimePassword)
       .then(() => router.push("/"))
-      .catch(error => console.error(error))
+      .catch(error => {
+        if (axios.isAxiosError(error) && error.response) {
+          if (error.response.data.code === "AUTHENTICATION_TOTP_REQUIRED") {
+            setTotpRequired(true)
+          }
+          const errorMessage = error.response.data.description || "An error occurred while logging in"
+          toast.error(errorMessage)
+        } else {
+          toast.error("An unexpected error occurred")
+        }
+      })
   }
 
   return (
@@ -106,10 +121,22 @@ export default function Login(): ReactJSXElement {
                     placeholder={t('form.password-placeholder')}
                   />
                 </FormControl>
+                {
+                  totpRequired && (
+                    <FormControl isRequired>
+                      <FormLabel>{t('form.totp-label')}</FormLabel>
+                      <Input
+                        name={'oneTimePassword'}
+                        onChange={handleLoginFormUpdate}
+                        placeholder={t('form.totp-placeholder')}
+                      />
+                    </FormControl>
+                  )
+                }
 
                 <Flex mt={2} justifyContent={'space-between'} gap={3}>
-                  <Button onClick={() => router.push("/register")}>{t('form.register-redirect')}</Button>
-                  <Button backgroundColor={theme.primaryColor} onClick={handleLogin}>{t('form.submit')}</Button>
+                  <Button fontWeight={'400'} onClick={() => router.push("/register")}>{t('form.register-redirect')}</Button>
+                  <Button color={'#f8f8f8'} fontWeight={'400'} backgroundColor={theme.primaryColor} onClick={handleLogin}>{t('form.submit')}</Button>
                 </Flex>
               </Stack>
             </CardBody>
