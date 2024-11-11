@@ -72,6 +72,11 @@ export const AddTransactionButton = ({ vault }: AddTransactionButtonProperties) 
   const handleTransactionCreate = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
+    if (transactionCreateRequest.description === '') {
+        toast.error(t('create-modal.validation.missing-description'))
+        return
+    }
+
     api
         .then(client => client.createTransaction(null, {
             vaultId: vault.id,
@@ -111,7 +116,7 @@ export const AddTransactionButton = ({ vault }: AddTransactionButtonProperties) 
           <ModalHeader>{t('create-modal.title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <FormControl>
+            <FormControl isRequired>
               <FormLabel>{t('create-modal.description-label')}</FormLabel>
               <Input onChange={handleDescriptionChange}
                      ref={initialRef}

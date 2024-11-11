@@ -90,7 +90,7 @@ declare namespace Components {
             vaultId: number; // int32
             transactionMethod: "CARD" | "BLIK" | "CASH";
             transactionType: "INCOMING" | "OUTGOING";
-            description?: string;
+            description: string;
             price: number;
             currency: string;
         }

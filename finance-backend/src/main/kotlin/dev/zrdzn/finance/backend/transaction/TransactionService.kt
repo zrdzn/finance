@@ -94,10 +94,14 @@ open class TransactionService(
         vaultId: VaultId,
         transactionMethod: TransactionMethod,
         transactionType: TransactionType,
-        description: String?,
+        description: String,
         price: Price
     ): TransactionCreateResponse {
         vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_CREATE)
+
+        if (description.isEmpty()) {
+            throw TransactionDescriptionRequiredException()
+        }
 
         return transactionRepository
             .save(

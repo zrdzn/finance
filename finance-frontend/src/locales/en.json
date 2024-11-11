@@ -148,7 +148,10 @@
       "price-label": "Total",
       "currency-label": "Currency",
       "submit": "Add",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "validation": {
+        "missing-description": "You need to provide a description"
+      }
     },
     "export": {
       "requested-export-success": "Requested transactions export",
