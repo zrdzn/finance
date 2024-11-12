@@ -1,4 +1,4 @@
-import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, Text} from "@chakra-ui/react"
+import {Accordion, AccordionButton, AccordionItem, Box, Flex, Heading, HStack, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {useApi} from "@/hooks/useApi"
 import {useTranslations} from "next-intl";
@@ -63,24 +63,34 @@ export const FlowsHistoryCardItem = ({
                 </Text>
                 {
                   flows && flows.amount > 0 &&
-                    <Text fontSize='xl'
-                          fontWeight={'600'}>
-                      {flows.amount.toFixed(2)} {flows.currency}
-                    </Text>
+                    <HStack>
+                        <Text fontSize='xl'
+                              fontWeight={'600'}
+                              color={transactionType === "INCOMING" ? 'green' : 'crimson'}
+                              isTruncated>
+                          {flows.amount.toFixed(2)}
+                        </Text>
+                        <Text fontSize='md'
+                              fontWeight={'600'}
+                              isTruncated>
+                          {flows.currency}
+                        </Text>
+                    </HStack>
                 }
                 {
                   flows && flows.amount === 0 &&
-                    <Text fontSize='xl'
-                          fontWeight={'600'}>
-                      0.00 {flows.currency}
-                    </Text>
-                }
-                {
-                  !flows &&
-                    <Text fontSize='xl'
-                          fontWeight={'600'}>
-                        N/A
-                    </Text>
+                    <HStack>
+                        <Text fontSize='xl'
+                              fontWeight={'600'}
+                              isTruncated>
+                            0.00
+                        </Text>
+                        <Text fontSize={'md'}
+                              fontWeight={'600'}
+                              isTruncated>
+                          {flows.currency}
+                        </Text>
+                    </HStack>
                 }
               </Flex>
               <Flex justifyContent={'space-between'}>
