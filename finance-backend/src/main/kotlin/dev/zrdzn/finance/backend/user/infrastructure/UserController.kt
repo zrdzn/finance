@@ -9,17 +9,15 @@ import dev.zrdzn.finance.backend.user.api.security.TwoFactorSetupResponse
 import dev.zrdzn.finance.backend.user.api.security.TwoFactorVerifyRequest
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.InputStreamResource
+import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import java.net.URI
 
 @RestController
@@ -83,7 +81,20 @@ class UserController(
             .build()
     }
 
+    @PutMapping("/avatar", consumes = [MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun updateUserAvatar(
+        @AuthenticationPrincipal userId: Int,
+        @RequestPart("avatar") avatar: MultipartFile
+    ) {
+        userService.updateUserAvatarById(userId, avatar.bytes)
+    }
+
     @GetMapping("/{userId}/username")
     fun getUsernameByUserId(@PathVariable userId: UserId): UsernameResponse = userService.getUsernameByUserId(userId)
+
+    @GetMapping("/avatar/{username}")
+    fun getUserAvatar(@PathVariable username: String): ResponseEntity<Resource> =
+        userService.getUserAvatarByUsername(username)
+            .let { ok().body(InputStreamResource(it)) }
 
 }

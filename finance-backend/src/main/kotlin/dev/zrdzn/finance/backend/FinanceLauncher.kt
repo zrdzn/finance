@@ -5,16 +5,20 @@ import org.springframework.boot.SpringApplication
 import org.springframework.context.ConfigurableApplicationContext
 
 fun main(args: Array<String>) {
-    val serverPort = System.getenv("SERVER_PORT")?.toInt() ?: 8080
-    val clientUrl = System.getenv("CLIENT_URL") ?: "http://localhost:3000"
+    val serverPort = System.getenv("SERVER_PORT")?.toInt()!!
+    val clientUrl = System.getenv("CLIENT_URL")!!
     val databaseUrl = System.getenv("DATABASE_URL")!!
     val databaseUsername = System.getenv("DATABASE_USERNAME")!!
     val databasePassword = System.getenv("DATABASE_PASSWORD")!!
-    val mailHost = System.getenv("MAIL_HOST") ?: "smtp.gmail.com"
-    val mailPort = System.getenv("MAIL_PORT")?.toInt() ?: 587
-    val mailUsername = System.getenv("MAIL_USERNAME") ?: ""
-    val mailPassword = System.getenv("MAIL_PASSWORD") ?: ""
-    val mailFrom = System.getenv("MAIL_FROM") ?: "tester@test.com"
+    val mailHost = System.getenv("MAIL_HOST")!!
+    val mailPort = System.getenv("MAIL_PORT")?.toInt()!!
+    val mailUsername = System.getenv("MAIL_USERNAME")!!
+    val mailPassword = System.getenv("MAIL_PASSWORD")!!
+    val mailFrom = System.getenv("MAIL_FROM")!!
+    val storageAccessKey = System.getenv("STORAGE_ACCESS_KEY")!!
+    val storageSecretKey = System.getenv("STORAGE_SECRET_KEY")!!
+    val storageRegion = System.getenv("STORAGE_REGION")!!
+    val storageEndpoint = System.getenv("STORAGE_ENDPOINT")!!
 
     FinanceLauncher().launchApplication(
         serverPort = serverPort,
@@ -26,7 +30,11 @@ fun main(args: Array<String>) {
         mailPort = mailPort,
         mailUsername = mailUsername,
         mailPassword = mailPassword,
-        mailFrom = mailFrom
+        mailFrom = mailFrom,
+        storageAccessKey = storageAccessKey,
+        storageSecretKey = storageSecretKey,
+        storageRegion = storageRegion,
+        storageEndpoint = storageEndpoint,
     )
 }
 
@@ -43,7 +51,11 @@ class FinanceLauncher {
         mailPort: Int,
         mailUsername: String,
         mailPassword: String,
-        mailFrom: String
+        mailFrom: String,
+        storageAccessKey: String,
+        storageSecretKey: String,
+        storageRegion: String,
+        storageEndpoint: String,
     ): ConfigurableApplicationContext {
         val application = SpringApplication(FinanceApplication::class.java)
 
@@ -57,7 +69,11 @@ class FinanceLauncher {
             EnvironmentProperty.MAIL_PORT.name to mailPort,
             EnvironmentProperty.MAIL_USERNAME.name to mailUsername,
             EnvironmentProperty.MAIL_PASSWORD.name to mailPassword,
-            EnvironmentProperty.MAIL_FROM.name to mailFrom
+            EnvironmentProperty.MAIL_FROM.name to mailFrom,
+            EnvironmentProperty.STORAGE_ACCESS_KEY.name to storageAccessKey,
+            EnvironmentProperty.STORAGE_SECRET_KEY.name to storageSecretKey,
+            EnvironmentProperty.STORAGE_REGION.name to storageRegion,
+            EnvironmentProperty.STORAGE_ENDPOINT.name to storageEndpoint,
         )
 
         properties.forEach { logger.info("Setting property ${it.key} -> ${it.value}") }

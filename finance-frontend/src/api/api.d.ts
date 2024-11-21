@@ -454,6 +454,17 @@ declare namespace Paths {
             export type $200 = Components.Schemas.TransactionListResponse;
         }
     }
+    namespace GetUserAvatar {
+        namespace Parameters {
+            export type UserId = number; // int32
+        }
+        export interface PathParameters {
+            userId: Parameters.UserId /* int32 */;
+        }
+        namespace Responses {
+            export type $200 = string; // binary
+        }
+    }
     namespace GetUsernameByUserId {
         namespace Parameters {
             export type UserId = number; // int32
@@ -626,6 +637,15 @@ declare namespace Paths {
             }
         }
     }
+    namespace UpdateUserAvatar {
+        export interface RequestBody {
+            avatar: string; // binary
+        }
+        namespace Responses {
+            export interface $200 {
+            }
+        }
+    }
     namespace UpdateUserEmail {
         export type RequestBody = Components.Schemas.UserEmailUpdateRequest;
         namespace Responses {
@@ -696,6 +716,14 @@ declare namespace Paths {
 }
 
 export interface OperationMethods {
+  /**
+   * updateUserAvatar
+   */
+  'updateUserAvatar'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.UpdateUserAvatar.RequestBody,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.UpdateUserAvatar.Responses.$200>
   /**
    * getVaultInvitations
    */
@@ -937,6 +965,14 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.GetUsernameByUserId.Responses.$200>
   /**
+   * getUserAvatar
+   */
+  'getUserAvatar'(
+    parameters: Parameters<Paths.GetUserAvatar.PathParameters>,
+    data?: any,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.GetUserAvatar.Responses.$200>
+  /**
    * verifyUser
    */
   'verifyUser'(
@@ -1059,6 +1095,16 @@ export interface OperationMethods {
 }
 
 export interface PathsDictionary {
+  ['/api/users/avatar']: {
+    /**
+     * updateUserAvatar
+     */
+    'put'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: Paths.UpdateUserAvatar.RequestBody,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.UpdateUserAvatar.Responses.$200>
+  }
   ['/api/vaults/{vaultId}/invitations']: {
     /**
      * getVaultInvitations
@@ -1348,6 +1394,16 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetUsernameByUserId.Responses.$200>
+  }
+  ['/api/users/{userId}/avatar']: {
+    /**
+     * getUserAvatar
+     */
+    'get'(
+      parameters: Parameters<Paths.GetUserAvatar.PathParameters>,
+      data?: any,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.GetUserAvatar.Responses.$200>
   }
   ['/api/users/verify']: {
     /**

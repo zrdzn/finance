@@ -319,6 +319,7 @@
     "title": "Finance - Account Settings",
     "profile-card": {
       "title": "Your profile",
+      "avatar-label": "Avatar",
       "email-label": "E-mail",
       "username-label": "Username",
       "username-placeholder": "Enter your new username",

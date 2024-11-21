@@ -41,7 +41,24 @@ services:
     ports:
       - "1025:1025"
       - "8025:8025"
+  storage:
+    image: minio/minio
+    restart: always
+    volumes:
+      - storage:/data
+    environment:
+      - MINIO_ROOT_USER=${STORAGE_ACCESS_KEY}
+      - MINIO_ROOT_PASSWORD=${STORAGE_SECRET_KEY}
+      - MINIO_SITE_REGION=${STORAGE_REGION}
+      - MINIO_SERVER_URL=${STORAGE_ENDPOINT}
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+      - '9002:9002'
+    entrypoint: ['minio', 'server', '/data', '--console-address', ':9002']
 
 volumes:
   database:
+    driver: local
+  storage:
     driver: local

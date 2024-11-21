@@ -6,6 +6,7 @@ import dev.samstevens.totp.qr.QrGenerator
 import dev.samstevens.totp.secret.SecretGenerator
 import dev.samstevens.totp.spring.autoconfigure.TotpAutoConfiguration
 import dev.zrdzn.finance.backend.mail.MailService
+import dev.zrdzn.finance.backend.storage.StorageClient
 import dev.zrdzn.finance.backend.user.TwoFactorCodeGenerator
 import dev.zrdzn.finance.backend.user.UserProtectionService
 import dev.zrdzn.finance.backend.user.UserRepository
@@ -27,6 +28,7 @@ class UserApplicationConfiguration(
     private val qrDataFactory: QrDataFactory,
     private val qrGenerator: QrGenerator,
     private val codeVerifier: CodeVerifier,
+    private val storageClient: StorageClient
 ) {
 
     @Bean
@@ -36,6 +38,7 @@ class UserApplicationConfiguration(
         userProtectionService = userProtectionService(),
         twoFactorCodeGenerator = totpCodeGenerator(),
         codeVerifier = codeVerifier,
+        storageClient = storageClient
     )
 
     @Bean

@@ -90,7 +90,7 @@ export default function Register(): ReactJSXElement {
         username: registrationForm.username,
         password: registrationForm.password
       })
-      .then(() => login(registrationForm.email, registrationForm.password)
+      .then(() => login(registrationForm.email, registrationForm.password, undefined)
           .then(() => {
             toast.success(t('form.submit-success'))
             router.push("/")

@@ -8,4 +8,6 @@ interface UserRepository {
 
     fun findByEmail(email: String): User?
 
+    fun findIdByUsername(username: String): Int?
+
 }
