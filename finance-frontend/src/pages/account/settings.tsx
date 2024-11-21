@@ -10,8 +10,9 @@ import {
   FormLabel,
   HStack,
   Input,
+  Image,
   Stack,
-  Text
+  Text, Avatar, AvatarBadge, VStack
 } from "@chakra-ui/react";
 import React, {useEffect, useState} from "react";
 import {useApi} from "@/hooks/useApi"
@@ -20,13 +21,15 @@ import {useTheme} from "@/hooks/useTheme"
 import {useAuthentication} from "@/hooks/useAuthentication"
 import toast from "react-hot-toast"
 import {Layout} from "@/components/Layout"
-import {FaEdit, FaEnvelope, FaKey, FaLock, FaSave, FaShieldAlt} from "react-icons/fa"
+import {FaEdit, FaEnvelope, FaKey, FaLock, FaSave, FaShieldAlt, FaUpload} from "react-icons/fa"
 import {FaPencil, FaShield} from "react-icons/fa6"
 import {RequestAccountUpdateButton} from "@/components/account/RequestAccountUpdateButton"
 import {RequestAccountVerificationButton} from "@/components/account/RequestAccountVerificationButton";
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
+import {FileUpload} from "@/components/shared/FileUpload";
+import {BiSolidPencil} from "react-icons/bi";
 
 type UserProfileUpdateRequest = Components.Schemas.UserProfileUpdateRequest;
 
@@ -79,6 +82,20 @@ export default function AccountSettings(): ReactJSXElement {
         })
   }
 
+  const handleAvatarUpload = (avatarFile: File) => {
+    const form = new FormData()
+
+    form.append("avatar", avatarFile)
+
+    api
+        .then(client => client.api.client.put("api/users/avatar", form))
+        .then(() => router.reload())
+        .catch(error => {
+          const errorMessage = error.response?.data?.message
+          toast.error(errorMessage)
+        })
+  }
+
   return (
     <>
       <Layout>
@@ -101,6 +118,20 @@ export default function AccountSettings(): ReactJSXElement {
               {
                 authenticationDetails &&
                   <Stack spacing='4'>
+                    <FormControl>
+                      <FormLabel>{t('profile-card.avatar-label')}</FormLabel>
+                      <HStack gap={4}>
+                        <Avatar size={"xl"} src={`${process.env.NEXT_PUBLIC_API_URL}/api/users/avatar/${authenticationDetails.username}`} />
+                        <FileUpload handleFile={it => handleAvatarUpload(it)}>
+                          <Button size={'md'}
+                                  backgroundColor={theme.primaryColor}
+                                  gap={1}
+                                  color={'#f8f8f8'} fontWeight={'400'}>
+                            <FaPencil />
+                          </Button>
+                        </FileUpload>
+                      </HStack>
+                    </FormControl>
                     <FormControl isRequired>
                       <FormLabel>{t('profile-card.email-label')}</FormLabel>
                       <HStack>

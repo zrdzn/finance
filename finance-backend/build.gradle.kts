@@ -47,6 +47,8 @@ dependencies {
 
     implementation("org.postgresql:postgresql:42.6.0")
 
+    implementation("software.amazon.awssdk:s3:2.29.17")
+
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 
     implementation("com.auth0:java-jwt:4.4.0")

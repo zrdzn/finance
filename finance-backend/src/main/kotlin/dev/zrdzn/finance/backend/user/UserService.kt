@@ -1,6 +1,7 @@
 package dev.zrdzn.finance.backend.user
 
 import dev.samstevens.totp.code.CodeVerifier
+import dev.zrdzn.finance.backend.storage.StorageClient
 import dev.zrdzn.finance.backend.user.api.*
 import dev.zrdzn.finance.backend.user.api.security.TwoFactorSetupResponse
 import dev.zrdzn.finance.backend.user.api.security.TwoFactorAlreadyEnabledException
@@ -8,16 +9,19 @@ import dev.zrdzn.finance.backend.user.api.UserAccessDeniedException
 import org.slf4j.LoggerFactory
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.transaction.annotation.Transactional
+import java.io.InputStream
 
 open class UserService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val userProtectionService: UserProtectionService,
     private val twoFactorCodeGenerator: TwoFactorCodeGenerator,
-    private val codeVerifier: CodeVerifier
+    private val codeVerifier: CodeVerifier,
+    private val storageClient: StorageClient
 ) {
 
     private val logger = LoggerFactory.getLogger(UserService::class.java)
+    private val AVATARS_BUCKET = "avatars"
 
     @Transactional
     open fun createUser(userCreateRequest: UserCreateRequest): UserCreateResponse {
@@ -138,6 +142,15 @@ open class UserService(
         logger.info("User with id $requesterId has verified his account")
     }
 
+    @Transactional
+    open fun updateUserAvatarById(requesterId: Int, avatar: ByteArray) {
+        userRepository.findById(requesterId) ?: throw UserNotFoundException()
+
+        storageClient.saveFile(AVATARS_BUCKET, requesterId.toString(), data = avatar.inputStream())
+
+        logger.info("User with id $requesterId has updated avatar")
+    }
+
     @Transactional(readOnly = true)
     open fun doesUserExistByEmail(email: String): Boolean =
         userRepository.findByEmail(email) != null
@@ -155,6 +168,10 @@ open class UserService(
                 )
             }
             ?: throw UserNotFoundException()
+
+    @Transactional(readOnly = true)
+    open fun getUserIdByUsername(username: String): Int =
+        userRepository.findIdByUsername(username) ?: throw UserNotFoundException()
 
     @Transactional(readOnly = true)
     open fun getUsernameByUserId(id: UserId): UsernameResponse =
@@ -176,5 +193,10 @@ open class UserService(
             }
             ?: throw UserNotFoundByEmailException()
 
+    @Transactional(readOnly = true)
+    open fun getUserAvatarByUsername(username: String): InputStream =
+        getUserIdByUsername(username)
+            .let { storageClient.loadFile(AVATARS_BUCKET, it.toString()) }
+            ?: throw UserNotFoundException()
 
 }

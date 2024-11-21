@@ -11,6 +11,10 @@ enum class EnvironmentProperty {
     MAIL_PORT,
     MAIL_USERNAME,
     MAIL_PASSWORD,
-    MAIL_FROM
+    MAIL_FROM,
+    STORAGE_ACCESS_KEY,
+    STORAGE_SECRET_KEY,
+    STORAGE_REGION,
+    STORAGE_ENDPOINT
 
 }

@@ -31,6 +31,12 @@ spring:
     from: ${MAIL_FROM}
 client:
   url: ${CLIENT_URL}
+storage:
+  access-key: ${STORAGE_ACCESS_KEY}
+  secret-key: ${STORAGE_SECRET_KEY}
+  region: ${STORAGE_REGION}
+  predefined-buckets:
+    - "avatars"
 springdoc:
   swagger-ui:
     path: "/swagger.html"
