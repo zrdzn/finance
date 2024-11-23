@@ -18,6 +18,7 @@ import {EditMemberButton} from "@/components/member/EditMemberButton";
 import {useAuthentication} from "@/hooks/useAuthentication";
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
+import {AccountAvatar} from "@/components/account/AccountAvatar";
 
 type VaultMemberResponse = Components.Schemas.VaultMemberResponse;
 type VaultRoleResponse = Components.Schemas.VaultRoleResponse;
@@ -63,6 +64,7 @@ export const MembersCardItem = ({
                 <Flex w={'full'}
                       gap={3}
                       alignItems={'center'}>
+                  <AccountAvatar size={'sm'} />
                   <Text fontSize='md' fontWeight={'600'}
                            maxWidth={'70%'}>
                     {member.user.username}

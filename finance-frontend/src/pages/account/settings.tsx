@@ -30,6 +30,7 @@ import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
 import {FileUpload} from "@/components/shared/FileUpload";
 import {BiSolidPencil} from "react-icons/bi";
+import {AccountAvatar} from "@/components/account/AccountAvatar";
 
 type UserProfileUpdateRequest = Components.Schemas.UserProfileUpdateRequest;
 
@@ -121,7 +122,7 @@ export default function AccountSettings(): ReactJSXElement {
                     <FormControl>
                       <FormLabel>{t('profile-card.avatar-label')}</FormLabel>
                       <HStack gap={4}>
-                        <Avatar size={"xl"} src={`${process.env.NEXT_PUBLIC_API_URL}/api/users/avatar/${authenticationDetails.username}`} />
+                        <AccountAvatar size={'xl'} />
                         <FileUpload handleFile={it => handleAvatarUpload(it)}>
                           <Button size={'md'}
                                   backgroundColor={theme.primaryColor}
