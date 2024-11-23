@@ -17,6 +17,7 @@ import {useTheme} from "@/hooks/useTheme"
 import React from "react"
 import {FaArrowRightToBracket} from "react-icons/fa6"
 import {useTranslations} from "next-intl";
+import {AccountAvatar} from "@/components/account/AccountAvatar";
 
 export const Navbar = () => {
   const { authenticationDetails, logout } = useAuthentication();
@@ -60,7 +61,7 @@ export const Navbar = () => {
             <Menu>
               <MenuButton>
                 <HStack alignItems={'center'} width={'full'} gap={2}>
-                  <FaUser />
+                  <AccountAvatar size={'xs'} />
                   <Box>{isMobile ? null : <Text>{authenticationDetails.username}</Text>}</Box>
                 </HStack>
               </MenuButton>
