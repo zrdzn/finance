@@ -1,4 +1,26 @@
 {
+  "Units": {
+    "dates": {
+      "singular": {
+        "second": "second",
+        "minute": "minute",
+        "hour": "hour",
+        "day": "day",
+        "week": "week",
+        "month": "month",
+        "year": "year"
+      },
+      "plural": {
+        "second": "seconds",
+        "minute": "minutes",
+        "hour": "hours",
+        "day": "days",
+        "week": "weeks",
+        "month": "months",
+        "year": "years"
+      }
+    }
+  },
   "Homepage": {
     "title": "Finance - Manage Vaults",
     "your-vaults": "Your vaults",
@@ -106,7 +128,6 @@
     "transactions": "Transactions",
     "products": "Products",
     "statistics": "Statistics",
-    "schedules": "Schedules",
     "members": "Members",
     "audits": "Audit Logs",
     "settings": "Settings"
@@ -164,6 +185,34 @@
         "export-range-start": "Start date",
         "export-range-end": "End date",
         "submit": "Export"
+      }
+    },
+    "schedules": {
+      "schedule-created-success": "Schedule has been created",
+      "schedule-created-error": "Failed to create a schedule",
+      "schedule-deleted-success": "Schedule has been deleted",
+      "schedule-deleted-error": "Failed to delete a schedule",
+      "card": {
+        "title": "Schedules",
+        "no-schedules": "There are no schedules",
+        "search-placeholder": "Search schedules",
+        "next-execution": "Next execution %date%",
+        "interval": "Interval",
+        "interval-value": "Every %interval%",
+        "create": "Create a new schedule"
+      },
+      "create-modal": {
+        "title": "Create a new schedule",
+        "description-label": "Description",
+        "description-placeholder": "What is the schedule for?",
+        "interval-label": "Interval",
+        "amount-label": "Amount",
+        "preview": "Create transaction every %interval%",
+        "cancel": "Cancel",
+        "submit": "Create",
+        "validation": {
+          "missing-description": "You need to provide a description"
+        }
       }
     },
     "product": {

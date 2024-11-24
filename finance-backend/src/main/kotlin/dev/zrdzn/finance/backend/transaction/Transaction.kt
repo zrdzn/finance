@@ -2,6 +2,7 @@ package dev.zrdzn.finance.backend.transaction
 
 import dev.zrdzn.finance.backend.shared.Currency
 import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
+import dev.zrdzn.finance.backend.transaction.api.TransactionResponse
 import dev.zrdzn.finance.backend.transaction.api.TransactionType
 import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.vault.VaultId
@@ -51,4 +52,17 @@ data class Transaction(
 
     @Column(name = "currency")
     var currency: Currency,
+)
+
+fun Transaction.toResponse(totalInVaultCurrency: BigDecimal) = TransactionResponse(
+    id = this.id!!,
+    userId = this.userId,
+    vaultId = this.vaultId,
+    createdAt = this.createdAt,
+    transactionMethod = this.transactionMethod,
+    transactionType = this.transactionType,
+    description = this.description,
+    totalInVaultCurrency = totalInVaultCurrency,
+    total = this.total,
+    currency = this.currency
 )
