@@ -6,37 +6,35 @@ import dev.zrdzn.finance.backend.audit.api.AuditAction
 import dev.zrdzn.finance.backend.exchange.ExchangeService
 import dev.zrdzn.finance.backend.product.ProductId
 import dev.zrdzn.finance.backend.product.ProductService
-import dev.zrdzn.finance.backend.product.api.ProductNotFoundException
 import dev.zrdzn.finance.backend.shared.Currency
 import dev.zrdzn.finance.backend.shared.Price
-import dev.zrdzn.finance.backend.transaction.api.TransactionAmountResponse
-import dev.zrdzn.finance.backend.transaction.api.TransactionCreateResponse
-import dev.zrdzn.finance.backend.transaction.api.TransactionListResponse
-import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
-import dev.zrdzn.finance.backend.transaction.api.TransactionNotFoundException
-import dev.zrdzn.finance.backend.transaction.api.TransactionResponse
-import dev.zrdzn.finance.backend.transaction.api.TransactionType
+import dev.zrdzn.finance.backend.transaction.api.*
 import dev.zrdzn.finance.backend.transaction.api.flow.TransactionFlowsResponse
 import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductCreateResponse
 import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductListResponse
 import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductWithProductResponse
+import dev.zrdzn.finance.backend.transaction.api.schedule.ScheduleInterval
+import dev.zrdzn.finance.backend.transaction.api.schedule.ScheduleListResponse
+import dev.zrdzn.finance.backend.transaction.api.schedule.ScheduleNotFoundException
+import dev.zrdzn.finance.backend.transaction.api.schedule.ScheduleResponse
 import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.user.UserService
 import dev.zrdzn.finance.backend.vault.VaultId
 import dev.zrdzn.finance.backend.vault.VaultService
 import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission
+import org.springframework.transaction.annotation.Transactional
 import java.io.StringWriter
 import java.math.BigDecimal
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import org.slf4j.LoggerFactory
-import org.springframework.transaction.annotation.Transactional
+import java.time.temporal.ChronoUnit
 
 open class TransactionService(
     private val transactionRepository: TransactionRepository,
     private val transactionProductRepository: TransactionProductRepository,
+    private val scheduleRepository: ScheduleRepository,
     private val productService: ProductService,
     private val exchangeService: ExchangeService,
     private val vaultService: VaultService,
@@ -44,8 +42,6 @@ open class TransactionService(
     private val auditService: AuditService,
     private val clock: Clock
 ) {
-
-    private val logger = LoggerFactory.getLogger(TransactionService::class.java)
 
     @Transactional
     open fun exportTransactionsToCsv(requesterId: UserId, vaultId: VaultId, startDate: Instant, endDate: Instant): String {
@@ -89,6 +85,43 @@ open class TransactionService(
     }
 
     @Transactional
+    open fun executeSchedules() {
+        val now = Instant.now(clock)
+
+        scheduleRepository.findByNextExecutionBefore(now).forEach { schedule ->
+            val transaction = transactionRepository.findById(schedule.transactionId) ?: throw TransactionNotFoundException()
+
+            val newTransaction = transactionRepository.save(
+                Transaction(
+                    id = null,
+                    userId = transaction.userId,
+                    vaultId = transaction.vaultId,
+                    createdAt = Instant.now(clock),
+                    transactionMethod = transaction.transactionMethod,
+                    transactionType = transaction.transactionType,
+                    description = transaction.description,
+                    total = transaction.total,
+                    currency = transaction.currency
+                )
+            )
+
+            transactionProductRepository.findByTransactionId(transaction.id!!).forEach {
+                transactionProductRepository.save(
+                    TransactionProduct(
+                        id = null,
+                        transactionId = newTransaction.id!!,
+                        productId = it.productId,
+                        unitAmount = it.unitAmount,
+                        quantity = it.quantity
+                    )
+                )
+            }
+
+            schedule.nextExecution = calculateNextExecutionDate(schedule.scheduleInterval, schedule.intervalValue)
+        }
+    }
+
+    @Transactional
     open fun createTransaction(
         requesterId: UserId,
         vaultId: VaultId,
@@ -117,13 +150,12 @@ open class TransactionService(
                     currency = price.currency
                 )
             )
-            .also { logger.info("Successfully created new transaction: $it") }
             .also {
                 auditService.createAudit(
                     vaultId = vaultId,
                     userId = requesterId,
                     auditAction = AuditAction.TRANSACTION_CREATED,
-                    description = description ?: "Transaction ID ${it.id}"
+                    description = description
                 )
             }
             .let { TransactionCreateResponse(id = it.id!!) }
@@ -151,7 +183,6 @@ open class TransactionService(
                     quantity = quantity,
                 )
             )
-            .also { logger.info("Successfully created new transaction product: $it") }
             .also {
                 auditService.createAudit(
                     vaultId = product.vaultId,
@@ -164,9 +195,45 @@ open class TransactionService(
     }
 
     @Transactional
+    open fun createSchedule(requesterId: Int, transactionId: Int, description: String, interval: ScheduleInterval, amount: Int): ScheduleResponse {
+        val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundException()
+
+        vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.SCHEDULE_CREATE)
+
+        val nextExecutionDate = calculateNextExecutionDate(interval, amount)
+
+        val schedule = scheduleRepository.save(
+            Schedule(
+                id = null,
+                transactionId = transaction.id!!,
+                description = description,
+                nextExecution = nextExecutionDate,
+                scheduleInterval = interval,
+                intervalValue = amount
+            )
+        )
+
+        auditService.createAudit(
+            vaultId = transaction.vaultId,
+            userId = requesterId,
+            auditAction = AuditAction.SCHEDULE_CREATED,
+            description = description
+        )
+
+        return ScheduleResponse(
+            id = schedule.id!!,
+            transactionId = schedule.transactionId,
+            description = schedule.description,
+            nextExecution = schedule.nextExecution,
+            interval = schedule.scheduleInterval,
+            amount = schedule.intervalValue
+        )
+    }
+
+    @Transactional
     open fun updateTransaction(requesterId: UserId, transactionId: TransactionId, transactionMethod: TransactionMethod,
                                transactionType: TransactionType, description: String?, price: Price) {
-        val transaction = transactionRepository.findById(transactionId) ?: throw ProductNotFoundException()
+        val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundException()
 
         vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_UPDATE)
 
@@ -175,7 +242,6 @@ open class TransactionService(
         transaction.description = description
         transaction.total = price.amount
         transaction.currency = price.currency
-        logger.info("Successfully updated transaction: $transaction")
 
         auditService.createAudit(
             vaultId = transaction.vaultId,
@@ -187,13 +253,11 @@ open class TransactionService(
 
     @Transactional
     open fun deleteTransaction(transactionId: TransactionId) {
-        val transaction = transactionRepository.findById(transactionId) ?: throw ProductNotFoundException()
+        val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundException()
 
         vaultService.authorizeMember(transaction.vaultId, transaction.userId, VaultPermission.TRANSACTION_DELETE)
 
         transactionRepository.deleteById(transactionId)
-
-        logger.info("Successfully deleted transaction with id: $transactionId")
 
         auditService.createAudit(
             vaultId = transaction.vaultId,
@@ -209,24 +273,7 @@ open class TransactionService(
 
         return transactionRepository
             .findByVaultId(vaultId)
-            .map {
-                TransactionResponse(
-                    id = it.id!!,
-                    userId = it.userId,
-                    vaultId = it.vaultId,
-                    createdAt = it.createdAt,
-                    transactionMethod = it.transactionMethod,
-                    transactionType = it.transactionType,
-                    description = it.description,
-                    totalInVaultCurrency = exchangeService.convertCurrency(
-                        amount = it.total,
-                        source = it.currency,
-                        target = "PLN"
-                    ).amount,
-                    total = it.total,
-                    currency = it.currency
-                )
-            }
+            .map { it.toResponse(exchangeService.convertCurrency(it.total, it.currency, "PLN").amount) }
             .toSet()
             .let { TransactionListResponse(it) }
     }
@@ -237,26 +284,20 @@ open class TransactionService(
 
         return transactionRepository
             .findByVaultIdAndCreatedAtBetween(vaultId, startDate, endDate)
-            .map {
-                TransactionResponse(
-                    id = it.id!!,
-                    userId = it.userId,
-                    vaultId = it.vaultId,
-                    createdAt = it.createdAt,
-                    transactionMethod = it.transactionMethod,
-                    transactionType = it.transactionType,
-                    description = it.description,
-                    totalInVaultCurrency = exchangeService.convertCurrency(
-                        amount = it.total,
-                        source = it.currency,
-                        target = "PLN"
-                    ).amount,
-                    total = it.total,
-                    currency = it.currency
-                )
-            }
+            .map { it.toResponse(exchangeService.convertCurrency(it.total, it.currency, "PLN").amount) }
             .toSet()
             .let { TransactionListResponse(it) }
+    }
+
+    @Transactional(readOnly = true)
+    open fun getTransaction(requesterId: UserId, transactionId: TransactionId): TransactionResponse {
+        val transaction = transactionRepository.findById(transactionId)
+            ?.let { it.toResponse(exchangeService.convertCurrency(it.total, it.currency, "PLN").amount) }
+            ?: throw TransactionNotFoundException()
+
+        vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_READ)
+
+        return transaction
     }
 
     @Transactional(readOnly = true)
@@ -290,6 +331,41 @@ open class TransactionService(
     }
 
     @Transactional(readOnly = true)
+    open fun getSchedules(requesterId: UserId, vaultId: VaultId): ScheduleListResponse {
+        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.SCHEDULE_READ)
+
+        return scheduleRepository
+            .findByVaultId(vaultId)
+            .map {
+                ScheduleResponse(
+                    id = it.id!!,
+                    transactionId = it.transactionId,
+                    description = it.description,
+                    nextExecution = it.nextExecution,
+                    interval = it.scheduleInterval,
+                    amount = it.intervalValue
+                )
+            }
+            .toSet()
+            .let { ScheduleListResponse(it) }
+    }
+
+    @Transactional(readOnly = true)
+    open fun getScheduleForcefully(scheduleId: Int): ScheduleResponse =
+        scheduleRepository.findById(scheduleId)
+            ?.let {
+                ScheduleResponse(
+                    id = it.id!!,
+                    transactionId = it.transactionId,
+                    description = it.description,
+                    nextExecution = it.nextExecution,
+                    interval = it.scheduleInterval,
+                    amount = it.intervalValue
+                )
+            }
+            ?: throw ScheduleNotFoundException()
+
+    @Transactional(readOnly = true)
     open fun getTransactionFlows(requesterId: UserId, vaultId: VaultId, transactionType: TransactionType?, currency: Currency, start: Instant): TransactionFlowsResponse {
         vaultService.authorizeMember(vaultId, requesterId, VaultPermission.DETAILS_READ)
 
@@ -312,6 +388,33 @@ open class TransactionService(
                 currency = currency
             )
         )
+    }
+
+    @Transactional
+    open fun deleteSchedule(requesterId: Int, scheduleId: Int) {
+        val schedule = getScheduleForcefully(scheduleId)
+        val transaction = getTransaction(requesterId, schedule.transactionId)
+
+        scheduleRepository.deleteById(scheduleId)
+
+        auditService.createAudit(
+            vaultId = transaction.vaultId,
+            userId = requesterId,
+            auditAction = AuditAction.SCHEDULE_DELETED,
+            description = schedule.description
+        )
+    }
+
+    private fun calculateNextExecutionDate(interval: ScheduleInterval, amount: Int): Instant {
+        val now = Instant.now(clock)
+        val convertedAmount = amount.toLong()
+        return when (interval) {
+            ScheduleInterval.HOUR -> now.plus(convertedAmount, ChronoUnit.HOURS)
+            ScheduleInterval.DAY -> now.plus(convertedAmount, ChronoUnit.DAYS)
+            ScheduleInterval.WEEK -> now.plus(convertedAmount * 7, ChronoUnit.DAYS)
+            ScheduleInterval.MONTH -> now.plus(convertedAmount * 30, ChronoUnit.DAYS)
+            ScheduleInterval.YEAR -> now.plus(convertedAmount * 365, ChronoUnit.DAYS)
+        }
     }
 
     private fun calculateFlowsByType(

@@ -3,6 +3,7 @@ package dev.zrdzn.finance.backend.transaction.application
 import dev.zrdzn.finance.backend.audit.AuditService
 import dev.zrdzn.finance.backend.exchange.ExchangeService
 import dev.zrdzn.finance.backend.product.ProductService
+import dev.zrdzn.finance.backend.transaction.ScheduleRepository
 import dev.zrdzn.finance.backend.transaction.TransactionProductRepository
 import dev.zrdzn.finance.backend.transaction.TransactionRepository
 import dev.zrdzn.finance.backend.transaction.TransactionService
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration
 class TransactionApplicationConfiguration(
     private val transactionRepository: TransactionRepository,
     private val transactionProductRepository: TransactionProductRepository,
+    private val scheduleRepository: ScheduleRepository,
     private val productService: ProductService,
     private val exchangeService: ExchangeService,
     private val vaultService: VaultService,
@@ -25,10 +27,11 @@ class TransactionApplicationConfiguration(
 ) {
 
     @Bean
-    fun transactionFacade(): TransactionService =
+    fun transactionService(): TransactionService =
         TransactionService(
             transactionRepository = transactionRepository,
             transactionProductRepository = transactionProductRepository,
+            scheduleRepository = scheduleRepository,
             productService = productService,
             exchangeService = exchangeService,
             vaultService = vaultService,

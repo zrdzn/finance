@@ -30,6 +30,7 @@ Data is securely stored in a PostgreSQL database.
     - Specify description, currency, payment method and type of transaction
     - Add existing products to transactions
     - Manage existing transactions
+- Schedule recurring transactions to automate transactions
 
 #### 📝 Export Transactions to .CSV File
 - Easily export transactions to a .CSV file for offline access and analysis
@@ -41,6 +42,9 @@ Data is securely stored in a PostgreSQL database.
 
 ### 👥 User and Member Management
 - Invite new users to vaults
+- Setup two-factor authentication for security
+- Verify accounts via email
+- Change avatar, username, email and password
 - Manage existing vault members and assign roles
 
 ### ⚙️ Vault Settings

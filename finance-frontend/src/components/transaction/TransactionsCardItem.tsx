@@ -6,7 +6,7 @@ import {
   Box,
   Divider,
   Flex,
-  Heading, HStack,
+  Heading, HStack, Link,
   Stack,
   Text
 } from "@chakra-ui/react"
@@ -24,6 +24,7 @@ import {FaCaretDown, FaCaretUp} from "react-icons/fa"
 import {useDateFormatter} from "@/hooks/useDateFormatter"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
+import {AddScheduleButton} from "@/components/transaction/schedule/AddScheduleButton";
 
 type TransactionResponse = Components.Schemas.TransactionResponse;
 type TransactionProductWithProductResponse = Components.Schemas.TransactionProductWithProductResponse;
@@ -126,6 +127,7 @@ export const TransactionsCardItem = ({
             {
               permissions.includes("TRANSACTION_UPDATE") && <EditTransactionButton transaction={transaction} />
             }
+            <AddScheduleButton transactionId={transaction.id} />
             {
               permissions.includes("TRANSACTION_DELETE") && <DeleteButton onClick={handleTransactionDelete} />
             }

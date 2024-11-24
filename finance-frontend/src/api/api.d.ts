@@ -23,7 +23,7 @@ declare namespace Components {
             createdAt: string; // date-time
             vault: VaultResponse;
             user: UserResponse;
-            auditAction: "TRANSACTION_CREATED" | "TRANSACTION_UPDATED" | "TRANSACTION_DELETED" | "TRANSACTION_EXPORTED" | "TRANSACTION_PRODUCT_CREATED" | "CATEGORY_CREATED" | "CATEGORY_DELETED" | "PRODUCT_CREATED" | "PRODUCT_UPDATED" | "PRODUCT_DELETED";
+            auditAction: "TRANSACTION_CREATED" | "TRANSACTION_UPDATED" | "TRANSACTION_DELETED" | "TRANSACTION_EXPORTED" | "TRANSACTION_PRODUCT_CREATED" | "SCHEDULE_CREATED" | "SCHEDULE_DELETED" | "CATEGORY_CREATED" | "CATEGORY_DELETED" | "PRODUCT_CREATED" | "PRODUCT_UPDATED" | "PRODUCT_DELETED";
             description: string;
         }
         export interface AuthenticationDetailsResponse {
@@ -82,6 +82,22 @@ declare namespace Components {
         }
         export interface ProductUpdateRequest {
             categoryId?: number; // int32
+        }
+        export interface ScheduleCreateRequest {
+            description: string;
+            interval: "HOUR" | "DAY" | "WEEK" | "MONTH" | "YEAR";
+            amount: number; // int32
+        }
+        export interface ScheduleListResponse {
+            schedules: ScheduleResponse[];
+        }
+        export interface ScheduleResponse {
+            id: number; // int32
+            transactionId: number; // int32
+            description: string;
+            nextExecution: string; // date-time
+            interval: "HOUR" | "DAY" | "WEEK" | "MONTH" | "YEAR";
+            amount: number; // int32
         }
         export interface TransactionAmountResponse {
             amount: number; // int32
@@ -229,7 +245,7 @@ declare namespace Components {
         export interface VaultRoleResponse {
             name: string;
             weight: number; // int32
-            permissions: ("DETAILS_READ" | "DELETE" | "AUDIT_READ" | "SETTINGS_READ" | "SETTINGS_UPDATE" | "TRANSACTION_CREATE" | "TRANSACTION_READ" | "TRANSACTION_UPDATE" | "TRANSACTION_DELETE" | "PRODUCT_CREATE" | "PRODUCT_READ" | "PRODUCT_UPDATE" | "PRODUCT_DELETE" | "CATEGORY_CREATE" | "CATEGORY_READ" | "CATEGORY_UPDATE" | "CATEGORY_DELETE" | "MEMBER_READ" | "MEMBER_UPDATE" | "MEMBER_REMOVE" | "MEMBER_INVITE_CREATE" | "MEMBER_INVITE_READ" | "MEMBER_INVITE_DELETE")[];
+            permissions: ("DETAILS_READ" | "DELETE" | "AUDIT_READ" | "SETTINGS_READ" | "SETTINGS_UPDATE" | "TRANSACTION_CREATE" | "TRANSACTION_READ" | "TRANSACTION_UPDATE" | "TRANSACTION_DELETE" | "SCHEDULE_CREATE" | "SCHEDULE_READ" | "SCHEDULE_DELETE" | "PRODUCT_CREATE" | "PRODUCT_READ" | "PRODUCT_UPDATE" | "PRODUCT_DELETE" | "CATEGORY_CREATE" | "CATEGORY_READ" | "CATEGORY_UPDATE" | "CATEGORY_DELETE" | "MEMBER_READ" | "MEMBER_UPDATE" | "MEMBER_REMOVE" | "MEMBER_INVITE_CREATE" | "MEMBER_INVITE_READ" | "MEMBER_INVITE_DELETE")[];
         }
         export interface VaultUpdateRequest {
             name: string;
@@ -261,6 +277,18 @@ declare namespace Paths {
         export type RequestBody = Components.Schemas.ProductCreateRequest;
         namespace Responses {
             export type $200 = Components.Schemas.ProductCreateResponse;
+        }
+    }
+    namespace CreateSchedule {
+        namespace Parameters {
+            export type TransactionId = number; // int32
+        }
+        export interface PathParameters {
+            transactionId: Parameters.TransactionId /* int32 */;
+        }
+        export type RequestBody = Components.Schemas.ScheduleCreateRequest;
+        namespace Responses {
+            export type $200 = Components.Schemas.ScheduleResponse;
         }
     }
     namespace CreateTransaction {
@@ -318,6 +346,18 @@ declare namespace Paths {
         }
         export interface PathParameters {
             productId: Parameters.ProductId /* int32 */;
+        }
+        namespace Responses {
+            export interface $200 {
+            }
+        }
+    }
+    namespace DeleteScheduleById {
+        namespace Parameters {
+            export type ScheduleId = number; // int32
+        }
+        export interface PathParameters {
+            scheduleId: Parameters.ScheduleId /* int32 */;
         }
         namespace Responses {
             export interface $200 {
@@ -421,6 +461,17 @@ declare namespace Paths {
             export type $200 = Components.Schemas.ProductListResponse;
         }
     }
+    namespace GetSchedulesByVaultId {
+        namespace Parameters {
+            export type VaultId = number; // int32
+        }
+        export interface PathParameters {
+            vaultId: Parameters.VaultId /* int32 */;
+        }
+        namespace Responses {
+            export type $200 = Components.Schemas.ScheduleListResponse;
+        }
+    }
     namespace GetTransactionProducts {
         namespace Parameters {
             export type TransactionId = number; // int32
@@ -456,10 +507,10 @@ declare namespace Paths {
     }
     namespace GetUserAvatar {
         namespace Parameters {
-            export type UserId = number; // int32
+            export type Username = string;
         }
         export interface PathParameters {
-            userId: Parameters.UserId /* int32 */;
+            username: Parameters.Username;
         }
         namespace Responses {
             export type $200 = string; // binary
@@ -773,6 +824,14 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.VerifyUserTwoFactorSetup.Responses.$200>
   /**
+   * createSchedule
+   */
+  'createSchedule'(
+    parameters: Parameters<Paths.CreateSchedule.PathParameters>,
+    data?: Paths.CreateSchedule.RequestBody,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.CreateSchedule.Responses.$200>
+  /**
    * createTransactionProduct
    */
   'createTransactionProduct'(
@@ -965,14 +1024,6 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.GetUsernameByUserId.Responses.$200>
   /**
-   * getUserAvatar
-   */
-  'getUserAvatar'(
-    parameters: Parameters<Paths.GetUserAvatar.PathParameters>,
-    data?: any,
-    config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.GetUserAvatar.Responses.$200>
-  /**
    * verifyUser
    */
   'verifyUser'(
@@ -996,6 +1047,14 @@ export interface OperationMethods {
     data?: any,
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.RequestUserUpdate.Responses.$200>
+  /**
+   * getUserAvatar
+   */
+  'getUserAvatar'(
+    parameters: Parameters<Paths.GetUserAvatar.PathParameters>,
+    data?: any,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.GetUserAvatar.Responses.$200>
   /**
    * getTransactionsByVaultId
    */
@@ -1036,6 +1095,14 @@ export interface OperationMethods {
     data?: any,
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.GetTransactionProducts.Responses.$200>
+  /**
+   * getSchedulesByVaultId
+   */
+  'getSchedulesByVaultId'(
+    parameters: Parameters<Paths.GetSchedulesByVaultId.PathParameters>,
+    data?: any,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.GetSchedulesByVaultId.Responses.$200>
   /**
    * getProductsByVaultId
    */
@@ -1084,6 +1151,14 @@ export interface OperationMethods {
     data?: any,
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.RemoveVaultInvitation.Responses.$200>
+  /**
+   * deleteScheduleById
+   */
+  'deleteScheduleById'(
+    parameters: Parameters<Paths.DeleteScheduleById.PathParameters>,
+    data?: any,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.DeleteScheduleById.Responses.$200>
   /**
    * deleteCategory
    */
@@ -1162,6 +1237,16 @@ export interface PathsDictionary {
       data?: Paths.VerifyUserTwoFactorSetup.RequestBody,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.VerifyUserTwoFactorSetup.Responses.$200>
+  }
+  ['/api/transactions/{transactionId}/schedule/create']: {
+    /**
+     * createSchedule
+     */
+    'post'(
+      parameters: Parameters<Paths.CreateSchedule.PathParameters>,
+      data?: Paths.CreateSchedule.RequestBody,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.CreateSchedule.Responses.$200>
   }
   ['/api/transactions/{transactionId}/products/create']: {
     /**
@@ -1395,16 +1480,6 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetUsernameByUserId.Responses.$200>
   }
-  ['/api/users/{userId}/avatar']: {
-    /**
-     * getUserAvatar
-     */
-    'get'(
-      parameters: Parameters<Paths.GetUserAvatar.PathParameters>,
-      data?: any,
-      config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.GetUserAvatar.Responses.$200>
-  }
   ['/api/users/verify']: {
     /**
      * verifyUser
@@ -1434,6 +1509,16 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.RequestUserUpdate.Responses.$200>
+  }
+  ['/api/users/avatar/{username}']: {
+    /**
+     * getUserAvatar
+     */
+    'get'(
+      parameters: Parameters<Paths.GetUserAvatar.PathParameters>,
+      data?: any,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.GetUserAvatar.Responses.$200>
   }
   ['/api/transactions/{vaultId}']: {
     /**
@@ -1484,6 +1569,16 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetTransactionProducts.Responses.$200>
+  }
+  ['/api/transactions/schedules/{vaultId}']: {
+    /**
+     * getSchedulesByVaultId
+     */
+    'get'(
+      parameters: Parameters<Paths.GetSchedulesByVaultId.PathParameters>,
+      data?: any,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.GetSchedulesByVaultId.Responses.$200>
   }
   ['/api/products/{vaultId}']: {
     /**
@@ -1544,6 +1639,16 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.RemoveVaultInvitation.Responses.$200>
+  }
+  ['/api/transactions/schedules/{scheduleId}']: {
+    /**
+     * deleteScheduleById
+     */
+    'delete'(
+      parameters: Parameters<Paths.DeleteScheduleById.PathParameters>,
+      data?: any,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.DeleteScheduleById.Responses.$200>
   }
   ['/api/categories/{categoryId}']: {
     /**

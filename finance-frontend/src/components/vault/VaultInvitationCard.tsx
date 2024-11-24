@@ -56,7 +56,7 @@ export const VaultInvitationCard = ({ invitation }: VaultInvitationCardPropertie
   }
 
   return (
-    <Card width='sm'
+    <Card width={{ base: '100%', sm: 'sm' }}
           mt={8}>
       <CardBody>
         <Stack mt='6' spacing='3'>

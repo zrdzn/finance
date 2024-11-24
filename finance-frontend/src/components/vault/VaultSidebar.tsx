@@ -52,10 +52,9 @@ const GetAvailableEndpoints = (vault: VaultResponse, permissions: string[]) => {
 
   const navItems = [
     { href: `/vault/${vault.publicId}`, icon: FaHouse, label: t('overview') },
-    { href: `/vault/${vault.publicId}/transactions`, icon: FaBook, label: t('transactions'), requireAtLeast: ['TRANSACTION_READ'] },
+    { href: `/vault/${vault.publicId}/transactions`, icon: FaBook, label: t('transactions'), requireAtLeast: ['TRANSACTION_READ', 'SCHEDULE_READ'] },
     { href: `/vault/${vault.publicId}/products`, icon: FaTags, label: t('products'), requireAtLeast: ['PRODUCT_READ', 'CATEGORY_READ'] },
     { href: `/vault/${vault.publicId}/statistics`, icon: FaChartSimple, label: t('statistics') },
-    { href: `/vault/${vault.publicId}/schedules`, icon: FaCalendarDays, label: t('schedules'), isDisabled: true },
     { href: `/vault/${vault.publicId}/members`, icon: FaUser, label: t('members'), requireAtLeast: ['MEMBER_READ', 'MEMBER_INVITE_READ'] },
     { href: `/vault/${vault.publicId}/audits`, icon: FaHistory, label: t('audits'), requireAtLeast: ['AUDIT_READ'] },
     { href: `/vault/${vault.publicId}/settings`, icon: FaGears, label: t('settings'), requireAtLeast: ['SETTINGS_READ'] }
@@ -104,7 +103,7 @@ const BaseView = ({ vault, vaultRole }: VaultSidebarProperties) => {
           </DrawerHeader>
           <DrawerBody padding={0}>
             <Flex direction={'column'} mt={5}>
-              {GetAvailableEndpoints(vault, vaultRole.permissions).map(({ href, icon: Icon, label, isDisabled }) => (
+              {GetAvailableEndpoints(vault, vaultRole.permissions).map(({ href, icon: Icon, label }) => (
                   <Flex key={href} width={'full'} marginY={3}>
                     <Link href={href} style={{ width: 'inherit' }}>
                       <Button
@@ -112,7 +111,6 @@ const BaseView = ({ vault, vaultRole }: VaultSidebarProperties) => {
                           onClick={() => router.push(href)}
                           width={'full'}
                           borderRadius={0}
-                          isDisabled={isDisabled}
                       >
                         <Flex alignItems={'center'} width={'full'} columnGap={2}>
                           <Icon />
@@ -171,7 +169,7 @@ const DesktopView = (
         alignItems={isCollapsed ? "center" : "flex-start"}
         flexGrow={1}
       >
-        {GetAvailableEndpoints(vault, vaultRole.permissions).map(({ href, icon: Icon, label, isDisabled }) => (
+        {GetAvailableEndpoints(vault, vaultRole.permissions).map(({ href, icon: Icon, label }) => (
             <Link key={href} href={href} style={{ width: "100%" }} backgroundColor={isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}>
               <Button
                   variant="ghost"
@@ -179,7 +177,6 @@ const DesktopView = (
                   justifyContent={isCollapsed ? "center" : "flex-start"}
                   leftIcon={<Icon />}
                   backgroundColor={!isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}
-                  isDisabled={isDisabled}
               >
                 {!isCollapsed && label}
               </Button>
