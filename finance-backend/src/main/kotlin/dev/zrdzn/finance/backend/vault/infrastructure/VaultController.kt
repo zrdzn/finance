@@ -1,30 +1,18 @@
 package dev.zrdzn.finance.backend.vault.infrastructure
 
-import dev.zrdzn.finance.backend.user.UserId
-import dev.zrdzn.finance.backend.vault.VaultId
-import dev.zrdzn.finance.backend.vault.VaultInvitationId
-import dev.zrdzn.finance.backend.vault.VaultPublicId
 import dev.zrdzn.finance.backend.vault.VaultService
 import dev.zrdzn.finance.backend.vault.api.VaultCreateRequest
-import dev.zrdzn.finance.backend.vault.api.VaultCreateResponse
-import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationCreateRequest
-import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationListResponse
 import dev.zrdzn.finance.backend.vault.api.VaultListResponse
-import dev.zrdzn.finance.backend.vault.api.member.VaultMemberListResponse
-import dev.zrdzn.finance.backend.vault.api.authority.VaultRoleResponse
 import dev.zrdzn.finance.backend.vault.api.VaultResponse
 import dev.zrdzn.finance.backend.vault.api.VaultUpdateRequest
+import dev.zrdzn.finance.backend.vault.api.authority.VaultRoleResponse
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationCreateRequest
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationListResponse
+import dev.zrdzn.finance.backend.vault.api.member.VaultMemberListResponse
 import dev.zrdzn.finance.backend.vault.api.member.VaultMemberUpdateRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/vaults")
@@ -34,9 +22,9 @@ class VaultController(
 
     @PostMapping("/create")
     fun createVault(
-        @AuthenticationPrincipal userId: UserId,
+        @AuthenticationPrincipal userId: Int,
         @RequestBody vaultCreateRequest: VaultCreateRequest
-    ): VaultCreateResponse =
+    ): VaultResponse =
         vaultService
             .createVault(
                 ownerId = userId,
@@ -47,8 +35,8 @@ class VaultController(
 
     @PostMapping("/{vaultId}/invitations")
     fun createVaultInvitation(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable vaultId: VaultId,
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable vaultId: Int,
         @RequestBody vaultInvitationCreateRequest: VaultInvitationCreateRequest
     ): Unit = vaultService.createVaultInvitation(
         vaultId = vaultId,
@@ -58,8 +46,8 @@ class VaultController(
 
     @PatchMapping("/{vaultId}")
     fun updateVault(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable vaultId: VaultId,
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable vaultId: Int,
         @RequestBody vaultUpdateRequest: VaultUpdateRequest
     ): Unit =
         vaultService.updateVault(
@@ -72,9 +60,9 @@ class VaultController(
 
     @PatchMapping("/{vaultId}/members/{userId}")
     fun updateVaultMember(
-        @AuthenticationPrincipal requesterId: UserId,
-        @PathVariable vaultId: VaultId,
-        @PathVariable userId: UserId,
+        @AuthenticationPrincipal requesterId: Int,
+        @PathVariable vaultId: Int,
+        @PathVariable userId: Int,
         @RequestBody vaultMemberUpdateRequest: VaultMemberUpdateRequest
     ): Unit = vaultService.updateVaultMember(
         vaultId = vaultId,
@@ -85,8 +73,8 @@ class VaultController(
 
     @PostMapping("/invitations/{invitationId}/accept")
     fun acceptVaultInvitation(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable invitationId: VaultInvitationId
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable invitationId: Int
     ): Unit = vaultService.acceptVaultInvitation(
         requesterId = userId,
         invitationId = invitationId
@@ -94,13 +82,13 @@ class VaultController(
 
     @GetMapping
     fun getVaults(
-        @AuthenticationPrincipal userId: UserId
+        @AuthenticationPrincipal userId: Int
     ): VaultListResponse = vaultService.getVaultsByVaultMemberUserId(userId)
 
     @GetMapping("/{vaultPublicId}")
     fun getVaultByPublicId(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable vaultPublicId: VaultPublicId
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable vaultPublicId: String
     ): ResponseEntity<VaultResponse> =
         vaultService.getVaultByPublicId(vaultPublicId, userId)
             ?.let { ResponseEntity.ok(it) }
@@ -108,19 +96,19 @@ class VaultController(
 
     @GetMapping("/{vaultId}/members")
     fun getVaultMembers(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable vaultId: VaultId
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable vaultId: Int
     ): VaultMemberListResponse = vaultService.getVaultMembers(vaultId, userId)
 
     @GetMapping("/{vaultId}/invitations")
     fun getVaultInvitations(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable vaultId: VaultId
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable vaultId: Int
     ): VaultInvitationListResponse = vaultService.getVaultInvitations(vaultId, userId)
 
     @GetMapping("/invitations/{userEmail}")
     fun getVaultInvitationsByUserEmail(
-        @AuthenticationPrincipal authenticatedUserId: UserId,
+        @AuthenticationPrincipal authenticatedUserId: Int,
         @PathVariable userEmail: String
     ): VaultInvitationListResponse = vaultService.getVaultInvitations(
         requesterId = authenticatedUserId,
@@ -129,8 +117,8 @@ class VaultController(
 
     @GetMapping("/{vaultId}/role")
     fun getVaultRole(
-        @AuthenticationPrincipal requesterId: UserId,
-        @PathVariable vaultId: VaultId
+        @AuthenticationPrincipal requesterId: Int,
+        @PathVariable vaultId: Int
     ): VaultRoleResponse = vaultService.getVaultRole(
         vaultId = vaultId,
         requesterId = requesterId
@@ -138,17 +126,17 @@ class VaultController(
 
     @DeleteMapping("/{vaultId}")
     fun removeVault(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable vaultId: VaultId
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable vaultId: Int
     ) {
         vaultService.removeVault(vaultId = vaultId, requesterId = userId)
     }
 
     @DeleteMapping("/{vaultId}/members/{userId}")
     fun removeVaultMember(
-        @AuthenticationPrincipal authenticatedUserId: UserId,
-        @PathVariable vaultId: VaultId,
-        @PathVariable userId: UserId
+        @AuthenticationPrincipal authenticatedUserId: Int,
+        @PathVariable vaultId: Int,
+        @PathVariable userId: Int
     ) {
         vaultService.removeVaultMember(
             vaultId = vaultId,
@@ -159,8 +147,8 @@ class VaultController(
 
     @DeleteMapping("/{vaultId}/invitations/{userEmail}")
     fun removeVaultInvitation(
-        @AuthenticationPrincipal authenticatedUserId: UserId,
-        @PathVariable vaultId: VaultId,
+        @AuthenticationPrincipal authenticatedUserId: Int,
+        @PathVariable vaultId: Int,
         @PathVariable userEmail: String
     ) {
         vaultService.removeVaultInvitation(

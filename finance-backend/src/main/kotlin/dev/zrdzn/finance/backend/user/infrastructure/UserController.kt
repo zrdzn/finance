@@ -1,9 +1,11 @@
 package dev.zrdzn.finance.backend.user.infrastructure
 
 import dev.zrdzn.finance.backend.shared.getBaseUrl
-import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.user.UserService
-import dev.zrdzn.finance.backend.user.api.*
+import dev.zrdzn.finance.backend.user.api.UserEmailUpdateRequest
+import dev.zrdzn.finance.backend.user.api.UserPasswordUpdateRequest
+import dev.zrdzn.finance.backend.user.api.UserProfileUpdateRequest
+import dev.zrdzn.finance.backend.user.api.UsernameResponse
 import dev.zrdzn.finance.backend.user.api.security.TwoFactorSetupRequest
 import dev.zrdzn.finance.backend.user.api.security.TwoFactorSetupResponse
 import dev.zrdzn.finance.backend.user.api.security.TwoFactorVerifyRequest
@@ -28,33 +30,33 @@ class UserController(
 ) {
 
     @GetMapping("/update/request")
-    fun requestUserUpdate(@AuthenticationPrincipal userId: UserId): Unit = userService.requestUserUpdate(userId)
+    fun requestUserUpdate(@AuthenticationPrincipal userId: Int): Unit = userService.requestUserUpdate(userId)
 
     @GetMapping("/verify/request")
-    fun requestUserVerification(@AuthenticationPrincipal userId: UserId, request: HttpServletRequest): Unit =
+    fun requestUserVerification(@AuthenticationPrincipal userId: Int, request: HttpServletRequest): Unit =
         userService.requestUserVerification(userId, "${request.getBaseUrl()}/api/users/verify")
 
     @PostMapping("/2fa/setup")
     fun requestUserTwoFactorSetup(
-        @AuthenticationPrincipal userId: UserId,
+        @AuthenticationPrincipal userId: Int,
         @RequestBody twoFactorSetupRequest: TwoFactorSetupRequest
     ): TwoFactorSetupResponse = userService.requestUserTwoFactorSetup(userId, twoFactorSetupRequest.securityCode)
 
     @PostMapping("/2fa/setup/verify")
     fun verifyUserTwoFactorSetup(
-        @AuthenticationPrincipal userId: UserId,
+        @AuthenticationPrincipal userId: Int,
         @RequestBody twoFactorVerifyRequest: TwoFactorVerifyRequest
     ): Unit = userService.verifyUserTwoFactorSetup(userId, twoFactorVerifyRequest.secret, twoFactorVerifyRequest.oneTimePassword)
 
     @PatchMapping("/update/email")
     fun updateUserEmail(
-        @AuthenticationPrincipal userId: UserId,
+        @AuthenticationPrincipal userId: Int,
         @RequestBody userEmailUpdateRequest: UserEmailUpdateRequest
     ): Unit = userService.updateUserEmail(userId, userEmailUpdateRequest.securityCode, userEmailUpdateRequest.email)
 
     @PatchMapping("/update/password")
     fun updateUserPassword(
-        @AuthenticationPrincipal userId: UserId,
+        @AuthenticationPrincipal userId: Int,
         @RequestBody userPasswordUpdateRequest: UserPasswordUpdateRequest
     ): Unit = userService.updateUserPassword(
         requesterId = userId,
@@ -65,13 +67,13 @@ class UserController(
 
     @PatchMapping("/profile")
     fun updateUserProfile(
-        @AuthenticationPrincipal userId: UserId,
+        @AuthenticationPrincipal userId: Int,
         @RequestBody userProfileUpdateRequest: UserProfileUpdateRequest
     ): Unit = userService.updateUserProfile(userId, userProfileUpdateRequest.username)
 
     @GetMapping("/verify")
     fun verifyUser(
-        @AuthenticationPrincipal userId: UserId,
+        @AuthenticationPrincipal userId: Int,
         @RequestParam("securityCode") securityCode: String
     ): ResponseEntity<Unit> {
         userService.verifyUser(userId, securityCode)
@@ -85,16 +87,14 @@ class UserController(
     fun updateUserAvatar(
         @AuthenticationPrincipal userId: Int,
         @RequestPart("avatar") avatar: MultipartFile
-    ) {
-        userService.updateUserAvatarById(userId, avatar.bytes)
-    }
+    ): Unit = userService.updateUserAvatar(userId, avatar.bytes)
 
     @GetMapping("/{userId}/username")
-    fun getUsernameByUserId(@PathVariable userId: UserId): UsernameResponse = userService.getUsernameByUserId(userId)
+    fun getUsernameByUserId(@PathVariable userId: Int): UsernameResponse = userService.getUsername(userId)
 
     @GetMapping("/avatar/{username}")
     fun getUserAvatar(@PathVariable username: String): ResponseEntity<Resource> =
-        userService.getUserAvatarByUsername(username)
+        userService.getUserAvatar(username)
             .let { ok().body(InputStreamResource(it)) }
 
 }

@@ -2,13 +2,7 @@ package dev.zrdzn.finance.backend.authentication.token
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import dev.zrdzn.finance.backend.authentication.token.api.AccessTokenCreateRequest
-import dev.zrdzn.finance.backend.authentication.token.api.AccessTokenCreateResponse
-import dev.zrdzn.finance.backend.authentication.token.api.AccessTokenResponse
-import dev.zrdzn.finance.backend.authentication.token.api.RefreshTokenCreateRequest
-import dev.zrdzn.finance.backend.authentication.token.api.RefreshTokenCreateResponse
-import dev.zrdzn.finance.backend.authentication.token.api.RefreshTokenResponse
-import dev.zrdzn.finance.backend.authentication.token.api.TokenSignatureMismatchException
+import dev.zrdzn.finance.backend.authentication.token.api.*
 import dev.zrdzn.finance.backend.shared.createRandomToken
 import java.time.Clock
 import java.time.Instant
@@ -23,7 +17,7 @@ class TokenService(
     // TODO add actual secret
     private val algorithm = Algorithm.HMAC512("some secret")
 
-    fun createRefreshToken(refreshTokenCreateRequest: RefreshTokenCreateRequest): RefreshTokenCreateResponse =
+    fun createRefreshToken(refreshTokenCreateRequest: RefreshTokenCreateRequest): RefreshTokenResponse =
         tokenRepository
             .save(
                 Token(
@@ -32,20 +26,16 @@ class TokenService(
                     expiresAt = Instant.now(clock).plus(14, ChronoUnit.DAYS)
                 )
             )
-            .let {
-                RefreshTokenCreateResponse(
-                    id = it.tokenId
-                )
-            }
+            .toResponse()
 
-    fun removeRefreshToken(tokenId: TokenId) =
+    fun removeRefreshToken(tokenId: String) =
         tokenRepository
             .findById(tokenId)
             ?.let {
                 tokenRepository.deleteById(it.tokenId)
             }
 
-    fun createAccessToken(accessTokenCreateRequest: AccessTokenCreateRequest): AccessTokenCreateResponse =
+    fun createAccessToken(accessTokenCreateRequest: AccessTokenCreateRequest): AccessTokenResponse =
         Instant.now()
             .let {
                 JWT.create()
@@ -56,9 +46,17 @@ class TokenService(
                     .withExpiresAt(Date.from(it.plus(7, ChronoUnit.DAYS)))
                     .sign(algorithm)
             }
-            .let { AccessTokenCreateResponse(it) }
+            .let {
+                AccessTokenResponse(
+                    value = it,
+                    userId = accessTokenCreateRequest.userId,
+                    refreshTokenId = accessTokenCreateRequest.refreshTokenId,
+                    email = accessTokenCreateRequest.email,
+                    expiresAt = Instant.now().plus(7, ChronoUnit.DAYS)
+                )
+            }
 
-    fun getRefreshTokenById(tokenId: TokenId): RefreshTokenResponse? =
+    fun getRefreshToken(tokenId: String): RefreshTokenResponse? =
         tokenRepository
             .findById(tokenId)
             ?.let {

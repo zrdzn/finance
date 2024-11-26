@@ -2,8 +2,6 @@ package dev.zrdzn.finance.backend.audit.infrastructure
 
 import dev.zrdzn.finance.backend.audit.AuditService
 import dev.zrdzn.finance.backend.audit.api.AuditListResponse
-import dev.zrdzn.finance.backend.user.UserId
-import dev.zrdzn.finance.backend.vault.VaultId
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -18,8 +16,8 @@ class AuditController(
 
     @GetMapping("/{vaultId}")
     fun getAudits(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable vaultId: VaultId
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable vaultId: Int
     ): AuditListResponse = auditService.getAudits(requesterId = userId, vaultId = vaultId)
 
 }

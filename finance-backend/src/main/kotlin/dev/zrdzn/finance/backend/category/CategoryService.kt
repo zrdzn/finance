@@ -2,25 +2,21 @@ package dev.zrdzn.finance.backend.category
 
 import dev.zrdzn.finance.backend.audit.AuditService
 import dev.zrdzn.finance.backend.audit.api.AuditAction
-import dev.zrdzn.finance.backend.category.api.CategoryCreateResponse
 import dev.zrdzn.finance.backend.category.api.CategoryListResponse
 import dev.zrdzn.finance.backend.category.api.CategoryNotFoundException
 import dev.zrdzn.finance.backend.category.api.CategoryResponse
-import dev.zrdzn.finance.backend.user.UserId
-import dev.zrdzn.finance.backend.vault.VaultId
 import dev.zrdzn.finance.backend.vault.VaultService
 import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission
-import org.slf4j.LoggerFactory
+import org.springframework.transaction.annotation.Transactional
 
-class CategoryService(
+open class CategoryService(
     private val categoryRepository: CategoryRepository,
     private val vaultService: VaultService,
     private val auditService: AuditService
 ) {
 
-    private val logger = LoggerFactory.getLogger(CategoryService::class.java)
-
-    fun createCategory(requesterId: UserId, name: String, vaultId: VaultId): CategoryCreateResponse {
+    @Transactional
+    open fun createCategory(requesterId: Int, name: String, vaultId: Int): CategoryResponse {
         vaultService.authorizeMember(vaultId, requesterId, VaultPermission.CATEGORY_CREATE)
 
         return categoryRepository
@@ -31,7 +27,6 @@ class CategoryService(
                     vaultId = vaultId
                 )
             )
-            .also { logger.info("Successfully created category: $it") }
             .also {
                 auditService.createAudit(
                     vaultId = vaultId,
@@ -40,21 +35,16 @@ class CategoryService(
                     description = name
                 )
             }
-            .let {
-                CategoryCreateResponse(
-                    id = it.id!!
-                )
-            }
+            .toResponse()
     }
 
-    fun deleteCategoryById(requesterId: UserId, categoryId: CategoryId) {
+    @Transactional
+    open fun deleteCategory(requesterId: Int, categoryId: Int) {
         val category = getCategoryById(requesterId, categoryId)
 
         vaultService.authorizeMember(category.vaultId, requesterId, VaultPermission.CATEGORY_DELETE)
 
         categoryRepository.deleteById(categoryId)
-
-        logger.info("Successfully deleted category with id: $categoryId")
 
         auditService.createAudit(
             vaultId = category.vaultId,
@@ -64,29 +54,23 @@ class CategoryService(
         )
     }
 
-    fun getCategoryById(requesterId: UserId, categoryId: CategoryId): CategoryResponse =
+    @Transactional(readOnly = true)
+    open fun getCategoryById(requesterId: Int, categoryId: Int): CategoryResponse =
         categoryRepository.findById(categoryId)
             ?.let {
                 vaultService.authorizeMember(it.vaultId, requesterId, VaultPermission.CATEGORY_READ)
 
-                CategoryResponse(
-                    id = it.id!!,
-                    name = it.name,
-                    vaultId = it.vaultId
-                )
+                it.toResponse()
             }
             ?: throw CategoryNotFoundException()
 
-    fun getCategoriesByVaultId(requesterId: UserId, vaultId: VaultId): CategoryListResponse =
+    @Transactional(readOnly = true)
+    open fun getCategoriesByVaultId(requesterId: Int, vaultId: Int): CategoryListResponse =
         categoryRepository.findAllByVaultId(vaultId)
             .map {
                 vaultService.authorizeMember(vaultId, requesterId, VaultPermission.CATEGORY_READ)
 
-                CategoryResponse(
-                    id = it.id!!,
-                    name = it.name,
-                    vaultId = it.vaultId
-                )
+                it.toResponse()
             }
             .toSet()
             .let { CategoryListResponse(it) }

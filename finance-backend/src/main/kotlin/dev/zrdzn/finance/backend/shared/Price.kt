@@ -4,5 +4,5 @@ import java.math.BigDecimal
 
 data class Price(
     val amount: BigDecimal,
-    val currency: Currency
+    val currency: String
 )

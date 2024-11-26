@@ -2,17 +2,12 @@ package dev.zrdzn.finance.backend.product
 
 import dev.zrdzn.finance.backend.audit.AuditService
 import dev.zrdzn.finance.backend.audit.api.AuditAction
-import dev.zrdzn.finance.backend.category.CategoryId
 import dev.zrdzn.finance.backend.category.CategoryService
-import dev.zrdzn.finance.backend.product.api.ProductCreateResponse
 import dev.zrdzn.finance.backend.product.api.ProductListResponse
 import dev.zrdzn.finance.backend.product.api.ProductNotFoundException
 import dev.zrdzn.finance.backend.product.api.ProductResponse
-import dev.zrdzn.finance.backend.user.UserId
-import dev.zrdzn.finance.backend.vault.VaultId
 import dev.zrdzn.finance.backend.vault.VaultService
 import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission
-import org.slf4j.LoggerFactory
 import org.springframework.transaction.annotation.Transactional
 
 open class ProductService(
@@ -22,10 +17,8 @@ open class ProductService(
     private val auditService: AuditService
 ) {
 
-    private val logger = LoggerFactory.getLogger(ProductService::class.java)
-
     @Transactional
-    open fun createProduct(requesterId: UserId, name: String, vaultId: VaultId, categoryId: CategoryId?): ProductCreateResponse {
+    open fun createProduct(requesterId: Int, name: String, vaultId: Int, categoryId: Int?): ProductResponse {
         vaultService.authorizeMember(vaultId, requesterId, VaultPermission.PRODUCT_CREATE)
 
         return productRepository
@@ -37,7 +30,6 @@ open class ProductService(
                     categoryId = categoryId
                 )
             )
-            .also { logger.info("Successfully created product: $it") }
             .also {
                 auditService.createAudit(
                     vaultId = vaultId,
@@ -46,24 +38,16 @@ open class ProductService(
                     description = name
                 )
             }
-            .let {
-                ProductCreateResponse(
-                    id = it.id!!,
-                    name = it.name,
-                    vaultId = it.vaultId,
-                    categoryId = it.categoryId
-                )
-            }
+            .toResponse(if (categoryId != null) categoryService.getCategoryById(requesterId, categoryId).name else null)
     }
 
     @Transactional
-    open fun updateProduct(requesterId: UserId, productId: ProductId, categoryId: CategoryId?) {
+    open fun updateProduct(requesterId: Int, productId: Int, categoryId: Int?) {
         val product = productRepository.findById(productId) ?: throw ProductNotFoundException()
 
         vaultService.authorizeMember(product.vaultId, requesterId, VaultPermission.PRODUCT_UPDATE)
 
         product.categoryId = categoryId
-        logger.info("Successfully updated product: $product")
 
         auditService.createAudit(
             vaultId = product.vaultId,
@@ -74,14 +58,12 @@ open class ProductService(
     }
 
     @Transactional
-    open fun deleteProductById(requesterId: UserId, productId: ProductId) {
+    open fun deleteProduct(requesterId: Int, productId: Int) {
         val product = productRepository.findById(productId) ?: throw ProductNotFoundException()
 
         vaultService.authorizeMember(product.vaultId, requesterId, VaultPermission.PRODUCT_DELETE)
 
         productRepository.deleteById(productId)
-
-        logger.info("Successfully deleted product with id: $productId")
 
         auditService.createAudit(
             vaultId = product.vaultId,
@@ -92,35 +74,21 @@ open class ProductService(
     }
 
     @Transactional(readOnly = true)
-    open fun getProductsByVaultId(requesterId: UserId, vaultId: VaultId): ProductListResponse =
+    open fun getProducts(requesterId: Int, vaultId: Int): ProductListResponse =
         productRepository
             .findByVaultId(vaultId)
-            .map {
-                ProductResponse(
-                    id = it.id!!,
-                    name = it.name,
-                    vaultId = it.vaultId,
-                    categoryId = it.categoryId,
-                    categoryName = it.categoryId?.let { categoryService.getCategoryById(requesterId, it) }?.name
-                )
-            }
+            .map { it.toResponse(it.categoryId?.let { id -> categoryService.getCategoryById(requesterId, id) }?.name) }
             .toSet()
             .let { ProductListResponse(it) }
 
     @Transactional(readOnly = true)
-    open fun getProductById(requesterId: UserId, productId: ProductId): ProductResponse =
+    open fun getProduct(requesterId: Int, productId: Int): ProductResponse =
         productRepository
             .findById(productId)
             ?.let {
                 vaultService.authorizeMember(it.vaultId, requesterId, VaultPermission.PRODUCT_READ)
 
-                ProductResponse(
-                    id = it.id!!,
-                    name = it.name,
-                    vaultId = it.vaultId,
-                    categoryId = it.categoryId,
-                    categoryName = it.categoryId?.let { categoryService.getCategoryById(requesterId, it) }?.name
-                )
+                it.toResponse(it.categoryId?.let { id -> categoryService.getCategoryById(requesterId, id) }?.name)
             }
             ?: throw ProductNotFoundException()
 

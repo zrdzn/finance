@@ -1,21 +1,11 @@
 package dev.zrdzn.finance.backend.category.infrastructure
 
-import dev.zrdzn.finance.backend.category.CategoryId
 import dev.zrdzn.finance.backend.category.CategoryService
 import dev.zrdzn.finance.backend.category.api.CategoryCreateRequest
-import dev.zrdzn.finance.backend.category.api.CategoryCreateResponse
 import dev.zrdzn.finance.backend.category.api.CategoryListResponse
 import dev.zrdzn.finance.backend.category.api.CategoryResponse
-import dev.zrdzn.finance.backend.user.UserId
-import dev.zrdzn.finance.backend.vault.VaultId
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/categories")
@@ -25,9 +15,9 @@ class CategoryController(
 
     @PostMapping("/create")
     fun createCategory(
-        @AuthenticationPrincipal userId: UserId,
+        @AuthenticationPrincipal userId: Int,
         @RequestBody categoryCreateRequest: CategoryCreateRequest
-    ): CategoryCreateResponse =
+    ): CategoryResponse =
         categoryService.createCategory(
             requesterId = userId,
             name = categoryCreateRequest.name,
@@ -36,21 +26,21 @@ class CategoryController(
 
     @DeleteMapping("/{categoryId}")
     fun deleteCategory(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable categoryId: CategoryId
-    ): Unit = categoryService.deleteCategoryById(userId, categoryId)
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable categoryId: Int
+    ): Unit = categoryService.deleteCategory(userId, categoryId)
 
-    @GetMapping("/{id}")
+    @GetMapping("/{categoryId}")
     fun getCategoryById(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable id: CategoryId
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable categoryId: Int
     ): CategoryResponse =
-        categoryService.getCategoryById(userId, id)
+        categoryService.getCategoryById(userId, categoryId)
 
     @GetMapping("/vault/{vaultId}")
     fun getCategoriesByVaultId(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable vaultId: VaultId
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable vaultId: Int
     ): CategoryListResponse =
         categoryService.getCategoriesByVaultId(userId, vaultId)
 

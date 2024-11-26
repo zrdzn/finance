@@ -1,40 +1,29 @@
 package dev.zrdzn.finance.backend.transaction
 
-import dev.zrdzn.finance.backend.shared.Currency
 import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
 import dev.zrdzn.finance.backend.transaction.api.TransactionResponse
 import dev.zrdzn.finance.backend.transaction.api.TransactionType
-import dev.zrdzn.finance.backend.user.UserId
-import dev.zrdzn.finance.backend.vault.VaultId
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.Table
-import java.math.BigDecimal
-import java.time.Instant
+import jakarta.persistence.*
 import org.hibernate.annotations.JdbcType
 import org.hibernate.dialect.PostgreSQLEnumJdbcType
+import java.math.BigDecimal
+import java.time.Instant
 
-typealias TransactionId = Int
-
-@Entity(name = "Transaction")
 @Table(name = "transactions")
 data class Transaction(
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: TransactionId?,
+    val id: Int?,
 
     @Column(name = "created_at")
     val createdAt: Instant,
 
     @Column(name = "user_id")
-    val userId: UserId,
+    val userId: Int,
 
     @Column(name = "vault_id")
-    val vaultId: VaultId,
+    val vaultId: Int,
 
     @Column(columnDefinition = "transaction_method")
     @JdbcType(PostgreSQLEnumJdbcType::class)
@@ -51,7 +40,7 @@ data class Transaction(
     var total: BigDecimal,
 
     @Column(name = "currency")
-    var currency: Currency,
+    var currency: String,
 )
 
 fun Transaction.toResponse(totalInVaultCurrency: BigDecimal) = TransactionResponse(

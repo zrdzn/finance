@@ -1,38 +1,21 @@
 package dev.zrdzn.finance.backend.transaction.infrastructure
 
-import dev.zrdzn.finance.backend.shared.Currency
 import dev.zrdzn.finance.backend.shared.Price
-import dev.zrdzn.finance.backend.transaction.TransactionId
 import dev.zrdzn.finance.backend.transaction.TransactionService
-import dev.zrdzn.finance.backend.transaction.api.TransactionAmountResponse
-import dev.zrdzn.finance.backend.transaction.api.TransactionCreateRequest
-import dev.zrdzn.finance.backend.transaction.api.TransactionCreateResponse
-import dev.zrdzn.finance.backend.transaction.api.TransactionListResponse
-import dev.zrdzn.finance.backend.transaction.api.TransactionType
-import dev.zrdzn.finance.backend.transaction.api.TransactionUpdateRequest
+import dev.zrdzn.finance.backend.transaction.api.*
 import dev.zrdzn.finance.backend.transaction.api.flow.TransactionFlowsResponse
 import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductCreateRequest
-import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductCreateResponse
 import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductListResponse
+import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductResponse
 import dev.zrdzn.finance.backend.transaction.api.schedule.ScheduleCreateRequest
 import dev.zrdzn.finance.backend.transaction.api.schedule.ScheduleListResponse
 import dev.zrdzn.finance.backend.transaction.api.schedule.ScheduleResponse
-import dev.zrdzn.finance.backend.user.UserId
-import dev.zrdzn.finance.backend.vault.VaultId
-import java.time.Instant
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import java.time.Instant
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -42,8 +25,8 @@ class TransactionController(
 
     @GetMapping("/{vaultId}/export")
     fun exportTransactions(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable vaultId: VaultId,
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable vaultId: Int,
         @RequestParam("startDate") startDate: Instant,
         @RequestParam("endDate") endDate: Instant
     ): ResponseEntity<String> {
@@ -65,9 +48,9 @@ class TransactionController(
 
     @PostMapping("/create")
     fun createTransaction(
-        @AuthenticationPrincipal userId: UserId,
+        @AuthenticationPrincipal userId: Int,
         @RequestBody transactionCreateRequest: TransactionCreateRequest
-    ): TransactionCreateResponse =
+    ): TransactionResponse =
         transactionService
             .createTransaction(
                 requesterId = userId,
@@ -83,10 +66,10 @@ class TransactionController(
 
     @PostMapping("/{transactionId}/products/create")
     fun createTransactionProduct(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable transactionId: TransactionId,
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable transactionId: Int,
         @RequestBody transactionProductCreateRequest: TransactionProductCreateRequest
-    ): TransactionProductCreateResponse =
+    ): TransactionProductResponse =
         transactionService.createTransactionProduct(
             requesterId = userId,
             transactionId = transactionId,
@@ -97,8 +80,8 @@ class TransactionController(
 
     @PostMapping("/{transactionId}/schedule/create")
     fun createSchedule(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable transactionId: TransactionId,
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable transactionId: Int,
         @RequestBody scheduleCreateRequest: ScheduleCreateRequest
     ): ScheduleResponse =
         transactionService.createSchedule(
@@ -111,8 +94,8 @@ class TransactionController(
 
     @PatchMapping("/{transactionId}")
     fun updateTransaction(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable transactionId: TransactionId,
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable transactionId: Int,
         @RequestBody transactionUpdateRequest: TransactionUpdateRequest
     ): Unit =
         transactionService.updateTransaction(
@@ -129,36 +112,36 @@ class TransactionController(
 
     @GetMapping("/{vaultId}")
     fun getTransactionsByVaultId(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable vaultId: VaultId
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable vaultId: Int
     ): TransactionListResponse =
         transactionService.getTransactions(userId, vaultId)
 
     @GetMapping("/{vaultId}/amount")
     fun getTransactionsAmountByVaultId(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable vaultId: VaultId
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable vaultId: Int
     ): TransactionAmountResponse = transactionService.getTransactionsAmount(userId, vaultId)
 
     @GetMapping("/{transactionId}/products")
     fun getTransactionProducts(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable transactionId: TransactionId
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable transactionId: Int
     ): TransactionProductListResponse =
         transactionService.getTransactionProducts(userId, transactionId)
 
     @GetMapping("/schedules/{vaultId}")
     fun getSchedulesByVaultId(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable vaultId: VaultId
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable vaultId: Int
     ): ScheduleListResponse = transactionService.getSchedules(userId, vaultId)
 
     @GetMapping("/{vaultId}/flows")
     fun getExpensesByVaultId(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable vaultId: VaultId,
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable vaultId: Int,
         @RequestParam("transactionType", required = false) transactionType: TransactionType?,
-        @RequestParam("currency") currency: Currency,
+        @RequestParam("currency") currency: String,
         @RequestParam("start") start: Instant
     ): TransactionFlowsResponse =
         transactionService.getTransactionFlows(
@@ -171,13 +154,13 @@ class TransactionController(
 
     @DeleteMapping("/{transactionId}")
     fun deleteTransaction(
-        @AuthenticationPrincipal userId: UserId,
-        @PathVariable transactionId: TransactionId
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable transactionId: Int
     ): Unit = transactionService.deleteTransaction(transactionId)
 
     @DeleteMapping("/schedules/{scheduleId}")
     fun deleteScheduleById(
-        @AuthenticationPrincipal userId: UserId,
+        @AuthenticationPrincipal userId: Int,
         @PathVariable scheduleId: Int
     ): Unit = transactionService.deleteSchedule(userId, scheduleId)
 

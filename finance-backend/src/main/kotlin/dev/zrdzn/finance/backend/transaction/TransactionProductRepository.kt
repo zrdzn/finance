@@ -4,6 +4,6 @@ interface TransactionProductRepository {
 
     fun save(transactionProduct: TransactionProduct): TransactionProduct
 
-    fun findByTransactionId(transactionId: TransactionId): Set<TransactionProduct>
+    fun findByTransactionId(transactionId: Int): Set<TransactionProduct>
 
 }

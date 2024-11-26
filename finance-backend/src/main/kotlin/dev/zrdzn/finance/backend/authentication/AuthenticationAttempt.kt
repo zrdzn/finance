@@ -3,7 +3,6 @@ package dev.zrdzn.finance.backend.authentication
 import jakarta.persistence.*
 import java.time.Instant
 
-@Entity(name = "AuthenticationAttempt")
 @Table(name = "authentication_attempts")
 data class AuthenticationAttempt(
     @Id

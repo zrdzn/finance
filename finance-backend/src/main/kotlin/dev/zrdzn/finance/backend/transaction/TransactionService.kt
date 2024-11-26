@@ -4,22 +4,17 @@ import com.opencsv.CSVWriter
 import dev.zrdzn.finance.backend.audit.AuditService
 import dev.zrdzn.finance.backend.audit.api.AuditAction
 import dev.zrdzn.finance.backend.exchange.ExchangeService
-import dev.zrdzn.finance.backend.product.ProductId
 import dev.zrdzn.finance.backend.product.ProductService
-import dev.zrdzn.finance.backend.shared.Currency
 import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.transaction.api.*
 import dev.zrdzn.finance.backend.transaction.api.flow.TransactionFlowsResponse
-import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductCreateResponse
 import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductListResponse
-import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductWithProductResponse
+import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductResponse
 import dev.zrdzn.finance.backend.transaction.api.schedule.ScheduleInterval
 import dev.zrdzn.finance.backend.transaction.api.schedule.ScheduleListResponse
 import dev.zrdzn.finance.backend.transaction.api.schedule.ScheduleNotFoundException
 import dev.zrdzn.finance.backend.transaction.api.schedule.ScheduleResponse
-import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.user.UserService
-import dev.zrdzn.finance.backend.vault.VaultId
 import dev.zrdzn.finance.backend.vault.VaultService
 import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission
 import org.springframework.transaction.annotation.Transactional
@@ -44,7 +39,7 @@ open class TransactionService(
 ) {
 
     @Transactional
-    open fun exportTransactionsToCsv(requesterId: UserId, vaultId: VaultId, startDate: Instant, endDate: Instant): String {
+    open fun exportTransactionsToCsv(requesterId: Int, vaultId: Int, startDate: Instant, endDate: Instant): String {
         val transactions = getTransactions(requesterId, vaultId, startDate, endDate).transactions
 
         val writer = StringWriter()
@@ -59,7 +54,7 @@ open class TransactionService(
                 .toLocalDateTime()
 
             val data = arrayOf(
-                userService.getUserById(it.userId).email,
+                userService.getUser(it.userId).email,
                 vaultService.getVault(vaultId = vaultId, requesterId = requesterId).name,
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(createdAtLocalDateTime),
                 it.transactionMethod.toString(),
@@ -123,13 +118,13 @@ open class TransactionService(
 
     @Transactional
     open fun createTransaction(
-        requesterId: UserId,
-        vaultId: VaultId,
+        requesterId: Int,
+        vaultId: Int,
         transactionMethod: TransactionMethod,
         transactionType: TransactionType,
         description: String,
         price: Price
-    ): TransactionCreateResponse {
+    ): TransactionResponse {
         vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_CREATE)
 
         if (description.isEmpty()) {
@@ -158,18 +153,18 @@ open class TransactionService(
                     description = description
                 )
             }
-            .let { TransactionCreateResponse(id = it.id!!) }
+            .let { it.toResponse(exchangeService.convertCurrency(it.total, it.currency, "PLN").amount) }
     }
 
     @Transactional
     open fun createTransactionProduct(
-        requesterId: UserId,
-        transactionId: TransactionId,
-        productId: ProductId,
+        requesterId: Int,
+        transactionId: Int,
+        productId: Int,
         unitAmount: BigDecimal,
         quantity: Int
-    ): TransactionProductCreateResponse {
-        val product = productService.getProductById(requesterId, productId)
+    ): TransactionProductResponse {
+        val product = productService.getProduct(requesterId, productId)
 
         vaultService.authorizeMember(product.vaultId, requesterId, VaultPermission.TRANSACTION_CREATE)
 
@@ -191,7 +186,7 @@ open class TransactionService(
                     description = product.name
                 )
             }
-            .let { TransactionProductCreateResponse(id = it.id!!) }
+            .toResponse(productService.getProduct(requesterId, productId))
     }
 
     @Transactional
@@ -231,8 +226,14 @@ open class TransactionService(
     }
 
     @Transactional
-    open fun updateTransaction(requesterId: UserId, transactionId: TransactionId, transactionMethod: TransactionMethod,
-                               transactionType: TransactionType, description: String?, price: Price) {
+    open fun updateTransaction(
+        requesterId: Int,
+        transactionId: Int,
+        transactionMethod: TransactionMethod,
+        transactionType: TransactionType,
+        description: String?,
+        price: Price
+    ) {
         val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundException()
 
         vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_UPDATE)
@@ -252,7 +253,7 @@ open class TransactionService(
     }
 
     @Transactional
-    open fun deleteTransaction(transactionId: TransactionId) {
+    open fun deleteTransaction(transactionId: Int) {
         val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundException()
 
         vaultService.authorizeMember(transaction.vaultId, transaction.userId, VaultPermission.TRANSACTION_DELETE)
@@ -268,7 +269,7 @@ open class TransactionService(
     }
 
     @Transactional(readOnly = true)
-    open fun getTransactions(requesterId: UserId, vaultId: VaultId): TransactionListResponse {
+    open fun getTransactions(requesterId: Int, vaultId: Int): TransactionListResponse {
         vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_READ)
 
         return transactionRepository
@@ -279,7 +280,7 @@ open class TransactionService(
     }
 
     @Transactional(readOnly = true)
-    open fun getTransactions(requesterId: UserId, vaultId: VaultId, startDate: Instant, endDate: Instant): TransactionListResponse {
+    open fun getTransactions(requesterId: Int, vaultId: Int, startDate: Instant, endDate: Instant): TransactionListResponse {
         vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_READ)
 
         return transactionRepository
@@ -290,7 +291,7 @@ open class TransactionService(
     }
 
     @Transactional(readOnly = true)
-    open fun getTransaction(requesterId: UserId, transactionId: TransactionId): TransactionResponse {
+    open fun getTransaction(requesterId: Int, transactionId: Int): TransactionResponse {
         val transaction = transactionRepository.findById(transactionId)
             ?.let { it.toResponse(exchangeService.convertCurrency(it.total, it.currency, "PLN").amount) }
             ?: throw TransactionNotFoundException()
@@ -301,7 +302,7 @@ open class TransactionService(
     }
 
     @Transactional(readOnly = true)
-    open fun getTransactionsAmount(requesterId: UserId, vaultId: VaultId): TransactionAmountResponse {
+    open fun getTransactionsAmount(requesterId: Int, vaultId: Int): TransactionAmountResponse {
         vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_READ)
 
         return transactionRepository
@@ -310,7 +311,7 @@ open class TransactionService(
     }
 
     @Transactional(readOnly = true)
-    open fun getTransactionProducts(requesterId: UserId, transactionId: TransactionId): TransactionProductListResponse {
+    open fun getTransactionProducts(requesterId: Int, transactionId: Int): TransactionProductListResponse {
         val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundException()
 
         vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_READ)
@@ -318,10 +319,10 @@ open class TransactionService(
         return transactionProductRepository
             .findByTransactionId(transactionId)
             .map {
-                TransactionProductWithProductResponse(
+                TransactionProductResponse(
                     id = it.id!!,
                     transactionId = it.transactionId,
-                    product = productService.getProductById(requesterId, it.productId),
+                    product = productService.getProduct(requesterId, it.productId),
                     unitAmount = it.unitAmount,
                     quantity = it.quantity
                 )
@@ -331,7 +332,7 @@ open class TransactionService(
     }
 
     @Transactional(readOnly = true)
-    open fun getSchedules(requesterId: UserId, vaultId: VaultId): ScheduleListResponse {
+    open fun getSchedules(requesterId: Int, vaultId: Int): ScheduleListResponse {
         vaultService.authorizeMember(vaultId, requesterId, VaultPermission.SCHEDULE_READ)
 
         return scheduleRepository
@@ -366,7 +367,7 @@ open class TransactionService(
             ?: throw ScheduleNotFoundException()
 
     @Transactional(readOnly = true)
-    open fun getTransactionFlows(requesterId: UserId, vaultId: VaultId, transactionType: TransactionType?, currency: Currency, start: Instant): TransactionFlowsResponse {
+    open fun getTransactionFlows(requesterId: Int, vaultId: Int, transactionType: TransactionType?, currency: String, start: Instant): TransactionFlowsResponse {
         vaultService.authorizeMember(vaultId, requesterId, VaultPermission.DETAILS_READ)
 
         // if transaction type is not provided, calculate balance
@@ -418,10 +419,10 @@ open class TransactionService(
     }
 
     private fun calculateFlowsByType(
-        vaultId: VaultId,
+        vaultId: Int,
         transactionType: TransactionType,
         start: Instant,
-        targetCurrency: Currency
+        targetCurrency: String
     ): BigDecimal {
         return transactionRepository.sumAndGroupFlowsByVaultIdAndTransactionType(vaultId, transactionType, start)
             .sumOf {

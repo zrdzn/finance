@@ -6,7 +6,6 @@ import org.hibernate.annotations.JdbcType
 import org.hibernate.dialect.PostgreSQLEnumJdbcType
 import java.time.Instant
 
-@Entity(name = "Schedule")
 @Table(name = "schedules")
 data class Schedule(
     @Id

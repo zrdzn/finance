@@ -7,12 +7,12 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import java.time.Clock
-import java.time.Instant
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.web.filter.OncePerRequestFilter
+import java.time.Clock
+import java.time.Instant
 
 class AuthenticationFilter(
     private val tokenService: TokenService,
@@ -46,7 +46,7 @@ class AuthenticationFilter(
 
         // Check if the access token is expired
         if (accessTokenDetails.expiresAt.isBefore(now)) {
-            val refreshToken = tokenService.getRefreshTokenById(accessTokenDetails.refreshTokenId)
+            val refreshToken = tokenService.getRefreshToken(accessTokenDetails.refreshTokenId)
             // Check if the refresh token is expired
             if (refreshToken == null || refreshToken.expiresAt.isBefore(now)) {
                 // Remove the refresh token from the database

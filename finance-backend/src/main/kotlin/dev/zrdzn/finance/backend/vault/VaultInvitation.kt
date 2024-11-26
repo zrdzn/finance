@@ -1,29 +1,30 @@
 package dev.zrdzn.finance.backend.vault
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import dev.zrdzn.finance.backend.vault.api.VaultResponse
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationResponse
+import jakarta.persistence.*
 import java.time.Instant
 
-typealias VaultInvitationId = Int
-
-@Entity(name = "VaultInvitation")
 @Table(name = "vault_invitations")
 data class VaultInvitation(
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: VaultInvitationId?,
+    val id: Int?,
 
     @Column(name = "vault_id")
-    val vaultId: VaultId,
+    val vaultId: Int,
 
     @Column(name = "user_email")
     val userEmail: String,
 
     @Column(name = "expires_at")
     val expiresAt: Instant,
+)
+
+fun VaultInvitation.toResponse(vault: VaultResponse) = VaultInvitationResponse(
+    id = id!!,
+    vault = vault,
+    userEmail = userEmail,
+    expiresAt = expiresAt
 )

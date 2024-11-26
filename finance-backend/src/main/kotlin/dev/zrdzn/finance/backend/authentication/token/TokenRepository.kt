@@ -4,8 +4,8 @@ interface TokenRepository {
 
     fun save(token: Token): Token
 
-    fun deleteById(tokenId: TokenId)
+    fun deleteById(tokenId: String)
 
-    fun findById(tokenId: TokenId): Token?
+    fun findById(tokenId: String): Token?
 
 }
