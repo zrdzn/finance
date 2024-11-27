@@ -1,10 +1,10 @@
 package dev.zrdzn.finance.backend.transaction.infrastructure
 
 import dev.zrdzn.finance.backend.transaction.TransactionService
+import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import java.util.concurrent.TimeUnit
 
 @Component
 class ScheduleExecutor(

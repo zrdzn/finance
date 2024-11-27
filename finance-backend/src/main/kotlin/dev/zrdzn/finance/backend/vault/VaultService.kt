@@ -7,17 +7,22 @@ import dev.zrdzn.finance.backend.vault.api.VaultListResponse
 import dev.zrdzn.finance.backend.vault.api.VaultNotFoundByPublicIdException
 import dev.zrdzn.finance.backend.vault.api.VaultNotFoundException
 import dev.zrdzn.finance.backend.vault.api.VaultResponse
-import dev.zrdzn.finance.backend.vault.api.authority.*
+import dev.zrdzn.finance.backend.vault.api.authority.UserNotMemberException
+import dev.zrdzn.finance.backend.vault.api.authority.VaultCannotUpdateMemberException
+import dev.zrdzn.finance.backend.vault.api.authority.VaultInsufficientPermissionException
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission
+import dev.zrdzn.finance.backend.vault.api.authority.VaultRole
+import dev.zrdzn.finance.backend.vault.api.authority.VaultRoleResponse
 import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationListResponse
 import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationNotFoundException
 import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationNotOwnedException
 import dev.zrdzn.finance.backend.vault.api.member.VaultMemberListResponse
 import dev.zrdzn.finance.backend.vault.api.member.VaultMemberNotFoundException
 import dev.zrdzn.finance.backend.vault.api.member.VaultMemberResponse
-import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import org.springframework.transaction.annotation.Transactional
 
 open class VaultService(
     private val vaultRepository: VaultRepository,
@@ -178,14 +183,14 @@ open class VaultService(
     }
 
     @Transactional(readOnly = true)
-    open fun getVaultByPublicIdForcefully(publicId: String): VaultResponse? {
+    open fun getVaultForcefully(publicId: String): VaultResponse? {
         return vaultRepository.findByPublicId(publicId)
             ?.toResponse()
     }
 
     @Transactional(readOnly = true)
-    open fun getVaultByPublicId(publicId: String, requesterId: Int): VaultResponse? {
-        val vault = getVaultByPublicIdForcefully(publicId) ?: throw VaultNotFoundByPublicIdException()
+    open fun getVault(publicId: String, requesterId: Int): VaultResponse? {
+        val vault = getVaultForcefully(publicId) ?: throw VaultNotFoundByPublicIdException()
 
         authorizeMember(vault.id, requesterId, VaultPermission.DETAILS_READ)
 

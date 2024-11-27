@@ -3,12 +3,18 @@ package dev.zrdzn.finance.backend.transaction
 import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
 import dev.zrdzn.finance.backend.transaction.api.TransactionResponse
 import dev.zrdzn.finance.backend.transaction.api.TransactionType
-import jakarta.persistence.*
-import org.hibernate.annotations.JdbcType
-import org.hibernate.dialect.PostgreSQLEnumJdbcType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import java.math.BigDecimal
 import java.time.Instant
+import org.hibernate.annotations.JdbcType
+import org.hibernate.dialect.PostgreSQLEnumJdbcType
 
+@Entity
 @Table(name = "transactions")
 data class Transaction(
     @Id

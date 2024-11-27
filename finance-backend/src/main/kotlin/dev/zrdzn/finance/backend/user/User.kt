@@ -1,9 +1,15 @@
 package dev.zrdzn.finance.backend.user
 
 import dev.zrdzn.finance.backend.user.api.UserResponse
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import jakarta.validation.constraints.Size
 
+@Entity
 @Table(name = "users")
 data class User(
     @Id

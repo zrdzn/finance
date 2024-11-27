@@ -3,10 +3,16 @@ package dev.zrdzn.finance.backend.vault
 import dev.zrdzn.finance.backend.user.api.UserResponse
 import dev.zrdzn.finance.backend.vault.api.authority.VaultRole
 import dev.zrdzn.finance.backend.vault.api.member.VaultMemberResponse
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import org.hibernate.annotations.JdbcType
 import org.hibernate.dialect.PostgreSQLEnumJdbcType
 
+@Entity
 @Table(name = "vault_members")
 data class VaultMember(
     @Id

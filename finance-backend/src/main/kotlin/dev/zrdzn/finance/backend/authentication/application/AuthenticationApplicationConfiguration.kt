@@ -4,10 +4,10 @@ import dev.zrdzn.finance.backend.authentication.AuthenticationAttemptRepository
 import dev.zrdzn.finance.backend.authentication.AuthenticationService
 import dev.zrdzn.finance.backend.authentication.token.TokenService
 import dev.zrdzn.finance.backend.user.UserService
+import java.time.Clock
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.password.PasswordEncoder
-import java.time.Clock
 
 @Configuration
 class AuthenticationApplicationConfiguration(

@@ -2,6 +2,7 @@ package dev.zrdzn.finance.backend.authentication.token
 
 import dev.zrdzn.finance.backend.authentication.token.api.RefreshTokenResponse
 import jakarta.persistence.Column
+import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.validation.constraints.Size
@@ -9,6 +10,7 @@ import java.time.Instant
 
 const val TOKEN_COOKIE_NAME = "token"
 
+@Entity
 @Table(name = "authentication_tokens")
 data class Token(
     @Id

@@ -4,10 +4,10 @@ interface VaultRepository {
 
     fun save(vault: Vault): Vault
 
-    fun findById(vaultId: VaultId): Vault?
+    fun findById(vaultId: Int): Vault?
 
-    fun findByPublicId(publicId: VaultPublicId): Vault?
+    fun findByPublicId(publicId: String): Vault?
 
-    fun deleteById(vaultId: VaultId)
+    fun deleteById(vaultId: Int)
 
 }

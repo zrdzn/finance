@@ -13,7 +13,7 @@ class TokenApplicationConfiguration(
 ) {
 
     @Bean
-    fun tokenFacade(): TokenService = TokenService(
+    fun tokenService(): TokenService = TokenService(
         tokenRepository = tokenRepository,
         clock = clock
     )

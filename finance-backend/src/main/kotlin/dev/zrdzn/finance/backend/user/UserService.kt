@@ -2,12 +2,19 @@ package dev.zrdzn.finance.backend.user
 
 import dev.samstevens.totp.code.CodeVerifier
 import dev.zrdzn.finance.backend.storage.StorageClient
-import dev.zrdzn.finance.backend.user.api.*
+import dev.zrdzn.finance.backend.user.api.UserAccessDeniedException
+import dev.zrdzn.finance.backend.user.api.UserCreateRequest
+import dev.zrdzn.finance.backend.user.api.UserEmailAlreadyTakenException
+import dev.zrdzn.finance.backend.user.api.UserNotFoundByEmailException
+import dev.zrdzn.finance.backend.user.api.UserNotFoundException
+import dev.zrdzn.finance.backend.user.api.UserResponse
+import dev.zrdzn.finance.backend.user.api.UserWithPasswordResponse
+import dev.zrdzn.finance.backend.user.api.UsernameResponse
 import dev.zrdzn.finance.backend.user.api.security.TwoFactorAlreadyEnabledException
 import dev.zrdzn.finance.backend.user.api.security.TwoFactorSetupResponse
+import java.io.InputStream
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.transaction.annotation.Transactional
-import java.io.InputStream
 
 open class UserService(
     private val userRepository: UserRepository,
