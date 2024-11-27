@@ -1,18 +1,15 @@
 package dev.zrdzn.finance.backend.authentication.infrastructure
 
 import dev.zrdzn.finance.backend.authentication.AuthenticationService
-import dev.zrdzn.finance.backend.authentication.api.AuthenticationDetailsResponse
 import dev.zrdzn.finance.backend.authentication.api.AuthenticationLoginRequest
-import dev.zrdzn.finance.backend.authentication.api.AuthenticationRegisterResponse
 import dev.zrdzn.finance.backend.authentication.token.TOKEN_COOKIE_NAME
 import dev.zrdzn.finance.backend.authentication.token.api.AccessTokenResponse
-import dev.zrdzn.finance.backend.user.UserId
 import dev.zrdzn.finance.backend.user.UserService
 import dev.zrdzn.finance.backend.user.api.UserCreateRequest
+import dev.zrdzn.finance.backend.user.api.UserResponse
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -31,10 +28,8 @@ class AuthenticationController(
     fun register(
         @RequestBody userCreateRequest: UserCreateRequest,
         response: HttpServletResponse
-    ): AuthenticationRegisterResponse =
-        userService
-            .createUser(userCreateRequest)
-            .let { AuthenticationRegisterResponse(it.userId) }
+    ): UserResponse =
+        userService.createUser(userCreateRequest)
 
     @PostMapping("/login")
     fun login(
@@ -50,7 +45,7 @@ class AuthenticationController(
 
     @PostMapping("/logout")
     fun logout(
-        @AuthenticationPrincipal userId: UserId,
+        @AuthenticationPrincipal userId: Int,
         request: HttpServletRequest,
         response: HttpServletResponse
     ): Unit? =
@@ -59,8 +54,8 @@ class AuthenticationController(
             ?.also { invalidateAuthenticationCookie(response) }
 
     @GetMapping("/details")
-    fun getAuthenticationDetails(@AuthenticationPrincipal userId: UserId): AuthenticationDetailsResponse =
-        authenticationService.getAuthenticationDetailsByUserId(userId)
+    fun getAuthenticationDetails(@AuthenticationPrincipal userId: Int): UserResponse =
+        authenticationService.getAuthenticationDetails(userId)
 
     private fun addAuthenticationCookie(response: HttpServletResponse, token: String) {
         val cookie = Cookie(TOKEN_COOKIE_NAME, token)

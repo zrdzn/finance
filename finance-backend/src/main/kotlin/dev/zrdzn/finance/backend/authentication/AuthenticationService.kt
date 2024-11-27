@@ -1,20 +1,22 @@
 package dev.zrdzn.finance.backend.authentication
 
-import dev.zrdzn.finance.backend.authentication.api.*
-import dev.zrdzn.finance.backend.authentication.token.TokenId
+import dev.zrdzn.finance.backend.authentication.api.AuthenticationAttemptNotFoundException
+import dev.zrdzn.finance.backend.authentication.api.AuthenticationCredentialsInvalidException
+import dev.zrdzn.finance.backend.authentication.api.AuthenticationLoginRequest
+import dev.zrdzn.finance.backend.authentication.api.AuthenticationTotpInvalidException
+import dev.zrdzn.finance.backend.authentication.api.AuthenticationTotpRequiredException
 import dev.zrdzn.finance.backend.authentication.token.TokenService
 import dev.zrdzn.finance.backend.authentication.token.api.AccessTokenCreateRequest
 import dev.zrdzn.finance.backend.authentication.token.api.AccessTokenResponse
 import dev.zrdzn.finance.backend.authentication.token.api.RefreshTokenCreateRequest
-import dev.zrdzn.finance.backend.authentication.token.api.RefreshTokenCreateResponse
-import dev.zrdzn.finance.backend.user.UserId
+import dev.zrdzn.finance.backend.authentication.token.api.RefreshTokenResponse
 import dev.zrdzn.finance.backend.user.UserService
+import dev.zrdzn.finance.backend.user.api.UserResponse
 import dev.zrdzn.finance.backend.user.api.UserWithPasswordResponse
-import org.slf4j.LoggerFactory
-import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
 import java.time.Instant
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.transaction.annotation.Transactional
 
 open class AuthenticationService(
     private val userService: UserService,
@@ -23,8 +25,6 @@ open class AuthenticationService(
     private val clock: Clock,
     private val authenticationAttemptRepository: AuthenticationAttemptRepository
 ) {
-
-    private val logger = LoggerFactory.getLogger(AuthenticationService::class.java)
 
     @Transactional(noRollbackFor = [
         AuthenticationCredentialsInvalidException::class,
@@ -38,7 +38,7 @@ open class AuthenticationService(
         // check if the user has two-factor authentication enabled
         if (user.totpSecret != null) {
             // check if the user is trying to authenticate from the same IP address
-            if (!doesIpAddressExistByUserId(user.id, ipAddress)) {
+            if (!doesIpAddressExist(user.id, ipAddress)) {
                 // check if the user provided a one-time password
                 if (authenticationLoginRequest.oneTimePassword == null) {
                     throw AuthenticationTotpRequiredException()
@@ -64,19 +64,10 @@ open class AuthenticationService(
         tokenService.removeRefreshToken(tokenService.getAccessTokenDetails(accessToken).refreshTokenId)
 
     @Transactional(readOnly = true)
-    open fun getAuthenticationDetailsByUserId(userId: UserId): AuthenticationDetailsResponse =
-        userService.getUserById(userId)
-            .let {
-                AuthenticationDetailsResponse(
-                    email = it.email,
-                    username = it.username,
-                    verified = it.verified,
-                    isTwoFactorEnabled = it.isTwoFactorEnabled
-                )
-            }
+    open fun getAuthenticationDetails(userId: Int): UserResponse = userService.getUser(userId)
 
     @Transactional
-    open fun createAuthenticationAttempt(userId: UserId, ipAddress: String) =
+    open fun createAuthenticationAttempt(userId: Int, ipAddress: String) =
         authenticationAttemptRepository.save(
             AuthenticationAttempt(
                 id = null,
@@ -92,22 +83,20 @@ open class AuthenticationService(
         val authenticationAttempt = authenticationAttemptRepository.findById(id) ?: throw AuthenticationAttemptNotFoundException()
 
         authenticationAttempt.authenticatedAt = authenticatedAt
-
-        logger.info("Authentication attempt with id {} updated", id)
     }
 
     @Transactional(readOnly = true)
-    open fun doesIpAddressExistByUserId(userId: UserId, ipAddress: String): Boolean =
+    open fun doesIpAddressExist(userId: Int, ipAddress: String): Boolean =
         authenticationAttemptRepository.doesIpAddressExistByUserId(userId, ipAddress)
 
     @Transactional
-    open fun createRefreshToken(userId: Int): RefreshTokenCreateResponse =
+    open fun createRefreshToken(userId: Int): RefreshTokenResponse =
         tokenService.createRefreshToken(RefreshTokenCreateRequest(userId))
 
     @Transactional
     open fun createAccessToken(
         userWithPasswordResponse: UserWithPasswordResponse,
-        refreshTokenId: TokenId
+        refreshTokenId: String
     ): AccessTokenResponse =
         tokenService
             .createAccessToken(
@@ -121,11 +110,9 @@ open class AuthenticationService(
 
     @Transactional
     open fun getValidatedUser(authenticationLoginRequest: AuthenticationLoginRequest, ipAddress: String): Pair<AuthenticationAttempt, UserWithPasswordResponse> {
-        val user = userService.getUserWithPasswordByEmail(authenticationLoginRequest.email)
+        val user = userService.getInsecureUser(authenticationLoginRequest.email)
 
         val authenticationAttempt = createAuthenticationAttempt(userId = user.id, ipAddress = ipAddress)
-
-        logger.info("There was an authentication attempt with id {}", authenticationAttempt.id)
 
         if (!passwordEncoder.matches(authenticationLoginRequest.password, user.password)) {
             throw AuthenticationCredentialsInvalidException()

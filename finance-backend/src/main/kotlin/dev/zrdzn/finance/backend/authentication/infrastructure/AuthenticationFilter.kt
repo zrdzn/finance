@@ -46,7 +46,7 @@ class AuthenticationFilter(
 
         // Check if the access token is expired
         if (accessTokenDetails.expiresAt.isBefore(now)) {
-            val refreshToken = tokenService.getRefreshTokenById(accessTokenDetails.refreshTokenId)
+            val refreshToken = tokenService.getRefreshToken(accessTokenDetails.refreshTokenId)
             // Check if the refresh token is expired
             if (refreshToken == null || refreshToken.expiresAt.isBefore(now)) {
                 // Remove the refresh token from the database

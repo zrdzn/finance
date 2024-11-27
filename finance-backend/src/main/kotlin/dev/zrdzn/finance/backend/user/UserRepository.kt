@@ -4,7 +4,7 @@ interface UserRepository {
 
     fun save(user: User): User
 
-    fun findById(id: UserId): User?
+    fun findById(id: Int): User?
 
     fun findByEmail(email: String): User?
 

@@ -2,7 +2,6 @@ package dev.zrdzn.finance.backend.exchange
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import dev.zrdzn.finance.backend.exchange.api.ExchangeRate
-import dev.zrdzn.finance.backend.shared.Currency
 import dev.zrdzn.finance.backend.shared.Price
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -14,9 +13,9 @@ class ExchangeService(
 
     private val exchangeRates = Caffeine.newBuilder()
         .expireAfterAccess(2, TimeUnit.HOURS)
-        .build<Currency, List<ExchangeRate>>()
+        .build<String, List<ExchangeRate>>()
 
-    fun convertCurrency(amount: BigDecimal, source: Currency, target: Currency): Price {
+    fun convertCurrency(amount: BigDecimal, source: String, target: String): Price {
         val rates = exchangeRates.get("PLN") { exchangeProvider.getExchangeRates() }
         val sourceRate = rates.first { it.currency == source }.rate
         val targetRate = rates.first { it.currency == target }.rate

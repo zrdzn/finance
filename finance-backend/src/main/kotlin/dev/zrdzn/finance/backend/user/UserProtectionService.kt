@@ -13,9 +13,9 @@ class UserProtectionService(
 ) {
 
     private val digest = MessageDigest.getInstance("SHA-256")
-    private val activeCodes = mutableMapOf<String, Pair<UserId, Instant>>()
+    private val activeCodes = mutableMapOf<String, Pair<Int, Instant>>()
 
-    fun sendUserUpdateCode(userId: UserId, userEmail: String) {
+    fun sendUserUpdateCode(userId: Int, userEmail: String) {
         val securityCode = prepareSecurityCode(userId)
 
         mailService.sendMail(
@@ -25,7 +25,7 @@ class UserProtectionService(
         )
     }
 
-    fun sendUserVerificationLink(userId: UserId, userEmail: String, verificationLink: String) {
+    fun sendUserVerificationLink(userId: Int, userEmail: String, verificationLink: String) {
         val securityCode = prepareSecurityCode(userId)
 
         mailService.sendMail(
@@ -35,7 +35,7 @@ class UserProtectionService(
         )
     }
 
-    fun isAccessGranted(userId: UserId, securityCode: String): Boolean {
+    fun isAccessGranted(userId: Int, securityCode: String): Boolean {
         val hashedSecurityCode = hashCode(securityCode)
 
         val userIdWithExpirationDate = activeCodes[hashedSecurityCode] ?: return false
@@ -51,7 +51,7 @@ class UserProtectionService(
         return true
     }
 
-    private fun prepareSecurityCode(userId: UserId): String {
+    private fun prepareSecurityCode(userId: Int): String {
         val securityCode = createRandomNumberToken(6)
         activeCodes[hashCode(securityCode)] = Pair(userId, Instant.now(clock).plus(10, ChronoUnit.MINUTES))
         return securityCode

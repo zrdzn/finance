@@ -1,19 +1,17 @@
 package dev.zrdzn.finance.backend.vault
 
-import dev.zrdzn.finance.backend.user.UserId
-
 interface VaultMemberRepository {
 
     fun save(vaultMember: VaultMember): VaultMember
 
-    fun findById(vaultMemberId: VaultMemberId): VaultMember?
+    fun findById(vaultMemberId: Int): VaultMember?
 
-    fun findByVaultId(vaultId: VaultId): Set<VaultMember>
+    fun findByVaultId(vaultId: Int): Set<VaultMember>
 
-    fun findByVaultIdAndUserId(vaultId: VaultId, userId: UserId): VaultMember?
+    fun findByVaultIdAndUserId(vaultId: Int, userId: Int): VaultMember?
 
-    fun findVaultsByUserId(userId: UserId): Set<Vault>
+    fun findVaultsByUserId(userId: Int): Set<Vault>
 
-    fun deleteByVaultIdAndUserId(vaultId: VaultId, userId: UserId)
+    fun deleteByVaultIdAndUserId(vaultId: Int, userId: Int)
 
 }

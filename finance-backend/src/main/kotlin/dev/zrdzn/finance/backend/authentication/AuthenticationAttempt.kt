@@ -1,9 +1,14 @@
 package dev.zrdzn.finance.backend.authentication
 
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import java.time.Instant
 
-@Entity(name = "AuthenticationAttempt")
+@Entity
 @Table(name = "authentication_attempts")
 data class AuthenticationAttempt(
     @Id

@@ -1,12 +1,17 @@
 package dev.zrdzn.finance.backend.transaction
 
 import dev.zrdzn.finance.backend.transaction.api.schedule.ScheduleInterval
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Table
+import java.time.Instant
 import org.hibernate.annotations.JdbcType
 import org.hibernate.dialect.PostgreSQLEnumJdbcType
-import java.time.Instant
 
-@Entity(name = "Schedule")
+@Entity
 @Table(name = "schedules")
 data class Schedule(
     @Id

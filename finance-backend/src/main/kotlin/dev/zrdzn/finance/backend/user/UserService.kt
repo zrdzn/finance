@@ -2,14 +2,19 @@ package dev.zrdzn.finance.backend.user
 
 import dev.samstevens.totp.code.CodeVerifier
 import dev.zrdzn.finance.backend.storage.StorageClient
-import dev.zrdzn.finance.backend.user.api.*
-import dev.zrdzn.finance.backend.user.api.security.TwoFactorSetupResponse
-import dev.zrdzn.finance.backend.user.api.security.TwoFactorAlreadyEnabledException
 import dev.zrdzn.finance.backend.user.api.UserAccessDeniedException
-import org.slf4j.LoggerFactory
+import dev.zrdzn.finance.backend.user.api.UserCreateRequest
+import dev.zrdzn.finance.backend.user.api.UserEmailAlreadyTakenException
+import dev.zrdzn.finance.backend.user.api.UserNotFoundByEmailException
+import dev.zrdzn.finance.backend.user.api.UserNotFoundException
+import dev.zrdzn.finance.backend.user.api.UserResponse
+import dev.zrdzn.finance.backend.user.api.UserWithPasswordResponse
+import dev.zrdzn.finance.backend.user.api.UsernameResponse
+import dev.zrdzn.finance.backend.user.api.security.TwoFactorAlreadyEnabledException
+import dev.zrdzn.finance.backend.user.api.security.TwoFactorSetupResponse
+import java.io.InputStream
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.transaction.annotation.Transactional
-import java.io.InputStream
 
 open class UserService(
     private val userRepository: UserRepository,
@@ -20,12 +25,11 @@ open class UserService(
     private val storageClient: StorageClient
 ) {
 
-    private val logger = LoggerFactory.getLogger(UserService::class.java)
-    private val AVATARS_BUCKET = "avatars"
+    private val avatarsBucket = "avatars"
 
     @Transactional
-    open fun createUser(userCreateRequest: UserCreateRequest): UserCreateResponse {
-        if (doesUserExistByEmail(userCreateRequest.email)) {
+    open fun createUser(userCreateRequest: UserCreateRequest): UserResponse {
+        if (doesUserExist(userCreateRequest.email)) {
             throw UserEmailAlreadyTakenException()
         }
 
@@ -40,25 +44,25 @@ open class UserService(
                     totpSecret = null
                 )
             )
-            .let { UserCreateResponse(it.id!!) }
+            .toResponse()
     }
 
     @Transactional
-    open fun requestUserUpdate(requesterId: UserId) {
+    open fun requestUserUpdate(requesterId: Int) {
         val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
 
         userProtectionService.sendUserUpdateCode(user.id!!, user.email)
     }
 
     @Transactional
-    open fun requestUserVerification(requesterId: UserId, verificationLink: String) {
+    open fun requestUserVerification(requesterId: Int, verificationLink: String) {
         val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
 
         userProtectionService.sendUserVerificationLink(user.id!!, user.email, verificationLink)
     }
 
     @Transactional
-    open fun requestUserTwoFactorSetup(requesterId: UserId, securityCode: String): TwoFactorSetupResponse {
+    open fun requestUserTwoFactorSetup(requesterId: Int, securityCode: String): TwoFactorSetupResponse {
         val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
 
         if (!userProtectionService.isAccessGranted(userId = user.id!!, securityCode = securityCode)) {
@@ -73,7 +77,7 @@ open class UserService(
     }
 
     @Transactional
-    open fun verifyUserTwoFactorSetup(requesterId: UserId, secret: String, oneTimePassword: String) {
+    open fun verifyUserTwoFactorSetup(requesterId: Int, secret: String, oneTimePassword: String) {
         val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
 
         if (!codeVerifier.isValidCode(secret, oneTimePassword)) {
@@ -81,8 +85,6 @@ open class UserService(
         }
 
         user.totpSecret = secret
-
-        logger.info("User with id $requesterId has enabled two-factor authentication")
     }
 
     @Transactional(readOnly = true)
@@ -91,7 +93,7 @@ open class UserService(
     }
 
     @Transactional
-    open fun updateUserEmail(requesterId: UserId, securityCode: String, email: String) {
+    open fun updateUserEmail(requesterId: Int, securityCode: String, email: String) {
         val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
 
         if (!userProtectionService.isAccessGranted(userId = user.id!!, securityCode = securityCode)) {
@@ -99,12 +101,10 @@ open class UserService(
         }
 
         user.email = email
-
-        logger.info("User with id $requesterId has updated email")
     }
 
     @Transactional
-    open fun updateUserPassword(requesterId: UserId, securityCode: String, oldPassword: String, newPassword: String) {
+    open fun updateUserPassword(requesterId: Int, securityCode: String, oldPassword: String, newPassword: String) {
         val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
 
         if (!userProtectionService.isAccessGranted(userId = user.id!!, securityCode = securityCode)) {
@@ -116,21 +116,17 @@ open class UserService(
         }
 
         user.password = passwordEncoder.encode(newPassword)
-
-        logger.info("User with id $requesterId has updated password")
     }
 
     @Transactional
-    open fun updateUserProfile(requesterId: UserId, username: String) {
+    open fun updateUserProfile(requesterId: Int, username: String) {
         val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
 
         user.username = username
-
-        logger.info("User with id $requesterId updated username to $username")
     }
 
     @Transactional
-    open fun verifyUser(requesterId: UserId, securityCode: String) {
+    open fun verifyUser(requesterId: Int, securityCode: String) {
         val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
 
         if (!userProtectionService.isAccessGranted(userId = user.id!!, securityCode = securityCode)) {
@@ -138,26 +134,22 @@ open class UserService(
         }
 
         user.verified = true
-
-        logger.info("User with id $requesterId has verified his account")
     }
 
     @Transactional
-    open fun updateUserAvatarById(requesterId: Int, avatar: ByteArray) {
+    open fun updateUserAvatar(requesterId: Int, avatar: ByteArray) {
         userRepository.findById(requesterId) ?: throw UserNotFoundException()
 
-        storageClient.saveFile(AVATARS_BUCKET, requesterId.toString(), data = avatar.inputStream())
-
-        logger.info("User with id $requesterId has updated avatar")
+        storageClient.saveFile(avatarsBucket, requesterId.toString(), data = avatar.inputStream())
     }
 
     @Transactional(readOnly = true)
-    open fun doesUserExistByEmail(email: String): Boolean =
+    open fun doesUserExist(email: String): Boolean =
         userRepository.findByEmail(email) != null
 
     @Transactional(readOnly = true)
-    open fun getUserById(id: UserId): UserResponse =
-        userRepository.findById(id)
+    open fun getUser(userId: Int): UserResponse =
+        userRepository.findById(userId)
             ?.let {
                 UserResponse(
                     id = it.id!!,
@@ -170,15 +162,15 @@ open class UserService(
             ?: throw UserNotFoundException()
 
     @Transactional(readOnly = true)
-    open fun getUserIdByUsername(username: String): Int =
+    open fun getUserId(username: String): Int =
         userRepository.findIdByUsername(username) ?: throw UserNotFoundException()
 
     @Transactional(readOnly = true)
-    open fun getUsernameByUserId(id: UserId): UsernameResponse =
-        UsernameResponse(getUserById(id).username)
+    open fun getUsername(userId: Int): UsernameResponse =
+        UsernameResponse(getUser(userId).username)
 
     @Transactional(readOnly = true)
-    open fun getUserWithPasswordByEmail(email: String): UserWithPasswordResponse =
+    open fun getInsecureUser(email: String): UserWithPasswordResponse =
         userRepository
             .findByEmail(email)
             ?.let {
@@ -194,9 +186,9 @@ open class UserService(
             ?: throw UserNotFoundByEmailException()
 
     @Transactional(readOnly = true)
-    open fun getUserAvatarByUsername(username: String): InputStream =
-        getUserIdByUsername(username)
-            .let { storageClient.loadFile(AVATARS_BUCKET, it.toString()) }
+    open fun getUserAvatar(username: String): InputStream =
+        getUserId(username)
+            .let { storageClient.loadFile(avatarsBucket, it.toString()) }
             ?: throw UserNotFoundException()
 
 }

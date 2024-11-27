@@ -1,6 +1,30 @@
 package dev.zrdzn.finance.backend.vault.api.authority
 
-import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.*
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.AUDIT_READ
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.CATEGORY_CREATE
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.CATEGORY_DELETE
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.CATEGORY_READ
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.CATEGORY_UPDATE
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.DETAILS_READ
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.MEMBER_INVITE_CREATE
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.MEMBER_INVITE_DELETE
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.MEMBER_INVITE_READ
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.MEMBER_READ
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.MEMBER_REMOVE
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.MEMBER_UPDATE
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.PRODUCT_CREATE
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.PRODUCT_DELETE
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.PRODUCT_READ
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.PRODUCT_UPDATE
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.SCHEDULE_CREATE
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.SCHEDULE_DELETE
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.SCHEDULE_READ
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.SETTINGS_READ
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.SETTINGS_UPDATE
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.TRANSACTION_CREATE
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.TRANSACTION_DELETE
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.TRANSACTION_READ
+import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission.TRANSACTION_UPDATE
 
 private val MEMBER_PERMISSIONS = setOf(
     DETAILS_READ,

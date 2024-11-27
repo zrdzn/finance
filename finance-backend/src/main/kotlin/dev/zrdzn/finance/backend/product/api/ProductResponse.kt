@@ -1,13 +1,9 @@
 package dev.zrdzn.finance.backend.product.api
 
-import dev.zrdzn.finance.backend.category.CategoryId
-import dev.zrdzn.finance.backend.product.ProductId
-import dev.zrdzn.finance.backend.vault.VaultId
-
 data class ProductResponse(
-    val id: ProductId,
+    val id: Int,
     val name: String,
-    val vaultId: VaultId,
-    val categoryId: CategoryId?,
+    val vaultId: Int,
+    val categoryId: Int?,
     val categoryName: String?
 )

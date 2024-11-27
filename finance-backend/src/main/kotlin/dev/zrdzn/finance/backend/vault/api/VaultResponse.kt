@@ -1,18 +1,14 @@
 package dev.zrdzn.finance.backend.vault.api
 
-import dev.zrdzn.finance.backend.shared.Currency
 import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
-import dev.zrdzn.finance.backend.user.UserId
-import dev.zrdzn.finance.backend.vault.VaultId
-import dev.zrdzn.finance.backend.vault.VaultPublicId
 import java.time.Instant
 
 data class VaultResponse(
-    val id: VaultId,
+    val id: Int,
     val createdAt: Instant,
-    val publicId: VaultPublicId,
-    val ownerId: UserId,
+    val publicId: String,
+    val ownerId: Int,
     val name: String,
-    val currency: Currency,
+    val currency: String,
     val transactionMethod: TransactionMethod
 )

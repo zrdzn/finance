@@ -1,5 +1,6 @@
 package dev.zrdzn.finance.backend.user
 
+import dev.zrdzn.finance.backend.user.api.UserResponse
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -8,15 +9,13 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.validation.constraints.Size
 
-typealias UserId = Int
-
-@Entity(name = "User")
+@Entity
 @Table(name = "users")
 data class User(
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: UserId?,
+    val id: Int?,
 
     @Column(name = "email")
     var email: String,
@@ -33,4 +32,12 @@ data class User(
 
     @Column(name = "totp_secret")
     var totpSecret: String?
+)
+
+fun User.toResponse() = UserResponse(
+    id = id!!,
+    email = email,
+    username = username,
+    verified = verified,
+    isTwoFactorEnabled = totpSecret != null
 )
