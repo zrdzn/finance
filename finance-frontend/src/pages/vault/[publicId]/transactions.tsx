@@ -9,6 +9,7 @@ import {ExportCard} from "@/components/transaction/export/ExportCard"
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
 import {SchedulesCard} from "@/components/transaction/schedule/SchedulesCard";
+import {ImportCard} from "@/components/transaction/import/ImportCard";
 
 export default function Transactions(): ReactJSXElement {
   const router = useRouter()
@@ -22,21 +23,26 @@ export default function Transactions(): ReactJSXElement {
           <Head>
             <title>{t('title')}</title>
           </Head>
-          <Flex justifyContent="center" p={4}>
+          <Flex justifyContent="center" alignItems={'center'} p={4} direction={'column'}>
             <Grid
-              templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
+              templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }}
               gap={4}
               width="full">
               {vaultRole.permissions.includes("SCHEDULE_READ") && (
                   <SchedulesCard vault={vault} permissions={vaultRole.permissions} />
               )}
+              {vaultRole.permissions.includes("TRANSACTION_CREATE") && (
+                    <ImportCard vault={vault} permissions={vaultRole.permissions} />
+              )}
               {vaultRole.permissions.includes("TRANSACTION_READ") && (
                   <ExportCard vault={vault} permissions={vaultRole.permissions} />
               )}
-              {vaultRole.permissions.includes("TRANSACTION_READ") && (
-                <TransactionsCard vault={vault} permissions={vaultRole.permissions} />
-              )}
             </Grid>
+            <Flex width={'full'}>
+              {vaultRole.permissions.includes("TRANSACTION_READ") && (
+                  <TransactionsCard vault={vault} permissions={vaultRole.permissions} />
+              )}
+            </Flex>
           </Flex>
         </>
       }

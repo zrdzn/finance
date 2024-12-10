@@ -1,7 +1,6 @@
-package dev.zrdzn.finance.backend.transaction
+package dev.zrdzn.finance.backend.transaction.api
 
 import dev.zrdzn.finance.backend.api.FinanceApiException
-import dev.zrdzn.finance.backend.transaction.api.TransactionErrorCode
 
 class TransactionDescriptionRequiredException : FinanceApiException(
     status = TransactionErrorCode.DESCRIPTION_REQUIRED.status,

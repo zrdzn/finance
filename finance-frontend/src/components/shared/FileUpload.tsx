@@ -25,7 +25,7 @@ export const FileUpload = ({handleFile, children}: {
             {React.cloneElement(children, {onClick: handleFileInput})}
             <Input
                 type={'file'}
-                accept={'image/*'}
+                accept={'image/* .csv'}
                 onChange={handleFileInputChange}
                 ref={hiddenFileInput}
                 style={{display: 'none'}}

@@ -1,12 +1,17 @@
 package dev.zrdzn.finance.backend.transaction
 
+import com.opencsv.CSVParserBuilder
+import com.opencsv.CSVReaderBuilder
 import com.opencsv.CSVWriter
+import com.opencsv.enums.CSVReaderNullFieldIndicator
 import dev.zrdzn.finance.backend.audit.AuditService
 import dev.zrdzn.finance.backend.audit.api.AuditAction
 import dev.zrdzn.finance.backend.exchange.ExchangeService
+import dev.zrdzn.finance.backend.price.Price
 import dev.zrdzn.finance.backend.product.ProductService
-import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.transaction.api.TransactionAmountResponse
+import dev.zrdzn.finance.backend.transaction.api.TransactionCreateRequest
+import dev.zrdzn.finance.backend.transaction.api.TransactionDescriptionRequiredException
 import dev.zrdzn.finance.backend.transaction.api.TransactionListResponse
 import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
 import dev.zrdzn.finance.backend.transaction.api.TransactionNotFoundException
@@ -22,14 +27,18 @@ import dev.zrdzn.finance.backend.transaction.api.schedule.ScheduleResponse
 import dev.zrdzn.finance.backend.user.UserService
 import dev.zrdzn.finance.backend.vault.VaultService
 import dev.zrdzn.finance.backend.vault.api.authority.VaultPermission
+import java.io.InputStreamReader
 import java.io.StringWriter
 import java.math.BigDecimal
 import java.time.Clock
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.util.Locale
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 
 open class TransactionService(
     private val transactionRepository: TransactionRepository,
@@ -42,6 +51,103 @@ open class TransactionService(
     private val auditService: AuditService,
     private val clock: Clock
 ) {
+
+    @Transactional
+    open fun importTransactionsFromCsv(
+        requesterId: Int,
+        vaultId: Int,
+        separator: Char,
+        file: MultipartFile,
+        mappings: Map<String, String>,
+        applyTransactionMethod: TransactionMethod?
+    ) {
+        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_CREATE)
+
+        val reader = InputStreamReader(file.inputStream)
+
+        val csvParser = CSVParserBuilder()
+            .withSeparator(separator)
+            .withQuoteChar('"')
+            .withEscapeChar('\\')
+            .withStrictQuotes(false)
+            .withIgnoreLeadingWhiteSpace(true)
+            .withIgnoreQuotations(false)
+            .withFieldAsNull(CSVReaderNullFieldIndicator.NEITHER)
+            .withErrorLocale(Locale.getDefault())
+            .build()
+
+        val csvReader = CSVReaderBuilder(reader)
+            .withCSVParser(csvParser)
+            .build()
+
+        val csvRecords = csvReader.readAll()
+        if (csvRecords.isEmpty()) {
+            return
+        }
+
+        val header = csvRecords.first()
+        val columns = mappings.mapValues { (_, columnName) ->
+            header.indexOf(columnName).takeIf { it >= 0 } ?: throw IllegalArgumentException("Column $columnName not found in CSV header")
+        }
+
+        val transactions = mutableSetOf<Transaction>()
+
+        for (csvRecord in csvReader.drop(1)) {
+            val createdAt = csvRecord[columns.getValue("createdAt")]
+            val transactionMethod = applyTransactionMethod ?: TransactionMethod.valueOf(csvRecord[columns.getValue("transactionMethod")])
+            val description = csvRecord[columns.getValue("description")]
+            val totalString = csvRecord[columns.getValue("total")]
+            val currency = csvRecord[columns.getValue("currency")]
+            val rawPrice = csvRecord.getOrNull(columns["rawPrice"] ?: -1)
+
+            val (total, finalCurrency) = when {
+                !rawPrice.isNullOrBlank() -> parseRawPrice(rawPrice)
+                !totalString.isNullOrBlank() -> totalString.toBigDecimal() to currency
+                else -> throw TransactionPriceRequiredException()
+            }
+
+            val transactionType = when {
+                total > BigDecimal.ZERO -> TransactionType.INCOMING
+                total < BigDecimal.ZERO -> TransactionType.OUTGOING
+                else -> throw TransactionPriceRequiredException()
+            }
+
+            val transactionCreateRequest = TransactionCreateRequest(
+                createdAt = LocalDateTime.parse(createdAt).toInstant(ZoneId.systemDefault().rules.getOffset(Instant.now())),
+                vaultId = vaultId,
+                transactionMethod = transactionMethod,
+                transactionType = transactionType,
+                description = description,
+                price = total,
+                currency = finalCurrency
+            )
+
+            transactions.add(
+                Transaction(
+                    id = null,
+                    userId = requesterId,
+                    vaultId = vaultId,
+                    createdAt = transactionCreateRequest.createdAt ?: Instant.now(clock),
+                    transactionMethod = transactionMethod,
+                    transactionType = transactionType,
+                    description = description,
+                    total = total,
+                    currency = finalCurrency
+                )
+            )
+        }
+
+        transactions.forEach {
+            transactionRepository.save(it)
+        }
+
+        auditService.createAudit(
+            vaultId = vaultId,
+            userId = requesterId,
+            auditAction = AuditAction.TRANSACTION_IMPORTED,
+            description = "Transactions amount ${transactions.size}"
+        )
+    }
 
     @Transactional
     open fun exportTransactionsToCsv(requesterId: Int, vaultId: Int, startDate: Instant, endDate: Instant): String {
@@ -437,6 +543,24 @@ open class TransactionService(
                     target = targetCurrency
                 ).amount
             }
+    }
+
+    private fun parseRawPrice(rawPrice: String): Pair<BigDecimal, String> {
+        val rawPriceCleaned = rawPrice.replace(",", ".").replace("\\s".toRegex(), "")
+
+        val regex = Regex("""^([A-Za-z]{3})?(\d+(\.\d{1,2})?)|(\d+(\.\d{1,2})?)([A-Za-z]{3})$""")
+
+        val matchResult = regex.find(rawPriceCleaned) ?: throw IllegalArgumentException("Invalid rawPrice format")
+
+        val groups = matchResult.groups
+        val currency = groups[1]?.value ?: groups[6]?.value
+        val amount = groups[2]?.value ?: groups[4]?.value
+
+        if (currency == null || amount == null) {
+            throw IllegalArgumentException("Invalid rawPrice format: missing currency or amount")
+        }
+
+        return BigDecimal(amount) to currency.trim().uppercase()
     }
 
 }

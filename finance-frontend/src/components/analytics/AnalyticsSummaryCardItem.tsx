@@ -195,7 +195,7 @@ export const AnalyticsSummaryCardItem = ({
                 }
                 {
                   transactions !== undefined && (
-                    <Text fontSize='md' fontWeight='600' isTruncated>
+                    <Text fontSize='xl' fontWeight='600' isTruncated>
                       {transactions.toLocaleString()}
                     </Text>
                   )

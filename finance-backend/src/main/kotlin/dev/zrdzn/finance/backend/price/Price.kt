@@ -1,4 +1,4 @@
-package dev.zrdzn.finance.backend.shared
+package dev.zrdzn.finance.backend.price
 
 import java.math.BigDecimal
 

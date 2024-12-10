@@ -187,6 +187,12 @@
         "submit": "Export"
       }
     },
+    "import": {
+      "card": {
+        "title": "Import transactions",
+        "submit": "Import"
+      }
+    },
     "schedules": {
       "schedule-created-success": "Schedule has been created",
       "schedule-created-error": "Failed to create a schedule",
