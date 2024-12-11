@@ -6,6 +6,7 @@ export const useAuditActionFormatter = () => {
       TRANSACTION_CREATED: "New transaction created",
       TRANSACTION_UPDATED: "Transaction updated",
       TRANSACTION_DELETED: "Transaction deleted",
+      TRANSACTION_IMPORTED: "Transactions imported",
       TRANSACTION_EXPORTED: "Transactions exported",
       TRANSACTION_PRODUCT_CREATED: "Product added to transaction",
       SCHEDULE_CREATED: "New schedule created",

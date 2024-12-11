@@ -5,11 +5,9 @@ import {
     Button,
     FormControl,
     FormLabel,
-    Heading,
-    Input,
     VStack,
     HStack,
-    Text, CardHeader, Flex, CardBody, Stack, RadioGroup, Radio, Card, Checkbox
+    Text, CardHeader, Flex, CardBody, RadioGroup, Radio, Card, Checkbox
 } from '@chakra-ui/react';
 import {useTheme} from "@/hooks/useTheme";
 import {useTranslations} from "next-intl";
@@ -17,12 +15,11 @@ import {FileUpload} from "@/components/shared/FileUpload";
 import toast from "react-hot-toast";
 import {useApi} from "@/hooks/useApi";
 import {SelectProperties, TransactionMethod} from "@/api/types";
-import {Components, Paths} from "@/api/api";
-import {Parameters} from "openapi-client-axios";
-import {CurrencySelect} from "@/components/shared/CurrencySelect";
+import {Components} from "@/api/api";
 import {TransactionMethodSelect} from "@/components/transaction/TransactionMethodSelect";
 import Select from "react-select";
 import axios from "axios";
+import {useRouter} from "next/router";
 
 export type VaultResponse = Components.Schemas.VaultResponse;
 
@@ -40,11 +37,11 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
     const [appliedTransactionMethod, setAppliedTransactionMethod] = useState<TransactionMethod>('BLIK');
     const [applyTransactionMethod, setApplyTransactionMethod] = useState<boolean>(false);
     const theme = useTheme()
+    const router = useRouter()
     const [hasCombinedPriceColumn, setHasCombinedPriceColumn] = useState<boolean>(false);
     const t = useTranslations("Transactions")
 
     const requiredFields = [
-        { value: 'createdAt', label: 'Date' },
         { value: 'transactionMethod', label: 'Payment method' },
         { value: 'description', label: 'Description' },
         { value: 'total', label: 'Amount' },
@@ -54,59 +51,54 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
 
     const handleFileUpload = async (file: File) => {
         if (!separator) {
-            toast.error('Please select a separator')
+            toast.error(t('import.select-separator'))
             return
         }
 
-        if (!file) return;
+        if (!file) return
 
         const text = await file.text()
-        const lines = text.split('\n');
+        const lines = text.split('\n')
 
         if (lines.length > 0) {
             if (!lines[0].includes(separator)) {
-                toast.error('Specified separator is invalid');
-                return;
+                toast.error(t('import.invalid-separator'))
+                return
             }
 
-            const columns = lines[0].split(separator).map((column) => column.trim());
-            setCsvColumns(columns);
+            const columns = lines[0].split(separator).map((column) => column.trim())
+            setCsvColumns(columns)
 
-            const data = lines.slice(1).map((line) => line.split(separator).map((value) => value.trim()));
+            const data = lines.slice(1).map((line) => line.split(separator).map((value) => value.trim()))
+            const csvContent = [lines.join('\n')]
+            setFileBlob(new Blob(csvContent, { type: 'text/csv' }))
 
-            const csvContent = [lines.join('\n')];
-            setFileBlob(new Blob(csvContent, { type: 'text/csv' }));
-
-            const priceRegex = /^\d+([.,]\d+)?\s?[A-Za-z]{3}$/;
-            const hasCombinedColumn = columns.some((col, index) =>
+            const priceRegex = /^(?:[A-Za-z]{3}\s?)?\d{1,3}(?:[ ,]\d{3})*(?:[.,]\d+)?\s?[A-Za-z]{3}?$/
+            const hasCombinedColumn = columns.some((_, index) =>
                 priceRegex.test(data[0][index])
-            );
+            )
 
-            setHasCombinedPriceColumn(hasCombinedColumn);
-
-            if (hasCombinedColumn) {
-                toast.success('Detected combined "Amount and Currency" column.');
-            }
+            setHasCombinedPriceColumn(hasCombinedColumn)
         }
-    };
+    }
 
     const handleMappingChange = (field: string, column: string) => {
         setMappedFields((prev) => ({ ...prev, [field]: column }));
-    };
+    }
 
     const handleSubmit = async () => {
         if (!appliedTransactionMethod) {
-            toast.error('Please select a transaction method')
+            toast.error(t('import.select-transaction-method'))
             return
         }
 
         if (!separator) {
-            toast.error('Please select a separator')
+            toast.error(t('import.select-separator'))
             return
         }
 
         if (!fileBlob) {
-            toast.error('Please select a file')
+            toast.error(t('import.select-file'))
             return
         }
 
@@ -125,10 +117,14 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
                     'Content-Type': 'multipart/form-data'
                 }
             }))
+            .then(() => {
+                toast.success(t('import.imported'))
+                setTimeout(() => router.reload(), 1000)
+            })
             .catch(error => {
                 console.error(error)
                 if (axios.isAxiosError(error) && error.response) {
-                    const errorMessage = error.response.data.description || "An error occurred while logging in"
+                    const errorMessage = error.response.data.description || "An error occurred while importing transactions"
                     toast.error(errorMessage)
                 } else {
                     toast.error("An unexpected error occurred")
@@ -147,7 +143,7 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
         </CardHeader>
         <CardBody>
             <FormControl mb={6}>
-                <FormLabel fontSize="lg">Choose file and separator</FormLabel>
+                <FormLabel fontSize="lg">{t('import.choose-file-and-separator')}</FormLabel>
                 <Flex
                     mt={4}
                     alignItems="center"
@@ -164,7 +160,7 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
                             width={{ base: '100%', lg: 'auto' }}
                             textAlign="center"
                         >
-                            <Text>Select file</Text>
+                            <Text>{t('import.select-file-button')}</Text>
                         </Button>
                     </FileUpload>
                     <RadioGroup value={separator} onChange={setSeparator}>
@@ -198,7 +194,7 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
             </FormControl>
             {csvColumns.length > 0 && (
                 <Box mt={6}>
-                    <FormLabel fontSize={'lg'}>Configure mappings</FormLabel>
+                    <FormLabel fontSize={'lg'}>{t('import.configure-mappings')}</FormLabel>
                     <VStack spacing={6} align="stretch" bg="gray.50" p={4} borderRadius="md">
                         {requiredFields
                             .filter(
@@ -224,7 +220,7 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
 
                                     <Box flex="1" minW={{ base: '100%', md: '45%' }}>
                                         <Select
-                                            placeholder="Select column"
+                                            placeholder={t('import.select-column')}
                                             value={{
                                                 value: mappedFields[field.value] || '',
                                                 label: mappedFields[field.value] || ''
@@ -254,7 +250,7 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
                                                 borderColor="teal.500"
                                                 _checked={{ bg: 'teal.500', borderColor: 'teal.500', color: 'white' }}
                                             />
-                                            <Text fontSize={'md'} fontWeight="400">Or apply to all</Text>
+                                            <Text fontSize={'md'} fontWeight="400">{t('import.apply-to-all')}</Text>
                                         </Box>
                                     )}
 

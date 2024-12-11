@@ -10,8 +10,8 @@ import dev.zrdzn.finance.backend.exchange.ExchangeService
 import dev.zrdzn.finance.backend.price.Price
 import dev.zrdzn.finance.backend.product.ProductService
 import dev.zrdzn.finance.backend.transaction.api.TransactionAmountResponse
-import dev.zrdzn.finance.backend.transaction.api.TransactionCreateRequest
 import dev.zrdzn.finance.backend.transaction.api.TransactionDescriptionRequiredException
+import dev.zrdzn.finance.backend.transaction.api.TransactionImportMappingNotFoundException
 import dev.zrdzn.finance.backend.transaction.api.TransactionListResponse
 import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
 import dev.zrdzn.finance.backend.transaction.api.TransactionNotFoundException
@@ -32,8 +32,6 @@ import java.io.StringWriter
 import java.math.BigDecimal
 import java.time.Clock
 import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
@@ -92,17 +90,36 @@ open class TransactionService(
 
         val transactions = mutableSetOf<Transaction>()
 
-        for (csvRecord in csvReader.drop(1)) {
-            val createdAt = csvRecord[columns.getValue("createdAt")]
-            val transactionMethod = applyTransactionMethod ?: TransactionMethod.valueOf(csvRecord[columns.getValue("transactionMethod")])
-            val description = csvRecord[columns.getValue("description")]
-            val totalString = csvRecord[columns.getValue("total")]
-            val currency = csvRecord[columns.getValue("currency")]
-            val rawPrice = csvRecord.getOrNull(columns["rawPrice"] ?: -1)
+        for (csvRecord in csvRecords.drop(1)) {
+            val values = try {
+                mapOf(
+                    "createdAt" to csvRecord.getOrNull(columns["createdAt"] ?: -1),
+                    "transactionMethod" to csvRecord.getOrNull(columns["transactionMethod"] ?: -1),
+                    "description" to csvRecord.getOrNull(columns["description"] ?: -1),
+                    "total" to csvRecord.getOrNull(columns["total"] ?: -1),
+                    "currency" to csvRecord.getOrNull(columns["currency"] ?: -1),
+                    "rawPrice" to csvRecord.getOrNull(columns["rawPrice"] ?: -1)
+                )
+            } catch (e: NoSuchElementException) {
+                throw TransactionImportMappingNotFoundException()
+            }
+
+            val transactionMethod = applyTransactionMethod ?: values["transactionMethod"]
+                ?.let { TransactionMethod.valueOf(it) }
+                ?: throw TransactionImportMappingNotFoundException()
+            val description = values["description"] ?: throw TransactionImportMappingNotFoundException()
+            val totalString = values["total"]
+            val currency = values["currency"]
+            val rawPrice = values["rawPrice"]
 
             val (total, finalCurrency) = when {
-                !rawPrice.isNullOrBlank() -> parseRawPrice(rawPrice)
-                !totalString.isNullOrBlank() -> totalString.toBigDecimal() to currency
+                !rawPrice.isNullOrBlank() -> {
+                    val (parsedTotal, parsedCurrency) = parseRawPrice(rawPrice)
+                    parsedTotal to (currency ?: parsedCurrency)
+                }
+                !totalString.isNullOrBlank() -> {
+                    totalString.replace(" ", "").replace(",", ".").toBigDecimal() to (currency ?: throw TransactionImportMappingNotFoundException())
+                }
                 else -> throw TransactionPriceRequiredException()
             }
 
@@ -112,22 +129,12 @@ open class TransactionService(
                 else -> throw TransactionPriceRequiredException()
             }
 
-            val transactionCreateRequest = TransactionCreateRequest(
-                createdAt = LocalDateTime.parse(createdAt).toInstant(ZoneId.systemDefault().rules.getOffset(Instant.now())),
-                vaultId = vaultId,
-                transactionMethod = transactionMethod,
-                transactionType = transactionType,
-                description = description,
-                price = total,
-                currency = finalCurrency
-            )
-
             transactions.add(
                 Transaction(
                     id = null,
                     userId = requesterId,
                     vaultId = vaultId,
-                    createdAt = transactionCreateRequest.createdAt ?: Instant.now(clock),
+                    createdAt = Instant.now(clock),
                     transactionMethod = transactionMethod,
                     transactionType = transactionType,
                     description = description,
@@ -160,14 +167,10 @@ open class TransactionService(
         csvWriter.writeNext(headers)
 
         transactions.forEach {
-            val createdAtLocalDateTime = Instant.ofEpochSecond(it.createdAt.epochSecond)
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime()
-
             val data = arrayOf(
                 userService.getUser(it.userId).email,
                 vaultService.getVault(vaultId = vaultId, requesterId = requesterId).name,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(createdAtLocalDateTime),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(it.createdAt),
                 it.transactionMethod.toString(),
                 it.transactionType.toString(),
                 it.description ?: "",
@@ -546,17 +549,17 @@ open class TransactionService(
     }
 
     private fun parseRawPrice(rawPrice: String): Pair<BigDecimal, String> {
-        val rawPriceCleaned = rawPrice.replace(",", ".").replace("\\s".toRegex(), "")
+        val rawPriceCleaned = rawPrice.replace(" ", "").replace(",", ".")
 
-        val regex = Regex("""^([A-Za-z]{3})?(\d+(\.\d{1,2})?)|(\d+(\.\d{1,2})?)([A-Za-z]{3})$""")
+        val regex = Regex("""^([A-Za-z]{3})?(-?\d{1,3}(?:\d{3})*(?:[.,]\d+)?)([A-Za-z]{3})?$""")
 
         val matchResult = regex.find(rawPriceCleaned) ?: throw IllegalArgumentException("Invalid rawPrice format")
 
         val groups = matchResult.groups
-        val currency = groups[1]?.value ?: groups[6]?.value
-        val amount = groups[2]?.value ?: groups[4]?.value
+        val amount = groups[2]?.value
+        val currency = (groups[1]?.value ?: "") + (groups[3]?.value ?: "")
 
-        if (currency == null || amount == null) {
+        if (currency.isEmpty() || amount == null) {
             throw IllegalArgumentException("Invalid rawPrice format: missing currency or amount")
         }
 

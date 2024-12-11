@@ -85,7 +85,6 @@ declare namespace Components {
             amount: number; // int32
         }
         export interface TransactionCreateRequest {
-            createdAt?: string; // date-time
             vaultId: number; // int32
             transactionMethod: "CARD" | "BLIK" | "CASH";
             transactionType: "INCOMING" | "OUTGOING";
