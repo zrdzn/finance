@@ -38,7 +38,7 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
   }
 
   return (
-    <Card margin={2}>
+    <Card margin={2} width={'full'}>
       <CardHeader backgroundColor={theme.secondaryColor}
                   color={theme.textColor}>
         <Flex alignItems={'center'}

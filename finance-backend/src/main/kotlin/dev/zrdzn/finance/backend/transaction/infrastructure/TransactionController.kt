@@ -1,10 +1,13 @@
 package dev.zrdzn.finance.backend.transaction.infrastructure
 
-import dev.zrdzn.finance.backend.shared.Price
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dev.zrdzn.finance.backend.price.Price
 import dev.zrdzn.finance.backend.transaction.TransactionService
 import dev.zrdzn.finance.backend.transaction.api.TransactionAmountResponse
 import dev.zrdzn.finance.backend.transaction.api.TransactionCreateRequest
 import dev.zrdzn.finance.backend.transaction.api.TransactionListResponse
+import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
 import dev.zrdzn.finance.backend.transaction.api.TransactionResponse
 import dev.zrdzn.finance.backend.transaction.api.TransactionType
 import dev.zrdzn.finance.backend.transaction.api.TransactionUpdateRequest
@@ -29,12 +32,40 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/api/transactions")
 class TransactionController(
     private val transactionService: TransactionService
 ) {
+
+    @PostMapping("/{vaultId}/import")
+    fun importTransactions(
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable vaultId: Int,
+        @RequestParam("file") file: MultipartFile,
+        @RequestParam("mappings") mappings: String,
+        @RequestParam("separator") separator: String,
+        @RequestParam("applyTransactionMethod", required = false) applyTransactionMethod: TransactionMethod?
+    ) {
+        val objectMapper = jacksonObjectMapper()
+        val newMappings = objectMapper.readValue(mappings, object : TypeReference<Map<String, String>>() {})
+
+        val mappingsMap = mutableMapOf<String, String>()
+        for ((key, value) in newMappings) {
+            mappingsMap[key] = value
+        }
+
+        transactionService.importTransactionsFromCsv(
+            requesterId = userId,
+            vaultId = vaultId,
+            separator = separator[0],
+            file = file,
+            mappings = mappingsMap,
+            applyTransactionMethod = applyTransactionMethod
+        )
+    }
 
     @GetMapping("/{vaultId}/export")
     fun exportTransactions(

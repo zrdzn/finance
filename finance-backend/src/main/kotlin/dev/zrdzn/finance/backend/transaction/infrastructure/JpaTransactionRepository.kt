@@ -1,6 +1,6 @@
 package dev.zrdzn.finance.backend.transaction.infrastructure
 
-import dev.zrdzn.finance.backend.shared.Price
+import dev.zrdzn.finance.backend.price.Price
 import dev.zrdzn.finance.backend.transaction.Transaction
 import dev.zrdzn.finance.backend.transaction.TransactionRepository
 import dev.zrdzn.finance.backend.transaction.api.TransactionType
@@ -15,7 +15,7 @@ interface JpaTransactionRepository : TransactionRepository, Repository<Transacti
 
     @Query(
         """
-        SELECT NEW dev.zrdzn.finance.backend.shared.Price(SUM(transaction.total), transaction.currency)
+        SELECT NEW dev.zrdzn.finance.backend.price.Price(SUM(transaction.total), transaction.currency)
         FROM Transaction transaction
         WHERE transaction.vaultId = :vaultId
         AND transaction.transactionType = :transactionType

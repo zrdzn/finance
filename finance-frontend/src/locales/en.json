@@ -187,6 +187,22 @@
         "submit": "Export"
       }
     },
+    "import": {
+      "imported": "Transactions have been imported",
+      "choose-file-and-separator": "Choose a file and a separator",
+      "select-file-button": "Select a file",
+      "configure-mappings": "Configure mappings",
+      "select-column": "Select a column",
+      "apply-to-all": "Or apply to all",
+      "select-separator": "Select a separator",
+      "invalid-separator": "Specified separator is invalid",
+      "select-transaction-method": "Select a transaction method",
+      "select-file": "Select a file",
+      "card": {
+        "title": "Import transactions",
+        "submit": "Import"
+      }
+    },
     "schedules": {
       "schedule-created-success": "Schedule has been created",
       "schedule-created-error": "Failed to create a schedule",

@@ -1,6 +1,6 @@
 package dev.zrdzn.finance.backend.transaction
 
-import dev.zrdzn.finance.backend.shared.Price
+import dev.zrdzn.finance.backend.price.Price
 import dev.zrdzn.finance.backend.transaction.api.TransactionType
 import java.time.Instant
 

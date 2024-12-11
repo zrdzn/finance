@@ -23,29 +23,17 @@ declare namespace Components {
             createdAt: string; // date-time
             vault: VaultResponse;
             user: UserResponse;
-            auditAction: "TRANSACTION_CREATED" | "TRANSACTION_UPDATED" | "TRANSACTION_DELETED" | "TRANSACTION_EXPORTED" | "TRANSACTION_PRODUCT_CREATED" | "SCHEDULE_CREATED" | "SCHEDULE_DELETED" | "CATEGORY_CREATED" | "CATEGORY_DELETED" | "PRODUCT_CREATED" | "PRODUCT_UPDATED" | "PRODUCT_DELETED";
+            auditAction: "TRANSACTION_CREATED" | "TRANSACTION_UPDATED" | "TRANSACTION_DELETED" | "TRANSACTION_IMPORTED" | "TRANSACTION_EXPORTED" | "TRANSACTION_PRODUCT_CREATED" | "SCHEDULE_CREATED" | "SCHEDULE_DELETED" | "CATEGORY_CREATED" | "CATEGORY_DELETED" | "PRODUCT_CREATED" | "PRODUCT_UPDATED" | "PRODUCT_DELETED";
             description: string;
-        }
-        export interface AuthenticationDetailsResponse {
-            email: string;
-            username: string;
-            verified: boolean;
-            isTwoFactorEnabled: boolean;
         }
         export interface AuthenticationLoginRequest {
             email: string;
             password: string;
             oneTimePassword?: string;
         }
-        export interface AuthenticationRegisterResponse {
-            userId: number; // int32
-        }
         export interface CategoryCreateRequest {
             name: string;
             vaultId: number; // int32
-        }
-        export interface CategoryCreateResponse {
-            id: number; // int32
         }
         export interface CategoryListResponse {
             categories: CategoryResponse[];
@@ -60,12 +48,6 @@ declare namespace Components {
             currency: string;
         }
         export interface ProductCreateRequest {
-            name: string;
-            vaultId: number; // int32
-            categoryId?: number; // int32
-        }
-        export interface ProductCreateResponse {
-            id: number; // int32
             name: string;
             vaultId: number; // int32
             categoryId?: number; // int32
@@ -110,9 +92,6 @@ declare namespace Components {
             price: number;
             currency: string;
         }
-        export interface TransactionCreateResponse {
-            id: number; // int32
-        }
         export interface TransactionFlowsResponse {
             total: Price;
         }
@@ -124,13 +103,10 @@ declare namespace Components {
             unitAmount: number;
             quantity: number; // int32
         }
-        export interface TransactionProductCreateResponse {
-            id: number; // int32
-        }
         export interface TransactionProductListResponse {
-            products: TransactionProductWithProductResponse[];
+            products: TransactionProductResponse[];
         }
-        export interface TransactionProductWithProductResponse {
+        export interface TransactionProductResponse {
             id: number; // int32
             transactionId: number; // int32
             product: ProductResponse;
@@ -201,10 +177,6 @@ declare namespace Components {
             currency: string;
             transactionMethod: "CARD" | "BLIK" | "CASH";
         }
-        export interface VaultCreateResponse {
-            id: number; // int32
-            publicId: string;
-        }
         export interface VaultInvitationCreateRequest {
             vaultId: number; // int32
             userEmail: string;
@@ -270,13 +242,13 @@ declare namespace Paths {
     namespace CreateCategory {
         export type RequestBody = Components.Schemas.CategoryCreateRequest;
         namespace Responses {
-            export type $200 = Components.Schemas.CategoryCreateResponse;
+            export type $200 = Components.Schemas.CategoryResponse;
         }
     }
     namespace CreateProduct {
         export type RequestBody = Components.Schemas.ProductCreateRequest;
         namespace Responses {
-            export type $200 = Components.Schemas.ProductCreateResponse;
+            export type $200 = Components.Schemas.ProductResponse;
         }
     }
     namespace CreateSchedule {
@@ -294,7 +266,7 @@ declare namespace Paths {
     namespace CreateTransaction {
         export type RequestBody = Components.Schemas.TransactionCreateRequest;
         namespace Responses {
-            export type $200 = Components.Schemas.TransactionCreateResponse;
+            export type $200 = Components.Schemas.TransactionResponse;
         }
     }
     namespace CreateTransactionProduct {
@@ -306,13 +278,13 @@ declare namespace Paths {
         }
         export type RequestBody = Components.Schemas.TransactionProductCreateRequest;
         namespace Responses {
-            export type $200 = Components.Schemas.TransactionProductCreateResponse;
+            export type $200 = Components.Schemas.TransactionProductResponse;
         }
     }
     namespace CreateVault {
         export type RequestBody = Components.Schemas.VaultCreateRequest;
         namespace Responses {
-            export type $200 = Components.Schemas.VaultCreateResponse;
+            export type $200 = Components.Schemas.VaultResponse;
         }
     }
     namespace CreateVaultInvitation {
@@ -406,7 +378,7 @@ declare namespace Paths {
     }
     namespace GetAuthenticationDetails {
         namespace Responses {
-            export type $200 = Components.Schemas.AuthenticationDetailsResponse;
+            export type $200 = Components.Schemas.UserResponse;
         }
     }
     namespace GetCategoriesByVaultId {
@@ -422,10 +394,10 @@ declare namespace Paths {
     }
     namespace GetCategoryById {
         namespace Parameters {
-            export type Id = number; // int32
+            export type CategoryId = number; // int32
         }
         export interface PathParameters {
-            id: Parameters.Id /* int32 */;
+            categoryId: Parameters.CategoryId /* int32 */;
         }
         namespace Responses {
             export type $200 = Components.Schemas.CategoryResponse;
@@ -587,6 +559,29 @@ declare namespace Paths {
             export type $200 = Components.Schemas.VaultListResponse;
         }
     }
+    namespace ImportTransactions {
+        namespace Parameters {
+            export type ApplyTransactionMethod = "CARD" | "BLIK" | "CASH";
+            export type Mappings = string;
+            export type Separator = string;
+            export type VaultId = number; // int32
+        }
+        export interface PathParameters {
+            vaultId: Parameters.VaultId /* int32 */;
+        }
+        export interface QueryParameters {
+            mappings: Parameters.Mappings;
+            separator: Parameters.Separator;
+            applyTransactionMethod?: Parameters.ApplyTransactionMethod;
+        }
+        export interface RequestBody {
+            file: string; // binary
+        }
+        namespace Responses {
+            export interface $200 {
+            }
+        }
+    }
     namespace Login {
         export type RequestBody = Components.Schemas.AuthenticationLoginRequest;
         namespace Responses {
@@ -601,7 +596,7 @@ declare namespace Paths {
     namespace Register {
         export type RequestBody = Components.Schemas.UserCreateRequest;
         namespace Responses {
-            export type $200 = Components.Schemas.AuthenticationRegisterResponse;
+            export type $200 = Components.Schemas.UserResponse;
         }
     }
     namespace RemoveVault {
@@ -823,6 +818,14 @@ export interface OperationMethods {
     data?: Paths.VerifyUserTwoFactorSetup.RequestBody,
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.VerifyUserTwoFactorSetup.Responses.$200>
+  /**
+   * importTransactions
+   */
+  'importTransactions'(
+    parameters: Parameters<Paths.ImportTransactions.QueryParameters & Paths.ImportTransactions.PathParameters>,
+    data?: Paths.ImportTransactions.RequestBody,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.ImportTransactions.Responses.$200>
   /**
    * createSchedule
    */
@@ -1120,6 +1123,14 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.GetCategoryById.Responses.$200>
   /**
+   * deleteCategory
+   */
+  'deleteCategory'(
+    parameters: Parameters<Paths.DeleteCategory.PathParameters>,
+    data?: any,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.DeleteCategory.Responses.$200>
+  /**
    * getCategoriesByVaultId
    */
   'getCategoriesByVaultId'(
@@ -1159,14 +1170,6 @@ export interface OperationMethods {
     data?: any,
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.DeleteScheduleById.Responses.$200>
-  /**
-   * deleteCategory
-   */
-  'deleteCategory'(
-    parameters: Parameters<Paths.DeleteCategory.PathParameters>,
-    data?: any,
-    config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.DeleteCategory.Responses.$200>
 }
 
 export interface PathsDictionary {
@@ -1237,6 +1240,16 @@ export interface PathsDictionary {
       data?: Paths.VerifyUserTwoFactorSetup.RequestBody,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.VerifyUserTwoFactorSetup.Responses.$200>
+  }
+  ['/api/transactions/{vaultId}/import']: {
+    /**
+     * importTransactions
+     */
+    'post'(
+      parameters: Parameters<Paths.ImportTransactions.QueryParameters & Paths.ImportTransactions.PathParameters>,
+      data?: Paths.ImportTransactions.RequestBody,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.ImportTransactions.Responses.$200>
   }
   ['/api/transactions/{transactionId}/schedule/create']: {
     /**
@@ -1590,7 +1603,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetProductsByVaultId.Responses.$200>
   }
-  ['/api/categories/{id}']: {
+  ['/api/categories/{categoryId}']: {
     /**
      * getCategoryById
      */
@@ -1599,6 +1612,14 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetCategoryById.Responses.$200>
+    /**
+     * deleteCategory
+     */
+    'delete'(
+      parameters: Parameters<Paths.DeleteCategory.PathParameters>,
+      data?: any,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.DeleteCategory.Responses.$200>
   }
   ['/api/categories/vault/{vaultId}']: {
     /**
@@ -1649,16 +1670,6 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.DeleteScheduleById.Responses.$200>
-  }
-  ['/api/categories/{categoryId}']: {
-    /**
-     * deleteCategory
-     */
-    'delete'(
-      parameters: Parameters<Paths.DeleteCategory.PathParameters>,
-      data?: any,
-      config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.DeleteCategory.Responses.$200>
   }
 }
 

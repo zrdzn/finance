@@ -2,7 +2,7 @@ package dev.zrdzn.finance.backend.exchange
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import dev.zrdzn.finance.backend.exchange.api.ExchangeRate
-import dev.zrdzn.finance.backend.shared.Price
+import dev.zrdzn.finance.backend.price.Price
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.concurrent.TimeUnit

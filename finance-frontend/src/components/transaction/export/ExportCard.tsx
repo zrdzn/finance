@@ -128,7 +128,7 @@ export const ExportCard = ({ vault, permissions }: ExportCardProperties) => {
                 />
               </Box>
             </Flex>
-            <Button mt={8} onClick={handleExport} backgroundColor={theme.primaryColor} width="100%" color={'#f8f8f8'} fontWeight={'400'}>
+            <Button mt={8} onClick={handleExport} backgroundColor={theme.primaryColor} width="full" color={'#f8f8f8'} fontWeight={'400'}>
               {t('export.card.submit')}
             </Button>
           </FormControl>

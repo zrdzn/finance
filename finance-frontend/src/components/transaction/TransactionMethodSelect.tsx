@@ -34,7 +34,7 @@ export const TransactionMethodSelect = ({ onChange, defaultValue, isDisabled }: 
             defaultValue={selectedTransactionMethod}
             required
             isDisabled={isDisabled}
-            isClearable
-            options={options} />
+            options={options}
+    />
   )
 }
