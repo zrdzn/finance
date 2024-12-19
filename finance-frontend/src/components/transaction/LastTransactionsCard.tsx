@@ -37,15 +37,16 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
         </Flex>
       </CardHeader>
       <CardBody>
-        <Stack gap={0}>
+        <Stack gap={4}>
           {
             transactions.length === 0 && <Text size={'sm'}>{t('recent.card.no-transactions')}</Text>
           }
           {
             transactions &&
-            transactions.sort((transactions, nextTransaction) => new Date(nextTransaction.createdAt).getTime() - new Date(transactions.createdAt).getTime())
-              .slice(0, 3)
-              .map(transaction => <TransactionsCardItem key={transaction.id}
+            transactions
+                .sort((transactions, nextTransaction) => new Date(nextTransaction.createdAt).getTime() - new Date(transactions.createdAt).getTime())
+                .slice(0, 3)
+                .map(transaction => <TransactionsCardItem key={transaction.id}
                                                     vaultId={vault.id}
                                                     transaction={transaction}
                                                     permissions={permissions} />)

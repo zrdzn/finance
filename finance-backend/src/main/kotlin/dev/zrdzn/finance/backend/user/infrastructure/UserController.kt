@@ -78,7 +78,12 @@ class UserController(
     fun updateUserProfile(
         @AuthenticationPrincipal userId: Int,
         @RequestBody userProfileUpdateRequest: UserProfileUpdateRequest
-    ): Unit = userService.updateUserProfile(userId, userProfileUpdateRequest.username)
+    ): Unit = userService.updateUserProfile(
+        requesterId = userId,
+        username = userProfileUpdateRequest.username,
+        decimalSeparator = userProfileUpdateRequest.decimalSeparator,
+        groupSeparator = userProfileUpdateRequest.groupSeparator
+    )
 
     @GetMapping("/verify")
     fun verifyUser(

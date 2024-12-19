@@ -1,100 +1,36 @@
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
 import {
-  Button,
   Card,
   CardBody,
   CardHeader,
   Flex,
-  FormControl,
-  FormLabel,
-  HStack,
-  Input,
-  Image,
-  Stack,
-  Text, Avatar, AvatarBadge, VStack
+  Text
 } from "@chakra-ui/react";
-import React, {useEffect, useState} from "react";
-import {useApi} from "@/hooks/useApi"
+import React, {useEffect} from "react";
 import {useRouter} from "next/router"
 import {useTheme} from "@/hooks/useTheme"
 import {useAuthentication} from "@/hooks/useAuthentication"
-import toast from "react-hot-toast"
 import {Layout} from "@/components/Layout"
-import {FaEdit, FaEnvelope, FaKey, FaLock, FaSave, FaShieldAlt, FaUpload} from "react-icons/fa"
-import {FaPencil, FaShield} from "react-icons/fa6"
-import {RequestAccountUpdateButton} from "@/components/account/RequestAccountUpdateButton"
-import {RequestAccountVerificationButton} from "@/components/account/RequestAccountVerificationButton";
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
-import {Components} from "@/api/api";
-import {FileUpload} from "@/components/shared/FileUpload";
-import {BiSolidPencil} from "react-icons/bi";
-import {AccountAvatar} from "@/components/account/AccountAvatar";
-
-type UserProfileUpdateRequest = Components.Schemas.UserProfileUpdateRequest;
+import {Components} from "@/api/api"
+import {AccountProfileUpdateForm} from "@/components/account/AccountProfileUpdateForm";
 
 export default function AccountSettings(): ReactJSXElement {
-  const { authenticationDetails } = useAuthentication()
-  const api = useApi()
+  const { details } = useAuthentication()
   const router = useRouter()
   const theme = useTheme()
   const t = useTranslations("AccountSettings")
-  const [userProfileUpdateRequest, setUserProfileUpdateRequest] = useState<UserProfileUpdateRequest>({
-    username: ''
-  })
-  const [isEditingUsername, setIsEditingUsername] = useState(false)
 
   useEffect(() => {
-    if (authenticationDetails === null) {
+    if (details === null) {
       router.push("/login")
     }
-  }, [authenticationDetails, router]);
+  }, [details, router]);
 
-  if (authenticationDetails === null) {
+  if (details === null) {
     return <></>
-  }
-
-  const handleUsernameChange = (username: string) => {
-    setUserProfileUpdateRequest((previous) => ({ ...previous, username: username }))
-  }
-
-  const handleUserProfileUpdate = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-
-    if (!authenticationDetails) {
-      return
-    }
-
-    if (userProfileUpdateRequest?.username === '') {
-      setUserProfileUpdateRequest((previous) => ({ ...previous, username: authenticationDetails.username }))
-      return
-    }
-
-    api
-        .then(client => client.updateUserProfile(null, userProfileUpdateRequest)
-            .then(() => {
-                toast.success(t('profile-card.updated-success'))
-                setTimeout(() => router.reload(), 1000)
-            }))
-        .catch(error => {
-                console.error(error)
-                toast.error(t('profile-card.updated-error'))
-        })
-  }
-
-  const handleAvatarUpload = (avatarFile: File) => {
-    const form = new FormData()
-
-    form.append("avatar", avatarFile)
-
-    api
-        .then(client => client.api.client.put("api/users/avatar", form))
-        .then(() => router.reload())
-        .catch(error => {
-          const errorMessage = error.response?.data?.message
-          toast.error(errorMessage)
-        })
   }
 
   return (
@@ -117,86 +53,7 @@ export default function AccountSettings(): ReactJSXElement {
             </CardHeader>
             <CardBody>
               {
-                authenticationDetails &&
-                  <Stack spacing='4'>
-                    <FormControl>
-                      <FormLabel>{t('profile-card.avatar-label')}</FormLabel>
-                      <HStack gap={4}>
-                        <AccountAvatar size={'xl'} />
-                        <FileUpload handleFile={it => handleAvatarUpload(it)}>
-                          <Button size={'md'}
-                                  backgroundColor={theme.primaryColor}
-                                  gap={1}
-                                  color={'#f8f8f8'} fontWeight={'400'}>
-                            <FaPencil />
-                          </Button>
-                        </FileUpload>
-                      </HStack>
-                    </FormControl>
-                    <FormControl isRequired>
-                      <FormLabel>{t('profile-card.email-label')}</FormLabel>
-                      <HStack>
-                        <Input
-                            name={'email'}
-                            defaultValue={authenticationDetails.email}
-                            isDisabled
-                        />
-                        <RequestAccountUpdateButton icon={<FaEdit />} accountUpdateType={'EMAIL'} />
-                      </HStack>
-                    </FormControl>
-                    <FormControl isRequired>
-                      <FormLabel>{t('profile-card.username-label')}</FormLabel>
-                      <HStack>
-                        <Input
-                            name={'username'}
-                            onChange={(event) => handleUsernameChange(event.target.value)}
-                            placeholder={t('profile-card.username-placeholder')}
-                            defaultValue={authenticationDetails.username}
-                            isDisabled={!isEditingUsername}
-                        />
-                        <Button
-                            backgroundColor={theme.primaryColor}
-                            onClick={(event) => {
-                              if (isEditingUsername) {
-                                handleUserProfileUpdate(event)
-                              }
-
-                              setIsEditingUsername(!isEditingUsername)}
-                        }
-                            size={'md'}
-                            color={'#f8f8f8'} fontWeight={'400'}
-                        >
-                          {
-                            isEditingUsername ? <FaSave /> : <FaPencil />
-                          }
-                        </Button>
-                      </HStack>
-                    </FormControl>
-                    <FormControl isRequired>
-                      <FormLabel>{t('profile-card.password-label')}</FormLabel>
-                      <HStack>
-                        <RequestAccountUpdateButton icon={<FaKey />} text={t('profile-card.password-placeholder')} accountUpdateType={'PASSWORD'} />
-                      </HStack>
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>{t('profile-card.verify-label')}</FormLabel>
-                      <HStack>
-                        {authenticationDetails.verified && <Text fontSize={'sm'} color={'green'}>{t('profile-card.already-verified')}</Text>}
-                        {!authenticationDetails.verified && (
-                            <RequestAccountVerificationButton icon={<FaEnvelope />} text={t('profile-card.verify-link')} />
-                        )}
-                      </HStack>
-                    </FormControl>
-                      <FormControl>
-                          <FormLabel>{t('profile-card.two-factor-setup-label')}</FormLabel>
-                          <HStack>
-                            {authenticationDetails.isTwoFactorEnabled && <Text fontSize={'sm'} color={'green'}>{t('profile-card.two-factor-already-enabled')}</Text>}
-                            {!authenticationDetails.isTwoFactorEnabled && (
-                              <RequestAccountUpdateButton icon={<FaLock />} text={t('profile-card.two-factor-setup-button-label')}  accountUpdateType={"TWO_FACTOR"}/>
-                            )}
-                          </HStack>
-                      </FormControl>
-                  </Stack>
+                details && <AccountProfileUpdateForm user={details} />
               }
             </CardBody>
           </Card>

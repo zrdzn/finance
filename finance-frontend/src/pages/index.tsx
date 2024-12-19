@@ -29,21 +29,21 @@ export default function Homepage(): ReactJSXElement {
   const [vaultInvitations, setVaultInvitations] = useState<VaultInvitationResponse[]>([])
   const router = useRouter();
   const t = useTranslations('Homepage')
-  const { authenticationDetails } = useAuthentication()
+  const { details } = useAuthentication()
 
   useEffect(() => {
-    if (!authenticationDetails) {
+    if (!details) {
       router.push("/login")
     }
-  }, [authenticationDetails, router]);
+  }, [details, router]);
 
   useEffect(() => {
     api
         .then(client => client.getVaults()
             .then(response => {
                 setYourVaults(response.data.vaults)
-              if (authenticationDetails?.email) {
-                return client.getVaultInvitationsByUserEmail(authenticationDetails.email);
+              if (details?.email) {
+                return client.getVaultInvitationsByUserEmail(details.email);
               }
 
               return null
@@ -57,9 +57,9 @@ export default function Homepage(): ReactJSXElement {
           })
         )
         .catch(error => console.error(error))
-  }, [api, authenticationDetails]);
+  }, [api, details]);
 
-  if (!authenticationDetails) {
+  if (!details) {
     return <></>
   }
 

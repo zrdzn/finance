@@ -25,7 +25,7 @@ import axios from "axios";
 type AuthenticationLoginRequest = Components.Schemas.AuthenticationLoginRequest;
 
 export default function Login(): ReactJSXElement {
-  const { authenticationDetails, login } = useAuthentication()
+  const { details, login } = useAuthentication()
   const router = useRouter()
   const theme = useTheme()
   const t = useTranslations('Login')
@@ -37,12 +37,12 @@ export default function Login(): ReactJSXElement {
   })
 
   useEffect(() => {
-    if (authenticationDetails) {
+    if (details) {
       router.push("/")
     }
-  }, [authenticationDetails, router]);
+  }, [details, router]);
 
-  if (authenticationDetails) {
+  if (details) {
     return <></>
   }
 

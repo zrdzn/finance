@@ -40,7 +40,7 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
   const theme = useTheme();
   const api = useApi();
   const router = useRouter();
-  const { authenticationDetails } = useAuthentication();
+  const { details } = useAuthentication();
   const { isOpen: requestIsOpen, onOpen: requestOnOpen, onClose: requestOnClose } = useDisclosure();
   const { isOpen: verificationIsOpen, onOpen: verificationOnOpen, onClose: verificationOnClose } = useDisclosure();
   const { isOpen: twoFactorSetupIsOpen, onOpen: twoFactorSetupOnOpen, onClose: twoFactorSetupOnClose } = useDisclosure();
@@ -194,7 +194,7 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
     setTimeout(() => setTooltipLabel(t('profile-modal.steps.two-factor.code-copy-tooltip')), 1500)
   }
 
-  return authenticationDetails && (
+  return details && (
     <>
       <Button backgroundColor={theme.primaryColor} onClick={requestOnOpen} gap={1} color={'#f8f8f8'} fontWeight={'400'}>
         {icon && icon}
@@ -213,7 +213,7 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
           <ModalCloseButton />
           <ModalBody pb={6}>
             <Text>
-              {t('profile-modal.steps.verify.description').replace("%email%", authenticationDetails.email)}
+              {t('profile-modal.steps.verify.description').replace("%email%", details.email)}
             </Text>
           </ModalBody>
 

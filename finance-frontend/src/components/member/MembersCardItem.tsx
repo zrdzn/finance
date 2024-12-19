@@ -34,7 +34,7 @@ export const MembersCardItem = ({
 }: MembersCardItemProperties) => {
   const api = useApi()
   const router = useRouter()
-  const { authenticationDetails } = useAuthentication()
+  const { details } = useAuthentication()
   const t = useTranslations("Members")
 
   const handleMemberDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -93,12 +93,12 @@ export const MembersCardItem = ({
                 <HStack spacing={2}>
                   {
                       member.vaultRole !== 'OWNER' &&
-                      member.user.email !== authenticationDetails?.email &&
+                      member.user.email !== details?.email &&
                       vaultRole.permissions.includes("MEMBER_UPDATE") && <EditMemberButton member={member} />
                   }
                   {
                     member.vaultRole !== 'OWNER' &&
-                    member.user.email !== authenticationDetails?.email &&
+                    member.user.email !== details?.email &&
                     vaultRole.permissions.includes("MEMBER_REMOVE") &&
                     <DeleteButton onClick={handleMemberDelete} />
                   }

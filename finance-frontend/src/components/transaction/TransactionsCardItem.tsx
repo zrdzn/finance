@@ -19,15 +19,15 @@ import {TransactionProductsCardItem} from "@/components/transaction/product/Tran
 import {EditTransactionButton} from "@/components/transaction/EditTransactionButton"
 import {DeleteButton} from "@/components/shared/DeleteButton"
 import toast from "react-hot-toast"
-import {FaCircleCheck} from "react-icons/fa6"
 import {FaCaretDown, FaCaretUp} from "react-icons/fa"
 import {useDateFormatter} from "@/hooks/useDateFormatter"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
 import {AddScheduleButton} from "@/components/transaction/schedule/AddScheduleButton";
+import {useNumberFormatter} from "@/hooks/useNumberFormatter";
 
 type TransactionResponse = Components.Schemas.TransactionResponse;
-type TransactionProductWithProductResponse = Components.Schemas.TransactionProductWithProductResponse;
+type TransactionProductWithProductResponse = Components.Schemas.TransactionProductResponse;
 
 interface TransactionsCardItemProperties {
   vaultId: number
@@ -42,6 +42,7 @@ export const TransactionsCardItem = ({
 }: TransactionsCardItemProperties) => {
   const api = useApi()
   const router = useRouter()
+  const { formatNumber } = useNumberFormatter()
   const { formatDate } = useDateFormatter()
   const t = useTranslations("Transactions")
   const [transactionProducts, setTransactionProducts] = useState<TransactionProductWithProductResponse[]>([])
@@ -93,6 +94,7 @@ export const TransactionsCardItem = ({
                   <Text fontSize='md'
                         isTruncated
                         fontWeight={'600'}
+                        title={transaction.description}
                         maxWidth={'70%'}>
                     {transaction.description}
                   </Text>
@@ -100,8 +102,8 @@ export const TransactionsCardItem = ({
                 <HStack>
                   {
                     transaction.transactionType === 'INCOMING' ?
-                      <Text fontSize={'xl'} fontWeight={'600'} color={'green'}>{transaction.total.toFixed(2)}</Text> :
-                      <Text fontSize={'xl'} fontWeight={'600'} color={'crimson'}>{transaction.total.toFixed(2)}</Text>
+                      <Text fontSize={'xl'} fontWeight={'600'} color={'green'}>{formatNumber(transaction.total)}</Text> :
+                      <Text fontSize={'xl'} fontWeight={'600'} color={'crimson'}>{formatNumber(transaction.total)}</Text>
                   }
                   <Text fontSize={'xl'} fontWeight={'600'}>
                     {transaction.currency}

@@ -31,7 +31,13 @@ data class User(
     var verified: Boolean,
 
     @Column(name = "totp_secret")
-    var totpSecret: String?
+    var totpSecret: String?,
+
+    @Column(name = "decimal_separator")
+    var decimalSeparator: String,
+
+    @Column(name = "group_separator")
+    var groupSeparator: String
 )
 
 fun User.toResponse() = UserResponse(
@@ -39,5 +45,7 @@ fun User.toResponse() = UserResponse(
     email = email,
     username = username,
     verified = verified,
-    isTwoFactorEnabled = totpSecret != null
+    isTwoFactorEnabled = totpSecret != null,
+    decimalSeparator = decimalSeparator,
+    groupSeparator = groupSeparator
 )

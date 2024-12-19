@@ -13,7 +13,7 @@ while the frontend uses Next.js with TypeScript.
 Data is securely stored in a PostgreSQL database.
 ## 🛠️ Features
 
-### 🔐 Vault Management
+### Vault Management
 - A Vault is a central place for managing:
     - Members
     - Transactions
@@ -21,50 +21,50 @@ Data is securely stored in a PostgreSQL database.
     - Categories
 - Users can create multiple vaults and automatically become members with owner roles
 
-### 🛒 Products and Categories
+### Products and Categories
 - Create and manage products and categories for easy reuse when adding payment records
 - Each product that has assigned category will have a label next to its name
 
-### 💳 Transactions
+### Transactions
 - Create detailed transactions, with the ability to:
     - Specify description, currency, payment method and type of transaction
     - Add existing products to transactions
     - Manage existing transactions
 - Schedule recurring transactions to automate transactions
 
-#### 📝 Export Transactions to .CSV File
+#### Export Transactions to .CSV File
 - Easily export transactions to a .CSV file for offline access and analysis
 
-### 📊 Statistics and Reporting
+### Statistics and Reporting
 - View various statistics, including:
     - Total amount of transactions
     - Total income and expenses over specific periods
 
-### 👥 User and Member Management
+### User and Member Management
 - Invite new users to vaults
 - Setup two-factor authentication for security
 - Verify accounts via email
 - Change avatar, username, email and password
 - Manage existing vault members and assign roles
 
-### ⚙️ Vault Settings
+### Vault Settings
 - Customize settings for each vault to suit your needs
 
-### 💱 Currency Conversion
+### Currency Conversion
 - View real exchange rates to display financial data in different currencies
 
-### 📱 Responsive Design
+### Responsive Design
 - The application follows a mobile-first approach, ensuring full responsiveness and accessibility on all devices
 ## 🛠️ Infrastructure
-### 💻 Backend
+### Backend
 - The backend provides access to other infrastructure elements, such as the database, and offers a REST API for clients.
   - **Language:** [Kotlin](https://kotlinlang.org/)
   - **Framework:** [Spring](https://spring.io/)
-### 🌐 Frontend
+### Frontend
 - The frontend consists of a dashboard accessible via a website.
   - **Language:** [TypeScript](https://www.typescriptlang.org/)
   - **Framework:** [Next.JS](https://nextjs.org/)
-### 🗄️ Database
+### Database
 - The database stores all data required for the application to function.
   - **Management System:** [PostgreSQL](https://www.postgresql.org/)
   - **Migration Files:** [View schema](https://github.com/zrdzn/finance/tree/main/finance-backend/src/main/resources/database)
@@ -81,7 +81,7 @@ Data is securely stored in a PostgreSQL database.
 - `MAIL_PASSWORD` - SMTP server password
 - `MAIL_FROM` - Email address from which emails will be sent
 ## 🚀 Installation
-### 🐳 Docker
+### Docker
 **1.** Pull images from Docker Hub
 ```bash
 docker pull zrdzn/finance-backend:latest
@@ -97,10 +97,10 @@ docker-compose up backend -d
 docker-compose up frontend -d
 ```
 ## 🧑‍💻 Developers
-### 📜 API Documentation
+### API Documentation
 - You can access the **Swagger** UI for detailed API documentation at `<backend-url>/swagger-ui.html`.
 - Additionally, an **OpenAPI** specification is available at `<backend-url>/v3/api-docs` for integration and development purposes.
-### 🏗️ Building from Source
+### Building from Source
 To build the backend from source, you can follow these simple steps:
 
 1. Clone the repository:

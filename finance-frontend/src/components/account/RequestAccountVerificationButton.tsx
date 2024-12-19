@@ -17,7 +17,7 @@ interface RequestAccountVerificationButtonProperties {
 export const RequestAccountVerificationButton = ({ icon, text }: RequestAccountVerificationButtonProperties) => {
   const theme = useTheme();
   const api = useApi();
-  const { authenticationDetails } = useAuthentication()
+  const { details } = useAuthentication()
   const t = useTranslations("AccountSettings")
 
   const handleVerificationLinkSend = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -29,7 +29,7 @@ export const RequestAccountVerificationButton = ({ icon, text }: RequestAccountV
       .catch(error => console.error(error))
   }
 
-  return authenticationDetails && (
+  return details && (
       <Button backgroundColor={theme.primaryColor} onClick={handleVerificationLinkSend} gap={1} color={'#f8f8f8'} fontWeight={'400'}>
         {icon && icon}
         {text && text}
