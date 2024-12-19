@@ -45,7 +45,7 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
     setVaultUpdateRequest((previous) => ({ ...previous, [event.target.name]: event.target.value }))
   }
 
-  const handleDefaultCurrencyChange = (currency: string) => {
+  const handleCurrencyChange = (currency: string) => {
     setVaultUpdateRequest((previous) => ({ ...previous, currency: currency }))
   }
 
@@ -114,10 +114,10 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
           </FormControl>
 
           <FormControl mt={4}>
-            <FormLabel>{t('form.default-currency-label')}</FormLabel>
+            <FormLabel>{t('form.currency-label')}</FormLabel>
             {
               vault.currency !== undefined &&
-                <CurrencySelect onChange={handleDefaultCurrencyChange}
+                <CurrencySelect onChange={handleCurrencyChange}
                                 defaultValue={vaultUpdateRequest.currency}
                                 isDisabled={!permissions.includes("SETTINGS_UPDATE")} />
             }

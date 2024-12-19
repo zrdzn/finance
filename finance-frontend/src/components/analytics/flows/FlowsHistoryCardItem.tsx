@@ -39,7 +39,6 @@ export const FlowsHistoryCardItem = ({
         .then(client => client.getExpensesByVaultId({
           vaultId: vault.id,
           transactionType: transactionType,
-          currency: 'PLN',
           start: startDate.toISOString()
         })
             .then(response => setFlows(response.data.total)))

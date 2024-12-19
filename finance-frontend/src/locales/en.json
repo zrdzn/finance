@@ -87,7 +87,7 @@
       "title": "Setup new vault",
       "name-label": "Name",
       "name-placeholder": "Choose name",
-      "default-currency-label": "Default currency",
+      "currency-label": "Currency",
       "default-transaction-method-label": "Default transaction method",
       "submit": "Setup",
       "submit-loading": "Creating vault",
@@ -352,7 +352,7 @@
     "form": {
       "name-label": "Name",
       "name-placeholder": "Change vault name",
-      "default-currency-label": "Default currency",
+      "currency-label": "Currency",
       "default-transaction-method-label": "Default currency",
       "validation": {
         "missing-name": "You need to provide a name"

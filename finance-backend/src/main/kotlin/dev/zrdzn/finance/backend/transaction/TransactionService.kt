@@ -481,26 +481,26 @@ open class TransactionService(
             ?: throw ScheduleNotFoundException()
 
     @Transactional(readOnly = true)
-    open fun getTransactionFlows(requesterId: Int, vaultId: Int, transactionType: TransactionType?, currency: String, start: Instant): TransactionFlowsResponse {
-        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.DETAILS_READ)
+    open fun getTransactionFlows(requesterId: Int, vaultId: Int, transactionType: TransactionType?, start: Instant): TransactionFlowsResponse {
+        val vault = vaultService.getVault(vaultId, requesterId)
 
         // if transaction type is not provided, calculate balance
         if (transactionType == null) {
-            val income = calculateFlowsByType(vaultId, TransactionType.INCOMING, start, currency)
-            val outcome = calculateFlowsByType(vaultId, TransactionType.OUTGOING, start, currency)
+            val income = calculateFlowsByType(vaultId, TransactionType.INCOMING, start, vault.currency)
+            val outcome = calculateFlowsByType(vaultId, TransactionType.OUTGOING, start, vault.currency)
 
             return TransactionFlowsResponse(
                 Price(
                     amount = income - outcome,
-                    currency = currency
+                    currency = vault.currency
                 )
             )
         }
 
         return TransactionFlowsResponse(
             Price(
-                amount = calculateFlowsByType(vaultId, transactionType, start, currency),
-                currency = currency
+                amount = calculateFlowsByType(vaultId, transactionType, start, vault.currency),
+                currency = vault.currency
             )
         )
     }

@@ -30,7 +30,6 @@ export const AnalyticsSummaryCardItem = ({
       api
         .then(client => client.getExpensesByVaultId({
           vaultId: vault.id,
-          currency: 'PLN',
           start: new Date(vault.createdAt).toISOString()
         })
           .then(response => setBalance(response.data.total)))
@@ -42,7 +41,6 @@ export const AnalyticsSummaryCardItem = ({
         .then(client => client.getExpensesByVaultId({
           vaultId: vault.id,
           transactionType: 'INCOMING',
-          currency: 'PLN',
           start: new Date(vault.createdAt).toISOString()
         })
           .then(response => setIncome(response.data.total)))
@@ -54,7 +52,6 @@ export const AnalyticsSummaryCardItem = ({
         .then(client => client.getExpensesByVaultId({
           vaultId: vault.id,
           transactionType: 'OUTGOING',
-          currency: 'PLN',
           start: new Date(vault.createdAt).toISOString()
         })
           .then(response => setExpenses(response.data.total)))
