@@ -396,6 +396,12 @@
       "two-factor-setup-label": "Two-factor authentication",
       "two-factor-already-enabled": "Two-factor authentication is enabled",
       "two-factor-setup-button-label": "Setup 2FA",
+      "group-separator-label": "Group separator",
+      "decimal-separator-label": "Decimal separator",
+      "comma-label": ",",
+      "dot-label": ".",
+      "space-label": "Space",
+      "save-preferences": "Save preferences",
       "updated-success": "Profile has been updated",
       "updated-error": "Failed to update your profile",
       "security-code-sent": "Security code has been sent to your e-mail inbox"

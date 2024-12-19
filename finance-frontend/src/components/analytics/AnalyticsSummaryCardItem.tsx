@@ -4,6 +4,7 @@ import {useApi} from "@/hooks/useApi"
 import {useTranslations} from "next-intl";
 import {AnalyticsOverviewStatisticType} from "@/api/types";
 import {Components} from "@/api/api";
+import {useNumberFormatter} from "@/hooks/useNumberFormatter";
 
 type VaultResponse = Components.Schemas.VaultResponse;
 type Price = Components.Schemas.Price;
@@ -18,6 +19,7 @@ export const AnalyticsSummaryCardItem = ({
 }: AnalyticsSummaryCardItemProperties) => {
   const api = useApi()
   const t = useTranslations("Analytics")
+  const { formatNumber } = useNumberFormatter()
   const [balance, setBalance] = useState<Price | undefined>(undefined)
   const [income, setIncome] = useState<Price | undefined>(undefined)
   const [expenses, setExpenses] = useState<Price | undefined>(undefined)
@@ -91,7 +93,7 @@ export const AnalyticsSummaryCardItem = ({
                               fontWeight={'600'}
                               color={'green'}
                               isTruncated>
-                          {balance.amount.toFixed(2)}
+                          {formatNumber(balance.amount)}
                         </Text>
                         <Text fontSize='md'
                               fontWeight={'600'}
@@ -106,7 +108,7 @@ export const AnalyticsSummaryCardItem = ({
                         <Text fontSize='xl'
                               fontWeight={'600'}
                               isTruncated>
-                            0.00
+                            {formatNumber(0.00)}
                         </Text>
                         <Text fontSize={'md'}
                               fontWeight={'600'}
@@ -122,7 +124,7 @@ export const AnalyticsSummaryCardItem = ({
                               fontWeight={'600'}
                               color={'crimson'}
                               isTruncated>
-                          {balance.amount.toFixed(2)}
+                          {formatNumber(balance.amount)}
                         </Text>
                         <Text fontSize='md'
                               fontWeight={'600'}
@@ -138,7 +140,7 @@ export const AnalyticsSummaryCardItem = ({
                               fontWeight={'600'}
                               color={'green'}
                               isTruncated>
-                          {income.amount.toFixed(2)}
+                          {formatNumber(income.amount)}
                         </Text>
                         <Text fontSize='md'
                               fontWeight={'600'}
@@ -153,7 +155,7 @@ export const AnalyticsSummaryCardItem = ({
                         <Text fontSize='xl'
                               fontWeight={'600'}
                               isTruncated>
-                            0.00
+                            {formatNumber(0.00)}
                         </Text>
                         <Text fontSize={'md'}
                               fontWeight={'600'}
@@ -169,7 +171,7 @@ export const AnalyticsSummaryCardItem = ({
                               fontWeight={'600'}
                               color={'crimson'}
                               isTruncated>
-                          {expenses.amount.toFixed(2)}
+                          {formatNumber(expenses.amount)}
                         </Text>
                         <Text fontSize='md'
                               fontWeight={'600'}
@@ -184,7 +186,7 @@ export const AnalyticsSummaryCardItem = ({
                         <Text fontSize='xl'
                               fontWeight={'600'}
                               isTruncated>
-                            0.00
+                            {formatNumber(0.00)}
                         </Text>
                         <Text fontSize={'md'}
                               fontWeight={'600'}

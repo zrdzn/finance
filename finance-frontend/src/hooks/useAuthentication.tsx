@@ -3,26 +3,26 @@ import {useApi} from "@/hooks/useApi"
 import toast from "react-hot-toast"
 import {Components} from "@/api/api";
 
-type AuthenticationDetailsResponse = Components.Schemas.AuthenticationDetailsResponse;
+type UserResponse = Components.Schemas.UserResponse;
 
 interface AuthenticationContext {
-  authenticationDetails: AuthenticationDetailsResponse | null | undefined;
+  details: UserResponse | null | undefined;
   login: (email: string, password: string, oneTimePassword: string | undefined) => Promise<void>;
   logout: () => Promise<void>
 }
 
 const DefaultAuthenticationContext = createContext<AuthenticationContext>({
-  authenticationDetails: undefined,
+  details: undefined,
   login: () => Promise.resolve(),
   logout: () => Promise.resolve()
 });
 
 export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const api = useApi()
-  const [authenticationDetails, setAuthenticationDetails] = useState<AuthenticationDetailsResponse | null | undefined>(undefined);
+  const [details, setDetails] = useState<UserResponse | null | undefined>(undefined);
 
   useEffect(() => {
-    if (authenticationDetails === undefined) {
+    if (details === undefined) {
       updateAuthenticationDetails()
     }
   }, [])
@@ -30,9 +30,9 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
   const updateAuthenticationDetails = () => {
     api
       .then(client => client.getAuthenticationDetails())
-      .then(response => setAuthenticationDetails(response.data))
+      .then(response => setDetails(response.data))
       .catch(error => {
-        setAuthenticationDetails(null);
+        setDetails(null);
         console.error(error);
       })
   }
@@ -49,7 +49,7 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
   const logout = async (): Promise<void> => {
     const logoutResult = api
         .then(client => client.logout())
-        .then(() => setAuthenticationDetails(null))
+        .then(() => setDetails(null))
         .catch(error => console.error(error))
 
     await toast.promise(logoutResult, {
@@ -61,7 +61,7 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
 
   return (
     <DefaultAuthenticationContext.Provider value={{
-      authenticationDetails: authenticationDetails,
+      details: details,
       login: login,
       logout: logout
     }}>

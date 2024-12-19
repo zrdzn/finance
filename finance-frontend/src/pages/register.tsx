@@ -30,7 +30,7 @@ interface RegistrationForm {
 }
 
 export default function Register(): ReactJSXElement {
-  const { authenticationDetails, login } = useAuthentication()
+  const { details, login } = useAuthentication()
   const api = useApi()
   const router = useRouter()
   const t = useTranslations("Register")
@@ -43,12 +43,12 @@ export default function Register(): ReactJSXElement {
   })
 
   useEffect(() => {
-    if (authenticationDetails) {
+    if (details) {
       router.push("/")
     }
-  }, [authenticationDetails, router]);
+  }, [details, router]);
 
-  if (authenticationDetails) {
+  if (details) {
     return <></>
   }
 

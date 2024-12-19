@@ -161,6 +161,8 @@ declare namespace Components {
         }
         export interface UserProfileUpdateRequest {
             username: string;
+            decimalSeparator: string;
+            groupSeparator: string;
         }
         export interface UserResponse {
             id: number; // int32
@@ -168,6 +170,8 @@ declare namespace Components {
             username: string;
             verified: boolean;
             isTwoFactorEnabled: boolean;
+            decimalSeparator: string;
+            groupSeparator: string;
         }
         export interface UsernameResponse {
             username: string;

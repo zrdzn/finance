@@ -20,7 +20,7 @@ interface ProtectedVaultProperties {
 export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties) => {
   const router = useRouter();
   const api = useApi();
-  const { authenticationDetails } = useAuthentication();
+  const { details } = useAuthentication();
   const vault = useVault({ publicId });
   const t = useTranslations("Overview")
   const [vaultRole, setVaultRole] = useState<VaultRoleResponse>();
@@ -38,19 +38,19 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
   }, []);
 
   useEffect(() => {
-    if (authenticationDetails === null) {
+    if (details === null) {
       router.push("/login").catch((error) => console.error(error));
     }
-  }, [authenticationDetails, router]);
+  }, [details, router]);
 
   useEffect(() => {
-    if (vault && authenticationDetails) {
+    if (vault && details) {
       api
           .then(client => client.getVaultRole({ vaultId: vault.id })
               .then(response => setVaultRole(response.data)))
             .catch(error => console.error(error))
     }
-  }, [api, authenticationDetails, vault]);
+  }, [api, details, vault]);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && isCollapsed !== undefined) {
@@ -66,7 +66,7 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
     return <>{t('vault-not-found')}</>;
   }
 
-  if (authenticationDetails === null || vaultRole === undefined) {
+  if (details === null || vaultRole === undefined) {
     return <>{t('not-authenticated')}</>;
   }
 

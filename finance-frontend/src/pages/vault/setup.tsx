@@ -30,7 +30,7 @@ import {TransactionMethod} from "@/api/types";
 type VaultCreateRequest = Components.Schemas.VaultCreateRequest;
 
 export default function SetupVault(): ReactJSXElement {
-  const { authenticationDetails } = useAuthentication()
+  const { details } = useAuthentication()
   const api = useApi()
   const router = useRouter()
   const t = useTranslations("VaultSetup")
@@ -42,12 +42,12 @@ export default function SetupVault(): ReactJSXElement {
   })
 
   useEffect(() => {
-    if (authenticationDetails === null) {
+    if (details === null) {
       router.push("/login")
     }
-  }, [authenticationDetails, router]);
+  }, [details, router]);
 
-  if (authenticationDetails === null) {
+  if (details === null) {
     return <></>
   }
 

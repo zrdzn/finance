@@ -20,7 +20,7 @@ import {useTranslations} from "next-intl";
 import {AccountAvatar} from "@/components/account/AccountAvatar";
 
 export const Navbar = () => {
-  const { authenticationDetails, logout } = useAuthentication();
+  const { details, logout } = useAuthentication();
   const theme = useTheme();
   const router = useRouter();
   const t = useTranslations("Navbar")
@@ -50,7 +50,7 @@ export const Navbar = () => {
         </Link>
       </Flex>
       <Flex alignItems="center" gap={8}>
-        {authenticationDetails && (
+        {details && (
           <>
             <Link href="/">
               <HStack alignItems={'center'} width={'full'} gap={2}>
@@ -62,7 +62,7 @@ export const Navbar = () => {
               <MenuButton>
                 <HStack alignItems={'center'} width={'full'} gap={2}>
                   <AccountAvatar size={'xs'} />
-                  <Box>{isMobile ? null : <Text>{authenticationDetails.username}</Text>}</Box>
+                  <Box>{isMobile ? null : <Text>{details.username}</Text>}</Box>
                 </HStack>
               </MenuButton>
               <MenuList>
@@ -73,7 +73,7 @@ export const Navbar = () => {
           </>
         )}
         {
-          !authenticationDetails &&
+          !details &&
             <HStack gap={'10'}>
                 <Link href="/login">
                     <HStack alignItems={'center'} width={'full'} gap={2}>

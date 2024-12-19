@@ -5,5 +5,7 @@ data class UserResponse(
     val email: String,
     val username: String,
     val verified: Boolean,
-    val isTwoFactorEnabled: Boolean
+    val isTwoFactorEnabled: Boolean,
+    val decimalSeparator: String,
+    val groupSeparator: String
 )

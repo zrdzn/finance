@@ -7,11 +7,11 @@ interface AvatarProperties {
 }
 
 export const AccountAvatar = ({ size }: AvatarProperties) => {
-    const { authenticationDetails } = useAuthentication()
+    const { details } = useAuthentication()
 
-    if (!authenticationDetails) {
+    if (!details) {
         return <Avatar size={size} />
     }
 
-    return <Avatar size={size} src={`${process.env.NEXT_PUBLIC_API_URL}/api/users/avatar/${authenticationDetails.username}`} />
+    return <Avatar size={size} src={`${process.env.NEXT_PUBLIC_API_URL}/api/users/avatar/${details.username}`} />
 }

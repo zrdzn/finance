@@ -41,7 +41,9 @@ open class UserService(
                     username = userCreateRequest.username,
                     password = passwordEncoder.encode(userCreateRequest.password),
                     verified = false,
-                    totpSecret = null
+                    totpSecret = null,
+                    decimalSeparator = ".",
+                    groupSeparator = ","
                 )
             )
             .toResponse()
@@ -119,10 +121,12 @@ open class UserService(
     }
 
     @Transactional
-    open fun updateUserProfile(requesterId: Int, username: String) {
+    open fun updateUserProfile(requesterId: Int, username: String, decimalSeparator: String, groupSeparator: String) {
         val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
 
         user.username = username
+        user.decimalSeparator = decimalSeparator
+        user.groupSeparator = groupSeparator
     }
 
     @Transactional
@@ -156,7 +160,9 @@ open class UserService(
                     email = it.email,
                     username = it.username,
                     verified = it.verified,
-                    isTwoFactorEnabled = it.totpSecret != null
+                    isTwoFactorEnabled = it.totpSecret != null,
+                    decimalSeparator = it.decimalSeparator,
+                    groupSeparator = it.groupSeparator
                 )
             }
             ?: throw UserNotFoundException()

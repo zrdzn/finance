@@ -4,6 +4,7 @@ import {useApi} from "@/hooks/useApi"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
 import {TransactionFlowsRange, TransactionType} from "@/api/types";
+import {useNumberFormatter} from "@/hooks/useNumberFormatter";
 
 type VaultResponse = Components.Schemas.VaultResponse;
 type Price = Components.Schemas.Price;
@@ -20,6 +21,7 @@ export const FlowsHistoryCardItem = ({
   flowsRange
 }: FlowsHistoryCardItemProperties) => {
   const api = useApi()
+  const { formatNumber } = useNumberFormatter()
   const t = useTranslations("Analytics")
   const [flows, setFlows] = useState<Price>({
     amount: 0,
@@ -68,7 +70,7 @@ export const FlowsHistoryCardItem = ({
                               fontWeight={'600'}
                               color={transactionType === "INCOMING" ? 'green' : 'crimson'}
                               isTruncated>
-                          {flows.amount.toFixed(2)}
+                          {formatNumber(flows.amount)}
                         </Text>
                         <Text fontSize='md'
                               fontWeight={'600'}
@@ -83,7 +85,7 @@ export const FlowsHistoryCardItem = ({
                         <Text fontSize='xl'
                               fontWeight={'600'}
                               isTruncated>
-                            0.00
+                            {formatNumber(0.00)}
                         </Text>
                         <Text fontSize={'md'}
                               fontWeight={'600'}
