@@ -185,14 +185,12 @@ class TransactionController(
         @AuthenticationPrincipal userId: Int,
         @PathVariable vaultId: Int,
         @RequestParam("transactionType", required = false) transactionType: TransactionType?,
-        @RequestParam("currency") currency: String,
         @RequestParam("start") start: Instant
     ): TransactionFlowsResponse =
         transactionService.getTransactionFlows(
             requesterId = userId,
             vaultId = vaultId,
             transactionType = transactionType,
-            currency = currency,
             start = start
         )
 

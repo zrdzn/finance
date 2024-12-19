@@ -24,7 +24,7 @@ export default function Dashboard(): ReactJSXElement {
           <Flex justifyContent="center"
                 p={4}>
             <Grid
-              templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }}
+              templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(2, 1fr)' }}
               gap={4}
               width="full">
               <LastTransactionsCard vault={vault} permissions={vaultRole.permissions} />

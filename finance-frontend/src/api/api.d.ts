@@ -409,7 +409,6 @@ declare namespace Paths {
     }
     namespace GetExpensesByVaultId {
         namespace Parameters {
-            export type Currency = string;
             export type Start = string; // date-time
             export type TransactionType = "INCOMING" | "OUTGOING";
             export type VaultId = number; // int32
@@ -419,7 +418,6 @@ declare namespace Paths {
         }
         export interface QueryParameters {
             transactionType?: Parameters.TransactionType;
-            currency: Parameters.Currency;
             start: Parameters.Start /* date-time */;
         }
         namespace Responses {

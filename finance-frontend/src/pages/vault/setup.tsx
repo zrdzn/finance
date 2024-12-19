@@ -55,7 +55,7 @@ export default function SetupVault(): ReactJSXElement {
     setVaultCreateRequest({ ...vaultCreateRequest, [event.target.name]: event.target.value });
   }
 
-  const handleDefaultCurrencyChange = (currency: string) => {
+  const handleCurrencyChange = (currency: string) => {
     setVaultCreateRequest((previous) => ({ ...previous, currency: currency }))
   }
 
@@ -116,8 +116,8 @@ export default function SetupVault(): ReactJSXElement {
                 </FormControl>
 
                 <FormControl mt={4}>
-                  <FormLabel>{t('form.default-currency-label')}</FormLabel>
-                  <CurrencySelect onChange={handleDefaultCurrencyChange} />
+                  <FormLabel>{t('form.currency-label')}</FormLabel>
+                  <CurrencySelect onChange={handleCurrencyChange} />
                 </FormControl>
 
                 <FormControl mt={4}>
