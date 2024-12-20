@@ -14,9 +14,9 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.TestInstance
 import org.slf4j.LoggerFactory
 import org.springframework.context.ConfigurableApplicationContext
+import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -24,13 +24,25 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @Testcontainers
 open class ApplicationTestRunner {
 
-    private val logger = LoggerFactory.getLogger(dev.zrdzn.finance.backend.ApplicationTestRunner::class.java)
+    private val logger = LoggerFactory.getLogger(ApplicationTestRunner::class.java)
     private val port = 8090
 
     protected lateinit var application: ConfigurableApplicationContext
 
     @Container
     val postgresContainer = PostgreSQLContainer("postgres")
+
+    @Container
+    val mailhogContainer = GenericContainer("mailhog/mailhog")
+        .withExposedPorts(1025, 8025)
+
+    @Container
+    val s3Container = GenericContainer("localstack/localstack")
+        .withExposedPorts(4566)
+        .withEnv("SERVICES", "s3")
+        .withEnv("DEFAULT_REGION", "us-east-1")
+        .withEnv("AWS_ACCESS_KEY_ID", "test")
+        .withEnv("AWS_SECRET_ACCESS_KEY", "test")
 
     @BeforeAll
     fun beforeAll() {
@@ -64,11 +76,21 @@ open class ApplicationTestRunner {
             )
             .defaultBaseUrl("http://localhost:$port/api")
 
-        application = dev.zrdzn.finance.backend.launchApplication(
+        application = FinanceLauncher().launchApplication(
             serverPort = port,
+            clientUrl = "http://localhost:3000",
             databaseUrl = postgresContainer.jdbcUrl,
             databaseUsername = postgresContainer.username,
-            databasePassword = postgresContainer.password
+            databasePassword = postgresContainer.password,
+            mailHost = mailhogContainer.host,
+            mailPort = mailhogContainer.getMappedPort(1025),
+            mailUsername = "",
+            mailPassword = "",
+            mailFrom = "test@financeapp.com",
+            storageAccessKey = s3Container.envMap["AWS_ACCESS_KEY_ID"]!!,
+            storageSecretKey = s3Container.envMap["AWS_SECRET_ACCESS_KEY"]!!,
+            storageRegion = s3Container.envMap["DEFAULT_REGION"]!!,
+            storageEndpoint = "http://${s3Container.host}:${s3Container.getMappedPort(4566)}",
         )
     }
 

@@ -1,4 +1,4 @@
-package dev.zrdzn.finance.backend.payment
+package dev.zrdzn.finance.backend.transaction
 
 import dev.zrdzn.finance.backend.common.payment.api.PaymentCreateRequest
 import dev.zrdzn.finance.backend.common.payment.api.PaymentCreateResponse
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 
-class PaymentControllerTest : PaymentSpecification() {
+class TransactionControllerTest : TransactionSpecification() {
 
     @Test
     fun `should create payment`() {

@@ -52,7 +52,7 @@ open class VaultService(
     }
 
     @Transactional
-    open fun createVault(ownerId: Int, name: String, defaultCurrency: String, defaultTransactionMethod: TransactionMethod): VaultResponse =
+    open fun createVault(ownerId: Int, name: String, currency: String, defaultTransactionMethod: TransactionMethod): VaultResponse =
         vaultRepository
             .save(
                 Vault(
@@ -61,7 +61,7 @@ open class VaultService(
                     publicId = createRandomToken(16),
                     ownerId = ownerId,
                     name = name,
-                    currency = defaultCurrency,
+                    currency = currency,
                     transactionMethod = defaultTransactionMethod
                 )
             )

@@ -36,7 +36,7 @@ class VaultController(
             .createVault(
                 ownerId = userId,
                 name = vaultCreateRequest.name,
-                defaultCurrency = vaultCreateRequest.currency,
+                currency = vaultCreateRequest.currency,
                 defaultTransactionMethod = vaultCreateRequest.transactionMethod
             )
 
