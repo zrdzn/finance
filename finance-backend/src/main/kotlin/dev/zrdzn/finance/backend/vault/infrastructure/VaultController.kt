@@ -8,6 +8,7 @@ import dev.zrdzn.finance.backend.vault.api.VaultUpdateRequest
 import dev.zrdzn.finance.backend.vault.api.authority.VaultRoleResponse
 import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationCreateRequest
 import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationListResponse
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationResponse
 import dev.zrdzn.finance.backend.vault.api.member.VaultMemberListResponse
 import dev.zrdzn.finance.backend.vault.api.member.VaultMemberUpdateRequest
 import org.springframework.http.ResponseEntity
@@ -45,7 +46,7 @@ class VaultController(
         @AuthenticationPrincipal userId: Int,
         @PathVariable vaultId: Int,
         @RequestBody vaultInvitationCreateRequest: VaultInvitationCreateRequest
-    ): Unit = vaultService.createVaultInvitation(
+    ): VaultInvitationResponse = vaultService.createVaultInvitation(
         vaultId = vaultId,
         requesterId = userId,
         userEmail = vaultInvitationCreateRequest.userEmail

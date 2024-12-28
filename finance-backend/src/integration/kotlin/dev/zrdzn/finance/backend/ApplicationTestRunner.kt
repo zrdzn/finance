@@ -47,6 +47,8 @@ open class ApplicationTestRunner {
     @BeforeAll
     fun beforeAll() {
         postgresContainer.start()
+        mailhogContainer.start()
+        s3Container.start()
         logger.info("Postgres container started with port ${postgresContainer.firstMappedPort}")
     }
 
@@ -103,6 +105,8 @@ open class ApplicationTestRunner {
     @AfterAll
     fun afterAll() {
         postgresContainer.stop()
+        mailhogContainer.stop()
+        s3Container.stop()
     }
 
 }

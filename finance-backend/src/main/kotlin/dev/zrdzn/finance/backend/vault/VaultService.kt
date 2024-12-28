@@ -16,6 +16,7 @@ import dev.zrdzn.finance.backend.vault.api.authority.VaultRoleResponse
 import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationListResponse
 import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationNotFoundException
 import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationNotOwnedException
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationResponse
 import dev.zrdzn.finance.backend.vault.api.member.VaultMemberListResponse
 import dev.zrdzn.finance.backend.vault.api.member.VaultMemberNotFoundException
 import dev.zrdzn.finance.backend.vault.api.member.VaultMemberResponse
@@ -90,12 +91,12 @@ open class VaultService(
     }
 
     @Transactional
-    open fun createVaultInvitation(vaultId: Int, requesterId: Int, userEmail: String) {
+    open fun createVaultInvitation(vaultId: Int, requesterId: Int, userEmail: String): VaultInvitationResponse {
         authorizeMember(vaultId, requesterId, VaultPermission.MEMBER_INVITE_CREATE)
 
         val vault = getVault(vaultId, requesterId)
 
-        vaultInvitationRepository
+        val invitation = vaultInvitationRepository
             .save(
                 VaultInvitation(
                     id = null,
@@ -104,6 +105,8 @@ open class VaultService(
                     expiresAt = Instant.now(clock).plus(1, ChronoUnit.DAYS)
                 )
             )
+
+        return invitation.toResponse(vault)
     }
 
     @Transactional

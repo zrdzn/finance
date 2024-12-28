@@ -7,11 +7,12 @@ import dev.zrdzn.finance.backend.user.api.UserResponse
 open class UserSpecification : ApplicationTestRunner() {
 
     protected val userService: UserService get() = application.getBean(UserService::class.java)
+    protected val userRepository: UserRepository get() = application.getBean(UserRepository::class.java)
 
     protected fun createUserCreateRequest(
-        email: String,
-        username: String,
-        password: String
+        email: String = "test@app.com",
+        username: String = "test",
+        password: String = "password"
     ): UserCreateRequest =
         UserCreateRequest(
             email = email,
@@ -20,9 +21,9 @@ open class UserSpecification : ApplicationTestRunner() {
         )
 
     protected fun createUser(
-        email: String,
-        username: String,
-        password: String
+        email: String = "test@app.com",
+        username: String = "test",
+        password: String = "password"
     ): UserResponse =
         userService.createUser(
             createUserCreateRequest(

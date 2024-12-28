@@ -8,4 +8,6 @@ interface TokenRepository {
 
     fun findById(tokenId: String): Token?
 
+    fun findByUserId(userId: Int): Set<Token>
+
 }
