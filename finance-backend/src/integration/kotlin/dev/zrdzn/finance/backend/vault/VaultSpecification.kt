@@ -4,6 +4,8 @@ import dev.zrdzn.finance.backend.authentication.AuthenticationSpecification
 import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
 import dev.zrdzn.finance.backend.vault.api.VaultResponse
 import dev.zrdzn.finance.backend.vault.api.authority.VaultRole
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationResponse
+import dev.zrdzn.finance.backend.vault.api.member.VaultMemberResponse
 
 open class VaultSpecification : AuthenticationSpecification() {
 
@@ -29,24 +31,22 @@ open class VaultSpecification : AuthenticationSpecification() {
         vaultId: Int,
         requesterId: Int,
         userEmail: String
-    ) {
+    ): VaultInvitationResponse =
         vaultService.createVaultInvitation(
             vaultId = vaultId,
             requesterId = requesterId,
             userEmail = userEmail
         )
-    }
 
     protected fun createVaultMember(
         vaultId: Int,
         userId: Int,
         vaultRole: VaultRole
-    ) {
+    ): VaultMemberResponse =
         vaultService.createVaultMemberForcefully(
             vaultId = vaultId,
             userId = userId,
             vaultRole = vaultRole
         )
-    }
 
 }

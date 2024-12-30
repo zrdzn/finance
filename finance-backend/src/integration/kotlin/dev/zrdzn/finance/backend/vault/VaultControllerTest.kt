@@ -6,12 +6,16 @@ import dev.zrdzn.finance.backend.vault.api.VaultCreateRequest
 import dev.zrdzn.finance.backend.vault.api.VaultListResponse
 import dev.zrdzn.finance.backend.vault.api.VaultResponse
 import dev.zrdzn.finance.backend.vault.api.authority.VaultRole
+import dev.zrdzn.finance.backend.vault.api.authority.VaultRoleResponse
 import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationCreateRequest
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationListResponse
 import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationResponse
+import dev.zrdzn.finance.backend.vault.api.member.VaultMemberListResponse
 import dev.zrdzn.finance.backend.vault.api.member.VaultMemberUpdateRequest
 import kong.unirest.core.Unirest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 
@@ -163,6 +167,178 @@ class VaultControllerTest : VaultSpecification() {
         assertEquals(HttpStatus.OK.value(), response.status)
         assertEquals(1, response.body.vaults.size)
         assertEquals(vault.publicId, response.body.vaults.first().publicId)
+    }
+
+    @Test
+    fun `should get vault by public id`() {
+        // given
+        val token = createUserAndAuthenticate()
+        val vault = createVault(token.userId)
+
+        // when
+        val response = Unirest.get("/vaults/${vault.publicId}")
+            .cookie(TOKEN_COOKIE_NAME, token.value)
+            .asObject(VaultResponse::class.java)
+
+        // then
+        assertNotNull(response.body)
+        assertEquals(HttpStatus.OK.value(), response.status)
+        assertEquals(vault.publicId, response.body.publicId)
+        assertEquals(vault.name, response.body.name)
+    }
+
+    @Test
+    fun `should get vault members`() {
+        // given
+        val token = createUserAndAuthenticate()
+        val vault = createVault(token.userId)
+        val user = createUser(email = "henry@app.com")
+        createVaultMember(vault.id, user.id, VaultRole.MEMBER)
+
+        // when
+        val response = Unirest.get("/vaults/${vault.id}/members")
+            .cookie(TOKEN_COOKIE_NAME, token.value)
+            .asObject(VaultMemberListResponse::class.java)
+
+        // then
+        val expectedMembers = response.body.vaultMembers
+        assertEquals(2, expectedMembers.size)
+    }
+
+    @Test
+    fun `should accept vault invitation by invited user`() {
+        // given
+        val token = createUserAndAuthenticate()
+        val vault = createVault(token.userId)
+        val user = createUserAndAuthenticate(userCreateRequest = createUserCreateRequest(email = "henry@app.com"))
+        val invitation = createVaultInvitation(vault.id, token.userId, user.email)
+
+        // when
+        val response = Unirest.post("/vaults/invitations/${invitation.id}/accept")
+            .cookie(TOKEN_COOKIE_NAME, user.value)
+            .asEmpty()
+
+        // then
+        val expectedMember = vaultMemberRepository.findByVaultId(vault.id).firstOrNull { it.userId == user.userId }
+        assertNotNull(expectedMember)
+        assertEquals(user.userId, expectedMember!!.userId)
+        assertEquals(vault.id, expectedMember.vaultId)
+        assertEquals(HttpStatus.OK.value(), response.status)
+    }
+
+    @Test
+    fun `should get vault invitations`() {
+        // given
+        val token = createUserAndAuthenticate()
+        val vault = createVault(token.userId)
+        val user = createUser(email = "henry@app.com")
+        val invitation = createVaultInvitation(vault.id, token.userId, user.email)
+
+        // when
+        val response = Unirest.get("/vaults/${vault.id}/invitations")
+            .cookie(TOKEN_COOKIE_NAME, token.value)
+            .asObject(VaultInvitationListResponse::class.java)
+
+        // then
+        val expectedInvitations = response.body.vaultInvitations.firstOrNull()
+        assertNotNull(expectedInvitations)
+        assertEquals(invitation.id, expectedInvitations!!.id)
+        assertEquals(vault.id, expectedInvitations.vault.id)
+        assertEquals(user.email, expectedInvitations.userEmail)
+        assertEquals(HttpStatus.OK.value(), response.status)
+    }
+
+    @Test
+    fun `should get vault invitations by user email by invited user`() {
+        // given
+        val token = createUserAndAuthenticate()
+        val vault = createVault(token.userId)
+        val user = createUserAndAuthenticate(userCreateRequest = createUserCreateRequest(email = "henry@app.com"))
+        val invitation = createVaultInvitation(vault.id, token.userId, user.email)
+
+        // when
+        val response = Unirest.get("/vaults/invitations/${user.email}")
+            .cookie(TOKEN_COOKIE_NAME, user.value)
+            .asObject(VaultInvitationListResponse::class.java)
+
+        // then
+        val expectedInvitations = response.body.vaultInvitations.firstOrNull()
+        assertNotNull(expectedInvitations)
+        assertEquals(invitation.id, expectedInvitations!!.id)
+        assertEquals(vault.id, expectedInvitations.vault.id)
+        assertEquals(user.email, expectedInvitations.userEmail)
+        assertEquals(HttpStatus.OK.value(), response.status)
+    }
+
+    @Test
+    fun `should get vault role`() {
+        // given
+        val token = createUserAndAuthenticate()
+        val vault = createVault(token.userId)
+
+        // when
+        val response = Unirest.get("/vaults/${vault.id}/role")
+            .cookie(TOKEN_COOKIE_NAME, token.value)
+            .asObject(VaultRoleResponse::class.java)
+
+        // then
+        assertEquals(VaultRole.OWNER.name, response.body.name)
+        assertEquals(HttpStatus.OK.value(), response.status)
+    }
+
+    @Test
+    fun `should remove vault`() {
+        // given
+        val token = createUserAndAuthenticate()
+        val vault = createVault(token.userId)
+
+        // when
+        val response = Unirest.delete("/vaults/${vault.id}")
+            .cookie(TOKEN_COOKIE_NAME, token.value)
+            .asEmpty()
+
+        // then
+        val expectedVault = vaultRepository.findByPublicId(vault.publicId)
+        assertNull(expectedVault)
+        assertEquals(HttpStatus.OK.value(), response.status)
+    }
+
+    @Test
+    fun `should remove vault member`() {
+        // given
+        val token = createUserAndAuthenticate()
+        val vault = createVault(token.userId)
+        val user = createUser(email = "henry@app.com")
+        val member = createVaultMember(vault.id, user.id, VaultRole.MEMBER)
+
+        // when
+        val response = Unirest.delete("/vaults/${vault.id}/members/${member.user.id}")
+            .cookie(TOKEN_COOKIE_NAME, token.value)
+            .asEmpty()
+
+        // then
+        val expectedMember = vaultMemberRepository.findByVaultId(vault.id).firstOrNull { it.userId == user.id }
+        assertNull(expectedMember)
+        assertEquals(HttpStatus.OK.value(), response.status)
+    }
+
+    @Test
+    fun `should remove vault invitation by invited user`() {
+        // given
+        val token = createUserAndAuthenticate()
+        val vault = createVault(token.userId)
+        val user = createUserAndAuthenticate(userCreateRequest = createUserCreateRequest(email = "henry@app.com"))
+        val invitation = createVaultInvitation(vault.id, token.userId, user.email)
+
+        // when
+        val response = Unirest.delete("/vaults/${vault.id}/invitations/${invitation.userEmail}")
+            .cookie(TOKEN_COOKIE_NAME, token.value)
+            .asEmpty()
+
+        // then
+        val expectedInvitation = vaultInvitationRepository.findByVaultId(vault.id).firstOrNull { it.userEmail == user.email }
+        assertNull(expectedInvitation)
+        assertEquals(HttpStatus.OK.value(), response.status)
     }
 
 }

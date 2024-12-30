@@ -76,10 +76,10 @@ open class VaultService(
             }
 
     @Transactional
-    open fun createVaultMemberForcefully(vaultId: Int, userId: Int, vaultRole: VaultRole) {
+    open fun createVaultMemberForcefully(vaultId: Int, userId: Int, vaultRole: VaultRole): VaultMemberResponse {
         val vault = getVaultForcefully(vaultId)
 
-        vaultMemberRepository
+        val member = vaultMemberRepository
             .save(
                 VaultMember(
                     id = null,
@@ -88,6 +88,8 @@ open class VaultService(
                     vaultRole = vaultRole
                 )
             )
+
+        return member.toResponse(userService.getUser(userId))
     }
 
     @Transactional
@@ -232,7 +234,7 @@ open class VaultService(
 
         return VaultInvitationListResponse(
             vaultInvitationRepository.findByUserEmail(userEmail)
-                .map { it.toResponse(getVault(vaultId = it.vaultId, requesterId = requesterId)) }
+                .map { it.toResponse(getVaultForcefully(vaultId = it.vaultId)) }
                 .toSet()
         )
     }
