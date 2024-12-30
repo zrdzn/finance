@@ -43,6 +43,7 @@ storage:
   access-key: ${STORAGE_ACCESS_KEY}
   secret-key: ${STORAGE_SECRET_KEY}
   region: ${STORAGE_REGION}
+  endpoint: ${STORAGE_ENDPOINT}
   predefined-buckets:
     - "avatars"
 springdoc:

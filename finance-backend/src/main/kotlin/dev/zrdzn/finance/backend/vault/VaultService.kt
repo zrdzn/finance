@@ -16,6 +16,7 @@ import dev.zrdzn.finance.backend.vault.api.authority.VaultRoleResponse
 import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationListResponse
 import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationNotFoundException
 import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationNotOwnedException
+import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationResponse
 import dev.zrdzn.finance.backend.vault.api.member.VaultMemberListResponse
 import dev.zrdzn.finance.backend.vault.api.member.VaultMemberNotFoundException
 import dev.zrdzn.finance.backend.vault.api.member.VaultMemberResponse
@@ -52,7 +53,7 @@ open class VaultService(
     }
 
     @Transactional
-    open fun createVault(ownerId: Int, name: String, defaultCurrency: String, defaultTransactionMethod: TransactionMethod): VaultResponse =
+    open fun createVault(ownerId: Int, name: String, currency: String, defaultTransactionMethod: TransactionMethod): VaultResponse =
         vaultRepository
             .save(
                 Vault(
@@ -61,7 +62,7 @@ open class VaultService(
                     publicId = createRandomToken(16),
                     ownerId = ownerId,
                     name = name,
-                    currency = defaultCurrency,
+                    currency = currency,
                     transactionMethod = defaultTransactionMethod
                 )
             )
@@ -75,10 +76,10 @@ open class VaultService(
             }
 
     @Transactional
-    open fun createVaultMemberForcefully(vaultId: Int, userId: Int, vaultRole: VaultRole) {
+    open fun createVaultMemberForcefully(vaultId: Int, userId: Int, vaultRole: VaultRole): VaultMemberResponse {
         val vault = getVaultForcefully(vaultId)
 
-        vaultMemberRepository
+        val member = vaultMemberRepository
             .save(
                 VaultMember(
                     id = null,
@@ -87,15 +88,17 @@ open class VaultService(
                     vaultRole = vaultRole
                 )
             )
+
+        return member.toResponse(userService.getUser(userId))
     }
 
     @Transactional
-    open fun createVaultInvitation(vaultId: Int, requesterId: Int, userEmail: String) {
+    open fun createVaultInvitation(vaultId: Int, requesterId: Int, userEmail: String): VaultInvitationResponse {
         authorizeMember(vaultId, requesterId, VaultPermission.MEMBER_INVITE_CREATE)
 
         val vault = getVault(vaultId, requesterId)
 
-        vaultInvitationRepository
+        val invitation = vaultInvitationRepository
             .save(
                 VaultInvitation(
                     id = null,
@@ -104,6 +107,8 @@ open class VaultService(
                     expiresAt = Instant.now(clock).plus(1, ChronoUnit.DAYS)
                 )
             )
+
+        return invitation.toResponse(vault)
     }
 
     @Transactional
@@ -229,7 +234,7 @@ open class VaultService(
 
         return VaultInvitationListResponse(
             vaultInvitationRepository.findByUserEmail(userEmail)
-                .map { it.toResponse(getVault(vaultId = it.vaultId, requesterId = requesterId)) }
+                .map { it.toResponse(getVaultForcefully(vaultId = it.vaultId)) }
                 .toSet()
         )
     }
