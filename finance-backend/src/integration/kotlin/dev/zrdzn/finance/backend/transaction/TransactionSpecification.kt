@@ -1,20 +1,26 @@
 package dev.zrdzn.finance.backend.transaction
 
-import dev.zrdzn.finance.backend.price.Price
+import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.product.ProductSpecification
-import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
-import dev.zrdzn.finance.backend.transaction.api.TransactionResponse
-import dev.zrdzn.finance.backend.transaction.api.TransactionType
-import dev.zrdzn.finance.backend.transaction.api.product.TransactionProductResponse
-import dev.zrdzn.finance.backend.transaction.api.schedule.ScheduleInterval
-import dev.zrdzn.finance.backend.transaction.api.schedule.ScheduleResponse
+import dev.zrdzn.finance.backend.transaction.application.TransactionService
+import dev.zrdzn.finance.backend.transaction.domain.TransactionMethod
+import dev.zrdzn.finance.backend.transaction.application.response.TransactionResponse
+import dev.zrdzn.finance.backend.transaction.domain.TransactionType
+import dev.zrdzn.finance.backend.transaction.application.response.TransactionProductResponse
+import dev.zrdzn.finance.backend.transaction.domain.ScheduleInterval
+import dev.zrdzn.finance.backend.transaction.application.response.ScheduleResponse
+import dev.zrdzn.finance.backend.transaction.domain.ScheduleRepository
+import dev.zrdzn.finance.backend.transaction.domain.TransactionProductRepository
+import dev.zrdzn.finance.backend.transaction.domain.TransactionRepository
 import java.math.BigDecimal
 
 open class TransactionSpecification : ProductSpecification() {
 
     protected val transactionService: TransactionService get() = application.getBean(TransactionService::class.java)
     protected val transactionRepository: TransactionRepository get() = application.getBean(TransactionRepository::class.java)
-    protected val transactionProductRepository: TransactionProductRepository get() = application.getBean(TransactionProductRepository::class.java)
+    protected val transactionProductRepository: TransactionProductRepository
+        get() = application.getBean(
+            TransactionProductRepository::class.java)
     protected val scheduleRepository: ScheduleRepository get() = application.getBean(ScheduleRepository::class.java)
 
     fun createTransaction(

@@ -1,9 +1,9 @@
 package dev.zrdzn.finance.backend.authentication
 
-import dev.zrdzn.finance.backend.api.FinanceApiException
-import dev.zrdzn.finance.backend.authentication.token.TOKEN_COOKIE_NAME
-import dev.zrdzn.finance.backend.authentication.token.api.AccessTokenResponse
-import dev.zrdzn.finance.backend.user.api.UserResponse
+import dev.zrdzn.finance.backend.error.FinanceApiException
+import dev.zrdzn.finance.backend.token.domain.TOKEN_COOKIE_NAME
+import dev.zrdzn.finance.backend.token.application.response.AccessTokenResponse
+import dev.zrdzn.finance.backend.user.application.response.UserResponse
 import kong.unirest.core.Unirest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals

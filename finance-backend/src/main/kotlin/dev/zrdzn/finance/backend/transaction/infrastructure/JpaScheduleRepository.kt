@@ -1,7 +1,7 @@
 package dev.zrdzn.finance.backend.transaction.infrastructure
 
-import dev.zrdzn.finance.backend.transaction.Schedule
-import dev.zrdzn.finance.backend.transaction.ScheduleRepository
+import dev.zrdzn.finance.backend.transaction.domain.Schedule
+import dev.zrdzn.finance.backend.transaction.domain.ScheduleRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.Repository
 import org.springframework.stereotype.Component

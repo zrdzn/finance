@@ -1,7 +1,7 @@
 package dev.zrdzn.finance.backend.audit.infrastructure
 
-import dev.zrdzn.finance.backend.audit.Audit
-import dev.zrdzn.finance.backend.audit.AuditRepository
+import dev.zrdzn.finance.backend.audit.domain.Audit
+import dev.zrdzn.finance.backend.audit.domain.AuditRepository
 import org.springframework.data.repository.Repository
 import org.springframework.stereotype.Component
 

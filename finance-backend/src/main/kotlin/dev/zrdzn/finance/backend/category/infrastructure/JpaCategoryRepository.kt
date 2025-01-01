@@ -1,7 +1,7 @@
 package dev.zrdzn.finance.backend.category.infrastructure
 
-import dev.zrdzn.finance.backend.category.Category
-import dev.zrdzn.finance.backend.category.CategoryRepository
+import dev.zrdzn.finance.backend.category.domain.Category
+import dev.zrdzn.finance.backend.category.domain.CategoryRepository
 import org.springframework.data.repository.Repository
 import org.springframework.stereotype.Component
 

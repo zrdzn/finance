@@ -1,7 +1,7 @@
 package dev.zrdzn.finance.backend.authentication.infrastructure
 
-import dev.zrdzn.finance.backend.authentication.AuthenticationAttempt
-import dev.zrdzn.finance.backend.authentication.AuthenticationAttemptRepository
+import dev.zrdzn.finance.backend.authentication.domain.AuthenticationAttempt
+import dev.zrdzn.finance.backend.authentication.domain.AuthenticationAttemptRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.Repository
 import org.springframework.stereotype.Component

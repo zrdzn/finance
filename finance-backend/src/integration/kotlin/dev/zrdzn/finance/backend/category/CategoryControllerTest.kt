@@ -1,10 +1,10 @@
 package dev.zrdzn.finance.backend.category
 
-import dev.zrdzn.finance.backend.authentication.token.TOKEN_COOKIE_NAME
-import dev.zrdzn.finance.backend.category.api.CategoryCreateRequest
-import dev.zrdzn.finance.backend.category.api.CategoryListResponse
-import dev.zrdzn.finance.backend.category.api.CategoryResponse
-import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
+import dev.zrdzn.finance.backend.token.domain.TOKEN_COOKIE_NAME
+import dev.zrdzn.finance.backend.category.application.request.CategoryCreateRequest
+import dev.zrdzn.finance.backend.category.application.response.CategoryListResponse
+import dev.zrdzn.finance.backend.category.application.response.CategoryResponse
+import dev.zrdzn.finance.backend.transaction.domain.TransactionMethod
 import kong.unirest.core.Unirest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
