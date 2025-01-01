@@ -1,17 +1,23 @@
 package dev.zrdzn.finance.backend.vault
 
 import dev.zrdzn.finance.backend.authentication.AuthenticationSpecification
-import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
-import dev.zrdzn.finance.backend.vault.api.VaultResponse
-import dev.zrdzn.finance.backend.vault.api.authority.VaultRole
-import dev.zrdzn.finance.backend.vault.api.invitation.VaultInvitationResponse
-import dev.zrdzn.finance.backend.vault.api.member.VaultMemberResponse
+import dev.zrdzn.finance.backend.transaction.domain.TransactionMethod
+import dev.zrdzn.finance.backend.vault.application.response.VaultResponse
+import dev.zrdzn.finance.backend.vault.application.VaultRole
+import dev.zrdzn.finance.backend.vault.application.VaultService
+import dev.zrdzn.finance.backend.vault.application.response.VaultInvitationResponse
+import dev.zrdzn.finance.backend.vault.application.response.VaultMemberResponse
+import dev.zrdzn.finance.backend.vault.domain.VaultInvitationRepository
+import dev.zrdzn.finance.backend.vault.domain.VaultMemberRepository
+import dev.zrdzn.finance.backend.vault.domain.VaultRepository
 
 open class VaultSpecification : AuthenticationSpecification() {
 
     protected val vaultService: VaultService get() = application.getBean(VaultService::class.java)
     protected val vaultRepository: VaultRepository get() = application.getBean(VaultRepository::class.java)
-    protected val vaultInvitationRepository: VaultInvitationRepository get() = application.getBean(VaultInvitationRepository::class.java)
+    protected val vaultInvitationRepository: VaultInvitationRepository
+        get() = application.getBean(
+            VaultInvitationRepository::class.java)
     protected val vaultMemberRepository: VaultMemberRepository get() = application.getBean(VaultMemberRepository::class.java)
 
     protected fun createVault(

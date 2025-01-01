@@ -1,8 +1,8 @@
 package dev.zrdzn.finance.backend.vault.infrastructure
 
-import dev.zrdzn.finance.backend.vault.Vault
-import dev.zrdzn.finance.backend.vault.VaultMember
-import dev.zrdzn.finance.backend.vault.VaultMemberRepository
+import dev.zrdzn.finance.backend.vault.domain.Vault
+import dev.zrdzn.finance.backend.vault.domain.VaultMember
+import dev.zrdzn.finance.backend.vault.domain.VaultMemberRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.Repository
 import org.springframework.data.repository.query.Param

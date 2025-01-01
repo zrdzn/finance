@@ -1,12 +1,14 @@
 package dev.zrdzn.finance.backend.exchange.infrastructure
 
-import dev.zrdzn.finance.backend.exchange.ExchangeProvider
-import dev.zrdzn.finance.backend.exchange.api.ExchangeRate
+import dev.zrdzn.finance.backend.exchange.domain.ExchangeProvider
+import dev.zrdzn.finance.backend.exchange.domain.ExchangeRate
 import kong.unirest.core.HttpResponse
 import kong.unirest.core.JsonNode
 import kong.unirest.core.Unirest
 import kong.unirest.core.json.JSONObject
+import org.springframework.stereotype.Service
 
+@Service
 class NbpExchangeProvider : ExchangeProvider {
 
     override fun getExchangeRates(): List<ExchangeRate> {

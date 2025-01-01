@@ -1,11 +1,11 @@
 package dev.zrdzn.finance.backend.product
 
-import dev.zrdzn.finance.backend.authentication.token.TOKEN_COOKIE_NAME
-import dev.zrdzn.finance.backend.product.api.ProductCreateRequest
-import dev.zrdzn.finance.backend.product.api.ProductListResponse
-import dev.zrdzn.finance.backend.product.api.ProductResponse
-import dev.zrdzn.finance.backend.product.api.ProductUpdateRequest
-import dev.zrdzn.finance.backend.transaction.api.TransactionMethod
+import dev.zrdzn.finance.backend.token.domain.TOKEN_COOKIE_NAME
+import dev.zrdzn.finance.backend.product.application.request.ProductCreateRequest
+import dev.zrdzn.finance.backend.product.application.response.ProductListResponse
+import dev.zrdzn.finance.backend.product.application.response.ProductResponse
+import dev.zrdzn.finance.backend.product.application.request.ProductUpdateRequest
+import dev.zrdzn.finance.backend.transaction.domain.TransactionMethod
 import kong.unirest.core.Unirest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull

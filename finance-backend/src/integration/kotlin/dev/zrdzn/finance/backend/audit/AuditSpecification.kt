@@ -1,7 +1,9 @@
 package dev.zrdzn.finance.backend.audit
 
-import dev.zrdzn.finance.backend.audit.api.AuditAction
-import dev.zrdzn.finance.backend.audit.api.AuditResponse
+import dev.zrdzn.finance.backend.audit.domain.AuditAction
+import dev.zrdzn.finance.backend.audit.application.response.AuditResponse
+import dev.zrdzn.finance.backend.audit.application.AuditService
+import dev.zrdzn.finance.backend.audit.domain.AuditRepository
 import dev.zrdzn.finance.backend.product.ProductSpecification
 
 open class AuditSpecification : ProductSpecification() {
