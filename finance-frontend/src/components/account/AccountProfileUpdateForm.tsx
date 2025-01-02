@@ -8,7 +8,6 @@ import {RequestAccountUpdateButton} from "@/components/account/RequestAccountUpd
 import {FaEdit, FaEnvelope, FaKey, FaLock, FaSave} from "react-icons/fa";
 import {RequestAccountVerificationButton} from "@/components/account/RequestAccountVerificationButton";
 import toast from "react-hot-toast";
-import {router} from "next/client";
 import {useApi} from "@/hooks/useApi";
 import {useRouter} from "next/router";
 import {useTranslations} from "next-intl";

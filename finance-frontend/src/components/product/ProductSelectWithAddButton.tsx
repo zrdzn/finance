@@ -3,7 +3,6 @@ import React, {useEffect, useState} from "react"
 import {useApi} from "@/hooks/useApi"
 import {ProductSelect} from "@/components/product/ProductSelect"
 import {AddProductButton} from "@/components/product/AddProductButton"
-import {Axios} from "axios"
 import {Client, Components} from "@/api/api";
 
 type ProductResponse = Components.Schemas.ProductResponse;

@@ -36,7 +36,7 @@ export const ProductsCardItem = ({
 
   useEffect(() => {
     api
-      .then(client => client.getCategoryById({ id: product.categoryId ?? 0 })
+      .then(client => client.getCategoryById({ categoryId: product.categoryId ?? 0 })
         .then(response => setCategory(response.data)))
       .catch(error => console.error(error))
   }, [api, product.categoryId]);
