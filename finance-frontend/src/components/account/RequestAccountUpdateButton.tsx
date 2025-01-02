@@ -12,13 +12,12 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure, useSteps, Stepper, Step, StepStatus, StepIcon, StepIndicator, StepSeparator,
-  Stack, Box, Tooltip, useClipboard,
+  Stack, Box, Tooltip,
 } from '@chakra-ui/react'
-import React, {ChangeEvent, useRef, useState} from "react"
+import React, { useRef, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
 import toast from "react-hot-toast"
-import {FaPencil} from "react-icons/fa6"
 import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"
 import {useTranslations} from "next-intl";

@@ -6,7 +6,6 @@ import {
   NumberInputStepper
 } from "@chakra-ui/react"
 import React, {useState} from "react"
-import {useNumberFormatter} from "@/hooks/useNumberFormatter";
 
 interface PriceInputProperties {
   onChange: (price: number) => void

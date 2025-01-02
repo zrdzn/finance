@@ -23,11 +23,11 @@ import {Components} from "@/api/api";
 
 type ProductCreateRequest = Components.Schemas.ProductCreateRequest;
 type CategoryResponse = Components.Schemas.CategoryResponse;
-type ProductCreateResponse = Components.Schemas.ProductCreateResponse;
+type ProductResponse = Components.Schemas.ProductResponse;
 
 interface AddProductButtonProperties {
   vaultId: number
-  onCreate?: (product: ProductCreateResponse) => void
+  onCreate?: (product: ProductResponse) => void
 }
 
 export const AddProductButton = ({ vaultId, onCreate }: AddProductButtonProperties) => {

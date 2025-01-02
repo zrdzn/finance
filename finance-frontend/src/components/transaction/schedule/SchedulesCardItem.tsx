@@ -4,10 +4,7 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
-  Divider,
-  Flex,
-  Heading, HStack, Link,
-  Stack,
+  Flex, HStack,
   Text
 } from "@chakra-ui/react"
 import React from "react"

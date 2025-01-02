@@ -1,9 +1,7 @@
-import {Accordion, Card, CardBody, CardHeader, Divider, Flex, Heading, Stack, Text} from "@chakra-ui/react"
-import {AddTransactionButton} from "@/components/transaction/AddTransactionButton"
+import {Card, CardBody, CardHeader, Divider, Flex, Stack, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
-import {TransactionsCardItem} from "@/components/transaction/TransactionsCardItem"
 import {SearchBar} from "@/components/shared/SearchBar"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
@@ -11,7 +9,6 @@ import {SchedulesCardItem} from "@/components/transaction/schedule/SchedulesCard
 
 type ScheduleResponse = Components.Schemas.ScheduleResponse;
 type VaultResponse = Components.Schemas.VaultResponse;
-type TransactionResponse = Components.Schemas.TransactionResponse;
 
 interface SchedulesCardProperties {
   vault: VaultResponse

@@ -1,4 +1,4 @@
-import {Card, CardBody, CardHeader, Divider, Flex, Heading, Stack, Text} from "@chakra-ui/react"
+import {Card, CardBody, CardHeader, Divider, Flex, Stack, Text} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
