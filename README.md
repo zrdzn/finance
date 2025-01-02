@@ -17,23 +17,27 @@ Data is securely stored in a PostgreSQL database.
 - A Vault is a central place for managing:
     - Members
     - Transactions
+    - Recurring transactions
     - Products
     - Categories
 - Users can create multiple vaults and automatically become members with owner roles
 
 ### Products and Categories
-- Create and manage products and categories for easy reuse when adding payment records
+- Create and manage products and categories for easy reuse when adding transaction records
 - Each product that has assigned category will have a label next to its name
 
 ### Transactions
 - Create detailed transactions, with the ability to:
-    - Specify description, currency, payment method and type of transaction
+    - Specify description, currency, transaction method and type of transaction
     - Add existing products to transactions
     - Manage existing transactions
 - Schedule recurring transactions to automate transactions
 
-#### Export Transactions to .CSV File
+#### Export Transactions
 - Easily export transactions to a .CSV file for offline access and analysis
+
+#### Import Transactions
+- Import transactions from a .CSV file to quickly add multiple transactions by mapping columns to fields
 
 ### Statistics and Reporting
 - View various statistics, including:
@@ -49,9 +53,12 @@ Data is securely stored in a PostgreSQL database.
 
 ### Vault Settings
 - Customize settings for each vault to suit your needs
+- Change vault name, currency and default transaction method
+- Delete vaults and all associated data
 
 ### Currency Conversion
 - View real exchange rates to display financial data in different currencies
+- Exchange rates are displayed based on currency set in vault settings
 
 ### Responsive Design
 - The application follows a mobile-first approach, ensuring full responsiveness and accessibility on all devices
@@ -68,6 +75,14 @@ Data is securely stored in a PostgreSQL database.
 - The database stores all data required for the application to function.
   - **Management System:** [PostgreSQL](https://www.postgresql.org/)
   - **Migration Files:** [View schema](https://github.com/zrdzn/finance/tree/main/finance-backend/src/main/resources/database)
+### Storage
+- The storage system is used to store files, such as user avatars.
+  - **Service:** [Amazon S3](https://aws.amazon.com/s3/)
+  - **Client:** [MinIO](https://min.io/)
+  - **Test client:** [LocalStack](https://localstack.cloud/)
+### Mailing
+- The mail system is used to send emails to users, such as verification emails.
+  - **Client:** [MailHog](https://github.com/mailhog/MailHog)
 ## ⚙️ Environment Variables
 - `SERVER_PORT` - Port on which server will be running
 - `CLIENT_URL` - Frontend URL
@@ -80,6 +95,10 @@ Data is securely stored in a PostgreSQL database.
 - `MAIL_USERNAME` - SMTP server username
 - `MAIL_PASSWORD` - SMTP server password
 - `MAIL_FROM` - Email address from which emails will be sent
+- `STORAGE_ACCESS_KEY` - S3 access key
+- `STORAGE_SECRET_KEY` - S3 secret key
+- `STORAGE_REGION` - S3 region
+- `STORAGE_ENDPOINT` - S3 endpoint
 ## 🚀 Installation
 ### Docker
 **1.** Pull images from Docker Hub
@@ -89,12 +108,10 @@ docker pull zrdzn/finance-frontend:latest
 ```
 **2.** Configure `.env` file to your needs
 
-**3.** Copy docker [compose file](compose.yml)
-
-**4.** Run images
+**3.** Run images
 ```bash
-docker-compose up backend -d
-docker-compose up frontend -d
+docker run -d --name finance-backend -p 8080:8080 --env-file .env zrdzn/finance-backend:latest
+docker run -d --name finance-frontend -p 3000:3000 --env-file .env zrdzn/finance-frontend:latest
 ```
 ## 🧑‍💻 Developers
 ### API Documentation
@@ -103,12 +120,12 @@ docker-compose up frontend -d
 ### Building from Source
 To build the backend from source, you can follow these simple steps:
 
-1. Clone the repository:
+**1.** Clone the repository:
 ```bash
 git clone https://github.com/zrdzn/finance.git
 cd finance/finance-backend
 ```
-2. Build the backend using Gradle:
+**2.** Build the backend using Gradle:
 ```bash
 ./gradlew bootJar
 ```
