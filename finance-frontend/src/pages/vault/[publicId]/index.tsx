@@ -1,6 +1,6 @@
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
-import {Flex, Grid} from "@chakra-ui/react";
+import {Card, CardBody, Flex, Grid, Stat, StatHelpText, StatLabel, StatNumber} from "@chakra-ui/react";
 import React from "react";
 import {useRouter} from "next/router"
 import {LastTransactionsCard} from "@/components/transaction/LastTransactionsCard"

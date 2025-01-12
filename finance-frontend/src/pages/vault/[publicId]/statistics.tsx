@@ -27,8 +27,14 @@ export default function Statistics(): ReactJSXElement {
               gap={4}
               width="full">
               <AnalyticsSummaryCard vault={vault} permissions={vaultRole.permissions} />
-              <FlowsHistoryCard vault={vault} transactionType={'INCOMING'} />
-              <FlowsHistoryCard vault={vault} transactionType={'OUTGOING'} />
+              <FlowsHistoryCard vault={vault} transactionType={'INCOMING'} flowsRange={"DAY"} />
+              <FlowsHistoryCard vault={vault} transactionType={'INCOMING'} flowsRange={"WEEK"} />
+              <FlowsHistoryCard vault={vault} transactionType={'INCOMING'} flowsRange={"MONTH"} />
+              <FlowsHistoryCard vault={vault} transactionType={'INCOMING'} flowsRange={"YEAR"} />
+              <FlowsHistoryCard vault={vault} transactionType={'OUTGOING'} flowsRange={"DAY"} />
+              <FlowsHistoryCard vault={vault} transactionType={'OUTGOING'} flowsRange={"WEEK"} />
+              <FlowsHistoryCard vault={vault} transactionType={'OUTGOING'} flowsRange={"MONTH"} />
+              <FlowsHistoryCard vault={vault} transactionType={'OUTGOING'} flowsRange={"YEAR"} />
             </Grid>
           </Flex>
         </>
