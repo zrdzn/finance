@@ -180,7 +180,7 @@ class TransactionController(
     ): ScheduleListResponse = transactionService.getSchedules(userId, vaultId)
 
     @GetMapping("/{vaultId}/flows")
-    fun getExpensesByVaultId(
+    fun getFlowsByVaultId(
         @AuthenticationPrincipal userId: Int,
         @PathVariable vaultId: Int,
         @RequestParam("transactionType", required = false) transactionType: TransactionType?,

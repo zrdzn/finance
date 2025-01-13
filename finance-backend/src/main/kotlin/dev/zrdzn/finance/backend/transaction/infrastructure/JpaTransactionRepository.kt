@@ -38,4 +38,19 @@ interface JpaTransactionRepository : TransactionRepository, Repository<Transacti
     )
     override fun countTotalDaysByVaultId(@Param("vaultId") vaultId: Int): Long
 
+    @Query(
+        """
+        SELECT COUNT(transaction)
+        FROM Transaction transaction
+        WHERE transaction.vaultId = :vaultId
+          AND transaction.transactionType = :transactionType
+          AND transaction.createdAt >= :start
+    """
+    )
+    override fun countByVaultIdAndTransactionType(
+        vaultId: Int,
+        transactionType: TransactionType,
+        start: Instant
+    ): Long
+
 }

@@ -7,8 +7,8 @@ import com.opencsv.enums.CSVReaderNullFieldIndicator
 import dev.zrdzn.finance.backend.audit.application.AuditService
 import dev.zrdzn.finance.backend.audit.domain.AuditAction
 import dev.zrdzn.finance.backend.exchange.application.ExchangeService
-import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.product.application.ProductService
+import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.transaction.application.TransactionMapper.toResponse
 import dev.zrdzn.finance.backend.transaction.application.error.ScheduleNotFoundException
 import dev.zrdzn.finance.backend.transaction.application.error.TransactionDescriptionRequiredException
@@ -500,18 +500,24 @@ class TransactionService(
             val outcome = calculateFlowsByType(vaultId, TransactionType.OUTGOING, start, vault.currency)
 
             return TransactionFlowsResponse(
-                Price(
+                total = Price(
                     amount = income - outcome,
                     currency = vault.currency
-                )
+                ),
+                count = transactionRepository
+                    .countByVaultId(vaultId)
+                    .let { TransactionAmountResponse(it.toInt()) }
             )
         }
 
         return TransactionFlowsResponse(
-            Price(
+            total = Price(
                 amount = calculateFlowsByType(vaultId, transactionType, start, vault.currency),
                 currency = vault.currency
-            )
+            ),
+            count = transactionRepository
+                .countByVaultIdAndTransactionType(vaultId, transactionType, start)
+                .let { TransactionAmountResponse(it.toInt()) }
         )
     }
 

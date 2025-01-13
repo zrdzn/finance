@@ -17,6 +17,8 @@ interface TransactionRepository {
 
     fun countByVaultId(vaultId: Int): Long
 
+    fun countByVaultIdAndTransactionType(vaultId: Int, transactionType: TransactionType, start: Instant): Long
+
     fun sumAndGroupFlowsByVaultIdAndTransactionType(vaultId: Int, transactionType: TransactionType, start: Instant): List<Price>
 
     fun countTotalDaysByVaultId(vaultId: Int): Long

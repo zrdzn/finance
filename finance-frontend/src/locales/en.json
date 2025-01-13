@@ -377,7 +377,9 @@
       "day": "Last 24 hours",
       "week": "Last week",
       "month": "Last month",
-      "year": "Last year"
+      "year": "Last year",
+      "transactions-amount": "Total transactions:",
+      "no-transactions": "No transactions recorded during this period"
     }
   },
   "AccountSettings": {
