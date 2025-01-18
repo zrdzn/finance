@@ -9,6 +9,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+    Text,
   useDisclosure,
 } from '@chakra-ui/react'
 import React, {useRef, useState} from "react"
@@ -62,8 +63,13 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
     <>
       <Button backgroundColor={theme.primaryColor}
               color={'#f8f8f8'} fontWeight={'400'}
+              size={'sm'}
+              gap={1}
               onClick={(event) => { event.preventDefault(); onOpen() } }>
         <FaEdit />
+        <Text>
+          Edit
+        </Text>
       </Button>
 
       <Modal

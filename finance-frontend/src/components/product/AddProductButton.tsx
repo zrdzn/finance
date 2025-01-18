@@ -69,7 +69,8 @@ export const AddProductButton = ({ vaultId, onCreate }: AddProductButtonProperti
   return (
     <>
       <Button backgroundColor={theme.primaryColor}
-              color={'#f8f8f8'} fontWeight={'400'}
+              color={'#f8f8f8'}
+              fontWeight={'400'}
               onClick={onOpen}>
         <FaPlus />
       </Button>

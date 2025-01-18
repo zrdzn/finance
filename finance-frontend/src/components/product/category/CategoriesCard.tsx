@@ -1,81 +1,132 @@
-import {Card, CardBody, CardHeader, Divider, Flex, Stack, Text} from "@chakra-ui/react"
+import {
+    CardBody,
+    Table,
+    Thead,
+    Tbody,
+    Tr,
+    Th,
+    Td,
+    Flex,
+    HStack,
+    Button,
+    Tag,
+    TagLabel,
+    Text,
+    Box,
+    Card, CardHeader, Divider,
+} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
-import {CategoriesCardItem} from "@/components/product/category/CategoriesCardItem"
 import {AddCategoryButton} from "@/components/product/category/AddCategoryButton"
 import {SearchBar} from "@/components/shared/SearchBar"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
+import {useRouter} from "next/router";
+import toast from "react-hot-toast";
+import {DeleteButton} from "@/components/shared/DeleteButton";
 
-type ProductResponse = Components.Schemas.ProductResponse;
-type VaultResponse = Components.Schemas.VaultResponse;
+type ProductResponse = Components.Schemas.ProductResponse
+type VaultResponse = Components.Schemas.VaultResponse
 
 interface CategoriesCardProperties {
-  vault: VaultResponse
-  permissions: string[]
+    vault: VaultResponse
+    permissions: string[]
 }
 
 export const CategoriesCard = ({ vault, permissions }: CategoriesCardProperties) => {
-  const theme = useTheme()
-  const api = useApi()
-  const t = useTranslations("Categories")
-  const [categories, setCategories] = useState<ProductResponse[]>([])
-  const [queriedCategories, setQueriedCategories] = useState<ProductResponse[]>([])
+    const api = useApi()
+    const router = useRouter()
+    const t = useTranslations("Categories")
+    const [categories, setCategories] = useState<ProductResponse[]>([])
+    const [queriedCategories, setQueriedCategories] = useState<ProductResponse[]>([])
 
-  useEffect(() => {
-    api
-      .then(client => client.getCategoriesByVaultId({ vaultId: vault.id })
-        .then(response => {
-          setCategories(response.data.categories)
-          setQueriedCategories(response.data.categories)
-        }))
-      .catch(error => console.error(error))
-  }, [api, vault.id]);
+    useEffect(() => {
+        api
+            .then((client) =>
+                client.getCategoriesByVaultId({ vaultId: vault.id }).then((response) => {
+                    setCategories(response.data.categories)
+                    setQueriedCategories(response.data.categories)
+                })
+            )
+            .catch((error) => console.error(error))
+    }, [api, vault.id])
 
-  const handleSearchResults = (results: ProductResponse[]) => {
-    setQueriedCategories(results)
-  }
+    const handleSearchResults = (results: ProductResponse[]) => {
+        setQueriedCategories(results)
+    }
 
-  return (
-    <Card margin={2}>
-      <CardHeader backgroundColor={theme.secondaryColor}
-                  color={theme.textColor}>
-        <Flex alignItems={'center'}
-              justifyContent={'space-between'}>
-          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>{t('card.title')}</Text>
-        </Flex>
-      </CardHeader>
-      <CardBody>
-        <Flex justifyContent={'space-between'}
-              gap={4}>
-          <SearchBar
-            placeholder={t('card.search-placeholder')}
-            content={categories}
-            onSearch={handleSearchResults}
-            filter={(category, query) => category.name.toLowerCase().includes(query.toLowerCase())}
-          />
-          {
-            permissions.includes("CATEGORY_CREATE") && <AddCategoryButton vaultId={vault.id} />
-          }
-        </Flex>
-        <Divider mt={4} />
-        <Stack gap={0}>
-          {
-            queriedCategories.length === 0 &&
-              <Flex justifyContent={'center'}
-                    mt={4}>
-                  <Text size={'sm'}>{t('card.no-categories')}</Text>
-              </Flex>
-          }
-          {
-            queriedCategories &&
-            queriedCategories.map(category => <CategoriesCardItem key={category.id}
-                                                                  category={category}
-                                                                  permissions={permissions} />)
-          }
-        </Stack>
-      </CardBody>
-    </Card>
-  )
+    const handleCategoryDelete = (categoryId: number) => {
+        api
+            .then((client) => client.deleteCategory({ categoryId: categoryId }))
+            .then(() => {
+                toast.success(t("category-deleted-success"))
+                setTimeout(() => router.reload(), 1000)
+            })
+            .catch((error) => {
+                console.error(error)
+                toast.error(t("category-deleted-error"))
+            })
+    }
+
+    return (
+        <Card margin={2} boxShadow="md" borderRadius="md" overflow="hidden">
+            <CardHeader>
+                <Text fontSize="md" fontWeight={"600"}>
+                    {t("card.title")}
+                </Text>
+            </CardHeader>
+            <CardBody>
+                <Flex justifyContent={"space-between"} gap={4} mb={4}>
+                    <SearchBar
+                        placeholder={t("card.search-placeholder")}
+                        content={categories}
+                        onSearch={handleSearchResults}
+                        filter={(category, query) =>
+                            category.name.toLowerCase().includes(query.toLowerCase())
+                        }
+                    />
+                    {permissions.includes("CATEGORY_CREATE") && (
+                        <AddCategoryButton vaultId={vault.id} />
+                    )}
+                </Flex>
+                <Box overflowX="auto">
+                    <Table variant={"outline"}>
+                        <Thead>
+                            <Tr>
+                                <Th>{t("table.name")}</Th>
+                                <Th>{t("table.actions")}</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            {queriedCategories.length === 0 ? (
+                                <Tr>
+                                    <Td colSpan={2}>
+                                        <Text textAlign="center" size="sm">
+                                            {t("card.no-categories")}
+                                        </Text>
+                                    </Td>
+                                </Tr>
+                            ) : (
+                                queriedCategories.map((category) => (
+                                    <Tr key={category.id}>
+                                        <Td>{category.name}</Td>
+                                        <Td>
+                                            <HStack spacing={2}>
+                                                {permissions.includes("CATEGORY_DELETE") && (
+                                                    <DeleteButton
+                                                        onClick={() => handleCategoryDelete(category.id)}
+                                                    />
+                                                )}
+                                            </HStack>
+                                        </Td>
+                                    </Tr>
+                                ))
+                            )}
+                        </Tbody>
+                    </Table>
+                </Box>
+            </CardBody>
+        </Card>
+    )
 }

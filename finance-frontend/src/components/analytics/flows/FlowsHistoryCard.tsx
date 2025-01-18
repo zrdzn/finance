@@ -12,7 +12,6 @@ import {
   StatHelpText, StatArrow, HStack
 } from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
-import {useTheme} from "@/hooks/useTheme"
 import {useTranslations} from "next-intl";
 import {TransactionFlowsRange, TransactionType} from "@/api/types";
 import {useNumberFormatter} from "@/hooks/useNumberFormatter";
@@ -66,14 +65,12 @@ export const FlowsHistoryCard = ({
         <CardBody>
           <Stat>
             <StatLabel>
-              {transactionType === 'INCOMING' && t('history.income-title')}
-              {transactionType === 'OUTGOING' && t('history.expenses-title')}
-              &nbsp;
-              (
-              {flowsRange === 'DAY' && t('history.day')}
-              {flowsRange === 'WEEK' && t('history.week')}
-              {flowsRange === 'MONTH' && t('history.month')}
-              {flowsRange === 'YEAR' && t('history.year')}
+              {transactionType === 'INCOMING' && t('income-title')}
+              {transactionType === 'OUTGOING' && t('expenses-title')}&nbsp;(
+              {flowsRange === 'DAY' && t('day')}
+              {flowsRange === 'WEEK' && t('week')}
+              {flowsRange === 'MONTH' && t('month')}
+              {flowsRange === 'YEAR' && t('year')}
               )
             </StatLabel>
 
@@ -106,8 +103,8 @@ export const FlowsHistoryCard = ({
 
             <StatHelpText fontSize="sm" color="gray.600" mt={2}>
               {flows.total.amount === 0
-                  ? t('history.no-transactions', { period: t(`history.${flowsRange.toLowerCase()}`) })
-                  : `${t('history.transactions-amount')} ${flows.count.amount}`}
+                  ? t('no-transactions', { period: t(`${flowsRange.toLowerCase()}`) })
+                  : `${t('transactions-amount')} ${flows.count.amount}`}
             </StatHelpText>
           </Stat>
         </CardBody>

@@ -1,4 +1,7 @@
 {
+  "Global": {
+    "delete-button": "Delete"
+  },
   "Units": {
     "dates": {
       "singular": {
@@ -305,6 +308,11 @@
       "no-products": "There are no products",
       "search-placeholder": "Search products"
     },
+    "table": {
+      "name": "Name",
+      "category": "Category",
+      "actions": "Actions"
+    },
     "create-modal": {
       "title": "Add a new product",
       "name-label": "Name",
@@ -336,6 +344,10 @@
       "title": "Categories",
       "no-categories": "There are no categories",
       "search-placeholder": "Search categories"
+    },
+    "table": {
+      "name": "Name",
+      "actions": "Actions"
     }
   },
   "VaultSettings": {
@@ -364,23 +376,17 @@
     "title": "Finance - Statistics"
   },
   "Analytics": {
-    "summary": {
-      "title": "Summary",
-      "balance": "Balance",
-      "income": "Income",
-      "expenses": "Expenses",
-      "transactions": "Transactions"
-    },
-    "history": {
-      "income-title": "Income",
-      "expenses-title": "Expenses",
-      "day": "Last 24 hours",
-      "week": "Last week",
-      "month": "Last month",
-      "year": "Last year",
-      "transactions-amount": "Total transactions:",
-      "no-transactions": "No transactions recorded during this period"
-    }
+    "balance": "Balance",
+    "expenses": "Expenses",
+    "income": "Income",
+    "income-title": "Income",
+    "expenses-title": "Expenses",
+    "day": "Last 24 hours",
+    "week": "Last week",
+    "month": "Last month",
+    "year": "Last year",
+    "transactions-amount": "Total transactions:",
+    "no-transactions": "No transactions recorded during this period"
   },
   "AccountSettings": {
     "title": "Finance - Account Settings",

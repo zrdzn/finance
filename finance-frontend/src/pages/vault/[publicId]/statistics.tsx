@@ -26,7 +26,9 @@ export default function Statistics(): ReactJSXElement {
               templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }}
               gap={4}
               width="full">
-              <AnalyticsSummaryCard vault={vault} permissions={vaultRole.permissions} />
+              <AnalyticsSummaryCard vault={vault} permissions={vaultRole.permissions} statisticType={"BALANCE"} />
+              <AnalyticsSummaryCard vault={vault} permissions={vaultRole.permissions} statisticType={"INCOME"} />
+              <AnalyticsSummaryCard vault={vault} permissions={vaultRole.permissions} statisticType={"EXPENSES"} />
               <FlowsHistoryCard vault={vault} transactionType={'INCOMING'} flowsRange={"DAY"} />
               <FlowsHistoryCard vault={vault} transactionType={'INCOMING'} flowsRange={"WEEK"} />
               <FlowsHistoryCard vault={vault} transactionType={'INCOMING'} flowsRange={"MONTH"} />

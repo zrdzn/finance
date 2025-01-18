@@ -28,7 +28,6 @@ export default function Dashboard(): ReactJSXElement {
               gap={4}
               width="full">
               <LastTransactionsCard vault={vault} permissions={vaultRole.permissions} />
-              <AnalyticsSummaryCard vault={vault} permissions={vaultRole.permissions} />
             </Grid>
           </Flex>
         </>
