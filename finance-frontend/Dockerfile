@@ -45,6 +45,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/entrypoint.sh ./entrypoint.sh
 COPY --from=builder --chown=nextjs:nodejs /app/replace-variables.sh ./replace-variables.sh
 
-EXPOSE 3000
+EXPOSE 3010
 
 ENTRYPOINT ["bash", "/app/entrypoint.sh"]
