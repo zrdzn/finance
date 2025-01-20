@@ -67,10 +67,12 @@ Data is securely stored in a PostgreSQL database.
 - The backend provides access to other infrastructure elements, such as the database, and offers a REST API for clients.
   - **Language:** [Kotlin](https://kotlinlang.org/)
   - **Framework:** [Spring](https://spring.io/)
+  - **Default port:** 8080
 ### Frontend
 - The frontend consists of a dashboard accessible via a website.
   - **Language:** [TypeScript](https://www.typescriptlang.org/)
   - **Framework:** [Next.JS](https://nextjs.org/)
+  - **Default port:** 3010
 ### Database
 - The database stores all data required for the application to function.
   - **Management System:** [PostgreSQL](https://www.postgresql.org/)
@@ -111,7 +113,7 @@ docker pull zrdzn/finance-frontend:latest
 **3.** Run images
 ```bash
 docker run -d --name finance-backend -p 8080:8080 --env-file .env zrdzn/finance-backend:latest
-docker run -d --name finance-frontend -p 3000:3000 --env-file .env zrdzn/finance-frontend:latest
+docker run -d --name finance-frontend -p 3010:3010 --env-file .env zrdzn/finance-frontend:latest
 ```
 ## 🧑‍💻 Developers
 ### API Documentation
