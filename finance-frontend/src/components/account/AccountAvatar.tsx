@@ -1,17 +1,15 @@
 import React from "react";
 import {Avatar} from "@chakra-ui/react";
-import {useAuthentication} from "@/hooks/useAuthentication";
 
 interface AvatarProperties {
-    size: string
+    size: string,
+    username?: string
 }
 
-export const AccountAvatar = ({ size }: AvatarProperties) => {
-    const { details } = useAuthentication()
-
-    if (!details) {
+export const AccountAvatar = ({ size, username }: AvatarProperties) => {
+    if (!username) {
         return <Avatar size={size} />
     }
 
-    return <Avatar size={size} src={`${process.env.NEXT_PUBLIC_API_URL}/api/users/avatar/${details.username}`} />
+    return <Avatar size={size} src={`${process.env.NEXT_PUBLIC_API_URL}/api/users/avatar/${username}`} />
 }

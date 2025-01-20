@@ -23,7 +23,7 @@ export default function Members(): ReactJSXElement {
           </Head>
           <Flex justifyContent="center" p={4}>
             <Grid
-              templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
+              templateColumns={{ base: '1fr' }}
               gap={4}
               width="full">
               {vaultRole.permissions.includes("MEMBER_READ") && (

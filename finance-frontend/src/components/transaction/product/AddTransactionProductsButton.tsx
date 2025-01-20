@@ -26,6 +26,7 @@ import {ProductSelectWithAddButton} from "@/components/product/ProductSelectWith
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
+import {AddButton} from "@/components/shared/AddButton";
 
 type TransactionProductCreateRequest = Components.Schemas.TransactionProductCreateRequest;
 type ProductResponse = Components.Schemas.ProductResponse;
@@ -75,11 +76,7 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId }: AddTran
 
   return (
     <>
-      <Button backgroundColor={theme.primaryColor}
-              color={'#f8f8f8'} fontWeight={'400'}
-              onClick={onOpen}>
-        <FaPlus />
-      </Button>
+      <AddButton onClick={onOpen} />
 
       <Modal
         initialFocusRef={initialRef}

@@ -61,7 +61,7 @@ export const Navbar = () => {
             <Menu>
               <MenuButton>
                 <HStack alignItems={'center'} width={'full'} gap={2}>
-                  <AccountAvatar size={'xs'} />
+                  <AccountAvatar size={'xs'} username={details.username} />
                   <Box>{isMobile ? null : <Text>{details.username}</Text>}</Box>
                 </HStack>
               </MenuButton>

@@ -24,6 +24,7 @@ import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
 import {TransactionMethod, TransactionType} from "@/api/types";
 import {Components} from "@/api/api";
+import {EditButton} from "@/components/shared/EditButton";
 
 type TransactionUpdateRequest = Components.Schemas.TransactionUpdateRequest;
 type TransactionResponse = Components.Schemas.TransactionResponse;
@@ -86,11 +87,7 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
 
   return (
     <>
-      <Button backgroundColor={theme.primaryColor}
-              color={'#f8f8f8'} fontWeight={'400'}
-              onClick={(event) => { event.preventDefault(); onOpen() } }>
-        <FaEdit />
-      </Button>
+      <EditButton onClick={(event) => { event.preventDefault(); onOpen() } } />
 
       <Modal
         initialFocusRef={initialRef}

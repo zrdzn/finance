@@ -1,13 +1,31 @@
-import {Box, Card, CardBody, CardHeader, Flex, Heading, Link, Stack, Text} from "@chakra-ui/react"
+import {
+  Box,
+  Card,
+  CardBody,
+  CardHeader,
+  Flex,
+  Heading, HStack,
+  Link,
+  Stack,
+  Table,
+  Tbody, Td,
+  Text,
+  Th,
+  Thead,
+  Tr
+} from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
 import {TransactionsCardItem} from "@/components/transaction/TransactionsCardItem"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
+import {DeleteButton} from "@/components/shared/DeleteButton";
+import {AccountAvatar} from "@/components/account/AccountAvatar";
 
 type VaultResponse = Components.Schemas.VaultResponse;
 type TransactionResponse = Components.Schemas.TransactionResponse;
+type TransactionProductWithProductResponse = Components.Schemas.TransactionProductResponse;
 
 interface LastTransactionsCardProperties {
   vault: VaultResponse
@@ -46,11 +64,51 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
             transactions
                 .sort((transactions, nextTransaction) => new Date(nextTransaction.createdAt).getTime() - new Date(transactions.createdAt).getTime())
                 .slice(0, 3)
-                .map(transaction => <TransactionsCardItem key={transaction.id}
+                .map((transaction) => <TransactionsCardItem key={transaction.id}
                                                     vaultId={vault.id}
                                                     transaction={transaction}
-                                                    permissions={permissions} />)
+                                                    permissions={permissions} />
+                )
           }
+
+          <Box overflowX="auto">
+            <Table variant={"simple"}>
+              <Thead>
+                <Tr>
+                  <Th>{t("recent.table.name")}</Th>
+                  <Th>{t("recent.table.actions")}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {transactions.length === 0 ? (
+                    <Tr>
+                      <Td colSpan={2}>
+                        <Text textAlign="center" size="sm">
+                          {t("recent.card.no-transactions")}
+                        </Text>
+                      </Td>
+                    </Tr>
+                ) : (
+                    transactions
+                        .sort((transactions, nextTransaction) => new Date(nextTransaction.createdAt).getTime() - new Date(transactions.createdAt).getTime())
+                        .slice(0, 3)
+                        .map((transaction) => (
+                        <Tr key={transaction.id}>
+                          <Td>
+                            <AccountAvatar size={'sm'} username={transaction.user.username} />
+                            <Text fontSize='md' fontWeight={'600'}
+                                  maxWidth={'70%'}>
+                              {transaction.user.username}
+                            </Text>
+                          </Td>
+                          <Td>{category.name}</Td>
+                          <Td></Td>
+                        </Tr>
+                    ))
+                )}
+              </Tbody>
+            </Table>
+          </Box>
           <Box paddingTop={4}>
             <Flex justifyContent={'space-between'}>
               <Box />

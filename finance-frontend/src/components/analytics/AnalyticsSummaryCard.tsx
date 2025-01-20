@@ -68,7 +68,15 @@ export const AnalyticsSummaryCard = ({ vault, permissions, statisticType }: Anal
     }, [api, statisticType, vault.createdAt, vault.id]);
 
     return (
-        <Card margin={2} boxShadow="md" borderRadius="md" overflow="hidden">
+        <Card
+            margin={4}
+            boxShadow="base"
+            borderRadius="lg"
+            overflow="hidden"
+            backgroundColor="whiteAlpha.900"
+            border="1px solid"
+            borderColor="gray.200"
+        >
             <CardBody>
                 <Stat>
                     <StatLabel>

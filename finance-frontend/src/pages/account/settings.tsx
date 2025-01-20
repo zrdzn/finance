@@ -42,14 +42,20 @@ export default function AccountSettings(): ReactJSXElement {
 
         <Flex justifyContent="center" p={4}>
           <Card
-            width={{ base: 'full', sm: '90%', md: '80%', lg: '60%' }}
-            maxWidth="600px"
-            margin={2}
+              width={{ base: 'full', sm: '90%', md: '80%', lg: '60%' }}
+              maxWidth="600px"
+              margin={4}
+              boxShadow="base"
+              borderRadius="lg"
+              overflow="hidden"
+              backgroundColor="whiteAlpha.900"
+              border="1px solid"
+              borderColor="gray.200"
           >
-            <CardHeader backgroundColor={theme.secondaryColor}>
-              <Flex alignItems={'center'} justifyContent={'space-between'}>
-                <Text fontSize='md' fontWeight={'600'}>{t('profile-card.title')}</Text>
-              </Flex>
+            <CardHeader>
+              <Text fontSize="sm" fontWeight="600">
+                {t("profile-card.title")}
+              </Text>
             </CardHeader>
             <CardBody>
               {

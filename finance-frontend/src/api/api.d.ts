@@ -117,10 +117,11 @@ declare namespace Components {
         export interface TransactionResponse {
             id: number; // int32
             createdAt: string; // date-time
-            userId: number; // int32
+            user: UserResponse;
             vaultId: number; // int32
             transactionMethod: "CARD" | "BLIK" | "CASH";
             transactionType: "INCOMING" | "OUTGOING";
+            products: TransactionProductListResponse;
             description?: string;
             totalInVaultCurrency: number;
             total: number;
@@ -444,17 +445,6 @@ declare namespace Paths {
         }
         namespace Responses {
             export type $200 = Components.Schemas.ScheduleListResponse;
-        }
-    }
-    namespace GetTransactionProducts {
-        namespace Parameters {
-            export type TransactionId = number; // int32
-        }
-        export interface PathParameters {
-            transactionId: Parameters.TransactionId /* int32 */;
-        }
-        namespace Responses {
-            export type $200 = Components.Schemas.TransactionProductListResponse;
         }
     }
     namespace GetTransactionsAmountByVaultId {
@@ -1093,14 +1083,6 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.GetTransactionsAmountByVaultId.Responses.$200>
   /**
-   * getTransactionProducts
-   */
-  'getTransactionProducts'(
-    parameters: Parameters<Paths.GetTransactionProducts.PathParameters>,
-    data?: any,
-    config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.GetTransactionProducts.Responses.$200>
-  /**
    * getSchedulesByVaultId
    */
   'getSchedulesByVaultId'(
@@ -1574,16 +1556,6 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetTransactionsAmountByVaultId.Responses.$200>
-  }
-  ['/api/transactions/{transactionId}/products']: {
-    /**
-     * getTransactionProducts
-     */
-    'get'(
-      parameters: Parameters<Paths.GetTransactionProducts.PathParameters>,
-      data?: any,
-      config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.GetTransactionProducts.Responses.$200>
   }
   ['/api/transactions/schedules/{vaultId}']: {
     /**

@@ -178,7 +178,7 @@ class TransactionService(
 
         transactions.forEach {
             val data = arrayOf(
-                userService.getUser(it.userId).email,
+                it.user.email,
                 vaultService.getVault(vaultId = vaultId, requesterId = requesterId).name,
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(it.createdAt),
                 it.transactionMethod.toString(),
@@ -277,7 +277,13 @@ class TransactionService(
                     description = description
                 )
             }
-            .let { it.toResponse(exchangeService.convertCurrency(it.total, it.currency, "PLN").amount) }
+            .let {
+                it.toResponse(
+                    user = userService.getUser(requesterId),
+                    products = getTransactionProducts(requesterId, it.id!!),
+                    totalInVaultCurrency = exchangeService.convertCurrency(it.total, it.currency, "PLN").amount
+                )
+            }
     }
 
     @Transactional
@@ -398,7 +404,13 @@ class TransactionService(
 
         return transactionRepository
             .findByVaultId(vaultId)
-            .map { it.toResponse(exchangeService.convertCurrency(it.total, it.currency, "PLN").amount) }
+            .map {
+                it.toResponse(
+                    user = userService.getUser(it.userId),
+                    products = getTransactionProducts(requesterId, it.id!!),
+                    totalInVaultCurrency = exchangeService.convertCurrency(it.total, it.currency, "PLN").amount
+                )
+            }
             .toSet()
             .let { TransactionListResponse(it) }
     }
@@ -409,7 +421,13 @@ class TransactionService(
 
         return transactionRepository
             .findByVaultIdAndCreatedAtBetween(vaultId, startDate, endDate)
-            .map { it.toResponse(exchangeService.convertCurrency(it.total, it.currency, "PLN").amount) }
+            .map {
+                it.toResponse(
+                    user = userService.getUser(it.userId),
+                    products = getTransactionProducts(requesterId, it.id!!),
+                    totalInVaultCurrency = exchangeService.convertCurrency(it.total, it.currency, "PLN").amount
+                )
+            }
             .toSet()
             .let { TransactionListResponse(it) }
     }
@@ -417,7 +435,13 @@ class TransactionService(
     @Transactional(readOnly = true)
     fun getTransaction(requesterId: Int, transactionId: Int): TransactionResponse {
         val transaction = transactionRepository.findById(transactionId)
-            ?.let { it.toResponse(exchangeService.convertCurrency(it.total, it.currency, "PLN").amount) }
+            ?.let {
+                it.toResponse(
+                    user = userService.getUser(it.userId),
+                    products = getTransactionProducts(requesterId, it.id!!),
+                    totalInVaultCurrency = exchangeService.convertCurrency(it.total, it.currency, "PLN").amount
+                )
+            }
             ?: throw TransactionNotFoundException()
 
         vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_READ)

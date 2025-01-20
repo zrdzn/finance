@@ -70,9 +70,17 @@ export const CategoriesCard = ({ vault, permissions }: CategoriesCardProperties)
     }
 
     return (
-        <Card margin={2} boxShadow="md" borderRadius="md" overflow="hidden">
+        <Card
+            margin={4}
+            boxShadow="base"
+            borderRadius="lg"
+            overflow="hidden"
+            backgroundColor="whiteAlpha.900"
+            border="1px solid"
+            borderColor="gray.200"
+        >
             <CardHeader>
-                <Text fontSize="md" fontWeight={"600"}>
+                <Text fontSize="sm" fontWeight={"600"}>
                     {t("card.title")}
                 </Text>
             </CardHeader>
@@ -91,7 +99,7 @@ export const CategoriesCard = ({ vault, permissions }: CategoriesCardProperties)
                     )}
                 </Flex>
                 <Box overflowX="auto">
-                    <Table variant={"outline"}>
+                    <Table variant={"simple"}>
                         <Thead>
                             <Tr>
                                 <Th>{t("table.name")}</Th>

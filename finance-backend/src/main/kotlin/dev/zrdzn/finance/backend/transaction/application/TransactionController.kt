@@ -12,7 +12,6 @@ import dev.zrdzn.finance.backend.transaction.application.response.ScheduleRespon
 import dev.zrdzn.finance.backend.transaction.application.response.TransactionAmountResponse
 import dev.zrdzn.finance.backend.transaction.application.response.TransactionFlowsResponse
 import dev.zrdzn.finance.backend.transaction.application.response.TransactionListResponse
-import dev.zrdzn.finance.backend.transaction.application.response.TransactionProductListResponse
 import dev.zrdzn.finance.backend.transaction.application.response.TransactionProductResponse
 import dev.zrdzn.finance.backend.transaction.application.response.TransactionResponse
 import dev.zrdzn.finance.backend.transaction.domain.TransactionMethod
@@ -165,13 +164,6 @@ class TransactionController(
         @AuthenticationPrincipal userId: Int,
         @PathVariable vaultId: Int
     ): TransactionAmountResponse = transactionService.getTransactionsAmount(userId, vaultId)
-
-    @GetMapping("/{transactionId}/products")
-    fun getTransactionProducts(
-        @AuthenticationPrincipal userId: Int,
-        @PathVariable transactionId: Int
-    ): TransactionProductListResponse =
-        transactionService.getTransactionProducts(userId, transactionId)
 
     @GetMapping("/schedules/{vaultId}")
     fun getSchedulesByVaultId(

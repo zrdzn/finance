@@ -21,6 +21,7 @@ import {useRouter} from 'next/router'
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
+import {EditButton} from "@/components/shared/EditButton";
 
 type ProductResponse = Components.Schemas.ProductResponse;
 type ProductUpdateRequest = Components.Schemas.ProductUpdateRequest;
@@ -61,16 +62,7 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
 
   return (
     <>
-      <Button backgroundColor={theme.primaryColor}
-              color={'#f8f8f8'} fontWeight={'400'}
-              size={'sm'}
-              gap={1}
-              onClick={(event) => { event.preventDefault(); onOpen() } }>
-        <FaEdit />
-        <Text>
-          Edit
-        </Text>
-      </Button>
+      <EditButton onClick={(event) => { event.preventDefault(); onOpen() } } />
 
       <Modal
         initialFocusRef={initialRef}

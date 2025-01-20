@@ -1,6 +1,8 @@
 {
   "Global": {
-    "delete-button": "Delete"
+    "add-button": "Add",
+    "delete-button": "Delete",
+    "edit-button": "Edit"
   },
   "Units": {
     "dates": {
@@ -106,6 +108,12 @@
     "card": {
       "title": "Audit Logs",
       "no-audits": "No logs yet"
+    },
+    "table": {
+      "action": "Action",
+      "user": "User",
+      "created": "Created at",
+      "description": "Description"
     }
   },
   "Overview": {
@@ -211,6 +219,7 @@
       "schedule-created-error": "Failed to create a schedule",
       "schedule-deleted-success": "Schedule has been deleted",
       "schedule-deleted-error": "Failed to delete a schedule",
+      "create-button": "Schedule",
       "card": {
         "title": "Schedules",
         "no-schedules": "There are no schedules",
@@ -277,6 +286,13 @@
         "manager": "Manager",
         "member": "Member"
       }
+    },
+    "table": {
+      "avatar": "Avatar",
+      "name": "Name",
+      "email": "E-mail",
+      "role": "Role",
+      "actions": "Actions"
     }
   },
   "Invitations": {
@@ -284,7 +300,7 @@
     "invitation-deleted-error": "Failed to invite for %email%",
     "invitation-created-success": "Successfully invited user %email%",
     "invitation-created-error": "Failed to invite user %email%",
-    "expires-tag": "Expires %date%",
+    "expires-tag": "%date%",
     "create-modal": {
       "title": "Create a new invitation",
       "email-label": "E-mail",
@@ -296,6 +312,11 @@
       "title": "Invitations",
       "no-invitations": "There are no invitations",
       "search-placeholder": "Search invitations"
+    },
+    "table": {
+      "email": "E-mail",
+      "expires": "Expires at",
+      "actions": "Actions"
     }
   },
   "Products": {
