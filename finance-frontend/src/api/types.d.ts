@@ -8,7 +8,7 @@ export type TransactionFlowsRange = "DAY" | "WEEK" | "MONTH" | "YEAR"
 
 export type ScheduleInterval = "HOUR" | "DAY" | "WEEK" | "MONTH" | "YEAR"
 
-export type AnalyticsOverviewStatisticType = "BALANCE" | "INCOME" | "EXPENSES" | "TRANSACTIONS"
+export type AnalyticsOverviewStatisticType = "BALANCE" | "INCOME" | "EXPENSES"
 
 export type SelectOptionProperties = {value: string, label: string}
 export type SelectProperties = SingleValue<SelectOptionProperties>

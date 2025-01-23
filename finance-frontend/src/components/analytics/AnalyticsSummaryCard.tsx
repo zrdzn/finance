@@ -19,7 +19,7 @@ import {useNumberFormatter} from "@/hooks/useNumberFormatter";
 import {AnalyticsOverviewStatisticType} from "@/api/types";
 
 type VaultResponse = Components.Schemas.VaultResponse;
-type Price = Components.Schemas.Price;
+type TransactionFlowsResponse = Components.Schemas.TransactionFlowsResponse;
 
 interface AnalyticsSummaryCardProperties {
   vault: VaultResponse
@@ -31,7 +31,15 @@ export const AnalyticsSummaryCard = ({ vault, permissions, statisticType }: Anal
     const api = useApi();
     const t = useTranslations("Analytics");
     const { formatNumber } = useNumberFormatter();
-    const [data, setData] = useState<Price | undefined>(undefined);
+    const [flows, setFlows] = useState<TransactionFlowsResponse>({
+        total: {
+            amount: 0,
+            currency: 'PLN'
+        },
+        count: {
+            amount: 0
+        }
+    })
 
     useEffect(() => {
         const fetchData = () => {
@@ -43,7 +51,7 @@ export const AnalyticsSummaryCard = ({ vault, permissions, statisticType }: Anal
                             vaultId: vault.id,
                             start: startDate,
                         })
-                        .then(response => setData(response.data.total));
+                        .then(response => setFlows(response.data));
                 } else if (statisticType === "INCOME") {
                     client
                         .getFlowsByVaultId({
@@ -51,7 +59,7 @@ export const AnalyticsSummaryCard = ({ vault, permissions, statisticType }: Anal
                             transactionType: "INCOMING",
                             start: startDate,
                         })
-                        .then(response => setData(response.data.total));
+                        .then(response => setFlows(response.data));
                 } else if (statisticType === "EXPENSES") {
                     client
                         .getFlowsByVaultId({
@@ -59,7 +67,7 @@ export const AnalyticsSummaryCard = ({ vault, permissions, statisticType }: Anal
                             transactionType: "OUTGOING",
                             start: startDate,
                         })
-                        .then(response => setData(response.data.total));
+                        .then(response => setFlows(response.data));
                 }
             });
         };
@@ -85,38 +93,45 @@ export const AnalyticsSummaryCard = ({ vault, permissions, statisticType }: Anal
                         {statisticType === "EXPENSES" && t("expenses")}
                     </StatLabel>
                     <StatNumber>
-                        {data && (
+                        {flows && (
                             <HStack alignItems="center">
                                 <Text
                                     fontSize="2xl"
                                     fontWeight="600"
                                     color={
-                                        data.amount === 0
-                                            ? "black"
-                                            : statisticType === "INCOME"
-                                                ? "green"
-                                                : "crimson"
+                                        flows.total.amount > 0
+                                            ? "green"
+                                            : flows.total.amount < 0
+                                                ? "crimson"
+                                                : "black"
                                     }
                                     isTruncated
                                 >
-                                    {data.amount !== 0 && (
+                                    {flows.total.amount !== 0 && (
                                         <StatArrow
-                                            type={statisticType === "INCOME" ? "increase" : "decrease"}
+                                            type={flows.total.amount > 0 ? "increase" : "decrease"}
                                             mr={2}
                                         />
                                     )}
-                                    {formatNumber(data.amount)}
+                                    {formatNumber(flows.total.amount)}
                                 </Text>
                                 <Text fontSize="xl" isTruncated>
-                                    {data.currency}
+                                    {flows.total.currency}
                                 </Text>
                             </HStack>
                         )}
                     </StatNumber>
                     <StatHelpText fontSize="sm" color="gray.600" mt={2}>
-                        {data && data.amount === 0
+                        {flows && flows.total.amount === 0
                             ? t('no-transactions')
-                            : `${t('transactions-amount')} TODO`}
+                            : (
+                                <>
+                                    {t('transactions-amount')}{" "}
+                                    <Text as="span" color={'black'} ml={1} fontWeight={flows.count.amount > 0 ? "bold" : "normal"}>
+                                        {flows.count.amount}
+                                    </Text>
+                                </>
+                            )}
                     </StatHelpText>
                 </Stat>
             </CardBody>

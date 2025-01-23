@@ -156,6 +156,21 @@
       "no-transactions": "There are no transactions",
       "search-placeholder": "Search transactions"
     },
+    "table": {
+      "user": "User",
+      "created": "Created at",
+      "method": "Method",
+      "description": "Description",
+      "total": "Total",
+      "actions": "Actions",
+      "products": {
+        "button": "Products",
+        "title": "Products",
+        "no-products": "There are no products",
+        "close": "Close",
+        "add": "Add a product"
+      }
+    },
     "update-modal": {
       "title": "Update transaction",
       "transaction-method-label": "Method",
@@ -224,10 +239,16 @@
         "title": "Schedules",
         "no-schedules": "There are no schedules",
         "search-placeholder": "Search schedules",
-        "next-execution": "Next execution %date%",
+        "next-execution": "%date%",
         "interval": "Interval",
         "interval-value": "Every %interval%",
         "create": "Create a new schedule"
+      },
+      "table": {
+        "description": "Description",
+        "interval": "Interval",
+        "next-execution": "Next execution",
+        "actions": "Actions"
       },
       "create-modal": {
         "title": "Create a new schedule",
@@ -262,6 +283,14 @@
         "title": "Last transactions",
         "no-transactions": "There are no transactions",
         "view-all": "View all"
+      },
+      "table": {
+        "user": "User",
+        "created": "Created at",
+        "method": "Method",
+        "description": "Description",
+        "total": "Total",
+        "actions": "Actions"
       }
     }
   },
@@ -393,11 +422,11 @@
       "submit": "Save"
     }
   },
-  "Statistics": {
-    "title": "Finance - Statistics"
-  },
   "Analytics": {
     "balance": "Balance",
+    "balance-last-year": "Balance over year",
+    "income-last-year": "Income over year",
+    "expenses-last-year": "Expenses over year",
     "expenses": "Expenses",
     "income": "Income",
     "income-title": "Income",
@@ -406,8 +435,8 @@
     "week": "Last week",
     "month": "Last month",
     "year": "Last year",
-    "transactions-amount": "Total transactions:",
-    "no-transactions": "No transactions recorded during this period"
+    "transactions-amount": "Transactions",
+    "no-transactions": "No Transactions Recorded"
   },
   "AccountSettings": {
     "title": "Finance - Account Settings",

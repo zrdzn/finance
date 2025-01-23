@@ -110,9 +110,16 @@ export const FlowsHistoryCard = ({
             </StatNumber>
 
             <StatHelpText fontSize="sm" color="gray.600" mt={2}>
-              {flows.total.amount === 0
-                  ? t('no-transactions', { period: t(`${flowsRange.toLowerCase()}`) })
-                  : `${t('transactions-amount')} ${flows.count.amount}`}
+              {flows && flows.total.amount === 0
+                  ? t('no-transactions')
+                  : (
+                      <>
+                        {t('transactions-amount')}{" "}
+                        <Text as="span" fontSize={'md'} ml={1} color={'black'} fontWeight={flows.count.amount > 0 ? "bold" : "normal"}>
+                          {flows.count.amount}
+                        </Text>
+                      </>
+                  )}
             </StatHelpText>
           </Stat>
         </CardBody>

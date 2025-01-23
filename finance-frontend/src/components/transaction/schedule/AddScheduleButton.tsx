@@ -90,7 +90,7 @@ export const AddScheduleButton = ({ transactionId }: AddScheduleButtonProperties
 
   return (
     <>
-      <Button backgroundColor={theme.primaryColor}
+      <Button backgroundColor={'purple.500'}
               color={'#f8f8f8'}
               fontWeight={'400'}
               size={'sm'}

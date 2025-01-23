@@ -69,14 +69,20 @@ export const ExportCard = ({ vault, permissions }: ExportCardProperties) => {
   }
 
   return (
-    <Card margin={2}>
-      <CardHeader backgroundColor={theme.secondaryColor}
-                  color={theme.textColor}>
-        <Flex alignItems={'center'}
-              justifyContent={'space-between'}>
-          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>{t('export.card.title')}</Text>
-        </Flex>
-      </CardHeader>
+      <Card
+          margin={4}
+          boxShadow="base"
+          borderRadius="lg"
+          overflow="hidden"
+          backgroundColor="whiteAlpha.900"
+          border="1px solid"
+          borderColor="gray.200"
+      >
+        <CardHeader>
+          <Text fontSize="sm" fontWeight={"600"}>
+            {t("export.card.title")}
+          </Text>
+        </CardHeader>
       <CardBody>
         <Stack gap={0}>
           <FormControl as="fieldset">

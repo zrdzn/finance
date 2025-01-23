@@ -7,6 +7,7 @@ import dev.zrdzn.finance.backend.transaction.application.request.ScheduleCreateR
 import dev.zrdzn.finance.backend.transaction.application.request.TransactionCreateRequest
 import dev.zrdzn.finance.backend.transaction.application.request.TransactionProductCreateRequest
 import dev.zrdzn.finance.backend.transaction.application.request.TransactionUpdateRequest
+import dev.zrdzn.finance.backend.transaction.application.response.FlowsChartResponse
 import dev.zrdzn.finance.backend.transaction.application.response.ScheduleListResponse
 import dev.zrdzn.finance.backend.transaction.application.response.ScheduleResponse
 import dev.zrdzn.finance.backend.transaction.application.response.TransactionAmountResponse
@@ -178,11 +179,23 @@ class TransactionController(
         @RequestParam("transactionType", required = false) transactionType: TransactionType?,
         @RequestParam("start") start: Instant
     ): TransactionFlowsResponse =
-        transactionService.getTransactionFlows(
+        transactionService.getFlows(
             requesterId = userId,
             vaultId = vaultId,
             transactionType = transactionType,
             start = start
+        )
+
+    @GetMapping("/{vaultId}/flows/chart")
+    fun getFlowsChart(
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable vaultId: Int,
+        @RequestParam("transactionType", required = false) transactionType: TransactionType?
+    ): FlowsChartResponse =
+        transactionService.getFlowsChart(
+            requesterId = userId,
+            vaultId = vaultId,
+            transactionType = transactionType
         )
 
     @DeleteMapping("/{transactionId}")

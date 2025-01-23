@@ -34,9 +34,10 @@ type ProductResponse = Components.Schemas.ProductResponse;
 interface AddTransactionProductsButtonProperties {
   vaultId: number
   transactionId: number
+  size?: string
 }
 
-export const AddTransactionProductsButton = ({ vaultId, transactionId }: AddTransactionProductsButtonProperties) => {
+export const AddTransactionProductsButton = ({ vaultId, transactionId, size }: AddTransactionProductsButtonProperties) => {
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
@@ -76,7 +77,7 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId }: AddTran
 
   return (
     <>
-      <AddButton onClick={onOpen} />
+      <AddButton onClick={onOpen} size={size} />
 
       <Modal
         initialFocusRef={initialRef}

@@ -23,4 +23,6 @@ interface TransactionRepository {
 
     fun countTotalDaysByVaultId(vaultId: Int): Long
 
+    fun getMonthlyTransactionSums(vaultId: Int): List<Array<Any>>
+
 }

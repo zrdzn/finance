@@ -53,4 +53,24 @@ interface JpaTransactionRepository : TransactionRepository, Repository<Transacti
         start: Instant
     ): Long
 
+    @Query(value = """
+        SELECT
+            CAST(EXTRACT(MONTH FROM transaction.created_at) AS INTEGER) AS month,
+            SUM(CASE WHEN transaction.transaction_type = 'INCOMING' THEN transaction.total ELSE 0 END) AS incoming,
+            SUM(CASE WHEN transaction.transaction_type = 'OUTGOING' THEN transaction.total ELSE 0 END) AS outgoing
+        FROM
+            transactions transaction,
+            vaults vault
+        WHERE
+            vault.id = :vaultId
+            AND transaction.created_at >= CURRENT_DATE - INTERVAL '12 months'
+        GROUP BY
+            CAST(EXTRACT(MONTH FROM transaction.created_at) AS INTEGER)
+        ORDER BY
+            CAST(EXTRACT(MONTH FROM transaction.created_at) AS INTEGER)
+    """, nativeQuery = true)
+    override fun getMonthlyTransactionSums(
+        @Param("vaultId") vaultId: Int
+    ): List<Array<Any>>
+
 }

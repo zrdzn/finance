@@ -14,7 +14,7 @@ export const EditButton = ({
   const theme = useTheme()
   const t = useTranslations('Global')
   return (
-    <Button backgroundColor={theme.primaryColor}
+    <Button backgroundColor={'blue.500'}
             color={'#f8f8f8'}
             fontWeight={'400'}
             size={'sm'}

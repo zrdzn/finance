@@ -6,10 +6,11 @@ import {useTheme} from "@/hooks/useTheme";
 
 interface AddButtonProperties {
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
+  size?: string
 }
 
 export const AddButton = ({
-  onClick
+  onClick, size
 }: AddButtonProperties) => {
   const theme = useTheme()
   const t = useTranslations('Global')
@@ -17,7 +18,7 @@ export const AddButton = ({
       <Button backgroundColor={theme.primaryColor}
               color={'#f8f8f8'}
               fontWeight={'400'}
-              size={'md'}
+              size={size || 'md'}
               gap={1}
               onClick={onClick}>
           <FaPlus />
