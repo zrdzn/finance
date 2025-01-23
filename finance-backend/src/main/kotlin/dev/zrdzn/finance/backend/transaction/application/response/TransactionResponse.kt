@@ -2,16 +2,18 @@ package dev.zrdzn.finance.backend.transaction.application.response
 
 import dev.zrdzn.finance.backend.transaction.domain.TransactionMethod
 import dev.zrdzn.finance.backend.transaction.domain.TransactionType
+import dev.zrdzn.finance.backend.user.application.response.UserResponse
 import java.math.BigDecimal
 import java.time.Instant
 
 data class TransactionResponse(
     val id: Int,
     val createdAt: Instant,
-    val userId: Int,
+    val user: UserResponse,
     val vaultId: Int,
     val transactionMethod: TransactionMethod,
     val transactionType: TransactionType,
+    val products: TransactionProductListResponse,
     val description: String?,
     val totalInVaultCurrency: BigDecimal,
     val total: BigDecimal,

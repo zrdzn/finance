@@ -12,6 +12,7 @@ import {useApi} from "@/hooks/useApi";
 import {useRouter} from "next/router";
 import {useTranslations} from "next-intl";
 import {useTheme} from "@/hooks/useTheme";
+import {useAuthentication} from "@/hooks/useAuthentication";
 
 export type UserProfileUpdateRequest = Components.Schemas.UserProfileUpdateRequest;
 export type UserResponse = Components.Schemas.UserResponse;
@@ -25,6 +26,7 @@ export const AccountProfileUpdateForm = ({ user }: AccountProfileUpdateFormPrope
     const t = useTranslations("AccountSettings")
     const router = useRouter()
     const theme = useTheme()
+    const { details } = useAuthentication()
     const [userProfileUpdateRequest, setUserProfileUpdateRequest] = useState<UserProfileUpdateRequest>({
         username: user.username,
         decimalSeparator: user.decimalSeparator,
@@ -78,7 +80,7 @@ export const AccountProfileUpdateForm = ({ user }: AccountProfileUpdateFormPrope
             <FormControl>
                 <FormLabel>{t('profile-card.avatar-label')}</FormLabel>
                 <HStack gap={4}>
-                    <AccountAvatar size={'xl'} />
+                    <AccountAvatar size={'xl'} username={details?.username} />
                     <FileUpload handleFile={it => handleAvatarUpload(it)}>
                         <Button size={'md'}
                                 backgroundColor={theme.primaryColor}

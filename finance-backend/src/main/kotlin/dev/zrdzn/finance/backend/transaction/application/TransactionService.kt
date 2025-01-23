@@ -7,14 +7,16 @@ import com.opencsv.enums.CSVReaderNullFieldIndicator
 import dev.zrdzn.finance.backend.audit.application.AuditService
 import dev.zrdzn.finance.backend.audit.domain.AuditAction
 import dev.zrdzn.finance.backend.exchange.application.ExchangeService
-import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.product.application.ProductService
+import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.transaction.application.TransactionMapper.toResponse
 import dev.zrdzn.finance.backend.transaction.application.error.ScheduleNotFoundException
 import dev.zrdzn.finance.backend.transaction.application.error.TransactionDescriptionRequiredException
 import dev.zrdzn.finance.backend.transaction.application.error.TransactionImportMappingNotFoundException
 import dev.zrdzn.finance.backend.transaction.application.error.TransactionNotFoundException
 import dev.zrdzn.finance.backend.transaction.application.error.TransactionPriceRequiredException
+import dev.zrdzn.finance.backend.transaction.application.response.FlowsChartResponse
+import dev.zrdzn.finance.backend.transaction.application.response.FlowsChartSeries
 import dev.zrdzn.finance.backend.transaction.application.response.ScheduleListResponse
 import dev.zrdzn.finance.backend.transaction.application.response.ScheduleResponse
 import dev.zrdzn.finance.backend.transaction.application.response.TransactionAmountResponse
@@ -40,6 +42,8 @@ import java.io.StringWriter
 import java.math.BigDecimal
 import java.time.Clock
 import java.time.Instant
+import java.time.LocalDate
+import java.time.Month
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
@@ -178,7 +182,7 @@ class TransactionService(
 
         transactions.forEach {
             val data = arrayOf(
-                userService.getUser(it.userId).email,
+                it.user.email,
                 vaultService.getVault(vaultId = vaultId, requesterId = requesterId).name,
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(it.createdAt),
                 it.transactionMethod.toString(),
@@ -277,7 +281,13 @@ class TransactionService(
                     description = description
                 )
             }
-            .let { it.toResponse(exchangeService.convertCurrency(it.total, it.currency, "PLN").amount) }
+            .let {
+                it.toResponse(
+                    user = userService.getUser(requesterId),
+                    products = getTransactionProducts(requesterId, it.id!!),
+                    totalInVaultCurrency = exchangeService.convertCurrency(it.total, it.currency, "PLN").amount
+                )
+            }
     }
 
     @Transactional
@@ -398,7 +408,13 @@ class TransactionService(
 
         return transactionRepository
             .findByVaultId(vaultId)
-            .map { it.toResponse(exchangeService.convertCurrency(it.total, it.currency, "PLN").amount) }
+            .map {
+                it.toResponse(
+                    user = userService.getUser(it.userId),
+                    products = getTransactionProducts(requesterId, it.id!!),
+                    totalInVaultCurrency = exchangeService.convertCurrency(it.total, it.currency, "PLN").amount
+                )
+            }
             .toSet()
             .let { TransactionListResponse(it) }
     }
@@ -409,7 +425,13 @@ class TransactionService(
 
         return transactionRepository
             .findByVaultIdAndCreatedAtBetween(vaultId, startDate, endDate)
-            .map { it.toResponse(exchangeService.convertCurrency(it.total, it.currency, "PLN").amount) }
+            .map {
+                it.toResponse(
+                    user = userService.getUser(it.userId),
+                    products = getTransactionProducts(requesterId, it.id!!),
+                    totalInVaultCurrency = exchangeService.convertCurrency(it.total, it.currency, "PLN").amount
+                )
+            }
             .toSet()
             .let { TransactionListResponse(it) }
     }
@@ -417,7 +439,13 @@ class TransactionService(
     @Transactional(readOnly = true)
     fun getTransaction(requesterId: Int, transactionId: Int): TransactionResponse {
         val transaction = transactionRepository.findById(transactionId)
-            ?.let { it.toResponse(exchangeService.convertCurrency(it.total, it.currency, "PLN").amount) }
+            ?.let {
+                it.toResponse(
+                    user = userService.getUser(it.userId),
+                    products = getTransactionProducts(requesterId, it.id!!),
+                    totalInVaultCurrency = exchangeService.convertCurrency(it.total, it.currency, "PLN").amount
+                )
+            }
             ?: throw TransactionNotFoundException()
 
         vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_READ)
@@ -491,7 +519,7 @@ class TransactionService(
             ?: throw ScheduleNotFoundException()
 
     @Transactional(readOnly = true)
-    fun getTransactionFlows(requesterId: Int, vaultId: Int, transactionType: TransactionType?, start: Instant): TransactionFlowsResponse {
+    fun getFlows(requesterId: Int, vaultId: Int, transactionType: TransactionType?, start: Instant): TransactionFlowsResponse {
         val vault = vaultService.getVault(vaultId, requesterId)
 
         // if transaction type is not provided, calculate balance
@@ -500,19 +528,66 @@ class TransactionService(
             val outcome = calculateFlowsByType(vaultId, TransactionType.OUTGOING, start, vault.currency)
 
             return TransactionFlowsResponse(
-                Price(
+                total = Price(
                     amount = income - outcome,
                     currency = vault.currency
-                )
+                ),
+                count = transactionRepository
+                    .countByVaultId(vaultId)
+                    .let { TransactionAmountResponse(it.toInt()) }
             )
         }
 
         return TransactionFlowsResponse(
-            Price(
+            total = Price(
                 amount = calculateFlowsByType(vaultId, transactionType, start, vault.currency),
                 currency = vault.currency
-            )
+            ),
+            count = transactionRepository
+                .countByVaultIdAndTransactionType(vaultId, transactionType, start)
+                .let { TransactionAmountResponse(it.toInt()) }
         )
+    }
+
+    @Transactional(readOnly = true)
+    fun getFlowsChart(
+        requesterId: Int,
+        vaultId: Int,
+        transactionType: TransactionType?
+    ): FlowsChartResponse {
+        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_READ)
+
+        val results = transactionRepository.getMonthlyTransactionSums(vaultId)
+
+        val today = LocalDate.now(clock)
+        val currentYear = today.year
+        val currentMonth = today.monthValue
+
+        val categories = Array(12) { index ->
+            val month = (currentMonth - index - 1).mod(12) + 1
+            val year = currentYear - if (month > currentMonth) 1 else 0
+            "${Month.of(month).name.substring(0, 3)} ${year}'"
+        }
+        val incomingData = Array(12) { BigDecimal.ZERO }
+        val outgoingData = Array(12) { BigDecimal.ZERO }
+        val differenceData = Array(12) { BigDecimal.ZERO }
+
+        results.forEach { row ->
+            val month = row[0] as Int
+            val incoming = row[1] as BigDecimal
+            val outgoing = row[2] as BigDecimal
+
+            categories[month - 1] = Month.of(month).name
+            incomingData[month - 1] = incoming
+            outgoingData[month - 1] = outgoing
+            differenceData[month - 1] = incoming.minus(outgoing)
+        }
+
+        when (transactionType) {
+            TransactionType.INCOMING -> return FlowsChartResponse(categories.reversed(), listOf(FlowsChartSeries("Income", incomingData.reversed())))
+            TransactionType.OUTGOING -> return FlowsChartResponse(categories.reversed(), listOf(FlowsChartSeries("Spent", outgoingData.reversed())))
+            else -> return FlowsChartResponse(categories.reversed(), listOf(FlowsChartSeries("Balance", differenceData.reversed())))
+        }
     }
 
     @Transactional

@@ -1,4 +1,9 @@
 {
+  "Global": {
+    "add-button": "Add",
+    "delete-button": "Delete",
+    "edit-button": "Edit"
+  },
   "Units": {
     "dates": {
       "singular": {
@@ -103,6 +108,12 @@
     "card": {
       "title": "Audit Logs",
       "no-audits": "No logs yet"
+    },
+    "table": {
+      "action": "Action",
+      "user": "User",
+      "created": "Created at",
+      "description": "Description"
     }
   },
   "Overview": {
@@ -144,6 +155,21 @@
       "title": "Transactions",
       "no-transactions": "There are no transactions",
       "search-placeholder": "Search transactions"
+    },
+    "table": {
+      "user": "User",
+      "created": "Created at",
+      "method": "Method",
+      "description": "Description",
+      "total": "Total",
+      "actions": "Actions",
+      "products": {
+        "button": "Products",
+        "title": "Products",
+        "no-products": "There are no products",
+        "close": "Close",
+        "add": "Add a product"
+      }
     },
     "update-modal": {
       "title": "Update transaction",
@@ -208,14 +234,21 @@
       "schedule-created-error": "Failed to create a schedule",
       "schedule-deleted-success": "Schedule has been deleted",
       "schedule-deleted-error": "Failed to delete a schedule",
+      "create-button": "Schedule",
       "card": {
         "title": "Schedules",
         "no-schedules": "There are no schedules",
         "search-placeholder": "Search schedules",
-        "next-execution": "Next execution %date%",
+        "next-execution": "%date%",
         "interval": "Interval",
         "interval-value": "Every %interval%",
         "create": "Create a new schedule"
+      },
+      "table": {
+        "description": "Description",
+        "interval": "Interval",
+        "next-execution": "Next execution",
+        "actions": "Actions"
       },
       "create-modal": {
         "title": "Create a new schedule",
@@ -250,6 +283,14 @@
         "title": "Last transactions",
         "no-transactions": "There are no transactions",
         "view-all": "View all"
+      },
+      "table": {
+        "user": "User",
+        "created": "Created at",
+        "method": "Method",
+        "description": "Description",
+        "total": "Total",
+        "actions": "Actions"
       }
     }
   },
@@ -274,6 +315,13 @@
         "manager": "Manager",
         "member": "Member"
       }
+    },
+    "table": {
+      "avatar": "Avatar",
+      "name": "Name",
+      "email": "E-mail",
+      "role": "Role",
+      "actions": "Actions"
     }
   },
   "Invitations": {
@@ -281,7 +329,7 @@
     "invitation-deleted-error": "Failed to invite for %email%",
     "invitation-created-success": "Successfully invited user %email%",
     "invitation-created-error": "Failed to invite user %email%",
-    "expires-tag": "Expires %date%",
+    "expires-tag": "%date%",
     "create-modal": {
       "title": "Create a new invitation",
       "email-label": "E-mail",
@@ -293,6 +341,11 @@
       "title": "Invitations",
       "no-invitations": "There are no invitations",
       "search-placeholder": "Search invitations"
+    },
+    "table": {
+      "email": "E-mail",
+      "expires": "Expires at",
+      "actions": "Actions"
     }
   },
   "Products": {
@@ -304,6 +357,11 @@
       "title": "Products",
       "no-products": "There are no products",
       "search-placeholder": "Search products"
+    },
+    "table": {
+      "name": "Name",
+      "category": "Category",
+      "actions": "Actions"
     },
     "create-modal": {
       "title": "Add a new product",
@@ -336,6 +394,10 @@
       "title": "Categories",
       "no-categories": "There are no categories",
       "search-placeholder": "Search categories"
+    },
+    "table": {
+      "name": "Name",
+      "actions": "Actions"
     }
   },
   "VaultSettings": {
@@ -360,25 +422,21 @@
       "submit": "Save"
     }
   },
-  "Statistics": {
-    "title": "Finance - Statistics"
-  },
   "Analytics": {
-    "summary": {
-      "title": "Summary",
-      "balance": "Balance",
-      "income": "Income",
-      "expenses": "Expenses",
-      "transactions": "Transactions"
-    },
-    "history": {
-      "income-title": "Income",
-      "expenses-title": "Expenses",
-      "day": "Last 24 hours",
-      "week": "Last week",
-      "month": "Last month",
-      "year": "Last year"
-    }
+    "balance": "Balance",
+    "balance-last-year": "Balance over year",
+    "income-last-year": "Income over year",
+    "expenses-last-year": "Expenses over year",
+    "expenses": "Expenses",
+    "income": "Income",
+    "income-title": "Income",
+    "expenses-title": "Expenses",
+    "day": "Last 24 hours",
+    "week": "Last week",
+    "month": "Last month",
+    "year": "Last year",
+    "transactions-amount": "Transactions",
+    "no-transactions": "No Transactions Recorded"
   },
   "AccountSettings": {
     "title": "Finance - Account Settings",

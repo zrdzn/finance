@@ -24,13 +24,20 @@ export default function Transactions(): ReactJSXElement {
             <title>{t('title')}</title>
           </Head>
           <Flex justifyContent="center" alignItems={'center'} p={4} direction={'column'}>
-            <Grid
-              templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }}
-              gap={4}
-              width="full">
+            <Flex width={'full'}>
+              {vaultRole.permissions.includes("TRANSACTION_READ") && (
+                  <TransactionsCard vault={vault} permissions={vaultRole.permissions} />
+              )}
+            </Flex>
+            <Flex width={'full'}>
               {vaultRole.permissions.includes("SCHEDULE_READ") && (
                   <SchedulesCard vault={vault} permissions={vaultRole.permissions} />
               )}
+            </Flex>
+            <Grid
+              templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
+              gap={4}
+              width="full">
               {vaultRole.permissions.includes("TRANSACTION_CREATE") && (
                     <ImportCard vault={vault} permissions={vaultRole.permissions} />
               )}
@@ -38,11 +45,6 @@ export default function Transactions(): ReactJSXElement {
                   <ExportCard vault={vault} permissions={vaultRole.permissions} />
               )}
             </Grid>
-            <Flex width={'full'}>
-              {vaultRole.permissions.includes("TRANSACTION_READ") && (
-                  <TransactionsCard vault={vault} permissions={vaultRole.permissions} />
-              )}
-            </Flex>
           </Flex>
         </>
       }

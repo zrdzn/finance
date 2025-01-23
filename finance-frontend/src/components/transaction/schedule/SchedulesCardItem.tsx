@@ -14,8 +14,8 @@ import {DeleteButton} from "@/components/shared/DeleteButton"
 import toast from "react-hot-toast"
 import {useDateFormatter} from "@/hooks/useDateFormatter"
 import {useTranslations} from "next-intl";
-import {Components} from "@/api/api";
 import {useIntervalFormatter} from "@/hooks/useIntervalFormatter";
+import {Components} from "@/api/api";
 
 type ScheduleResponse = Components.Schemas.ScheduleResponse;
 

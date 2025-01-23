@@ -24,6 +24,7 @@ import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
 import {TransactionMethod, TransactionType} from "@/api/types";
+import {AddButton} from "@/components/shared/AddButton";
 
 type VaultResponse = Components.Schemas.VaultResponse;
 type TransactionCreateRequest = Components.Schemas.TransactionCreateRequest;
@@ -99,11 +100,7 @@ export const AddTransactionButton = ({ vault }: AddTransactionButtonProperties) 
 
   return (
     <>
-      <Button backgroundColor={theme.primaryColor}
-              color={'#f8f8f8'} fontWeight={'400'}
-              onClick={onOpen}>
-        <FaPlus />
-      </Button>
+      <AddButton onClick={onOpen} />
 
       <Modal
         initialFocusRef={initialRef}

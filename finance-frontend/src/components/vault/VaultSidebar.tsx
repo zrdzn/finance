@@ -54,7 +54,6 @@ const GetAvailableEndpoints = (vault: VaultResponse, permissions: string[]) => {
     { href: `/vault/${vault.publicId}`, icon: FaHouse, label: t('overview') },
     { href: `/vault/${vault.publicId}/transactions`, icon: FaBook, label: t('transactions'), requireAtLeast: ['TRANSACTION_READ', 'SCHEDULE_READ'] },
     { href: `/vault/${vault.publicId}/products`, icon: FaTags, label: t('products'), requireAtLeast: ['PRODUCT_READ', 'CATEGORY_READ'] },
-    { href: `/vault/${vault.publicId}/statistics`, icon: FaChartSimple, label: t('statistics') },
     { href: `/vault/${vault.publicId}/members`, icon: FaUser, label: t('members'), requireAtLeast: ['MEMBER_READ', 'MEMBER_INVITE_READ'] },
     { href: `/vault/${vault.publicId}/audits`, icon: FaHistory, label: t('audits'), requireAtLeast: ['AUDIT_READ'] },
     { href: `/vault/${vault.publicId}/settings`, icon: FaGears, label: t('settings'), requireAtLeast: ['SETTINGS_READ'] }

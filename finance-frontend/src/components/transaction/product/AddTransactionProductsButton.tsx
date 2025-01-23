@@ -26,6 +26,7 @@ import {ProductSelectWithAddButton} from "@/components/product/ProductSelectWith
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
+import {AddButton} from "@/components/shared/AddButton";
 
 type TransactionProductCreateRequest = Components.Schemas.TransactionProductCreateRequest;
 type ProductResponse = Components.Schemas.ProductResponse;
@@ -33,9 +34,10 @@ type ProductResponse = Components.Schemas.ProductResponse;
 interface AddTransactionProductsButtonProperties {
   vaultId: number
   transactionId: number
+  size?: string
 }
 
-export const AddTransactionProductsButton = ({ vaultId, transactionId }: AddTransactionProductsButtonProperties) => {
+export const AddTransactionProductsButton = ({ vaultId, transactionId, size }: AddTransactionProductsButtonProperties) => {
   const theme = useTheme()
   const api = useApi()
   const router = useRouter()
@@ -75,11 +77,7 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId }: AddTran
 
   return (
     <>
-      <Button backgroundColor={theme.primaryColor}
-              color={'#f8f8f8'} fontWeight={'400'}
-              onClick={onOpen}>
-        <FaPlus />
-      </Button>
+      <AddButton onClick={onOpen} size={size} />
 
       <Modal
         initialFocusRef={initialRef}

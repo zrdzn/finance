@@ -1,24 +1,40 @@
-import {Card, CardBody, CardHeader, Divider, Flex, Heading, Stack, Text} from "@chakra-ui/react"
-import React, {useEffect, useState} from "react"
-import {useTheme} from "@/hooks/useTheme"
-import {useApi} from "@/hooks/useApi"
-import {AddProductButton} from "@/components/product/AddProductButton"
-import {ProductsCardItem} from "@/components/product/ProductsCardItem"
-import {SearchBar} from "@/components/shared/SearchBar"
-import {useRouter} from "next/router"
-import {useTranslations} from "next-intl";
-import {Components} from "@/api/api";
+import React, { useEffect, useState } from "react"
+import { useApi } from "@/hooks/useApi"
+import { useTranslations } from "next-intl"
+import { useRouter } from "next/router"
+import { Components } from "@/api/api"
+import {
+    CardBody,
+    Table,
+    Thead,
+    Tbody,
+    Tr,
+    Th,
+    Td,
+    Flex,
+    HStack,
+    Button,
+    Tag,
+    TagLabel,
+    Text,
+    Box,
+    Card, CardHeader,
+} from "@chakra-ui/react"
+import { EditProductButton } from "@/components/product/EditProductButton"
+import { DeleteButton } from "@/components/shared/DeleteButton"
+import toast from "react-hot-toast"
+import { AddProductButton } from "@/components/product/AddProductButton"
+import { SearchBar } from "@/components/shared/SearchBar"
 
-type VaultResponse = Components.Schemas.VaultResponse;
-type ProductResponse = Components.Schemas.ProductResponse;
+type ProductResponse = Components.Schemas.ProductResponse
+type VaultResponse = Components.Schemas.VaultResponse
 
-interface ProductsCardProperties {
+interface ProductsTableProperties {
   vault: VaultResponse
   permissions: string[]
 }
 
-export const ProductsCard = ({ vault, permissions }: ProductsCardProperties) => {
-  const theme = useTheme()
+export const ProductsCard = ({ vault, permissions }: ProductsTableProperties) => {
   const api = useApi()
   const router = useRouter()
   const t = useTranslations("Products")
@@ -33,7 +49,7 @@ export const ProductsCard = ({ vault, permissions }: ProductsCardProperties) => 
               setQueriedProducts(response.data.products)
             }))
         .catch(error => console.error(error))
-  }, [api, vault.id]);
+  }, [api, vault.id])
 
   const handleSearchResults = (results: ProductResponse[]) => {
     setQueriedProducts(results)
@@ -43,45 +59,89 @@ export const ProductsCard = ({ vault, permissions }: ProductsCardProperties) => 
     router.reload()
   }
 
-  return (
-    <Card margin={2}>
-      <CardHeader backgroundColor={theme.secondaryColor}
-                  color={theme.textColor}>
-        <Flex alignItems={'center'}
-              justifyContent={'space-between'}>
-          <Text fontSize='md' fontWeight={'600'} textTransform={'uppercase'}>{t('card.title')}</Text>
-        </Flex>
-      </CardHeader>
-      <CardBody>
-        <Flex justifyContent={'space-between'}
-              gap={4}>
-          <SearchBar
-            placeholder={t('card.search-placeholder')}
-            content={products}
-            onSearch={handleSearchResults}
-            filter={(product, query) => product.name.toLowerCase().includes(query.toLowerCase())}
-          />
-          {
-            permissions.includes("PRODUCT_CREATE") && <AddProductButton vaultId={vault.id} onCreate={handleProductCreate} />
-          }
-        </Flex>
-        <Divider mt={4} />
-        <Stack gap={0}>
-          {
-            queriedProducts.length === 0 &&
-              <Flex justifyContent={'center'}
-                    mt={4}>
-                  <Text size={'sm'}>{t('card.no-products')}</Text>
-              </Flex>
-          }
-          {
-            queriedProducts &&
-            queriedProducts.map(product => <ProductsCardItem key={product.id}
-                                                             product={product}
-                                                             permissions={permissions} />)
-          }
-        </Stack>
-      </CardBody>
-    </Card>
-  )
+    return (
+        <Card
+            margin={4}
+            boxShadow="base"
+            borderRadius="lg"
+            overflow="hidden"
+            backgroundColor="whiteAlpha.900"
+            border="1px solid"
+            borderColor="gray.200"
+        >
+            <CardHeader>
+                <Text fontSize="sm" fontWeight={"600"}>
+                    {t("card.title")}
+                </Text>
+            </CardHeader>
+            <CardBody>
+                <Flex justifyContent={"space-between"} gap={4} mb={4}>
+                    <SearchBar
+                        placeholder={t("card.search-placeholder")}
+                        content={products}
+                        onSearch={handleSearchResults}
+                        filter={(product, query) => product.name.toLowerCase().includes(query.toLowerCase())}
+                    />
+                    {permissions.includes("PRODUCT_CREATE") && (
+                        <AddProductButton vaultId={vault.id} onCreate={handleProductCreate} />
+                    )}
+                </Flex>
+                <Box overflowX="auto">
+                    <Table variant={'simple'}>
+                        <Thead>
+                            <Tr>
+                                <Th>{t("table.name")}</Th>
+                                <Th>{t("table.category")}</Th>
+                                <Th>{t("table.actions")}</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            {queriedProducts.length === 0 ? (
+                                <Tr>
+                                    <Td colSpan={3}>
+                                        <Text textAlign="center" size="sm">
+                                            {t("card.no-products")}
+                                        </Text>
+                                    </Td>
+                                </Tr>
+                            ) : (
+                                queriedProducts.map((product) => (
+                                    <Tr key={product.id}>
+                                        <Td>{product.name}</Td>
+                                        <Td>
+                                            {product.categoryName && (
+                                                <Tag size={"sm"} colorScheme="cyan">
+                                                    <TagLabel>{product.categoryName}</TagLabel>
+                                                </Tag>
+                                            )}
+                                        </Td>
+                                        <Td>
+                                            <HStack spacing={2}>
+                                                {permissions.includes("PRODUCT_UPDATE") && (
+                                                    <EditProductButton product={product} />
+                                                )}
+                                                {permissions.includes("PRODUCT_DELETE") && (
+                                                    <DeleteButton
+                                                        onClick={() => {
+                                                            api
+                                                                .then((client) => client.deleteProduct({ productId: product.id }))
+                                                                .then(() => {
+                                                                    toast.success(t("product-deleted-success"))
+                                                                    setTimeout(() => router.reload(), 1000)
+                                                                })
+                                                                .catch((error) => console.error(error))
+                                                        }}
+                                                    />
+                                                )}
+                                            </HStack>
+                                        </Td>
+                                    </Tr>
+                                ))
+                            )}
+                        </Tbody>
+                    </Table>
+                </Box>
+            </CardBody>
+        </Card>
+    )
 }

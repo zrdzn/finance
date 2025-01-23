@@ -90,10 +90,16 @@ export const AddScheduleButton = ({ transactionId }: AddScheduleButtonProperties
 
   return (
     <>
-      <Button backgroundColor={theme.primaryColor}
-              color={'#f8f8f8'} fontWeight={'400'}
+      <Button backgroundColor={'purple.500'}
+              color={'#f8f8f8'}
+              fontWeight={'400'}
+              size={'sm'}
+              gap={1}
               onClick={onOpen}>
         <FaCalendar />
+        <Text>
+            {t('schedules.create-button')}
+        </Text>
       </Button>
 
       <Modal

@@ -21,6 +21,7 @@ import {VaultRoleSelect} from "@/components/vault/VaultRoleSelect";
 import {useTranslations} from "next-intl";
 import {VaultRole} from "@/api/types";
 import {Components} from "@/api/api";
+import {EditButton} from "@/components/shared/EditButton";
 
 type VaultMemberResponse = Components.Schemas.VaultMemberResponse;
 type VaultMemberUpdateRequest = Components.Schemas.VaultMemberUpdateRequest;
@@ -63,11 +64,7 @@ export const EditMemberButton = ({ member }: EditMemberButtonProperties) => {
 
   return (
     <>
-      <Button backgroundColor={theme.primaryColor}
-              color={'#f8f8f8'} fontWeight={'400'}
-              onClick={(event) => { event.preventDefault(); onOpen() } }>
-        <FaEdit />
-      </Button>
+      <EditButton onClick={(event) => { event.preventDefault(); onOpen() } } />
 
       <Modal
         initialFocusRef={initialRef}

@@ -43,6 +43,14 @@ declare namespace Components {
             name: string;
             vaultId: number; // int32
         }
+        export interface FlowsChartResponse {
+            categories: string[];
+            series: FlowsChartSeries[];
+        }
+        export interface FlowsChartSeries {
+            name: string;
+            data: number /* double */[];
+        }
         export interface Price {
             amount: number;
             currency: string;
@@ -94,6 +102,7 @@ declare namespace Components {
         }
         export interface TransactionFlowsResponse {
             total: Price;
+            count: TransactionAmountResponse;
         }
         export interface TransactionListResponse {
             transactions: TransactionResponse[];
@@ -116,10 +125,11 @@ declare namespace Components {
         export interface TransactionResponse {
             id: number; // int32
             createdAt: string; // date-time
-            userId: number; // int32
+            user: UserResponse;
             vaultId: number; // int32
             transactionMethod: "CARD" | "BLIK" | "CASH";
             transactionType: "INCOMING" | "OUTGOING";
+            products: TransactionProductListResponse;
             description?: string;
             totalInVaultCurrency: number;
             total: number;
@@ -300,8 +310,7 @@ declare namespace Paths {
         }
         export type RequestBody = Components.Schemas.VaultInvitationCreateRequest;
         namespace Responses {
-            export interface $200 {
-            }
+            export type $200 = Components.Schemas.VaultInvitationResponse;
         }
     }
     namespace DeleteCategory {
@@ -407,7 +416,7 @@ declare namespace Paths {
             export type $200 = Components.Schemas.CategoryResponse;
         }
     }
-    namespace GetExpensesByVaultId {
+    namespace GetFlowsByVaultId {
         namespace Parameters {
             export type Start = string; // date-time
             export type TransactionType = "INCOMING" | "OUTGOING";
@@ -422,6 +431,21 @@ declare namespace Paths {
         }
         namespace Responses {
             export type $200 = Components.Schemas.TransactionFlowsResponse;
+        }
+    }
+    namespace GetFlowsChart {
+        namespace Parameters {
+            export type TransactionType = "INCOMING" | "OUTGOING";
+            export type VaultId = number; // int32
+        }
+        export interface PathParameters {
+            vaultId: Parameters.VaultId /* int32 */;
+        }
+        export interface QueryParameters {
+            transactionType?: Parameters.TransactionType;
+        }
+        namespace Responses {
+            export type $200 = Components.Schemas.FlowsChartResponse;
         }
     }
     namespace GetProductsByVaultId {
@@ -444,17 +468,6 @@ declare namespace Paths {
         }
         namespace Responses {
             export type $200 = Components.Schemas.ScheduleListResponse;
-        }
-    }
-    namespace GetTransactionProducts {
-        namespace Parameters {
-            export type TransactionId = number; // int32
-        }
-        export interface PathParameters {
-            transactionId: Parameters.TransactionId /* int32 */;
-        }
-        namespace Responses {
-            export type $200 = Components.Schemas.TransactionProductListResponse;
         }
     }
     namespace GetTransactionsAmountByVaultId {
@@ -1069,13 +1082,21 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.GetTransactionsByVaultId.Responses.$200>
   /**
-   * getExpensesByVaultId
+   * getFlowsByVaultId
    */
-  'getExpensesByVaultId'(
-    parameters: Parameters<Paths.GetExpensesByVaultId.QueryParameters & Paths.GetExpensesByVaultId.PathParameters>,
+  'getFlowsByVaultId'(
+    parameters: Parameters<Paths.GetFlowsByVaultId.QueryParameters & Paths.GetFlowsByVaultId.PathParameters>,
     data?: any,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.GetExpensesByVaultId.Responses.$200>
+  ): OperationResponse<Paths.GetFlowsByVaultId.Responses.$200>
+  /**
+   * getFlowsChart
+   */
+  'getFlowsChart'(
+    parameters: Parameters<Paths.GetFlowsChart.QueryParameters & Paths.GetFlowsChart.PathParameters>,
+    data?: any,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.GetFlowsChart.Responses.$200>
   /**
    * exportTransactions
    */
@@ -1092,14 +1113,6 @@ export interface OperationMethods {
     data?: any,
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.GetTransactionsAmountByVaultId.Responses.$200>
-  /**
-   * getTransactionProducts
-   */
-  'getTransactionProducts'(
-    parameters: Parameters<Paths.GetTransactionProducts.PathParameters>,
-    data?: any,
-    config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.GetTransactionProducts.Responses.$200>
   /**
    * getSchedulesByVaultId
    */
@@ -1547,13 +1560,23 @@ export interface PathsDictionary {
   }
   ['/api/transactions/{vaultId}/flows']: {
     /**
-     * getExpensesByVaultId
+     * getFlowsByVaultId
      */
     'get'(
-      parameters: Parameters<Paths.GetExpensesByVaultId.QueryParameters & Paths.GetExpensesByVaultId.PathParameters>,
+      parameters: Parameters<Paths.GetFlowsByVaultId.QueryParameters & Paths.GetFlowsByVaultId.PathParameters>,
       data?: any,
       config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.GetExpensesByVaultId.Responses.$200>
+    ): OperationResponse<Paths.GetFlowsByVaultId.Responses.$200>
+  }
+  ['/api/transactions/{vaultId}/flows/chart']: {
+    /**
+     * getFlowsChart
+     */
+    'get'(
+      parameters: Parameters<Paths.GetFlowsChart.QueryParameters & Paths.GetFlowsChart.PathParameters>,
+      data?: any,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.GetFlowsChart.Responses.$200>
   }
   ['/api/transactions/{vaultId}/export']: {
     /**
@@ -1574,16 +1597,6 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetTransactionsAmountByVaultId.Responses.$200>
-  }
-  ['/api/transactions/{transactionId}/products']: {
-    /**
-     * getTransactionProducts
-     */
-    'get'(
-      parameters: Parameters<Paths.GetTransactionProducts.PathParameters>,
-      data?: any,
-      config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.GetTransactionProducts.Responses.$200>
   }
   ['/api/transactions/schedules/{vaultId}']: {
     /**
