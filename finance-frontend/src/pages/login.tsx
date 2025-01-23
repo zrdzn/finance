@@ -92,14 +92,20 @@ export default function Login(): ReactJSXElement {
 
         <Flex justifyContent="center" p={4}>
           <Card
-            width={{ base: 'full', sm: '80%', md: '60%', lg: '50%' }}
-            maxWidth="500px"
-            margin={2}
+              width={{ base: 'full', sm: '80%', md: '60%', lg: '50%' }}
+              maxWidth="500px"
+              margin={2}
+              boxShadow="base"
+              borderRadius="lg"
+              overflow="hidden"
+              backgroundColor="whiteAlpha.900"
+              border="1px solid"
+              borderColor="gray.200"
           >
-            <CardHeader backgroundColor={theme.secondaryColor}>
-              <Flex alignItems={'center'} justifyContent={'space-between'}>
-                <Text fontSize='md' fontWeight={'600'}>{t('form.title')}</Text>
-              </Flex>
+            <CardHeader>
+              <Text fontSize="md" fontWeight="600">
+                {t("form.title")}
+              </Text>
             </CardHeader>
             <CardBody>
               <Stack spacing='4'>
