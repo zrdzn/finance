@@ -1,6 +1,6 @@
 package dev.zrdzn.finance.backend.transaction
 
-import dev.zrdzn.finance.backend.error.FinanceApiException
+import dev.zrdzn.finance.backend.error.FinanceApiError
 import dev.zrdzn.finance.backend.token.domain.TOKEN_COOKIE_NAME
 import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.transaction.application.response.TransactionAmountResponse
@@ -93,7 +93,7 @@ class TransactionControllerTest : TransactionSpecification() {
             .contentType("application/json")
             .cookie(TOKEN_COOKIE_NAME, token.value)
             .body(request)
-            .asObject(FinanceApiException::class.java)
+            .asObject(FinanceApiError::class.java)
 
         // then
         assertNotNull(response.body)
@@ -282,7 +282,7 @@ class TransactionControllerTest : TransactionSpecification() {
         // when
         val response = Unirest.get("/transactions/0")
             .cookie(TOKEN_COOKIE_NAME, token.value)
-            .asObject(FinanceApiException::class.java)
+            .asObject(FinanceApiError::class.java)
 
         // then
         assertNotNull(response.body)

@@ -1,20 +1,25 @@
 package dev.zrdzn.finance.backend.transaction.application
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
 import com.opencsv.CSVWriter
 import com.opencsv.enums.CSVReaderNullFieldIndicator
+import dev.zrdzn.finance.backend.ai.domain.AiClient
+import dev.zrdzn.finance.backend.ai.domain.AiPrompts.ANALYZE_TRANSACTION_FROM_IMAGE
 import dev.zrdzn.finance.backend.audit.application.AuditService
 import dev.zrdzn.finance.backend.audit.domain.AuditAction
 import dev.zrdzn.finance.backend.exchange.application.ExchangeService
 import dev.zrdzn.finance.backend.product.application.ProductService
 import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.transaction.application.TransactionMapper.toResponse
-import dev.zrdzn.finance.backend.transaction.application.error.ScheduleNotFoundException
-import dev.zrdzn.finance.backend.transaction.application.error.TransactionDescriptionRequiredException
-import dev.zrdzn.finance.backend.transaction.application.error.TransactionImportMappingNotFoundException
-import dev.zrdzn.finance.backend.transaction.application.error.TransactionNotFoundException
-import dev.zrdzn.finance.backend.transaction.application.error.TransactionPriceRequiredException
+import dev.zrdzn.finance.backend.transaction.application.error.ScheduleNotFoundError
+import dev.zrdzn.finance.backend.transaction.application.error.TransactionDescriptionRequiredError
+import dev.zrdzn.finance.backend.transaction.application.error.TransactionImportMappingNotFoundError
+import dev.zrdzn.finance.backend.transaction.application.error.TransactionNotFoundError
+import dev.zrdzn.finance.backend.transaction.application.error.TransactionPriceRequiredError
+import dev.zrdzn.finance.backend.transaction.application.response.AnalysedTransactionResponse
 import dev.zrdzn.finance.backend.transaction.application.response.FlowsChartResponse
 import dev.zrdzn.finance.backend.transaction.application.response.FlowsChartSeries
 import dev.zrdzn.finance.backend.transaction.application.response.ScheduleListResponse
@@ -37,6 +42,7 @@ import dev.zrdzn.finance.backend.transaction.domain.TransactionType
 import dev.zrdzn.finance.backend.user.application.UserService
 import dev.zrdzn.finance.backend.vault.application.VaultPermission
 import dev.zrdzn.finance.backend.vault.application.VaultService
+import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.StringWriter
 import java.math.BigDecimal
@@ -47,9 +53,10 @@ import java.time.Month
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
+import org.apache.commons.codec.binary.Base64
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.multipart.MultipartFile
 
 @Service
 class TransactionService(
@@ -61,21 +68,39 @@ class TransactionService(
     private val vaultService: VaultService,
     private val userService: UserService,
     private val auditService: AuditService,
-    private val clock: Clock
+    private val clock: Clock,
+    private val aiClient: AiClient
 ) {
+
+    private val logger = LoggerFactory.getLogger(TransactionService::class.java)
+
+    @Transactional
+    fun analyzeImage(userId: Int, file: InputStream): AnalysedTransactionResponse {
+        val imageBytes = file.readAllBytes()
+        val base64Image = Base64.encodeBase64String(imageBytes)
+
+        val response = aiClient.sendRequest(
+            prompt = ANALYZE_TRANSACTION_FROM_IMAGE,
+            base64Image = base64Image
+        )
+
+        val analysedTransaction = jacksonObjectMapper().readValue<AnalysedTransactionResponse>(response.response)
+
+        return analysedTransaction
+    }
 
     @Transactional
     fun importTransactionsFromCsv(
         requesterId: Int,
         vaultId: Int,
         separator: Char,
-        file: MultipartFile,
+        file: InputStream,
         mappings: Map<String, String>,
         applyTransactionMethod: TransactionMethod?
     ) {
         vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_CREATE)
 
-        val reader = InputStreamReader(file.inputStream)
+        val reader = InputStreamReader(file)
 
         val csvParser = CSVParserBuilder()
             .withSeparator(separator)
@@ -115,13 +140,13 @@ class TransactionService(
                     "rawPrice" to csvRecord.getOrNull(columns["rawPrice"] ?: -1)
                 )
             } catch (e: NoSuchElementException) {
-                throw TransactionImportMappingNotFoundException()
+                throw TransactionImportMappingNotFoundError()
             }
 
             val transactionMethod = applyTransactionMethod ?: values["transactionMethod"]
                 ?.let { TransactionMethod.valueOf(it) }
-                ?: throw TransactionImportMappingNotFoundException()
-            val description = values["description"] ?: throw TransactionImportMappingNotFoundException()
+                ?: throw TransactionImportMappingNotFoundError()
+            val description = values["description"] ?: throw TransactionImportMappingNotFoundError()
             val totalString = values["total"]
             val currency = values["currency"]
             val rawPrice = values["rawPrice"]
@@ -132,15 +157,15 @@ class TransactionService(
                     parsedTotal to (currency ?: parsedCurrency)
                 }
                 !totalString.isNullOrBlank() -> {
-                    totalString.replace(" ", "").replace(",", ".").toBigDecimal() to (currency ?: throw TransactionImportMappingNotFoundException())
+                    totalString.replace(" ", "").replace(",", ".").toBigDecimal() to (currency ?: throw TransactionImportMappingNotFoundError())
                 }
-                else -> throw TransactionPriceRequiredException()
+                else -> throw TransactionPriceRequiredError()
             }
 
             val transactionType = when {
                 total > BigDecimal.ZERO -> TransactionType.INCOMING
                 total < BigDecimal.ZERO -> TransactionType.OUTGOING
-                else -> throw TransactionPriceRequiredException()
+                else -> throw TransactionPriceRequiredError()
             }
 
             transactions.add(
@@ -212,7 +237,7 @@ class TransactionService(
         val now = Instant.now(clock)
 
         scheduleRepository.findByNextExecutionBefore(now).forEach { schedule ->
-            val transaction = transactionRepository.findById(schedule.transactionId) ?: throw TransactionNotFoundException()
+            val transaction = transactionRepository.findById(schedule.transactionId) ?: throw TransactionNotFoundError()
 
             val newTransaction = transactionRepository.save(
                 Transaction(
@@ -256,7 +281,7 @@ class TransactionService(
         vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_CREATE)
 
         if (description.isEmpty()) {
-            throw TransactionDescriptionRequiredException()
+            throw TransactionDescriptionRequiredError()
         }
 
         return transactionRepository
@@ -325,7 +350,7 @@ class TransactionService(
 
     @Transactional
     fun createSchedule(requesterId: Int, transactionId: Int, description: String, interval: ScheduleInterval, amount: Int): ScheduleResponse {
-        val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundException()
+        val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundError()
 
         vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.SCHEDULE_CREATE)
 
@@ -368,7 +393,7 @@ class TransactionService(
         description: String?,
         price: Price
     ) {
-        val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundException()
+        val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundError()
 
         vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_UPDATE)
 
@@ -388,7 +413,7 @@ class TransactionService(
 
     @Transactional
     fun deleteTransaction(transactionId: Int) {
-        val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundException()
+        val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundError()
 
         vaultService.authorizeMember(transaction.vaultId, transaction.userId, VaultPermission.TRANSACTION_DELETE)
 
@@ -446,7 +471,7 @@ class TransactionService(
                     totalInVaultCurrency = exchangeService.convertCurrency(it.total, it.currency, "PLN").amount
                 )
             }
-            ?: throw TransactionNotFoundException()
+            ?: throw TransactionNotFoundError()
 
         vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_READ)
 
@@ -464,7 +489,7 @@ class TransactionService(
 
     @Transactional(readOnly = true)
     fun getTransactionProducts(requesterId: Int, transactionId: Int): TransactionProductListResponse {
-        val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundException()
+        val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundError()
 
         vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_READ)
 
@@ -516,7 +541,7 @@ class TransactionService(
                     amount = it.intervalValue
                 )
             }
-            ?: throw ScheduleNotFoundException()
+            ?: throw ScheduleNotFoundError()
 
     @Transactional(readOnly = true)
     fun getFlows(requesterId: Int, vaultId: Int, transactionType: TransactionType?, start: Instant): TransactionFlowsResponse {

@@ -7,7 +7,7 @@ import {
     FormLabel,
     VStack,
     HStack,
-    Text, CardHeader, Flex, CardBody, RadioGroup, Radio, Card, Checkbox
+    Text, CardHeader, Flex, CardBody, RadioGroup, Radio, Card, Checkbox, Tabs, TabList, Tab, TabPanel, TabPanels
 } from '@chakra-ui/react';
 import {useTheme} from "@/hooks/useTheme";
 import {useTranslations} from "next-intl";
@@ -32,7 +32,8 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
     const api = useApi()
     const [csvColumns, setCsvColumns] = useState<string[]>([]);
     const [mappedFields, setMappedFields] = useState<{[name: string]: string}>({});
-    const [fileBlob, setFileBlob] = useState<Blob | undefined>(undefined);
+    const [csvBlob, setCsvBlob] = useState<Blob | undefined>(undefined);
+    const [imageBlob, setImageBlob] = useState<Blob | undefined>(undefined);
     const [separator, setSeparator] = useState<string | undefined>(undefined);
     const [appliedTransactionMethod, setAppliedTransactionMethod] = useState<TransactionMethod>('BLIK');
     const [applyTransactionMethod, setApplyTransactionMethod] = useState<boolean>(false);
@@ -49,7 +50,7 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
         { value: 'rawPrice', label: 'Price' }
     ]
 
-    const handleFileUpload = async (file: File) => {
+    const handleCsvUpload = async (file: File) => {
         if (!separator) {
             toast.error(t('import.select-separator'))
             return
@@ -71,7 +72,7 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
 
             const data = lines.slice(1).map((line) => line.split(separator).map((value) => value.trim()))
             const csvContent = [lines.join('\n')]
-            setFileBlob(new Blob(csvContent, { type: 'text/csv' }))
+            setCsvBlob(new Blob(csvContent, { type: 'text/csv' }))
 
             const priceRegex = /^(?:[A-Za-z]{3}\s?)?\d{1,3}(?:[ ,]\d{3})*(?:[.,]\d+)?\s?[A-Za-z]{3}?$/
             const hasCombinedColumn = columns.some((_, index) =>
@@ -82,11 +83,17 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
         }
     }
 
+    const handleImageUpload = async (file: File) => {
+        if (!file) return
+
+        setImageBlob(file)
+    }
+
     const handleMappingChange = (field: string, column: string) => {
         setMappedFields((prev) => ({ ...prev, [field]: column }));
     }
 
-    const handleSubmit = async () => {
+    const handleCsvImport = async () => {
         if (!appliedTransactionMethod) {
             toast.error(t('import.select-transaction-method'))
             return
@@ -97,7 +104,7 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
             return
         }
 
-        if (!fileBlob) {
+        if (!csvBlob) {
             toast.error(t('import.select-file'))
             return
         }
@@ -107,7 +114,7 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
         const mappingsJson = JSON.stringify(mappedFields);
 
         formData.append("mappings", mappingsJson);
-        formData.append('file', fileBlob, 'file.csv');
+        formData.append('file', csvBlob, 'file.csv');
         formData.append('separator', separator!);
         formData.append('applyTransactionMethod', appliedTransactionMethod);
 
@@ -132,6 +139,35 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
             })
     };
 
+    const handleImageImport = async () => {
+        if (!imageBlob) {
+            toast.error(t('import.select-file'))
+            return
+        }
+
+        const formData = new FormData()
+        formData.append('file', imageBlob, 'file.png');
+
+        api
+          .then(client => client.api.client.post(`/api/transactions/image-analysis`, formData, {
+              headers: {
+                  'Content-Type': 'multipart/form-data'
+              }
+          }))
+          .then(() => {
+              toast.success(t('import.analysed'))
+          })
+          .catch(error => {
+              console.error(error)
+              if (axios.isAxiosError(error) && error.response) {
+                  const errorMessage = error.response.data.description || "An error occurred while importing transactions"
+                  toast.error(errorMessage)
+              } else {
+                  toast.error("An unexpected error occurred")
+              }
+          })
+    }
+
     return (
         <Card
             margin={4}
@@ -148,138 +184,172 @@ export const ImportCard = ({ vault, permissions }: ImportCardProperties) => {
                 </Text>
             </CardHeader>
         <CardBody>
-            <FormControl mb={6}>
-                <FormLabel fontSize="lg">{t('import.choose-file-and-separator')}</FormLabel>
-                <Flex
-                    mt={4}
-                    alignItems="center"
-                    justifyContent={{ base: 'center', lg: 'space-between' }}
-                    flexDirection={{ base: 'column', lg: 'row' }}
-                    gap={4}
-                >
-                    <FileUpload handleFile={handleFileUpload}>
+            <Tabs isFitted>
+                <TabList mb={'1em'}>
+                    <Tab>{t('import.card.csv')}</Tab>
+                    <Tab>{t('import.card.image')}</Tab>
+                </TabList>
+                <TabPanels>
+                    <TabPanel>
+                        <FormControl mb={6}>
+                            <FormLabel fontSize="lg">{t('import.choose-file-and-separator')}</FormLabel>
+                            <Flex
+                              mt={4}
+                              alignItems="center"
+                              justifyContent={{ base: 'center', lg: 'space-between' }}
+                              flexDirection={{ base: 'column', lg: 'row' }}
+                              gap={4}
+                            >
+                                <FileUpload handleFile={handleCsvUpload}>
+                                    <Button
+                                      size="md"
+                                      backgroundColor={theme.primaryColor}
+                                      color="#f8f8f8"
+                                      fontWeight="400"
+                                      width={{ base: '100%', lg: 'auto' }}
+                                      textAlign="center"
+                                    >
+                                        <Text>{t('import.select-file-button')}</Text>
+                                    </Button>
+                                </FileUpload>
+                                <RadioGroup value={separator} onChange={setSeparator}>
+                                    <Flex
+                                      wrap="wrap"
+                                      gap={2}
+                                      justifyContent="center"
+                                    >
+                                        {[':', ';', ',', '|'].map((separator) => (
+                                          <Box
+                                            as="label"
+                                            key={separator}
+                                            display="flex"
+                                            alignItems="center"
+                                            p={3}
+                                            border="1px solid"
+                                            borderColor="gray.300"
+                                            borderRadius="md"
+                                            cursor="pointer"
+                                            _hover={{ borderColor: theme.secondaryColor }}
+                                            width={{ base: '100%', lg: 'auto' }}
+                                            flex="0 1 auto"
+                                          >
+                                              <Radio value={separator} mr={3} />
+                                              <Text fontWeight="medium">{separator}</Text>
+                                          </Box>
+                                        ))}
+                                    </Flex>
+                                </RadioGroup>
+                            </Flex>
+                        </FormControl>
+                        {csvColumns.length > 0 && (
+                          <Box mt={6}>
+                              <FormLabel fontSize={'lg'}>{t('import.configure-mappings')}</FormLabel>
+                              <VStack spacing={6} align="stretch" bg="gray.50" p={4} borderRadius="md">
+                                  {requiredFields
+                                    .filter(
+                                      (field) => {
+                                          if (hasCombinedPriceColumn && (field.value === 'total' || field.value === 'currency')) {
+                                              return false;
+                                          }
+
+                                          return !(!hasCombinedPriceColumn && field.value === 'rawPrice');
+                                      }
+                                    )
+                                    .map((field) => (
+                                      <HStack
+                                        key={field.value}
+                                        justifyContent="space-between"
+                                        p={3}
+                                        borderBottom="1px solid"
+                                        borderColor="gray.200"
+                                        _last={{ borderBottom: 'none' }}
+                                        flexWrap="wrap"
+                                      >
+                                          <Text fontWeight="400" mr={2} minW="120px">{field.label}:</Text>
+
+                                          <Box flex="1" minW={{ base: '100%', md: '45%' }}>
+                                              <Select
+                                                placeholder={t('import.select-column')}
+                                                value={{
+                                                    value: mappedFields[field.value] || '',
+                                                    label: mappedFields[field.value] || ''
+                                                }}
+                                                onChange={(selectedOption: SelectProperties) => {
+                                                    if (selectedOption) {
+                                                        handleMappingChange(field.value, selectedOption.value)
+                                                    }
+                                                }}
+                                                isClearable
+                                                required
+                                                options={csvColumns.map(column => ({
+                                                    value: column,
+                                                    label: column
+                                                }))}
+                                              />
+                                          </Box>
+
+                                          {field.value === 'transactionMethod' && (
+                                            <Box display="flex" alignItems="center" mt={{ base: 2, md: 0 }} ml={2}>
+                                                <Checkbox
+                                                  isChecked={applyTransactionMethod}
+                                                  onChange={(e) => setApplyTransactionMethod(e.target.checked)}
+                                                  size="md"
+                                                  colorScheme="teal"
+                                                  mr={2}
+                                                  borderColor="teal.500"
+                                                  _checked={{ bg: 'teal.500', borderColor: 'teal.500', color: 'white' }}
+                                                />
+                                                <Text fontSize={'md'} fontWeight="400">{t('import.apply-to-all')}</Text>
+                                            </Box>
+                                          )}
+
+                                          {field.value === 'transactionMethod' && (
+                                            <Box flex="1" maxW={{ base: '100%', lg: '40%' }} minW="150px">
+                                                <TransactionMethodSelect onChange={setAppliedTransactionMethod} />
+                                            </Box>
+                                          )}
+                                      </HStack>
+                                    ))}
+                              </VStack>
+                              <Button
+                                mt={8}
+                                onClick={handleCsvImport}
+                                backgroundColor={theme.primaryColor}
+                                width="full"
+                                color={'#f8f8f8'}
+                                fontWeight={'400'}
+                              >
+                                  {t('import.card.submit')}
+                              </Button>
+                          </Box>
+                        )}
+                    </TabPanel>
+                    <TabPanel>
+                        <FileUpload handleFile={handleImageUpload}>
+                            <Button
+                              size="md"
+                              backgroundColor={theme.primaryColor}
+                              color="#f8f8f8"
+                              fontWeight="400"
+                              width={{ base: '100%', lg: 'auto' }}
+                              textAlign="center"
+                            >
+                                <Text>{t('import.select-image-button')}</Text>
+                            </Button>
+                        </FileUpload>
                         <Button
-                            size="md"
-                            backgroundColor={theme.primaryColor}
-                            color="#f8f8f8"
-                            fontWeight="400"
-                            width={{ base: '100%', lg: 'auto' }}
-                            textAlign="center"
+                          mt={8}
+                          onClick={handleImageImport}
+                          backgroundColor={theme.primaryColor}
+                          width="full"
+                          color={'#f8f8f8'}
+                          fontWeight={'400'}
                         >
-                            <Text>{t('import.select-file-button')}</Text>
+                            {t('import.card.submit')}
                         </Button>
-                    </FileUpload>
-                    <RadioGroup value={separator} onChange={setSeparator}>
-                        <Flex
-                            wrap="wrap"
-                            gap={2}
-                            justifyContent="center"
-                        >
-                            {[':', ';', ',', '|'].map((separator) => (
-                                <Box
-                                    as="label"
-                                    key={separator}
-                                    display="flex"
-                                    alignItems="center"
-                                    p={3}
-                                    border="1px solid"
-                                    borderColor="gray.300"
-                                    borderRadius="md"
-                                    cursor="pointer"
-                                    _hover={{ borderColor: theme.secondaryColor }}
-                                    width={{ base: '100%', lg: 'auto' }}
-                                    flex="0 1 auto"
-                                >
-                                    <Radio value={separator} mr={3} />
-                                    <Text fontWeight="medium">{separator}</Text>
-                                </Box>
-                            ))}
-                        </Flex>
-                    </RadioGroup>
-                </Flex>
-            </FormControl>
-            {csvColumns.length > 0 && (
-                <Box mt={6}>
-                    <FormLabel fontSize={'lg'}>{t('import.configure-mappings')}</FormLabel>
-                    <VStack spacing={6} align="stretch" bg="gray.50" p={4} borderRadius="md">
-                        {requiredFields
-                            .filter(
-                                (field) => {
-                                    if (hasCombinedPriceColumn && (field.value === 'total' || field.value === 'currency')) {
-                                        return false;
-                                    }
-
-                                    return !(!hasCombinedPriceColumn && field.value === 'rawPrice');
-                                }
-                            )
-                            .map((field) => (
-                                <HStack
-                                    key={field.value}
-                                    justifyContent="space-between"
-                                    p={3}
-                                    borderBottom="1px solid"
-                                    borderColor="gray.200"
-                                    _last={{ borderBottom: 'none' }}
-                                    flexWrap="wrap"
-                                >
-                                    <Text fontWeight="400" mr={2} minW="120px">{field.label}:</Text>
-
-                                    <Box flex="1" minW={{ base: '100%', md: '45%' }}>
-                                        <Select
-                                            placeholder={t('import.select-column')}
-                                            value={{
-                                                value: mappedFields[field.value] || '',
-                                                label: mappedFields[field.value] || ''
-                                            }}
-                                            onChange={(selectedOption: SelectProperties) => {
-                                                if (selectedOption) {
-                                                    handleMappingChange(field.value, selectedOption.value)
-                                                }
-                                            }}
-                                            isClearable
-                                            required
-                                            options={csvColumns.map(column => ({
-                                                value: column,
-                                                label: column
-                                            }))}
-                                        />
-                                    </Box>
-
-                                    {field.value === 'transactionMethod' && (
-                                        <Box display="flex" alignItems="center" mt={{ base: 2, md: 0 }} ml={2}>
-                                            <Checkbox
-                                                isChecked={applyTransactionMethod}
-                                                onChange={(e) => setApplyTransactionMethod(e.target.checked)}
-                                                size="md"
-                                                colorScheme="teal"
-                                                mr={2}
-                                                borderColor="teal.500"
-                                                _checked={{ bg: 'teal.500', borderColor: 'teal.500', color: 'white' }}
-                                            />
-                                            <Text fontSize={'md'} fontWeight="400">{t('import.apply-to-all')}</Text>
-                                        </Box>
-                                    )}
-
-                                    {field.value === 'transactionMethod' && (
-                                        <Box flex="1" maxW={{ base: '100%', lg: '40%' }} minW="150px">
-                                            <TransactionMethodSelect onChange={setAppliedTransactionMethod} />
-                                        </Box>
-                                    )}
-                                </HStack>
-                            ))}
-                    </VStack>
-                    <Button
-                        mt={8}
-                        onClick={handleSubmit}
-                        backgroundColor={theme.primaryColor}
-                        width="full"
-                        color={'#f8f8f8'}
-                        fontWeight={'400'}
-                    >
-                        {t('import.card.submit')}
-                    </Button>
-                </Box>
-            )}
+                    </TabPanel>
+                </TabPanels>
+            </Tabs>
         </CardBody>
     </Card>
     )

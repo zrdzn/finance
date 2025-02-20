@@ -15,6 +15,18 @@ declare namespace Components {
             email: string;
             expiresAt: string; // date-time
         }
+        export interface AnalysedTransactionProductResponse {
+            productName: string;
+            unitAmount: number;
+            quantity: number; // int32
+        }
+        export interface AnalysedTransactionResponse {
+            transactionMethod: "CARD" | "BLIK" | "CASH";
+            products: AnalysedTransactionProductResponse[];
+            description: string;
+            total: number;
+            currency: string;
+        }
         export interface AuditListResponse {
             audits: AuditResponse[];
         }
@@ -43,13 +55,16 @@ declare namespace Components {
             name: string;
             vaultId: number; // int32
         }
+        export interface ConfigurationResponse {
+            aiEnabled: boolean;
+        }
         export interface FlowsChartResponse {
             categories: string[];
             series: FlowsChartSeries[];
         }
         export interface FlowsChartSeries {
             name: string;
-            data: number /* double */[];
+            data: number[];
         }
         export interface Price {
             amount: number;
@@ -253,6 +268,14 @@ declare namespace Paths {
             }
         }
     }
+    namespace AnalyzeImage {
+        export interface RequestBody {
+            file: string; // binary
+        }
+        namespace Responses {
+            export type $200 = Components.Schemas.AnalysedTransactionResponse;
+        }
+    }
     namespace CreateCategory {
         export type RequestBody = Components.Schemas.CategoryCreateRequest;
         namespace Responses {
@@ -414,6 +437,11 @@ declare namespace Paths {
         }
         namespace Responses {
             export type $200 = Components.Schemas.CategoryResponse;
+        }
+    }
+    namespace GetConfiguration {
+        namespace Responses {
+            export type $200 = Components.Schemas.ConfigurationResponse;
         }
     }
     namespace GetFlowsByVaultId {
@@ -858,6 +886,14 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.CreateTransactionProduct.Responses.$200>
   /**
+   * analyzeImage
+   */
+  'analyzeImage'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.AnalyzeImage.RequestBody,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.AnalyzeImage.Responses.$200>
+  /**
    * createTransaction
    */
   'createTransaction'(
@@ -1130,6 +1166,14 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.GetProductsByVaultId.Responses.$200>
   /**
+   * getConfiguration
+   */
+  'getConfiguration'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: any,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.GetConfiguration.Responses.$200>
+  /**
    * getCategoryById
    */
   'getCategoryById'(
@@ -1285,6 +1329,16 @@ export interface PathsDictionary {
       data?: Paths.CreateTransactionProduct.RequestBody,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.CreateTransactionProduct.Responses.$200>
+  }
+  ['/api/transactions/image-analysis']: {
+    /**
+     * analyzeImage
+     */
+    'post'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: Paths.AnalyzeImage.RequestBody,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.AnalyzeImage.Responses.$200>
   }
   ['/api/transactions/create']: {
     /**
@@ -1617,6 +1671,16 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetProductsByVaultId.Responses.$200>
+  }
+  ['/api/config']: {
+    /**
+     * getConfiguration
+     */
+    'get'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: any,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.GetConfiguration.Responses.$200>
   }
   ['/api/categories/{categoryId}']: {
     /**

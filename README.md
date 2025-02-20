@@ -101,6 +101,7 @@ Data is securely stored in a PostgreSQL database.
 - `STORAGE_SECRET_KEY` - S3 secret key
 - `STORAGE_REGION` - S3 region
 - `STORAGE_ENDPOINT` - S3 endpoint
+- `OPENAI_API_KEY` - OpenAI API key
 ## 🚀 Installation
 ### Docker
 **1.** Pull images from Docker Hub

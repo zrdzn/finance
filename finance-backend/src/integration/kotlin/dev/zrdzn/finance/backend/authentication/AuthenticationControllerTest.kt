@@ -1,6 +1,6 @@
 package dev.zrdzn.finance.backend.authentication
 
-import dev.zrdzn.finance.backend.error.FinanceApiException
+import dev.zrdzn.finance.backend.error.FinanceApiError
 import dev.zrdzn.finance.backend.token.domain.TOKEN_COOKIE_NAME
 import dev.zrdzn.finance.backend.token.application.response.AccessTokenResponse
 import dev.zrdzn.finance.backend.user.application.response.UserResponse
@@ -57,7 +57,7 @@ class AuthenticationControllerTest : AuthenticationSpecification() {
         val response = Unirest.post("/authentication/register")
             .contentType("application/json")
             .body(request)
-            .asObject(FinanceApiException::class.java)
+            .asObject(FinanceApiError::class.java)
 
         // then
         val expectedUserId = userRepository.findIdByUsername(username)
@@ -116,7 +116,7 @@ class AuthenticationControllerTest : AuthenticationSpecification() {
         val response = Unirest.post("/authentication/login")
             .contentType("application/json")
             .body(request)
-            .asObject(FinanceApiException::class.java)
+            .asObject(FinanceApiError::class.java)
 
         // then
         val expectedTokens = tokenRepository.findByUserId(user.id)

@@ -60,6 +60,18 @@ export const FlowsHistoryCard = ({
         .catch(error => console.error(error))
   }, [api, transactionType, flowsRange, vault.id])
 
+  const getColor = () => {
+    if (transactionType === "INCOMING") return "green";
+    if (transactionType === "OUTGOING") return "crimson";
+    return flows.total.amount > 0 ? "green" : flows.total.amount < 0 ? "crimson" : "black";
+  };
+
+  const getArrowType = () => {
+    if (transactionType === "INCOMING") return "increase";
+    if (transactionType === "OUTGOING") return "decrease";
+    return flows.total.amount > 0 ? "increase" : "decrease";
+  };
+
   return (
       <Card
           margin={4}
@@ -88,12 +100,12 @@ export const FlowsHistoryCard = ({
                     <Text
                         fontSize="2xl"
                         fontWeight="600"
-                        color={flows.total.amount === 0 ? 'black' : transactionType === "INCOMING" ? 'green' : 'crimson'}
+                        color={getColor()}
                         isTruncated
                     >
                       {flows.total.amount !== 0 && (
                           <StatArrow
-                              type={transactionType === "INCOMING" ? 'increase' : 'decrease'}
+                              type={getArrowType()}
                               mr={2}
                           />
                       )}

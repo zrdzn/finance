@@ -101,7 +101,8 @@ export default function Register(): ReactJSXElement {
           })
       ))
       .catch(error => {
-        const errorMessage = error.response?.data?.message || t('form.submit-error')
+        console.error(error)
+        const errorMessage = error.response?.data?.description || t('form.submit-error')
         toast.error(errorMessage)
       })
   }

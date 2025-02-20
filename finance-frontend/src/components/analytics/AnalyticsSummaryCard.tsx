@@ -75,6 +75,18 @@ export const AnalyticsSummaryCard = ({ vault, permissions, statisticType }: Anal
         fetchData();
     }, [api, statisticType, vault.createdAt, vault.id]);
 
+    const getColor = () => {
+        if (statisticType === "INCOME") return "green";
+        if (statisticType === "EXPENSES") return "crimson";
+        return flows.total.amount > 0 ? "green" : flows.total.amount < 0 ? "crimson" : "black";
+    };
+
+    const getArrowType = () => {
+        if (statisticType === "INCOME") return "increase";
+        if (statisticType === "EXPENSES") return "decrease";
+        return flows.total.amount > 0 ? "increase" : "decrease";
+    };
+
     return (
         <Card
             margin={4}
@@ -98,19 +110,13 @@ export const AnalyticsSummaryCard = ({ vault, permissions, statisticType }: Anal
                                 <Text
                                     fontSize="2xl"
                                     fontWeight="600"
-                                    color={
-                                        flows.total.amount > 0
-                                            ? "green"
-                                            : flows.total.amount < 0
-                                                ? "crimson"
-                                                : "black"
-                                    }
+                                    color={getColor()}
                                     isTruncated
                                 >
                                     {flows.total.amount !== 0 && (
                                         <StatArrow
-                                            type={flows.total.amount > 0 ? "increase" : "decrease"}
-                                            mr={2}
+                                          type={getArrowType()}
+                                          mr={2}
                                         />
                                     )}
                                     {formatNumber(flows.total.amount)}

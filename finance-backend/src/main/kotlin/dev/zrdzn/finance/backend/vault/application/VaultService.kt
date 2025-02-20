@@ -4,14 +4,14 @@ import dev.zrdzn.finance.backend.shared.createRandomToken
 import dev.zrdzn.finance.backend.transaction.domain.TransactionMethod
 import dev.zrdzn.finance.backend.user.application.UserService
 import dev.zrdzn.finance.backend.vault.application.VaultMapper.toResponse
-import dev.zrdzn.finance.backend.vault.application.error.UserNotMemberException
-import dev.zrdzn.finance.backend.vault.application.error.VaultCannotUpdateMemberException
-import dev.zrdzn.finance.backend.vault.application.error.VaultInsufficientPermissionException
-import dev.zrdzn.finance.backend.vault.application.error.VaultInvitationNotFoundException
-import dev.zrdzn.finance.backend.vault.application.error.VaultInvitationNotOwnedException
-import dev.zrdzn.finance.backend.vault.application.error.VaultMemberNotFoundException
-import dev.zrdzn.finance.backend.vault.application.error.VaultNotFoundByPublicIdException
-import dev.zrdzn.finance.backend.vault.application.error.VaultNotFoundException
+import dev.zrdzn.finance.backend.vault.application.error.UserNotMemberError
+import dev.zrdzn.finance.backend.vault.application.error.VaultCannotUpdateMemberError
+import dev.zrdzn.finance.backend.vault.application.error.VaultInsufficientPermissionError
+import dev.zrdzn.finance.backend.vault.application.error.VaultInvitationNotFoundError
+import dev.zrdzn.finance.backend.vault.application.error.VaultInvitationNotOwnedError
+import dev.zrdzn.finance.backend.vault.application.error.VaultMemberNotFoundError
+import dev.zrdzn.finance.backend.vault.application.error.VaultNotFoundByPublicIdError
+import dev.zrdzn.finance.backend.vault.application.error.VaultNotFoundError
 import dev.zrdzn.finance.backend.vault.application.response.VaultInvitationListResponse
 import dev.zrdzn.finance.backend.vault.application.response.VaultInvitationResponse
 import dev.zrdzn.finance.backend.vault.application.response.VaultListResponse
@@ -50,10 +50,10 @@ class VaultService(
                     user = userService.getUser(it.userId),
                     vaultRole = it.vaultRole
                 )
-            } ?: throw UserNotMemberException()
+            } ?: throw UserNotMemberError()
 
         when {
-            !member.vaultRole.hasPermission(requiredPermission) -> throw VaultInsufficientPermissionException()
+            !member.vaultRole.hasPermission(requiredPermission) -> throw VaultInsufficientPermissionError()
         }
 
         return member
@@ -120,7 +120,7 @@ class VaultService(
 
     @Transactional
     fun updateVault(requesterId: Int, vaultId: Int, name: String, currency: String, transactionMethod: TransactionMethod) {
-        val vault = vaultRepository.findById(vaultId) ?: throw VaultNotFoundException()
+        val vault = vaultRepository.findById(vaultId) ?: throw VaultNotFoundError()
 
         authorizeMember(vaultId, requesterId, VaultPermission.SETTINGS_UPDATE)
 
@@ -132,15 +132,15 @@ class VaultService(
     @Transactional
     fun updateVaultMember(requesterId: Int, vaultId: Int, vaultMemberId: Int, vaultRole: VaultRole) {
         val requester = authorizeMember(vaultId, requesterId, VaultPermission.MEMBER_UPDATE)
-        val vaultMember = vaultMemberRepository.findById(vaultMemberId) ?: throw VaultMemberNotFoundException()
+        val vaultMember = vaultMemberRepository.findById(vaultMemberId) ?: throw VaultMemberNotFoundError()
 
         // check if the requester has higher role than the user he wants to update
         if (!requester.vaultRole.isHigherThan(vaultMember.vaultRole)) {
-            throw VaultCannotUpdateMemberException()
+            throw VaultCannotUpdateMemberError()
         }
 
         if (vaultRole.isOwner()) {
-            throw VaultCannotUpdateMemberException()
+            throw VaultCannotUpdateMemberError()
         }
 
         vaultMember.vaultRole = vaultRole
@@ -148,14 +148,14 @@ class VaultService(
 
     @Transactional
     fun acceptVaultInvitation(requesterId: Int, invitationId: Int) {
-        val invitation = vaultInvitationRepository.findById(invitationId) ?: throw VaultInvitationNotFoundException()
+        val invitation = vaultInvitationRepository.findById(invitationId) ?: throw VaultInvitationNotFoundError()
 
         val vault = getVaultForcefully(invitation.vaultId)
 
         val requester = userService.getUser(requesterId)
 
         if (requester.email != invitation.userEmail) {
-            throw VaultInvitationNotOwnedException()
+            throw VaultInvitationNotOwnedError()
         }
 
         createVaultMemberForcefully(
@@ -171,7 +171,7 @@ class VaultService(
     fun getVaultForcefully(vaultId: Int): VaultResponse {
         return vaultRepository.findById(vaultId)
             ?.toResponse()
-            ?: throw VaultNotFoundException()
+            ?: throw VaultNotFoundError()
     }
 
     @Transactional(readOnly = true)
@@ -202,7 +202,7 @@ class VaultService(
 
     @Transactional(readOnly = true)
     fun getVault(publicId: String, requesterId: Int): VaultResponse? {
-        val vault = getVaultForcefully(publicId) ?: throw VaultNotFoundByPublicIdException()
+        val vault = getVaultForcefully(publicId) ?: throw VaultNotFoundByPublicIdError()
 
         authorizeMember(vault.id, requesterId, VaultPermission.DETAILS_READ)
 
@@ -236,7 +236,7 @@ class VaultService(
         val requester = userService.getUser(requesterId)
 
         if (requester.email != userEmail) {
-            throw VaultInvitationNotOwnedException()
+            throw VaultInvitationNotOwnedError()
         }
 
         return VaultInvitationListResponse(
@@ -257,7 +257,7 @@ class VaultService(
                     permissions = it.permissions
                 )
             }
-            ?: throw UserNotMemberException()
+            ?: throw UserNotMemberError()
     }
 
     @Transactional

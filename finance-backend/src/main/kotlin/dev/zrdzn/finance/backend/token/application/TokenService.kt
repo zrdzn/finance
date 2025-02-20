@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import dev.zrdzn.finance.backend.shared.createRandomToken
 import dev.zrdzn.finance.backend.token.application.TokenMapper.toResponse
-import dev.zrdzn.finance.backend.token.application.error.TokenSignatureMismatchException
+import dev.zrdzn.finance.backend.token.application.error.TokenSignatureMismatchError
 import dev.zrdzn.finance.backend.token.application.request.AccessTokenCreateRequest
 import dev.zrdzn.finance.backend.token.application.request.RefreshTokenCreateRequest
 import dev.zrdzn.finance.backend.token.application.response.AccessTokenResponse
@@ -79,13 +79,13 @@ class TokenService(
     fun getAccessTokenDetails(accessToken: String): AccessTokenResponse {
         val token = JWT.decode(accessToken)
         if (algorithm.name != token.algorithm) {
-            throw TokenSignatureMismatchException()
+            throw TokenSignatureMismatchError()
         }
 
         try {
             algorithm.verify(token)
         } catch (exception: Exception) {
-            throw TokenSignatureMismatchException()
+            throw TokenSignatureMismatchError()
         }
 
         return AccessTokenResponse(

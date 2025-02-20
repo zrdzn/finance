@@ -3,7 +3,7 @@ package dev.zrdzn.finance.backend.category.application
 import dev.zrdzn.finance.backend.audit.application.AuditService
 import dev.zrdzn.finance.backend.audit.domain.AuditAction
 import dev.zrdzn.finance.backend.category.application.CategoryMapper.toResponse
-import dev.zrdzn.finance.backend.category.application.error.CategoryNotFoundException
+import dev.zrdzn.finance.backend.category.application.error.CategoryNotFoundError
 import dev.zrdzn.finance.backend.category.application.response.CategoryListResponse
 import dev.zrdzn.finance.backend.category.application.response.CategoryResponse
 import dev.zrdzn.finance.backend.category.domain.Category
@@ -67,7 +67,7 @@ class CategoryService(
 
                 it.toResponse()
             }
-            ?: throw CategoryNotFoundException()
+            ?: throw CategoryNotFoundError()
 
     @Transactional(readOnly = true)
     fun getCategoriesByVaultId(requesterId: Int, vaultId: Int): CategoryListResponse =

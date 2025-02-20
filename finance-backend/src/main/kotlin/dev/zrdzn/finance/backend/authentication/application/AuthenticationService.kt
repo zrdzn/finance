@@ -1,9 +1,9 @@
 package dev.zrdzn.finance.backend.authentication.application
 
-import dev.zrdzn.finance.backend.authentication.application.error.AuthenticationAttemptNotFoundException
-import dev.zrdzn.finance.backend.authentication.application.error.AuthenticationCredentialsInvalidException
-import dev.zrdzn.finance.backend.authentication.application.error.AuthenticationTotpInvalidException
-import dev.zrdzn.finance.backend.authentication.application.error.AuthenticationTotpRequiredException
+import dev.zrdzn.finance.backend.authentication.application.error.AuthenticationAttemptNotFoundError
+import dev.zrdzn.finance.backend.authentication.application.error.AuthenticationCredentialsInvalidError
+import dev.zrdzn.finance.backend.authentication.application.error.AuthenticationTotpInvalidError
+import dev.zrdzn.finance.backend.authentication.application.error.AuthenticationTotpRequiredError
 import dev.zrdzn.finance.backend.authentication.application.request.AuthenticationLoginRequest
 import dev.zrdzn.finance.backend.authentication.domain.AuthenticationAttempt
 import dev.zrdzn.finance.backend.authentication.domain.AuthenticationAttemptRepository
@@ -31,9 +31,9 @@ class AuthenticationService(
 ) {
 
     @Transactional(noRollbackFor = [
-        AuthenticationCredentialsInvalidException::class,
-        AuthenticationTotpRequiredException::class,
-        AuthenticationTotpInvalidException::class
+        AuthenticationCredentialsInvalidError::class,
+        AuthenticationTotpRequiredError::class,
+        AuthenticationTotpInvalidError::class
     ])
     fun authenticate(authenticationLoginRequest: AuthenticationLoginRequest, ipAddress: String): AccessTokenResponse {
         // validate password and create authentication attempt
@@ -45,12 +45,12 @@ class AuthenticationService(
             if (!doesIpAddressExist(user.id, ipAddress)) {
                 // check if the user provided a one-time password
                 if (authenticationLoginRequest.oneTimePassword == null) {
-                    throw AuthenticationTotpRequiredException()
+                    throw AuthenticationTotpRequiredError()
                 }
 
                 // validate the one-time password
                 if (!userService.verifyUserTwoFactorCode(user.totpSecret, authenticationLoginRequest.oneTimePassword)) {
-                    throw AuthenticationTotpInvalidException()
+                    throw AuthenticationTotpInvalidError()
                 }
             }
         }
@@ -84,7 +84,7 @@ class AuthenticationService(
 
     @Transactional
     fun updateAuthenticationAttempt(id: Int, authenticatedAt: Instant) {
-        val authenticationAttempt = authenticationAttemptRepository.findById(id) ?: throw AuthenticationAttemptNotFoundException()
+        val authenticationAttempt = authenticationAttemptRepository.findById(id) ?: throw AuthenticationAttemptNotFoundError()
 
         authenticationAttempt.authenticatedAt = authenticatedAt
     }
@@ -114,12 +114,12 @@ class AuthenticationService(
 
     @Transactional
     fun getValidatedUser(authenticationLoginRequest: AuthenticationLoginRequest, ipAddress: String): Pair<AuthenticationAttempt, UserWithPasswordResponse> {
-        val user = userService.getInsecureUser(authenticationLoginRequest.email)
+        val user = userService.getInsecureUser(authenticationLoginRequest.email) ?: throw AuthenticationCredentialsInvalidError()
 
         val authenticationAttempt = createAuthenticationAttempt(userId = user.id, ipAddress = ipAddress)
 
         if (!passwordEncoder.matches(authenticationLoginRequest.password, user.password)) {
-            throw AuthenticationCredentialsInvalidException()
+            throw AuthenticationCredentialsInvalidError()
         }
 
         return authenticationAttempt to user

@@ -93,6 +93,7 @@ open class ApplicationTestRunner {
             storageSecretKey = s3Container.envMap["AWS_SECRET_ACCESS_KEY"]!!,
             storageRegion = s3Container.envMap["DEFAULT_REGION"]!!,
             storageEndpoint = "http://${s3Container.host}:${s3Container.getMappedPort(4566)}",
+            openAiApiKey = ""
         )
     }
 
