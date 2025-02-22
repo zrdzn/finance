@@ -78,13 +78,13 @@ export const AnalyticsSummaryCard = ({ vault, permissions, statisticType }: Anal
     const getColor = () => {
         if (statisticType === "INCOME") return "green";
         if (statisticType === "EXPENSES") return "crimson";
-        return flows.total.amount > 0 ? "green" : flows.total.amount < 0 ? "crimson" : "black";
+        return flows.total.amount >= 0 ? "green" : flows.total.amount < 0 ? "crimson" : "black";
     };
 
     const getArrowType = () => {
         if (statisticType === "INCOME") return "increase";
         if (statisticType === "EXPENSES") return "decrease";
-        return flows.total.amount > 0 ? "increase" : "decrease";
+        return flows.total.amount >= 0 ? "increase" : "decrease";
     };
 
     return (

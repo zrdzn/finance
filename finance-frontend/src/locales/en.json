@@ -233,12 +233,17 @@
       "invalid-separator": "Specified separator is invalid",
       "select-transaction-method": "Select a transaction method",
       "select-file": "Select a file",
-      "card": {
-        "title": "Import transactions",
-        "csv": "CSV",
-        "image": "Image",
-        "submit": "Import"
-      }
+      "description": "Description",
+      "select-all": "Select all",
+      "unselect-all": "Unselect all",
+      "select": "Select",
+      "product-name": "Name",
+      "price": "Price",
+      "quantity": "Quantity",
+      "button": "Import",
+      "csv": "Import from a CSV file",
+      "image": "Import from image",
+      "submit": "Import"
     },
     "schedules": {
       "schedule-created-success": "Schedule has been created",
