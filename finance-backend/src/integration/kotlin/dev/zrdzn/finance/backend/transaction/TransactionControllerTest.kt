@@ -139,7 +139,7 @@ class TransactionControllerTest : TransactionSpecification() {
         val expectedTransactionProduct = transactionProductRepository.findById(response.body.id)
         assertNotNull(expectedTransactionProduct)
         assertEquals(transaction.id, expectedTransactionProduct!!.transactionId)
-        assertEquals(product.id, expectedTransactionProduct.productId)
+        assertEquals(product.id, expectedTransactionProduct.name)
         assertEquals(unitAmount, expectedTransactionProduct.unitAmount)
         assertEquals(quantity, expectedTransactionProduct.quantity)
 

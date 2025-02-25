@@ -1,28 +1,26 @@
 import {
-    Avatar,
-    Box,
-    Button,
-    Drawer,
-    DrawerBody,
-    DrawerContent,
-    DrawerHeader,
-    DrawerOverlay,
-    Flex, Heading, HStack, IconButton, Input,
-    Link,
-    Text,
-    useDisclosure,
-    useMediaQuery, VStack
+  Avatar,
+  Box,
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
+  Flex, Heading, HStack, IconButton, Input,
+  Link,
+  Text,
+  useDisclosure,
+  useMediaQuery, VStack
 } from "@chakra-ui/react";
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace"
 import {useTheme} from "@/hooks/useTheme"
 import React, {useEffect, useState} from "react"
-import {FaAngleLeft, FaAngleRight, FaBars, FaBook, FaComment, FaHistory, FaRobot, FaTags, FaUser} from "react-icons/fa"
-import {FaCalendarDays, FaChartSimple, FaGears, FaHouse, FaMessage, FaX} from "react-icons/fa6"
+import {FaAngleLeft, FaAngleRight, FaBars, FaBook, FaHistory, FaRobot, FaTags, FaUser} from "react-icons/fa"
+import {FaGears, FaHouse, FaMessage, FaX} from "react-icons/fa6"
 import {useRouter} from "next/router"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
-import {sendMessage} from "next/dist/client/components/react-dev-overlay/pages/websocket";
-import {right} from "@popperjs/core";
 import {AccountAvatar} from "@/components/account/AccountAvatar";
 import {useAuthentication} from "@/hooks/useAuthentication";
 import {useApi} from "@/hooks/useApi";
@@ -38,7 +36,7 @@ interface VaultSidebarProperties {
   aiEnabled?: boolean;
 }
 
-const SidebarLogo = ({ vault, isCollapsed }: { vault: VaultResponse, isCollapsed?: boolean }) => (
+const SidebarLogo = ({vault, isCollapsed}: { vault: VaultResponse, isCollapsed?: boolean }) => (
   <Flex
     textTransform="uppercase"
     fontWeight="semibold"
@@ -58,163 +56,173 @@ const GetAvailableEndpoints = (vault: VaultResponse, permissions: string[]) => {
   const t = useTranslations("VaultSidebar")
 
   const navItems = [
-    { href: `/vault/${vault.publicId}`, icon: FaHouse, label: t('overview') },
-    { href: `/vault/${vault.publicId}/transactions`, icon: FaBook, label: t('transactions'), requireAtLeast: ['TRANSACTION_READ', 'SCHEDULE_READ'] },
-    { href: `/vault/${vault.publicId}/products`, icon: FaTags, label: t('products'), requireAtLeast: ['PRODUCT_READ', 'CATEGORY_READ'] },
-    { href: `/vault/${vault.publicId}/members`, icon: FaUser, label: t('members'), requireAtLeast: ['MEMBER_READ', 'MEMBER_INVITE_READ'] },
-    { href: `/vault/${vault.publicId}/audits`, icon: FaHistory, label: t('audits'), requireAtLeast: ['AUDIT_READ'] },
-    { href: `/vault/${vault.publicId}/settings`, icon: FaGears, label: t('settings'), requireAtLeast: ['SETTINGS_READ'] }
+    {href: `/vault/${vault.publicId}`, icon: FaHouse, label: t('overview')},
+    {
+      href: `/vault/${vault.publicId}/transactions`,
+      icon: FaBook,
+      label: t('transactions'),
+      requireAtLeast: ['TRANSACTION_READ', 'SCHEDULE_READ']
+    },
+    {
+      href: `/vault/${vault.publicId}/members`,
+      icon: FaUser,
+      label: t('members'),
+      requireAtLeast: ['MEMBER_READ', 'MEMBER_INVITE_READ']
+    },
+    {href: `/vault/${vault.publicId}/audits`, icon: FaHistory, label: t('audits'), requireAtLeast: ['AUDIT_READ']},
+    {href: `/vault/${vault.publicId}/settings`, icon: FaGears, label: t('settings'), requireAtLeast: ['SETTINGS_READ']}
   ]
 
-  return navItems.filter(({ requireAtLeast }) => {
+  return navItems.filter(({requireAtLeast}) => {
     return !requireAtLeast || requireAtLeast.some(permission => permissions.includes(permission));
   })
 }
 
 interface StyleProperties {
-    bottom: string;
-    right: string;
-    width: number;
-    height: number;
-    fontSize: string;
+  bottom: string;
+  right: string;
+  width: number;
+  height: number;
+  fontSize: string;
 }
 
 interface ChatBoxProps {
-    iconStyle: StyleProperties;
-    boxStyle: StyleProperties;
+  iconStyle: StyleProperties;
+  boxStyle: StyleProperties;
 }
 
-const ChatBox = ({ iconStyle, boxStyle }: ChatBoxProps) => {
+const ChatBox = ({iconStyle, boxStyle}: ChatBoxProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const t = useTranslations("VaultSidebar");
-  const { details } = useAuthentication()
+  const {details} = useAuthentication()
   const [messages, setMessages] = useState([
-      { text: t('chat.initial-message'), isUser: false },
-      { text: 'How much did I spent last year? Also, provide me a full report for this month.', isUser: true },
-        { text: 'Sure, let me check that for you.', isUser: false },
-        { text: 'I have found the information you requested. Here is the report.', isUser: false },
-        { text: 'Thank you!', isUser: true }
+    {text: t('chat.initial-message'), isUser: false},
+    {text: 'How much did I spent last year? Also, provide me a full report for this month.', isUser: true},
+    {text: 'Sure, let me check that for you.', isUser: false},
+    {text: 'I have found the information you requested. Here is the report.', isUser: false},
+    {text: 'Thank you!', isUser: true}
   ]);
   const [input, setInput] = useState("");
 
   return (
-      <>
-          <Button
-              position="fixed"
-              bottom={iconStyle.bottom}
-              right={iconStyle.right}
-              zIndex={1}
-              variant="unstyled"
-              aria-label="Open Chatbot"
-              width={iconStyle.width}
-              height={iconStyle.height}
-              fontSize={iconStyle.fontSize}
-              backgroundColor={'#007bff'}
-              color={'#f8f8f8'} fontWeight={'400'}
-              borderRadius="full"
-              display="flex"
-              onClick={() => setIsOpen(!isOpen)}
-              alignItems="center"
-              justifyContent="center"
-          >
-              <FaMessage />
-          </Button>
+    <>
+      <Button
+        position="fixed"
+        bottom={iconStyle.bottom}
+        right={iconStyle.right}
+        zIndex={1}
+        variant="unstyled"
+        aria-label="Open Chatbot"
+        width={iconStyle.width}
+        height={iconStyle.height}
+        fontSize={iconStyle.fontSize}
+        backgroundColor={'#007bff'}
+        color={'#f8f8f8'} fontWeight={'400'}
+        borderRadius="full"
+        display="flex"
+        onClick={() => setIsOpen(!isOpen)}
+        alignItems="center"
+        justifyContent="center"
+      >
+        <FaMessage/>
+      </Button>
       <Box
-          position="fixed"
-          bottom={boxStyle.bottom}
-          right={boxStyle.right}
-          zIndex="1000">
-            <Box
-                width={boxStyle.width}
-                height={boxStyle.height}
-                bg="white"
-                boxShadow="xl"
-                borderRadius="lg"
-                overflow="hidden"
-                maxHeight={isOpen ? boxStyle.height : 0}
-                maxW={isOpen ? boxStyle.width : 0}
-                opacity={isOpen ? 1 : 0}
-                transition={"max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, max-width 0.3s ease-in-out"}
-                border={'1px rgba(0, 0, 0, 0.1) solid'}
-                display="flex"
-                flexDirection="column"
-            >
-              <VStack
-                  flex="1"
-                  overflowY="auto"
-                  p={3}
-                  spacing={2}
-                  align="stretch"
-              >
-                  <Box>
-                      <Heading size="md">{t('chat.title')}</Heading>
-                  </Box>
-                  {messages.map((msg, idx) =>
-                      !msg.isUser ? (
-                          <Box
-                              key={idx}
-                              p={2}
-                              borderRadius="md"
-                              alignSelf="flex-start"
-                              textAlign="left"
-                              bg="gray.100"
-                              maxW="80%"
-                          >
-                              <HStack>
-                                  <Box fontSize={'3xl'}>
-                                      <FaRobot />
-                                  </Box>
-                                  <Text fontWeight="bold">{t('chat.assistant')}</Text>
-                              </HStack>
-                              <Text>{msg.text}</Text>
-                          </Box>
-                      ) : (
-                          <Box
-                              key={idx}
-                              p={2}
-                              borderRadius="md"
-                              alignSelf="flex-end"
-                              textAlign="right"
-                              bg="blue.100"
-                              maxW="80%"
-                          >
-                              <HStack justify="flex-end">
-                                  <Text fontWeight="bold">
-                                      {
-                                          details?.username
-                                      }
-                                  </Text>
-                                  <AccountAvatar size="sm" />
-                              </HStack>
-                              <Text>{msg.text}</Text>
-                          </Box>
-                      )
-                  )}
-              </VStack>
-              <Box p={3} borderTop="1px solid #ddd" display="flex">
-                <Input
-                    flex="1"
-                    placeholder={t('chat.placeholder')}
-                    value={input}
-                    onChange={(event) => setInput(event.target.value)}
-                    onKeyDown={(event) => event.key === "Enter"}
-                />
-                <Button colorScheme="teal" ml={2} onClick={event => console.log(messages)}>{t('chat.send')}</Button>
-              </Box>
+        position="fixed"
+        bottom={boxStyle.bottom}
+        right={boxStyle.right}
+        zIndex="1000">
+        <Box
+          width={boxStyle.width}
+          height={boxStyle.height}
+          bg="white"
+          boxShadow="xl"
+          borderRadius="lg"
+          overflow="hidden"
+          maxHeight={isOpen ? boxStyle.height : 0}
+          maxW={isOpen ? boxStyle.width : 0}
+          opacity={isOpen ? 1 : 0}
+          transition={"max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, max-width 0.3s ease-in-out"}
+          border={'1px rgba(0, 0, 0, 0.1) solid'}
+          display="flex"
+          flexDirection="column"
+        >
+          <VStack
+            flex="1"
+            overflowY="auto"
+            p={3}
+            spacing={2}
+            align="stretch"
+          >
+            <Box>
+              <Heading size="md">{t('chat.title')}</Heading>
             </Box>
+            {messages.map((msg, idx) =>
+              !msg.isUser ? (
+                <Box
+                  key={idx}
+                  p={2}
+                  borderRadius="md"
+                  alignSelf="flex-start"
+                  textAlign="left"
+                  bg="gray.100"
+                  maxW="80%"
+                >
+                  <HStack>
+                    <Box fontSize={'3xl'}>
+                      <FaRobot/>
+                    </Box>
+                    <Text fontWeight="bold">{t('chat.assistant')}</Text>
+                  </HStack>
+                  <Text>{msg.text}</Text>
+                </Box>
+              ) : (
+                <Box
+                  key={idx}
+                  p={2}
+                  borderRadius="md"
+                  alignSelf="flex-end"
+                  textAlign="right"
+                  bg="blue.100"
+                  maxW="80%"
+                >
+                  <HStack justify="flex-end">
+                    <Text fontWeight="bold">
+                      {
+                        details?.username
+                      }
+                    </Text>
+                    <AccountAvatar size="sm"/>
+                  </HStack>
+                  <Text>{msg.text}</Text>
+                </Box>
+              )
+            )}
+          </VStack>
+          <Box p={3} borderTop="1px solid #ddd" display="flex">
+            <Input
+              flex="1"
+              placeholder={t('chat.placeholder')}
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              onKeyDown={(event) => event.key === "Enter"}
+            />
+            <Button colorScheme="teal" ml={2} onClick={event => console.log(messages)}>{t('chat.send')}</Button>
+          </Box>
+        </Box>
       </Box>
-      </>
+    </>
   )
 }
 
-const BaseView = ({ vault, vaultRole, aiEnabled }: VaultSidebarProperties) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+const BaseView = ({vault, vaultRole, aiEnabled}: VaultSidebarProperties) => {
+  const {isOpen, onOpen, onClose} = useDisclosure();
   const theme = useTheme();
   const router = useRouter();
 
   return (
     <>
       {
+        /* TODO: Implement actual ai messages in chatbox
         aiEnabled && (
           <ChatBox
             iconStyle={{
@@ -233,6 +241,7 @@ const BaseView = ({ vault, vaultRole, aiEnabled }: VaultSidebarProperties) => {
             }}
           />
         )
+         */
       }
       <Button
         position="fixed"
@@ -251,36 +260,37 @@ const BaseView = ({ vault, vaultRole, aiEnabled }: VaultSidebarProperties) => {
         alignItems="center"
         justifyContent="center"
       >
-        <FaBars />
+        <FaBars/>
       </Button>
 
       <Drawer placement={'left'} onClose={onClose} isOpen={isOpen}>
-        <DrawerOverlay />
+        <DrawerOverlay/>
         <DrawerContent color={theme.textColor}>
           <DrawerHeader backgroundColor={theme.primaryColor}>
             <Flex justifyContent={'space-between'} width={'full'} alignItems={'center'}>
-              <SidebarLogo vault={vault} isCollapsed={false} />
-              <Button backgroundColor={theme.primaryColor} padding={3.5} variant={'unstyled'} onClick={onClose} leftIcon={<FaX />} color={'#f8f8f8'} fontWeight={'400'} />
+              <SidebarLogo vault={vault} isCollapsed={false}/>
+              <Button backgroundColor={theme.primaryColor} padding={3.5} variant={'unstyled'} onClick={onClose}
+                      leftIcon={<FaX/>} color={'#f8f8f8'} fontWeight={'400'}/>
             </Flex>
           </DrawerHeader>
           <DrawerBody padding={0}>
             <Flex direction={'column'} mt={5}>
-              {GetAvailableEndpoints(vault, vaultRole.permissions).map(({ href, icon: Icon, label }) => (
-                  <Flex key={href} width={'full'} marginY={3}>
-                    <Link href={href} style={{ width: 'inherit' }}>
-                      <Button
-                          backgroundColor={router.asPath === href ? theme.secondaryColor : theme.backgroundColor}
-                          onClick={() => router.push(href)}
-                          width={'full'}
-                          borderRadius={0}
-                      >
-                        <Flex alignItems={'center'} width={'full'} columnGap={2}>
-                          <Icon />
-                          <Box>{label}</Box>
-                        </Flex>
-                      </Button>
-                    </Link>
-                  </Flex>
+              {GetAvailableEndpoints(vault, vaultRole.permissions).map(({href, icon: Icon, label}) => (
+                <Flex key={href} width={'full'} marginY={3}>
+                  <Link href={href} style={{width: 'inherit'}}>
+                    <Button
+                      backgroundColor={router.asPath === href ? theme.secondaryColor : theme.backgroundColor}
+                      onClick={() => router.push(href)}
+                      width={'full'}
+                      borderRadius={0}
+                    >
+                      <Flex alignItems={'center'} width={'full'} columnGap={2}>
+                        <Icon/>
+                        <Box>{label}</Box>
+                      </Flex>
+                    </Button>
+                  </Link>
+                </Flex>
               ))}
             </Flex>
           </DrawerBody>
@@ -312,6 +322,7 @@ const DesktopView = (
       boxShadow="4px 0 8px rgba(0, 0, 0, 0.1)"
     >
       {
+        /* TODO: Implement actual ai messages in chatbox
         aiEnabled && (
           <ChatBox
             iconStyle={{
@@ -330,6 +341,7 @@ const DesktopView = (
             }}
           />
         )
+ */
       }
       <Flex
         justifyContent="center"
@@ -339,9 +351,9 @@ const DesktopView = (
         backgroundColor={theme.primaryColor}
         borderBottom={`1px solid ${theme.secondaryColor}`}
       >
-        { isCollapsed && <Button variant="unstyled" onClick={toggleCollapse} leftIcon={<FaAngleRight />} /> }
-        { !isCollapsed && <Button variant="unstyled" onClick={toggleCollapse} leftIcon={<FaAngleLeft />} />}
-        { !isCollapsed && <SidebarLogo vault={vault} isCollapsed={isCollapsed} /> }
+        {isCollapsed && <Button variant="unstyled" onClick={toggleCollapse} leftIcon={<FaAngleRight/>}/>}
+        {!isCollapsed && <Button variant="unstyled" onClick={toggleCollapse} leftIcon={<FaAngleLeft/>}/>}
+        {!isCollapsed && <SidebarLogo vault={vault} isCollapsed={isCollapsed}/>}
       </Flex>
       <Flex
         direction="column"
@@ -351,18 +363,19 @@ const DesktopView = (
         alignItems={isCollapsed ? "center" : "flex-start"}
         flexGrow={1}
       >
-        {GetAvailableEndpoints(vault, vaultRole.permissions).map(({ href, icon: Icon, label }) => (
-            <Link key={href} href={href} style={{ width: "100%" }} backgroundColor={isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}>
-              <Button
-                  variant="ghost"
-                  width="100%"
-                  justifyContent={isCollapsed ? "center" : "flex-start"}
-                  leftIcon={<Icon />}
-                  backgroundColor={!isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}
-              >
-                {!isCollapsed && label}
-              </Button>
-            </Link>
+        {GetAvailableEndpoints(vault, vaultRole.permissions).map(({href, icon: Icon, label}) => (
+          <Link key={href} href={href} style={{width: "100%"}}
+                backgroundColor={isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}>
+            <Button
+              variant="ghost"
+              width="100%"
+              justifyContent={isCollapsed ? "center" : "flex-start"}
+              leftIcon={<Icon/>}
+              backgroundColor={!isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}
+            >
+              {!isCollapsed && label}
+            </Button>
+          </Link>
         ))}
       </Flex>
     </Flex>
@@ -377,17 +390,19 @@ export const VaultSidebar = (
   const [isMobile] = useMediaQuery("(max-width: 768px)");
   const api = useApi()
   const [aiEnabled, setAiEnabled] = useState(false)
-  
+
   useEffect(() => {
     api
       .then(client => client.getConfiguration())
-      .then(({ data }) => setAiEnabled(data.aiEnabled))
+      .then(({data}) => setAiEnabled(data.aiEnabled))
       .catch(console.error)
   }, [api])
 
   if (isMobile) {
-    return <BaseView vault={vault} vaultRole={vaultRole} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} aiEnabled={aiEnabled} />;
+    return <BaseView vault={vault} vaultRole={vaultRole} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse}
+                     aiEnabled={aiEnabled}/>;
   } else {
-    return <DesktopView vault={vault} vaultRole={vaultRole} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} aiEnabled={aiEnabled} />;
+    return <DesktopView vault={vault} vaultRole={vaultRole} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse}
+                        aiEnabled={aiEnabled}/>;
   }
 };

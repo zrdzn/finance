@@ -16,7 +16,7 @@ import {
     Input, Checkbox,
     Tr,
     Thead,
-    Th, Box,
+    Th, Box, Flex, FormControl, FormLabel,
 } from '@chakra-ui/react';
 import {useTheme} from "@/hooks/useTheme";
 import {useTranslations} from "next-intl";
@@ -25,10 +25,17 @@ import toast from "react-hot-toast";
 import {useApi} from "@/hooks/useApi";
 import {Components} from "@/api/api";
 import axios from "axios";
+import TransactionCreateRequest = Components.Schemas.TransactionCreateRequest;
 
 export type VaultResponse = Components.Schemas.VaultResponse;
 export type AnalysedTransactionResponse = Components.Schemas.AnalysedTransactionResponse;
 export type AnalysedTransactionProductResponse = Components.Schemas.AnalysedTransactionProductResponse;
+export type TransactionCreateProductRequest = Components.Schemas.TransactionProductCreateRequest
+
+interface ModifiedProduct {
+    request: TransactionCreateProductRequest
+    selected: boolean
+}
 
 interface ImageImportProperties {
     vault: VaultResponse
@@ -44,10 +51,8 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
     const finalRef = useRef(null)
     const theme = useTheme()
     const [analysedTransaction, setAnalysedTransaction] = useState<AnalysedTransactionResponse | undefined>(undefined)
-    const [selectedProducts, setSelectedProducts] = useState<Record<string, boolean>>({});
-    const [editedProducts, setEditedProducts] = useState<Record<string, Partial<AnalysedTransactionProductResponse>>>({});
     const [editedDescription, setEditedDescription] = useState<string | undefined>(undefined);
-    const [selectAll, setSelectAll] = useState<boolean>(true);
+    const [modifiedProducts, setModifiedProducts] = useState<ModifiedProduct[]>([])
     const t = useTranslations("Transactions")
 
     const handleImageUpload = async (file: File) => {
@@ -56,7 +61,34 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
         setImageBlob(file)
     }
 
-    const handleImageImport = async () => {
+    const handleProductChange = (
+      name: string,
+      field: "name" | "unitAmount" | "quantity",
+      value: string | number
+    ) => {
+        setModifiedProducts(previous =>
+            previous.map(product =>
+                product.request.name === name ? { ...product, [field]: value } : product
+            )
+        )
+    };
+
+    const toggleProductSelection = (name: string) => {
+        setModifiedProducts(previous =>
+            previous.map(product =>
+                product.request.name === name ? { ...product, selected: !product.selected } : product
+            )
+        )
+    };
+
+    const toggleSelectAll = () => {
+        const allSelected = modifiedProducts.every(product => product.selected)
+        setModifiedProducts(previous =>
+            previous.map(product => ({ ...product, selected: !allSelected }))
+        )
+    };
+
+    const handleImageAnalysis = async () => {
         if (!imageBlob) {
             toast.error(t('import.select-file'))
             return
@@ -73,10 +105,21 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
           }))
           .then(response => {
               toast.success(t('import.analysed'))
+
               setAnalysedTransaction(response.data);
+
               setEditedDescription(response.data.description);
-              const productSelection = Object.fromEntries(response.data.products.map((p: AnalysedTransactionProductResponse) => [p.productName, true]));
-              setSelectedProducts(productSelection);
+
+              setModifiedProducts(
+                response.data.products.map((product: AnalysedTransactionProductResponse) => ({
+                    request: {
+                        name: product.name,
+                        unitAmount: product.unitAmount,
+                        quantity: product.quantity
+                    },
+                    selected: true
+                }))
+              )
           })
           .catch(error => {
               console.error(error)
@@ -89,30 +132,33 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
           })
     }
 
-    const handleProductChange = (productName: string, field: keyof AnalysedTransactionProductResponse, value: any) => {
-        setEditedProducts((prev) => ({
-            ...prev,
-            [productName]: {
-                ...prev[productName],
-                [field]: value,
-            },
-        }));
-    };
+    const handleImageImport = () => {
+        if (!analysedTransaction) {
+            toast.error(t('import.analyze-first'))
+            return
+        }
 
-    const toggleProductSelection = (productName: string) => {
-        setSelectedProducts((prev) => ({
-            ...prev,
-            [productName]: !prev[productName],
-        }));
-    };
+        if (!editedDescription) {
+            toast(t('import.enter-description'))
+            return
+        }
 
-    const toggleSelectAll = () => {
-        const newState = !selectAll;
-        setSelectAll(newState);
-        setSelectedProducts(
-          Object.fromEntries((analysedTransaction?.products ?? []).map((p) => [p.productName, newState]))
-        );
-    };
+        const selectedProducts = modifiedProducts.filter(product => product.selected)
+        if (selectedProducts.length === 0) {
+            toast(t('import.select-products'))
+            return
+        }
+
+        const request: TransactionCreateRequest = {
+            vaultId: vault.id,
+            transactionMethod: analysedTransaction.transactionMethod,
+            transactionType: "OUTGOING",
+            description: editedDescription,
+            price: analysedTransaction.total,
+            currency: analysedTransaction.currency,
+            pr
+        }
+    }
 
     return (
       <Modal
@@ -133,100 +179,101 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
                         backgroundColor={theme.primaryColor}
                         color="#f8f8f8"
                         fontWeight="400"
-                        width={'full'}
                         textAlign="center"
+                        mb={4}
                       >
                           <Text>{t('import.select-image-button')}</Text>
                       </Button>
                   </FileUpload>
                   {analysedTransaction && (
                     <>
-                        <Text fontSize="lg" fontWeight="bold" mt={4}>
-                            {t("import.description")}
-                        </Text>
-                        <Input
-                          value={editedDescription}
-                          onChange={(e) => setEditedDescription(e.target.value)}
-                          placeholder={t("import.edit-description")}
-                          mb={4}
-                        />
-
-                        <Checkbox isChecked={selectAll} onChange={toggleSelectAll} mb={2}>
-                            {selectAll ? t("import.unselect-all") : t("import.select-all")}
-                        </Checkbox>
-
-                        <Table variant="simple" mt={2}>
-                            <Thead>
-                                <Tr>
-                                    <Th>{t("import.select")}</Th>
-                                    <Th>{t("import.product-name")}</Th>
-                                    <Th>{t("import.price")}</Th>
-                                    <Th>{t("import.quantity")}</Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-                                {analysedTransaction.products.map((product) => (
-                                  <Tr key={product.productName}>
-                                      <Td>
-                                          <Checkbox
-                                            isChecked={selectedProducts[product.productName]}
-                                            onChange={() => toggleProductSelection(product.productName)}
-                                          />
-                                      </Td>
-                                      <Td>
-                                          <Box flex="1">
-                                              <Input
-                                                value={editedProducts[product.productName]?.productName ?? product.productName}
-                                                onChange={(e) =>
-                                                  handleProductChange(product.productName, "productName", e.target.value)
-                                                }
-                                                minWidth="120px"
-                                                maxWidth="250px"
+                        <FormControl isRequired mb={4}>
+                            <FormLabel>{t('import.description')}</FormLabel>
+                            <Input
+                              name={'description'}
+                              value={editedDescription}
+                              onChange={(e) => setEditedDescription(e.target.value)}
+                              placeholder={t("import.edit-description")}
+                            />
+                        </FormControl>
+                        <FormControl isRequired>
+                            <FormLabel>{t('import.products')}</FormLabel>
+                            <Table variant="simple" mt={2}>
+                                <Thead>
+                                    <Tr>
+                                        <Th>
+                                            <Checkbox isChecked={selectAll} onChange={toggleSelectAll} mb={2}>
+                                            </Checkbox>
+                                        </Th>
+                                        <Th>{t("import.product-name")}</Th>
+                                        <Th>{t("import.price")}</Th>
+                                        <Th>{t("import.quantity")}</Th>
+                                    </Tr>
+                                </Thead>
+                                <Tbody>
+                                    {analysedTransaction.products.map((product) => (
+                                      <Tr key={product.productName}>
+                                          <Td>
+                                              <Checkbox
+                                                isChecked={selectedProducts[product.productName]}
+                                                onChange={() => toggleProductSelection(product.productName)}
                                               />
-                                          </Box>
-                                      </Td>
-                                      <Td>
-                                          <Box flex="1">
-                                              <Input
-                                                type="number"
-                                                value={editedProducts[product.productName]?.unitAmount ?? product.unitAmount}
-                                                onChange={(e) =>
-                                                  handleProductChange(product.productName, "unitAmount", parseFloat(e.target.value))
-                                                }
-                                                minWidth="120px"
-                                                maxWidth="250px"
-                                              />
-                                          </Box>
-                                      </Td>
-                                      <Td>
-                                          <Box flex="1">
-                                              <Input
-                                                type="number"
-                                                value={editedProducts[product.productName]?.quantity ?? product.quantity}
-                                                onChange={(e) =>
-                                                  handleProductChange(product.productName, "quantity", parseInt(e.target.value))
-                                                }
-                                                minWidth="120px"
-                                                maxWidth="250px"
-                                              />
-                                          </Box>
-                                      </Td>
-                                  </Tr>
-                                ))}
-                            </Tbody>
-                        </Table>
+                                          </Td>
+                                          <Td>
+                                              <Box flex="1">
+                                                  <Input
+                                                    value={editedProducts[product.productName]?.productName ?? product.productName}
+                                                    onChange={(e) =>
+                                                      handleProductChange(product.productName, "productName", e.target.value)
+                                                    }
+                                                    minWidth="120px"
+                                                    maxWidth="250px"
+                                                  />
+                                              </Box>
+                                          </Td>
+                                          <Td>
+                                              <Box flex="1">
+                                                  <Input
+                                                    type="number"
+                                                    value={editedProducts[product.productName]?.unitAmount ?? product.unitAmount}
+                                                    onChange={(e) =>
+                                                      handleProductChange(product.productName, "unitAmount", parseFloat(e.target.value))
+                                                    }
+                                                    minWidth="120px"
+                                                    maxWidth="250px"
+                                                  />
+                                              </Box>
+                                          </Td>
+                                          <Td>
+                                              <Box flex="1">
+                                                  <Input
+                                                    type="number"
+                                                    value={editedProducts[product.productName]?.quantity ?? product.quantity}
+                                                    onChange={(e) =>
+                                                      handleProductChange(product.productName, "quantity", parseInt(e.target.value))
+                                                    }
+                                                    minWidth="120px"
+                                                    maxWidth="250px"
+                                                  />
+                                              </Box>
+                                          </Td>
+                                      </Tr>
+                                    ))}
+                                </Tbody>
+                            </Table>
+                        </FormControl>
                     </>
                   )}
               </ModalBody>
               <ModalFooter>
                   <Button
                     mt={8}
-                    onClick={handleImageImport}
+                    onClick={handleImageAnalysis}
                     backgroundColor={theme.primaryColor}
                     color={'#f8f8f8'}
                     fontWeight={'400'}
                   >
-                      {t('import.submit')}
+                      {t('import.analyze')}
                   </Button>
               </ModalFooter>
           </ModalContent>

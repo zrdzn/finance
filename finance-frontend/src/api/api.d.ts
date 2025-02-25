@@ -16,7 +16,7 @@ declare namespace Components {
             expiresAt: string; // date-time
         }
         export interface AnalysedTransactionProductResponse {
-            productName: string;
+            name: string;
             unitAmount: number;
             quantity: number; // int32
         }
@@ -123,7 +123,7 @@ declare namespace Components {
             transactions: TransactionResponse[];
         }
         export interface TransactionProductCreateRequest {
-            productId: number; // int32
+            name: string;
             unitAmount: number;
             quantity: number; // int32
         }
@@ -133,7 +133,7 @@ declare namespace Components {
         export interface TransactionProductResponse {
             id: number; // int32
             transactionId: number; // int32
-            product: ProductResponse;
+            name: string;
             unitAmount: number;
             quantity: number; // int32
         }
@@ -602,7 +602,7 @@ declare namespace Paths {
             export type $200 = Components.Schemas.VaultListResponse;
         }
     }
-    namespace ImportTransactions {
+    namespace ImportTransactionsFromCsv {
         namespace Parameters {
             export type ApplyTransactionMethod = "CARD" | "BLIK" | "CASH";
             export type Mappings = string;
@@ -862,13 +862,13 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.VerifyUserTwoFactorSetup.Responses.$200>
   /**
-   * importTransactions
+   * importTransactionsFromCsv
    */
-  'importTransactions'(
-    parameters: Parameters<Paths.ImportTransactions.QueryParameters & Paths.ImportTransactions.PathParameters>,
-    data?: Paths.ImportTransactions.RequestBody,
+  'importTransactionsFromCsv'(
+    parameters: Parameters<Paths.ImportTransactionsFromCsv.QueryParameters & Paths.ImportTransactionsFromCsv.PathParameters>,
+    data?: Paths.ImportTransactionsFromCsv.RequestBody,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.ImportTransactions.Responses.$200>
+  ): OperationResponse<Paths.ImportTransactionsFromCsv.Responses.$200>
   /**
    * createSchedule
    */
@@ -1300,15 +1300,15 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.VerifyUserTwoFactorSetup.Responses.$200>
   }
-  ['/api/transactions/{vaultId}/import']: {
+  ['/api/transactions/{vaultId}/import/csv']: {
     /**
-     * importTransactions
+     * importTransactionsFromCsv
      */
     'post'(
-      parameters: Parameters<Paths.ImportTransactions.QueryParameters & Paths.ImportTransactions.PathParameters>,
-      data?: Paths.ImportTransactions.RequestBody,
+      parameters: Parameters<Paths.ImportTransactionsFromCsv.QueryParameters & Paths.ImportTransactionsFromCsv.PathParameters>,
+      data?: Paths.ImportTransactionsFromCsv.RequestBody,
       config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.ImportTransactions.Responses.$200>
+    ): OperationResponse<Paths.ImportTransactionsFromCsv.Responses.$200>
   }
   ['/api/transactions/{transactionId}/schedule/create']: {
     /**

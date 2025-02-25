@@ -1,6 +1,5 @@
 package dev.zrdzn.finance.backend.transaction.application
 
-import dev.zrdzn.finance.backend.product.application.response.ProductResponse
 import dev.zrdzn.finance.backend.transaction.application.response.TransactionProductListResponse
 import dev.zrdzn.finance.backend.transaction.application.response.TransactionProductResponse
 import dev.zrdzn.finance.backend.transaction.application.response.TransactionResponse
@@ -29,10 +28,10 @@ object TransactionMapper {
         currency = this.currency
     )
 
-    fun TransactionProduct.toResponse(product: ProductResponse) = TransactionProductResponse(
+    fun TransactionProduct.toResponse() = TransactionProductResponse(
         id = id!!,
         transactionId = transactionId,
-        product = product,
+        name = name,
         unitAmount = unitAmount,
         quantity = quantity
     )

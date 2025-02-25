@@ -12,7 +12,7 @@ data class AnalysedTransactionResponse(
 )
 
 data class AnalysedTransactionProductResponse(
-    val productName: String,
+    val name: String,
     val unitAmount: BigDecimal,
     val quantity: Int
 )

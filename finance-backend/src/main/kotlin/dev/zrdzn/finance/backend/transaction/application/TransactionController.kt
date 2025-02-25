@@ -47,8 +47,8 @@ class TransactionController(
         @RequestPart("file") file: MultipartFile
     ): AnalysedTransactionResponse = transactionService.analyzeImage(userId, file.inputStream)
 
-    @PostMapping("/{vaultId}/import")
-    fun importTransactions(
+    @PostMapping("/{vaultId}/import/csv")
+    fun importTransactionsFromCsv(
         @AuthenticationPrincipal userId: Int,
         @PathVariable vaultId: Int,
         @RequestParam("file") file: MultipartFile,
@@ -124,7 +124,7 @@ class TransactionController(
         transactionService.createTransactionProduct(
             requesterId = userId,
             transactionId = transactionId,
-            productId = transactionProductCreateRequest.productId,
+            name = transactionProductCreateRequest.name,
             unitAmount = transactionProductCreateRequest.unitAmount,
             quantity = transactionProductCreateRequest.quantity
         )

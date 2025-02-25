@@ -19,6 +19,7 @@ import dev.zrdzn.finance.backend.transaction.application.error.TransactionDescri
 import dev.zrdzn.finance.backend.transaction.application.error.TransactionImportMappingNotFoundError
 import dev.zrdzn.finance.backend.transaction.application.error.TransactionNotFoundError
 import dev.zrdzn.finance.backend.transaction.application.error.TransactionPriceRequiredError
+import dev.zrdzn.finance.backend.transaction.application.error.TransactionProductNotFoundError
 import dev.zrdzn.finance.backend.transaction.application.response.AnalysedTransactionResponse
 import dev.zrdzn.finance.backend.transaction.application.response.FlowsChartResponse
 import dev.zrdzn.finance.backend.transaction.application.response.FlowsChartSeries
@@ -258,7 +259,7 @@ class TransactionService(
                     TransactionProduct(
                         id = null,
                         transactionId = newTransaction.id!!,
-                        productId = it.productId,
+                        name = it.name,
                         unitAmount = it.unitAmount,
                         quantity = it.quantity
                     )
@@ -319,33 +320,33 @@ class TransactionService(
     fun createTransactionProduct(
         requesterId: Int,
         transactionId: Int,
-        productId: Int,
+        name: String,
         unitAmount: BigDecimal,
         quantity: Int
     ): TransactionProductResponse {
-        val product = productService.getProduct(requesterId, productId)
+        val transaction = getTransaction(requesterId, transactionId)
 
-        vaultService.authorizeMember(product.vaultId, requesterId, VaultPermission.TRANSACTION_CREATE)
+        vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_CREATE)
 
         return transactionProductRepository
             .save(
                 TransactionProduct(
                     id = null,
                     transactionId = transactionId,
-                    productId = productId,
+                    name = name,
                     unitAmount = unitAmount,
                     quantity = quantity,
                 )
             )
             .also {
                 auditService.createAudit(
-                    vaultId = product.vaultId,
+                    vaultId = transaction.vaultId,
                     userId = requesterId,
                     auditAction = AuditAction.TRANSACTION_PRODUCT_CREATED,
-                    description = product.name
+                    description = name
                 )
             }
-            .toResponse(productService.getProduct(requesterId, productId))
+            .toResponse()
     }
 
     @Transactional
@@ -495,17 +496,22 @@ class TransactionService(
 
         return transactionProductRepository
             .findByTransactionId(transactionId)
-            .map {
-                TransactionProductResponse(
-                    id = it.id!!,
-                    transactionId = it.transactionId,
-                    product = productService.getProduct(requesterId, it.productId),
-                    unitAmount = it.unitAmount,
-                    quantity = it.quantity
-                )
-            }
+            .map { it.toResponse() }
             .toSet()
             .let { TransactionProductListResponse(it) }
+    }
+
+    @Transactional(readOnly = true)
+    fun getTransactionProductForcefully(name: String): TransactionProductResponse {
+        val product = transactionProductRepository.findByName(name) ?: throw TransactionProductNotFoundError()
+
+        return TransactionProductResponse(
+            id = product.id!!,
+            transactionId = product.transactionId,
+            name = product.name,
+            unitAmount = product.unitAmount,
+            quantity = product.quantity
+        )
     }
 
     @Transactional(readOnly = true)

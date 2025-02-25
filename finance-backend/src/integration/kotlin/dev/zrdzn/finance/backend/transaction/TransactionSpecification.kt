@@ -52,7 +52,7 @@ open class TransactionSpecification : ProductSpecification() {
     ): TransactionProductResponse =
         transactionService.createTransactionProduct(
             transactionId = transactionId,
-            productId = productId,
+            name = productId,
             requesterId = requesterId,
             unitAmount = unitAmount,
             quantity = quantity

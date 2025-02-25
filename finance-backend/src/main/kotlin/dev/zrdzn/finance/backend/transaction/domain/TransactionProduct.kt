@@ -19,8 +19,8 @@ data class TransactionProduct(
     @Column(name = "transaction_id")
     val transactionId: Int,
 
-    @Column(name = "product_id")
-    val productId: Int,
+    @Column(name = "name")
+    val name: String,
 
     @Column(name = "unit_amount")
     val unitAmount: BigDecimal,
