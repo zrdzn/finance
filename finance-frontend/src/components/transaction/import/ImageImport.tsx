@@ -16,7 +16,7 @@ import {
     Input, Checkbox,
     Tr,
     Thead,
-    Th, Box, Flex, FormControl, FormLabel,
+    Th, Box, Flex, FormControl, FormLabel, HStack,
 } from '@chakra-ui/react';
 import {useTheme} from "@/hooks/useTheme";
 import {useTranslations} from "next-intl";
@@ -25,14 +25,17 @@ import toast from "react-hot-toast";
 import {useApi} from "@/hooks/useApi";
 import {Components} from "@/api/api";
 import axios from "axios";
-import TransactionCreateRequest = Components.Schemas.TransactionCreateRequest;
+import {useRouter} from "next/router";
+import Image from "next/image";
 
 export type VaultResponse = Components.Schemas.VaultResponse;
 export type AnalysedTransactionResponse = Components.Schemas.AnalysedTransactionResponse;
 export type AnalysedTransactionProductResponse = Components.Schemas.AnalysedTransactionProductResponse;
+export type TransactionCreateRequest = Components.Schemas.TransactionCreateRequest
 export type TransactionCreateProductRequest = Components.Schemas.TransactionProductCreateRequest
 
 interface ModifiedProduct {
+    id: number
     request: TransactionCreateProductRequest
     selected: boolean
 }
@@ -50,6 +53,7 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
     const initialRef = useRef(null)
     const finalRef = useRef(null)
     const theme = useTheme()
+    const router = useRouter()
     const [analysedTransaction, setAnalysedTransaction] = useState<AnalysedTransactionResponse | undefined>(undefined)
     const [editedDescription, setEditedDescription] = useState<string | undefined>(undefined);
     const [modifiedProducts, setModifiedProducts] = useState<ModifiedProduct[]>([])
@@ -62,21 +66,25 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
     }
 
     const handleProductChange = (
-      name: string,
+      id: number,
       field: "name" | "unitAmount" | "quantity",
       value: string | number
     ) => {
         setModifiedProducts(previous =>
-            previous.map(product =>
-                product.request.name === name ? { ...product, [field]: value } : product
+            previous.map((product, index) =>
+                id === index
+                    ? { ...product, request: { ...product.request, [field]: value } }
+                    : product
             )
         )
     };
 
-    const toggleProductSelection = (name: string) => {
+    const toggleProductSelection = (id: number) => {
         setModifiedProducts(previous =>
-            previous.map(product =>
-                product.request.name === name ? { ...product, selected: !product.selected } : product
+            previous.map((product, index) =>
+                id === index
+                  ? { ...product, selected: !product.selected }
+                  : product
             )
         )
     };
@@ -94,6 +102,8 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
             return
         }
 
+        const loadingToastId = toast.loading(t('import.analyzing'))
+
         const formData = new FormData()
         formData.append('file', imageBlob, 'file.png');
 
@@ -104,6 +114,7 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
               }
           }))
           .then(response => {
+              toast.dismiss(loadingToastId)
               toast.success(t('import.analysed'))
 
               setAnalysedTransaction(response.data);
@@ -111,7 +122,8 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
               setEditedDescription(response.data.description);
 
               setModifiedProducts(
-                response.data.products.map((product: AnalysedTransactionProductResponse) => ({
+                response.data.products.map((product: AnalysedTransactionProductResponse, index: number) => ({
+                    id: index,
                     request: {
                         name: product.name,
                         unitAmount: product.unitAmount,
@@ -122,6 +134,8 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
               )
           })
           .catch(error => {
+              toast.dismiss(loadingToastId)
+
               console.error(error)
               if (axios.isAxiosError(error) && error.response) {
                   const errorMessage = error.response.data.description || "An error occurred while importing transactions"
@@ -156,8 +170,24 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
             description: editedDescription,
             price: analysedTransaction.total,
             currency: analysedTransaction.currency,
-            pr
+            products: selectedProducts.map(product => product.request)
         }
+
+        api
+          .then(client => client.createTransaction(null, request))
+          .then(() => {
+              toast.success(t('import.imported'))
+              setTimeout(() => router.reload(), 1000)
+          })
+          .catch(error => {
+              console.error(error)
+              if (axios.isAxiosError(error) && error.response) {
+                  const errorMessage = error.response.data.description || "An error occurred while importing transactions"
+                  toast.error(errorMessage)
+              } else {
+                  toast.error("An unexpected error occurred")
+              }
+          })
     }
 
     return (
@@ -169,22 +199,66 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
         size={'lg'}
       >
           <ModalOverlay />
-          <ModalContent maxWidth={["100%", "90%", "80%"]} width="100%" overflow={'hidden'}>
+          <ModalContent
+            maxWidth={modifiedProducts.length > 0 ? "90%" : undefined}
+            width="100%"
+            overflow={'hidden'}>
               <ModalHeader>{t('import.image')}</ModalHeader>
               <ModalCloseButton />
               <ModalBody pb={6} overflowX="scroll">
-                  <FileUpload handleFile={handleImageUpload}>
-                      <Button
-                        size="md"
-                        backgroundColor={theme.primaryColor}
-                        color="#f8f8f8"
-                        fontWeight="400"
-                        textAlign="center"
-                        mb={4}
-                      >
-                          <Text>{t('import.select-image-button')}</Text>
-                      </Button>
-                  </FileUpload>
+                  <FormControl mb={4}>
+                      <FormLabel mb={2}>{t('import.select-image-label')}</FormLabel>
+                      <FileUpload handleFile={handleImageUpload}>
+                          <Button
+                            size="md"
+                            backgroundColor={theme.primaryColor}
+                            color="#f8f8f8"
+                            fontWeight="400"
+                            textAlign="center"
+                            width="full"
+                            _hover={{ opacity: 0.9 }}
+                          >
+                              <Text>{t('import.select-image-button')}</Text>
+                          </Button>
+                      </FileUpload>
+                  </FormControl>
+                  {imageBlob && (
+                    <FormControl mb={4}>
+                        <FormLabel mb={2}>{t('import.image-preview')}</FormLabel>
+                        <Box
+                          borderWidth="1px"
+                          borderRadius="md"
+                          p={4}
+                          display={'flex'}
+                          overflow="hidden"
+                          boxShadow="sm"
+                          justifyContent={'center'}
+                          alignItems={'center'}
+                          bg="white"
+                          _hover={{ boxShadow: "md" }}
+                          transition="box-shadow 0.2s"
+                        >
+                            <Image src={URL.createObjectURL(imageBlob)} alt="Preview" width={300} height={300} style={{ maxWidth: "100%" }} />
+                        </Box>
+                    </FormControl>
+                  )}
+                  {
+                    !analysedTransaction && (
+                      <FormControl mb={4}>
+                          <FormLabel mb={2}>{t('import.analyze-label')}</FormLabel>
+                          <Button
+                            onClick={handleImageAnalysis}
+                            backgroundColor={theme.primaryColor}
+                            color={'#f8f8f8'}
+                            fontWeight={'400'}
+                            width="full"
+                            _hover={{ opacity: 0.9 }}
+                          >
+                              {t('import.analyze')}
+                          </Button>
+                      </FormControl>
+                    )
+                  }
                   {analysedTransaction && (
                     <>
                         <FormControl isRequired mb={4}>
@@ -192,7 +266,7 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
                             <Input
                               name={'description'}
                               value={editedDescription}
-                              onChange={(e) => setEditedDescription(e.target.value)}
+                              onChange={event => setEditedDescription(event.target.value)}
                               placeholder={t("import.edit-description")}
                             />
                         </FormControl>
@@ -202,8 +276,10 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
                                 <Thead>
                                     <Tr>
                                         <Th>
-                                            <Checkbox isChecked={selectAll} onChange={toggleSelectAll} mb={2}>
-                                            </Checkbox>
+                                            <Checkbox
+                                              isChecked={modifiedProducts.every(product => product.selected)}
+                                              onChange={toggleSelectAll}
+                                              mb={2} />
                                         </Th>
                                         <Th>{t("import.product-name")}</Th>
                                         <Th>{t("import.price")}</Th>
@@ -211,20 +287,20 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    {analysedTransaction.products.map((product) => (
-                                      <Tr key={product.productName}>
+                                    {modifiedProducts.map((product, index) => (
+                                      <Tr key={index}>
                                           <Td>
                                               <Checkbox
-                                                isChecked={selectedProducts[product.productName]}
-                                                onChange={() => toggleProductSelection(product.productName)}
+                                                isChecked={product.selected}
+                                                onChange={() => toggleProductSelection(index)}
                                               />
                                           </Td>
                                           <Td>
                                               <Box flex="1">
                                                   <Input
-                                                    value={editedProducts[product.productName]?.productName ?? product.productName}
-                                                    onChange={(e) =>
-                                                      handleProductChange(product.productName, "productName", e.target.value)
+                                                    value={product.request.name}
+                                                    onChange={event =>
+                                                      handleProductChange(index, "name", event.target.value)
                                                     }
                                                     minWidth="120px"
                                                     maxWidth="250px"
@@ -235,9 +311,9 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
                                               <Box flex="1">
                                                   <Input
                                                     type="number"
-                                                    value={editedProducts[product.productName]?.unitAmount ?? product.unitAmount}
-                                                    onChange={(e) =>
-                                                      handleProductChange(product.productName, "unitAmount", parseFloat(e.target.value))
+                                                    value={product.request.unitAmount}
+                                                    onChange={event =>
+                                                      handleProductChange(index, "unitAmount", parseFloat(event.target.value))
                                                     }
                                                     minWidth="120px"
                                                     maxWidth="250px"
@@ -248,9 +324,9 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
                                               <Box flex="1">
                                                   <Input
                                                     type="number"
-                                                    value={editedProducts[product.productName]?.quantity ?? product.quantity}
-                                                    onChange={(e) =>
-                                                      handleProductChange(product.productName, "quantity", parseInt(e.target.value))
+                                                    value={product.request.quantity}
+                                                    onChange={event =>
+                                                      handleProductChange(index, "quantity", parseInt(event.target.value))
                                                     }
                                                     minWidth="120px"
                                                     maxWidth="250px"
@@ -266,15 +342,19 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
                   )}
               </ModalBody>
               <ModalFooter>
-                  <Button
-                    mt={8}
-                    onClick={handleImageAnalysis}
-                    backgroundColor={theme.primaryColor}
-                    color={'#f8f8f8'}
-                    fontWeight={'400'}
-                  >
-                      {t('import.analyze')}
-                  </Button>
+                  {
+                      analysedTransaction && (
+                      <Button
+                        mt={8}
+                        onClick={handleImageImport}
+                        backgroundColor={theme.primaryColor}
+                        color={'#f8f8f8'}
+                        fontWeight={'400'}
+                      >
+                          {t('import.submit')}
+                      </Button>
+                    )
+                  }
               </ModalFooter>
           </ModalContent>
       </Modal>

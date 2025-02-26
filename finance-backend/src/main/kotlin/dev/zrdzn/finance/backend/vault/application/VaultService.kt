@@ -50,7 +50,8 @@ class VaultService(
                     user = userService.getUser(it.userId),
                     vaultRole = it.vaultRole
                 )
-            } ?: throw UserNotMemberError()
+            }
+            ?: throw UserNotMemberError()
 
         when {
             !member.vaultRole.hasPermission(requiredPermission) -> throw VaultInsufficientPermissionError()

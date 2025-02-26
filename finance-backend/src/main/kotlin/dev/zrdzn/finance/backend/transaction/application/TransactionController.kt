@@ -112,7 +112,8 @@ class TransactionController(
                 price = Price(
                     amount = transactionCreateRequest.price,
                     currency = transactionCreateRequest.currency
-                )
+                ),
+                products = transactionCreateRequest.products
             )
 
     @PostMapping("/{transactionId}/products/create")
@@ -125,6 +126,7 @@ class TransactionController(
             requesterId = userId,
             transactionId = transactionId,
             name = transactionProductCreateRequest.name,
+            categoryId = transactionProductCreateRequest.categoryId,
             unitAmount = transactionProductCreateRequest.unitAmount,
             quantity = transactionProductCreateRequest.quantity
         )

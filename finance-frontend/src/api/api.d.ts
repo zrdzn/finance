@@ -114,6 +114,7 @@ declare namespace Components {
             description: string;
             price: number;
             currency: string;
+            products: TransactionProductCreateRequest[];
         }
         export interface TransactionFlowsResponse {
             total: Price;
@@ -124,6 +125,7 @@ declare namespace Components {
         }
         export interface TransactionProductCreateRequest {
             name: string;
+            categoryId?: number; // int32
             unitAmount: number;
             quantity: number; // int32
         }
@@ -134,6 +136,7 @@ declare namespace Components {
             id: number; // int32
             transactionId: number; // int32
             name: string;
+            categoryName?: string;
             unitAmount: number;
             quantity: number; // int32
         }

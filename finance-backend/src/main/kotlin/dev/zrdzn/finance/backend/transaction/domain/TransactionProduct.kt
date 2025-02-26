@@ -22,6 +22,9 @@ data class TransactionProduct(
     @Column(name = "name")
     val name: String,
 
+    @Column(name = "category_id")
+    val categoryId: Int?,
+
     @Column(name = "unit_amount")
     val unitAmount: BigDecimal,
 

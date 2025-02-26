@@ -28,10 +28,11 @@ object TransactionMapper {
         currency = this.currency
     )
 
-    fun TransactionProduct.toResponse() = TransactionProductResponse(
+    fun TransactionProduct.toResponse(categoryName: String?) = TransactionProductResponse(
         id = id!!,
         transactionId = transactionId,
         name = name,
+        categoryName = categoryName,
         unitAmount = unitAmount,
         quantity = quantity
     )

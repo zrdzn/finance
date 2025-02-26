@@ -10,8 +10,8 @@ import dev.zrdzn.finance.backend.ai.domain.AiClient
 import dev.zrdzn.finance.backend.ai.domain.AiPrompts.ANALYZE_TRANSACTION_FROM_IMAGE
 import dev.zrdzn.finance.backend.audit.application.AuditService
 import dev.zrdzn.finance.backend.audit.domain.AuditAction
+import dev.zrdzn.finance.backend.category.application.CategoryService
 import dev.zrdzn.finance.backend.exchange.application.ExchangeService
-import dev.zrdzn.finance.backend.product.application.ProductService
 import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.transaction.application.TransactionMapper.toResponse
 import dev.zrdzn.finance.backend.transaction.application.error.ScheduleNotFoundError
@@ -20,6 +20,7 @@ import dev.zrdzn.finance.backend.transaction.application.error.TransactionImport
 import dev.zrdzn.finance.backend.transaction.application.error.TransactionNotFoundError
 import dev.zrdzn.finance.backend.transaction.application.error.TransactionPriceRequiredError
 import dev.zrdzn.finance.backend.transaction.application.error.TransactionProductNotFoundError
+import dev.zrdzn.finance.backend.transaction.application.request.TransactionProductCreateRequest
 import dev.zrdzn.finance.backend.transaction.application.response.AnalysedTransactionResponse
 import dev.zrdzn.finance.backend.transaction.application.response.FlowsChartResponse
 import dev.zrdzn.finance.backend.transaction.application.response.FlowsChartSeries
@@ -55,7 +56,6 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
 import org.apache.commons.codec.binary.Base64
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -64,7 +64,7 @@ class TransactionService(
     private val transactionRepository: TransactionRepository,
     private val transactionProductRepository: TransactionProductRepository,
     private val scheduleRepository: ScheduleRepository,
-    private val productService: ProductService,
+    private val categoryService: CategoryService,
     private val exchangeService: ExchangeService,
     private val vaultService: VaultService,
     private val userService: UserService,
@@ -72,8 +72,6 @@ class TransactionService(
     private val clock: Clock,
     private val aiClient: AiClient
 ) {
-
-    private val logger = LoggerFactory.getLogger(TransactionService::class.java)
 
     @Transactional
     fun analyzeImage(userId: Int, file: InputStream): AnalysedTransactionResponse {
@@ -204,7 +202,7 @@ class TransactionService(
         val csvWriter = CSVWriter(writer)
 
         val headers = arrayOf("Payer Email", "Vault Name", "Transaction Date", "Transaction Method", "Transaction Type", "Description", "Total", "Currency")
-        csvWriter.writeNext(headers)
+        csvWriter.writeNext(headers, false)
 
         transactions.forEach {
             val data = arrayOf(
@@ -260,6 +258,7 @@ class TransactionService(
                         id = null,
                         transactionId = newTransaction.id!!,
                         name = it.name,
+                        categoryId = it.categoryId,
                         unitAmount = it.unitAmount,
                         quantity = it.quantity
                     )
@@ -277,7 +276,8 @@ class TransactionService(
         transactionMethod: TransactionMethod,
         transactionType: TransactionType,
         description: String,
-        price: Price
+        price: Price,
+        products: Set<TransactionProductCreateRequest>
     ): TransactionResponse {
         vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_CREATE)
 
@@ -285,35 +285,43 @@ class TransactionService(
             throw TransactionDescriptionRequiredError()
         }
 
-        return transactionRepository
-            .save(
-                Transaction(
-                    id = null,
-                    userId = requesterId,
-                    vaultId = vaultId,
-                    createdAt = Instant.now(clock),
-                    transactionMethod = transactionMethod,
-                    transactionType = transactionType,
-                    description = description,
-                    total = price.amount,
-                    currency = price.currency
-                )
+        val transaction = transactionRepository.save(
+            Transaction(
+                id = null,
+                userId = requesterId,
+                vaultId = vaultId,
+                createdAt = Instant.now(clock),
+                transactionMethod = transactionMethod,
+                transactionType = transactionType,
+                description = description,
+                total = price.amount,
+                currency = price.currency
             )
-            .also {
-                auditService.createAudit(
-                    vaultId = vaultId,
-                    userId = requesterId,
-                    auditAction = AuditAction.TRANSACTION_CREATED,
-                    description = description
-                )
-            }
-            .let {
-                it.toResponse(
-                    user = userService.getUser(requesterId),
-                    products = getTransactionProducts(requesterId, it.id!!),
-                    totalInVaultCurrency = exchangeService.convertCurrency(it.total, it.currency, "PLN").amount
-                )
-            }
+        )
+
+        products.forEach {
+            createTransactionProduct(
+                requesterId = requesterId,
+                transactionId = transaction.id!!,
+                name = it.name,
+                categoryId = it.categoryId,
+                unitAmount = it.unitAmount,
+                quantity = it.quantity
+            )
+        }
+
+        auditService.createAudit(
+            vaultId = vaultId,
+            userId = requesterId,
+            auditAction = AuditAction.TRANSACTION_CREATED,
+            description = description
+        )
+
+        return transaction.toResponse(
+            user = userService.getUser(requesterId),
+            products = getTransactionProducts(requesterId, transaction.id!!),
+            totalInVaultCurrency = exchangeService.convertCurrency(transaction.total, transaction.currency, "PLN").amount
+        )
     }
 
     @Transactional
@@ -321,6 +329,7 @@ class TransactionService(
         requesterId: Int,
         transactionId: Int,
         name: String,
+        categoryId: Int?,
         unitAmount: BigDecimal,
         quantity: Int
     ): TransactionProductResponse {
@@ -328,12 +337,15 @@ class TransactionService(
 
         vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_CREATE)
 
+        val categoryName = categoryId?.let { categoryService.getCategoryById(requesterId, it).name }
+
         return transactionProductRepository
             .save(
                 TransactionProduct(
                     id = null,
                     transactionId = transactionId,
                     name = name,
+                    categoryId = categoryId,
                     unitAmount = unitAmount,
                     quantity = quantity,
                 )
@@ -346,7 +358,7 @@ class TransactionService(
                     description = name
                 )
             }
-            .toResponse()
+            .toResponse(categoryName)
     }
 
     @Transactional
@@ -496,7 +508,11 @@ class TransactionService(
 
         return transactionProductRepository
             .findByTransactionId(transactionId)
-            .map { it.toResponse() }
+            .map {
+                val categoryName = it.categoryId?.let { id -> categoryService.getCategoryById(requesterId, id).name }
+
+                it.toResponse(categoryName)
+            }
             .toSet()
             .let { TransactionProductListResponse(it) }
     }
@@ -505,10 +521,13 @@ class TransactionService(
     fun getTransactionProductForcefully(name: String): TransactionProductResponse {
         val product = transactionProductRepository.findByName(name) ?: throw TransactionProductNotFoundError()
 
+        val categoryName = product.categoryId?.let { categoryService.getCategoryById(product.transactionId, it).name }
+
         return TransactionProductResponse(
             id = product.id!!,
             transactionId = product.transactionId,
             name = product.name,
+            categoryName = categoryName,
             unitAmount = product.unitAmount,
             quantity = product.quantity
         )

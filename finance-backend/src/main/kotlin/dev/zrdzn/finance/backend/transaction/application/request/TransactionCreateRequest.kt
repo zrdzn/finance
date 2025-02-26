@@ -10,5 +10,6 @@ data class TransactionCreateRequest(
     val transactionType: TransactionType,
     val description: String,
     val price: BigDecimal,
-    val currency: String
+    val currency: String,
+    val products: Set<TransactionProductCreateRequest>
 )
