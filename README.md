@@ -13,6 +13,12 @@ while the frontend uses Next.js with TypeScript.
 Data is securely stored in a PostgreSQL database.
 ## 🛠️ Features
 
+### AI Image Analysis
+- Upload images of receipts and invoices to automatically extract transaction data
+- AI-powered image recognition scans and identifies products, prices, and transaction details
+- Edit and verify AI-extracted data before finalizing the transaction
+- Supports various receipt formats from different merchants and shops
+
 ### Vault Management
 - A Vault is a central place for managing:
     - Members
@@ -115,6 +121,14 @@ docker pull zrdzn/finance-frontend:latest
 ```bash
 docker run -d --name finance-backend -p 8080:8080 --env-file .env zrdzn/finance-backend:latest
 docker run -d --name finance-frontend -p 3010:3010 --env-file .env zrdzn/finance-frontend:latest
+```
+
+### AI Features (Optional)
+**1.** Sign up for an OpenAI API key at [OpenAI](https://platform.openai.com/)
+
+**2.** Add your API key to the `.env` file
+```bash
+OPENAI_API_KEY=your-api-key
 ```
 ## 🧑‍💻 Developers
 ### API Documentation
