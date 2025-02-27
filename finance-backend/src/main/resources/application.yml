@@ -56,6 +56,8 @@ totp:
     length: 16
   code:
     length: 6
+ai:
+  api-key: ${OPENAI_API_KEY}
 logging:
   level:
     org.springframework.orm.jpa.JpaTransactionManager: DEBUG

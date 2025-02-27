@@ -76,7 +76,7 @@ export const AuditTable = ({ vault, permissions }: AuditTableProperties) => {
             <Tbody>
               {audits.length === 0 ? (
                   <Tr>
-                    <Td colSpan={2}>
+                    <Td colSpan={4}>
                       <Text textAlign="center" size="sm">
                         {t("card.no-audits")}
                       </Text>

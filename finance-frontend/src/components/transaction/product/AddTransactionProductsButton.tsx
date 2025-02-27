@@ -1,7 +1,7 @@
 import {
   Button,
   FormControl,
-  FormLabel,
+  FormLabel, Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -44,15 +44,15 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId, size }: A
   const { isOpen, onOpen, onClose } = useDisclosure()
   const t = useTranslations("Transactions")
   const [transactionProductCreateRequest, setTransactionProductCreateRequest] = useState<TransactionProductCreateRequest>({
-    productId: 0,
+    name: "",
     unitAmount: 0,
     quantity: 1
   })
   const initialRef = useRef(null)
   const finalRef = useRef(null)
 
-  const handleProductChange = (product: ProductResponse) => {
-    setTransactionProductCreateRequest({ ...transactionProductCreateRequest, productId: product.id });
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTransactionProductCreateRequest({ ...transactionProductCreateRequest, name: event.target.value });
   }
 
   const handlePriceChange = (price: number) => {
@@ -92,7 +92,10 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId, size }: A
           <ModalBody pb={6}>
             <FormControl>
               <FormLabel>{t('product.create-modal.product-label')}</FormLabel>
-              <ProductSelectWithAddButton vaultId={vaultId} onChange={handleProductChange} />
+              <Input name={'name'}
+                     onChange={handleNameChange}
+                     ref={initialRef}
+                     placeholder={t("product.create-modal.product-placeholder")} />
             </FormControl>
 
             <FormControl mt={4}>

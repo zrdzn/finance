@@ -30,6 +30,9 @@ import toast from "react-hot-toast";
 import {router} from "next/client";
 import {useRouter} from "next/router";
 import {TransactionProductsPopover} from "@/components/transaction/TransactionProductsPopover";
+import {ImportButton} from "@/components/transaction/import/ImportButton";
+import {CsvImport} from "@/components/transaction/import/CsvImport";
+import {ImageImport} from "@/components/transaction/import/ImageImport";
 
 type VaultResponse = Components.Schemas.VaultResponse;
 type TransactionResponse = Components.Schemas.TransactionResponse;
@@ -47,7 +50,9 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
   const [queriedTransactions, setQueriedTransactions] = useState<TransactionResponse[]>([])
   const { formatNumber } = useNumberFormatter()
   const { formatDate } = useDateFormatter()
-    const router = useRouter()
+  const router = useRouter()
+  const { isOpen: isCsvOpen, onOpen: onCsvOpen, onClose: onCsvClose } = useDisclosure()
+  const { isOpen: isImageOpen, onOpen: onImageOpen, onClose: onImageClose } = useDisclosure()
 
   useEffect(() => {
       api
@@ -110,6 +115,12 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
           {
             permissions.includes("TRANSACTION_CREATE") && <AddTransactionButton vault={vault} />
           }
+          {
+            permissions.includes("TRANSACTION_CREATE") &&
+              <ImportButton openCsv={onCsvOpen} openImage={onImageOpen} />
+          }
+          <CsvImport vault={vault} isOpen={isCsvOpen} onClose={onCsvClose} permissions={permissions} />
+          <ImageImport vault={vault} isOpen={isImageOpen} onClose={onImageClose} permissions={permissions} />
         </Flex>
           <Box overflowX="auto">
               <Table variant={"simple"}>

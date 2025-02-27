@@ -9,7 +9,6 @@ import {ExportCard} from "@/components/transaction/export/ExportCard"
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
 import {SchedulesCard} from "@/components/transaction/schedule/SchedulesCard";
-import {ImportCard} from "@/components/transaction/import/ImportCard";
 
 export default function Transactions(): ReactJSXElement {
   const router = useRouter()
@@ -38,9 +37,6 @@ export default function Transactions(): ReactJSXElement {
               templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
               gap={4}
               width="full">
-              {vaultRole.permissions.includes("TRANSACTION_CREATE") && (
-                    <ImportCard vault={vault} permissions={vaultRole.permissions} />
-              )}
               {vaultRole.permissions.includes("TRANSACTION_READ") && (
                   <ExportCard vault={vault} permissions={vaultRole.permissions} />
               )}

@@ -7,6 +7,7 @@ import dev.zrdzn.finance.backend.transaction.application.request.ScheduleCreateR
 import dev.zrdzn.finance.backend.transaction.application.request.TransactionCreateRequest
 import dev.zrdzn.finance.backend.transaction.application.request.TransactionProductCreateRequest
 import dev.zrdzn.finance.backend.transaction.application.request.TransactionUpdateRequest
+import dev.zrdzn.finance.backend.transaction.application.response.AnalysedTransactionResponse
 import dev.zrdzn.finance.backend.transaction.application.response.FlowsChartResponse
 import dev.zrdzn.finance.backend.transaction.application.response.ScheduleListResponse
 import dev.zrdzn.finance.backend.transaction.application.response.ScheduleResponse
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 
@@ -39,8 +41,14 @@ class TransactionController(
     private val transactionService: TransactionService
 ) {
 
-    @PostMapping("/{vaultId}/import")
-    fun importTransactions(
+    @PostMapping("/image-analysis")
+    fun analyzeImage(
+        @AuthenticationPrincipal userId: Int,
+        @RequestPart("file") file: MultipartFile
+    ): AnalysedTransactionResponse = transactionService.analyzeImage(userId, file.inputStream)
+
+    @PostMapping("/{vaultId}/import/csv")
+    fun importTransactionsFromCsv(
         @AuthenticationPrincipal userId: Int,
         @PathVariable vaultId: Int,
         @RequestParam("file") file: MultipartFile,
@@ -60,7 +68,7 @@ class TransactionController(
             requesterId = userId,
             vaultId = vaultId,
             separator = separator[0],
-            file = file,
+            file = file.inputStream,
             mappings = mappingsMap,
             applyTransactionMethod = applyTransactionMethod
         )
@@ -104,7 +112,8 @@ class TransactionController(
                 price = Price(
                     amount = transactionCreateRequest.price,
                     currency = transactionCreateRequest.currency
-                )
+                ),
+                products = transactionCreateRequest.products
             )
 
     @PostMapping("/{transactionId}/products/create")
@@ -116,12 +125,13 @@ class TransactionController(
         transactionService.createTransactionProduct(
             requesterId = userId,
             transactionId = transactionId,
-            productId = transactionProductCreateRequest.productId,
+            name = transactionProductCreateRequest.name,
+            categoryId = transactionProductCreateRequest.categoryId,
             unitAmount = transactionProductCreateRequest.unitAmount,
             quantity = transactionProductCreateRequest.quantity
         )
 
-    @PostMapping("/{transactionId}/schedule/create")
+    @PostMapping("/{transactionId}/schedules/create")
     fun createSchedule(
         @AuthenticationPrincipal userId: Int,
         @PathVariable transactionId: Int,

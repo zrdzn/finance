@@ -22,7 +22,7 @@ interface ThemeColors {
 export const themeColors: ThemeColors = {
   lightText: '#111111',
   lightBackground: 'rgba(238,255,239,0.32)',
-  lightPrimary: 'rgb(76, 175, 80)',
+  lightPrimary: '#4CAF50',
   lightSecondary: 'rgb(129, 199, 132)',
 
   darkText: '#000000',

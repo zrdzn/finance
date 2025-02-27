@@ -3,11 +3,9 @@ package dev.zrdzn.finance.backend.user.application
 import dev.samstevens.totp.code.CodeVerifier
 import dev.zrdzn.finance.backend.shared.storage.StorageClient
 import dev.zrdzn.finance.backend.user.application.UserMapper.toResponse
-import dev.zrdzn.finance.backend.user.application.error.TwoFactorAlreadyEnabledException
-import dev.zrdzn.finance.backend.user.application.error.UserAccessDeniedException
-import dev.zrdzn.finance.backend.user.application.error.UserEmailAlreadyTakenException
-import dev.zrdzn.finance.backend.user.application.error.UserNotFoundByEmailException
-import dev.zrdzn.finance.backend.user.application.error.UserNotFoundException
+import dev.zrdzn.finance.backend.user.application.error.TwoFactorAlreadyEnabledError
+import dev.zrdzn.finance.backend.user.application.error.UserAccessDeniedError
+import dev.zrdzn.finance.backend.user.application.error.UserEmailAlreadyTakenError
 import dev.zrdzn.finance.backend.user.application.request.UserCreateRequest
 import dev.zrdzn.finance.backend.user.application.response.TwoFactorSetupResponse
 import dev.zrdzn.finance.backend.user.application.response.UserResponse
@@ -35,7 +33,7 @@ class UserService(
     @Transactional
     fun createUser(userCreateRequest: UserCreateRequest): UserResponse {
         if (doesUserExist(userCreateRequest.email)) {
-            throw UserEmailAlreadyTakenException()
+            throw UserEmailAlreadyTakenError()
         }
 
         return userRepository
@@ -56,28 +54,28 @@ class UserService(
 
     @Transactional
     fun requestUserUpdate(requesterId: Int) {
-        val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
+        val user = userRepository.findById(requesterId) ?: throw UserAccessDeniedError()
 
         userProtectionService.sendUserUpdateCode(user.id!!, user.email)
     }
 
     @Transactional
     fun requestUserVerification(requesterId: Int, verificationLink: String) {
-        val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
+        val user = userRepository.findById(requesterId) ?: throw UserAccessDeniedError()
 
         userProtectionService.sendUserVerificationLink(user.id!!, user.email, verificationLink)
     }
 
     @Transactional
     fun requestUserTwoFactorSetup(requesterId: Int, securityCode: String): TwoFactorSetupResponse {
-        val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
+        val user = userRepository.findById(requesterId) ?: throw UserAccessDeniedError()
 
         if (!userProtectionService.isAccessGranted(userId = user.id!!, securityCode = securityCode)) {
-            throw UserAccessDeniedException()
+            throw UserAccessDeniedError()
         }
 
         if (user.totpSecret != null) {
-            throw TwoFactorAlreadyEnabledException()
+            throw TwoFactorAlreadyEnabledError()
         }
 
         return twoFactorCodeGenerator.generateTwoFactorSecret(user.email)
@@ -85,10 +83,10 @@ class UserService(
 
     @Transactional
     fun verifyUserTwoFactorSetup(requesterId: Int, secret: String, oneTimePassword: String) {
-        val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
+        val user = userRepository.findById(requesterId) ?: throw UserAccessDeniedError()
 
         if (!codeVerifier.isValidCode(secret, oneTimePassword)) {
-            throw UserAccessDeniedException()
+            throw UserAccessDeniedError()
         }
 
         user.totpSecret = secret
@@ -101,10 +99,10 @@ class UserService(
 
     @Transactional
     fun updateUserEmail(requesterId: Int, securityCode: String, email: String) {
-        val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
+        val user = userRepository.findById(requesterId) ?: throw UserAccessDeniedError()
 
         if (!userProtectionService.isAccessGranted(userId = user.id!!, securityCode = securityCode)) {
-            throw UserAccessDeniedException()
+            throw UserAccessDeniedError()
         }
 
         user.email = email
@@ -112,14 +110,14 @@ class UserService(
 
     @Transactional
     fun updateUserPassword(requesterId: Int, securityCode: String, oldPassword: String, newPassword: String) {
-        val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
+        val user = userRepository.findById(requesterId) ?: throw UserAccessDeniedError()
 
         if (!userProtectionService.isAccessGranted(userId = user.id!!, securityCode = securityCode)) {
-            throw UserAccessDeniedException()
+            throw UserAccessDeniedError()
         }
 
         if (!passwordEncoder.matches(oldPassword, user.password)) {
-            throw UserAccessDeniedException()
+            throw UserAccessDeniedError()
         }
 
         user.password = passwordEncoder.encode(newPassword)
@@ -127,7 +125,7 @@ class UserService(
 
     @Transactional
     fun updateUserProfile(requesterId: Int, username: String, decimalSeparator: String, groupSeparator: String) {
-        val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
+        val user = userRepository.findById(requesterId) ?: throw UserAccessDeniedError()
 
         user.username = username
         user.decimalSeparator = decimalSeparator
@@ -136,10 +134,10 @@ class UserService(
 
     @Transactional
     fun verifyUser(requesterId: Int, securityCode: String) {
-        val user = userRepository.findById(requesterId) ?: throw UserNotFoundException()
+        val user = userRepository.findById(requesterId) ?: throw UserAccessDeniedError()
 
         if (!userProtectionService.isAccessGranted(userId = user.id!!, securityCode = securityCode)) {
-            throw UserAccessDeniedException()
+            throw UserAccessDeniedError()
         }
 
         user.verified = true
@@ -147,7 +145,7 @@ class UserService(
 
     @Transactional
     fun updateUserAvatar(requesterId: Int, avatar: ByteArray) {
-        userRepository.findById(requesterId) ?: throw UserNotFoundException()
+        userRepository.findById(requesterId) ?: throw UserAccessDeniedError()
 
         storageClient.saveFile(avatarsBucket, requesterId.toString(), data = avatar.inputStream())
     }
@@ -170,18 +168,18 @@ class UserService(
                     groupSeparator = it.groupSeparator
                 )
             }
-            ?: throw UserNotFoundException()
+            ?: throw UserAccessDeniedError()
 
     @Transactional(readOnly = true)
     fun getUserId(username: String): Int =
-        userRepository.findIdByUsername(username) ?: throw UserNotFoundException()
+        userRepository.findIdByUsername(username) ?: throw UserAccessDeniedError()
 
     @Transactional(readOnly = true)
     fun getUsername(userId: Int): UsernameResponse =
         UsernameResponse(getUser(userId).username)
 
     @Transactional(readOnly = true)
-    fun getInsecureUser(email: String): UserWithPasswordResponse =
+    fun getInsecureUser(email: String): UserWithPasswordResponse? =
         userRepository
             .findByEmail(email)
             ?.let {
@@ -194,12 +192,11 @@ class UserService(
                     totpSecret = it.totpSecret
                 )
             }
-            ?: throw UserNotFoundByEmailException()
 
     @Transactional(readOnly = true)
     fun getUserAvatar(username: String): InputStream =
         getUserId(username)
             .let { storageClient.loadFile(avatarsBucket, it.toString()) }
-            ?: throw UserNotFoundException()
+            ?: throw UserAccessDeniedError()
 
 }

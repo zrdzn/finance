@@ -6,6 +6,8 @@ interface TransactionProductRepository {
 
     fun findById(transactionProductId: Int): TransactionProduct?
 
+    fun findByName(transactionProductName: String): TransactionProduct?
+
     fun findByTransactionId(transactionId: Int): Set<TransactionProduct>
 
 }

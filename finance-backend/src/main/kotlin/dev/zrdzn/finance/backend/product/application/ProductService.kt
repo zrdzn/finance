@@ -4,7 +4,7 @@ import dev.zrdzn.finance.backend.audit.application.AuditService
 import dev.zrdzn.finance.backend.audit.domain.AuditAction
 import dev.zrdzn.finance.backend.category.application.CategoryService
 import dev.zrdzn.finance.backend.product.application.ProductMapper.toResponse
-import dev.zrdzn.finance.backend.product.application.error.ProductNotFoundException
+import dev.zrdzn.finance.backend.product.application.error.ProductNotFoundError
 import dev.zrdzn.finance.backend.product.application.response.ProductListResponse
 import dev.zrdzn.finance.backend.product.application.response.ProductResponse
 import dev.zrdzn.finance.backend.product.domain.Product
@@ -48,7 +48,7 @@ class ProductService(
 
     @Transactional
     fun updateProduct(requesterId: Int, productId: Int, categoryId: Int?) {
-        val product = productRepository.findById(productId) ?: throw ProductNotFoundException()
+        val product = productRepository.findById(productId) ?: throw ProductNotFoundError()
 
         vaultService.authorizeMember(product.vaultId, requesterId, VaultPermission.PRODUCT_UPDATE)
 
@@ -64,7 +64,7 @@ class ProductService(
 
     @Transactional
     fun deleteProduct(requesterId: Int, productId: Int) {
-        val product = productRepository.findById(productId) ?: throw ProductNotFoundException()
+        val product = productRepository.findById(productId) ?: throw ProductNotFoundError()
 
         vaultService.authorizeMember(product.vaultId, requesterId, VaultPermission.PRODUCT_DELETE)
 
@@ -95,6 +95,6 @@ class ProductService(
 
                 it.toResponse(it.categoryId?.let { id -> categoryService.getCategoryById(requesterId, id) }?.name)
             }
-            ?: throw ProductNotFoundException()
+            ?: throw ProductNotFoundError()
 
 }

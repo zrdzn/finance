@@ -23,6 +23,7 @@ repositories {
 }
 
 dependencies {
+    // Spring
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -33,35 +34,46 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.security:spring-security-crypto")
-
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
+    // TOTP
     implementation("dev.samstevens.totp:totp-spring-boot-starter:1.7.1")
 
+    // Serialization
     val jackson = "2.15.3"
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jackson")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson")
-
-    implementation("org.liquibase:liquibase-core:4.26.0")
-
-    implementation("org.postgresql:postgresql:42.6.0")
-
-    implementation("software.amazon.awssdk:s3:2.29.17")
-
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
-
-    implementation("com.auth0:java-jwt:4.4.0")
-
-    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
-
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-
     implementation("com.konghq:unirest-java-core:4.2.4")
     implementation("com.konghq:unirest-objectmapper-jackson:4.2.4")
 
+    // Database
+    implementation("org.liquibase:liquibase-core:4.26.0")
+    implementation("org.postgresql:postgresql:42.6.0")
+
+    // Storage
+    implementation("software.amazon.awssdk:s3:2.29.17")
+
+    // Authentication
+    implementation("com.auth0:java-jwt:4.4.0")
+
+    // Cache
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+
+    // Reflection
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    // CSV
     implementation("com.opencsv:opencsv:5.9")
 
+    // AI
+    implementation("io.github.sashirestela:simple-openai:3.18.0") {
+        exclude(group = "ch.qos.logback", module = "logback-classic")
+        exclude(group = "org.slf4j", module = "slf4j-api")
+        exclude(group = "org.slf4j", module = "slf4j-simple")
+    }
+
+    // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.springframework.security:spring-security-test")

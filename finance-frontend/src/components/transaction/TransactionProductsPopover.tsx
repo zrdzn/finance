@@ -72,10 +72,10 @@ export const TransactionProductsPopover = ({transaction, permissions}: Transacti
                                     _hover={{ boxShadow: "md" }}
                                 >
                                     <Text fontWeight="bold">
-                                        x{product.quantity} {product.product.name}
+                                        x{product.quantity} {product.name}
                                     </Text>
                                     <Text fontSize="sm" color="gray.600">
-                                        {product.product.categoryName}
+                                        {product.categoryName}
                                     </Text>
                                     <Flex justify="space-between" mt={2}>
                                         <Text>{formatNumber(product.unitAmount * product.quantity)}</Text>

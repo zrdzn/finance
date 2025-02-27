@@ -8,4 +8,5 @@ enum class TransactionErrorCode(val status: Int, val code: String, val descripti
     PRICE_REQUIRED(HttpStatus.BAD_REQUEST.value(), "TRANSACTION_PRICE_REQUIRED", "Transaction price is required"),
     IMPORT_MAPPING_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "IMPORT_MAPPING_NOT_FOUND", "Some of the mappings are not found"),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "SCHEDULE_NOT_FOUND", "Schedule not found"),
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "TRANSACTION_PRODUCT_NOT_FOUND", "Transaction product not found")
 }

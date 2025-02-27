@@ -15,6 +15,18 @@ declare namespace Components {
             email: string;
             expiresAt: string; // date-time
         }
+        export interface AnalysedTransactionProductResponse {
+            name: string;
+            unitAmount: number;
+            quantity: number; // int32
+        }
+        export interface AnalysedTransactionResponse {
+            transactionMethod: "CARD" | "BLIK" | "CASH";
+            products: AnalysedTransactionProductResponse[];
+            description: string;
+            total: number;
+            currency: string;
+        }
         export interface AuditListResponse {
             audits: AuditResponse[];
         }
@@ -43,13 +55,16 @@ declare namespace Components {
             name: string;
             vaultId: number; // int32
         }
+        export interface ConfigurationResponse {
+            aiEnabled: boolean;
+        }
         export interface FlowsChartResponse {
             categories: string[];
             series: FlowsChartSeries[];
         }
         export interface FlowsChartSeries {
             name: string;
-            data: number /* double */[];
+            data: number[];
         }
         export interface Price {
             amount: number;
@@ -99,6 +114,7 @@ declare namespace Components {
             description: string;
             price: number;
             currency: string;
+            products: TransactionProductCreateRequest[];
         }
         export interface TransactionFlowsResponse {
             total: Price;
@@ -108,7 +124,8 @@ declare namespace Components {
             transactions: TransactionResponse[];
         }
         export interface TransactionProductCreateRequest {
-            productId: number; // int32
+            name: string;
+            categoryId?: number; // int32
             unitAmount: number;
             quantity: number; // int32
         }
@@ -118,7 +135,8 @@ declare namespace Components {
         export interface TransactionProductResponse {
             id: number; // int32
             transactionId: number; // int32
-            product: ProductResponse;
+            name: string;
+            categoryName?: string;
             unitAmount: number;
             quantity: number; // int32
         }
@@ -251,6 +269,14 @@ declare namespace Paths {
         namespace Responses {
             export interface $200 {
             }
+        }
+    }
+    namespace AnalyzeImage {
+        export interface RequestBody {
+            file: string; // binary
+        }
+        namespace Responses {
+            export type $200 = Components.Schemas.AnalysedTransactionResponse;
         }
     }
     namespace CreateCategory {
@@ -416,6 +442,11 @@ declare namespace Paths {
             export type $200 = Components.Schemas.CategoryResponse;
         }
     }
+    namespace GetConfiguration {
+        namespace Responses {
+            export type $200 = Components.Schemas.ConfigurationResponse;
+        }
+    }
     namespace GetFlowsByVaultId {
         namespace Parameters {
             export type Start = string; // date-time
@@ -574,7 +605,7 @@ declare namespace Paths {
             export type $200 = Components.Schemas.VaultListResponse;
         }
     }
-    namespace ImportTransactions {
+    namespace ImportTransactionsFromCsv {
         namespace Parameters {
             export type ApplyTransactionMethod = "CARD" | "BLIK" | "CASH";
             export type Mappings = string;
@@ -834,13 +865,13 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.VerifyUserTwoFactorSetup.Responses.$200>
   /**
-   * importTransactions
+   * importTransactionsFromCsv
    */
-  'importTransactions'(
-    parameters: Parameters<Paths.ImportTransactions.QueryParameters & Paths.ImportTransactions.PathParameters>,
-    data?: Paths.ImportTransactions.RequestBody,
+  'importTransactionsFromCsv'(
+    parameters: Parameters<Paths.ImportTransactionsFromCsv.QueryParameters & Paths.ImportTransactionsFromCsv.PathParameters>,
+    data?: Paths.ImportTransactionsFromCsv.RequestBody,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.ImportTransactions.Responses.$200>
+  ): OperationResponse<Paths.ImportTransactionsFromCsv.Responses.$200>
   /**
    * createSchedule
    */
@@ -857,6 +888,14 @@ export interface OperationMethods {
     data?: Paths.CreateTransactionProduct.RequestBody,
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.CreateTransactionProduct.Responses.$200>
+  /**
+   * analyzeImage
+   */
+  'analyzeImage'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.AnalyzeImage.RequestBody,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.AnalyzeImage.Responses.$200>
   /**
    * createTransaction
    */
@@ -1130,6 +1169,14 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.GetProductsByVaultId.Responses.$200>
   /**
+   * getConfiguration
+   */
+  'getConfiguration'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: any,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.GetConfiguration.Responses.$200>
+  /**
    * getCategoryById
    */
   'getCategoryById'(
@@ -1256,15 +1303,15 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.VerifyUserTwoFactorSetup.Responses.$200>
   }
-  ['/api/transactions/{vaultId}/import']: {
+  ['/api/transactions/{vaultId}/import/csv']: {
     /**
-     * importTransactions
+     * importTransactionsFromCsv
      */
     'post'(
-      parameters: Parameters<Paths.ImportTransactions.QueryParameters & Paths.ImportTransactions.PathParameters>,
-      data?: Paths.ImportTransactions.RequestBody,
+      parameters: Parameters<Paths.ImportTransactionsFromCsv.QueryParameters & Paths.ImportTransactionsFromCsv.PathParameters>,
+      data?: Paths.ImportTransactionsFromCsv.RequestBody,
       config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.ImportTransactions.Responses.$200>
+    ): OperationResponse<Paths.ImportTransactionsFromCsv.Responses.$200>
   }
   ['/api/transactions/{transactionId}/schedule/create']: {
     /**
@@ -1285,6 +1332,16 @@ export interface PathsDictionary {
       data?: Paths.CreateTransactionProduct.RequestBody,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.CreateTransactionProduct.Responses.$200>
+  }
+  ['/api/transactions/image-analysis']: {
+    /**
+     * analyzeImage
+     */
+    'post'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: Paths.AnalyzeImage.RequestBody,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.AnalyzeImage.Responses.$200>
   }
   ['/api/transactions/create']: {
     /**
@@ -1617,6 +1674,16 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetProductsByVaultId.Responses.$200>
+  }
+  ['/api/config']: {
+    /**
+     * getConfiguration
+     */
+    'get'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: any,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.GetConfiguration.Responses.$200>
   }
   ['/api/categories/{categoryId}']: {
     /**

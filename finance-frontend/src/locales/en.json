@@ -141,7 +141,14 @@
     "statistics": "Statistics",
     "members": "Members",
     "audits": "Audit Logs",
-    "settings": "Settings"
+    "settings": "Settings",
+    "chat": {
+      "title": "AI Assistance",
+      "initial-message": "Hello! How can I help you today?",
+      "assistant": "Assistant",
+      "placeholder": "Type your message...",
+      "send": "Send"
+    }
   },
   "Transactions": {
     "title": "Finance - Transactions",
@@ -215,8 +222,14 @@
     },
     "import": {
       "imported": "Transactions have been imported",
+      "analyzing": "Analysing image...",
+      "analysed": "Image has been analysed",
+      "analyze-label": "Analyze image",
       "choose-file-and-separator": "Choose a file and a separator",
       "select-file-button": "Select a file",
+      "select-image-label": "Select an image that you would like to analyze",
+      "select-image-button": "Choose file",
+      "image-preview": "Image preview",
       "configure-mappings": "Configure mappings",
       "select-column": "Select a column",
       "apply-to-all": "Or apply to all",
@@ -224,10 +237,28 @@
       "invalid-separator": "Specified separator is invalid",
       "select-transaction-method": "Select a transaction method",
       "select-file": "Select a file",
-      "card": {
-        "title": "Import transactions",
-        "submit": "Import"
-      }
+      "description": "Description",
+      "transaction-method": "Transaction method",
+      "total": "Total",
+      "currency": "Currency",
+      "analyze": "Analyze",
+      "products": "Products",
+      "analyze-first": "Analyze the image first",
+      "select-products": "You need to select at least one product",
+      "enter-description": "You need to enter a description",
+      "enter-transaction-method": "You need to enter a transaction method",
+      "enter-total": "You need to enter a total",
+      "enter-currency": "You need to enter a currency",
+      "select-all": "Select all",
+      "unselect-all": "Unselect all",
+      "select": "Select",
+      "product-name": "Name",
+      "price": "Price",
+      "quantity": "Quantity",
+      "button": "Import",
+      "csv": "Import from a CSV file",
+      "image": "Import from image",
+      "submit": "Import"
     },
     "schedules": {
       "schedule-created-success": "Schedule has been created",
