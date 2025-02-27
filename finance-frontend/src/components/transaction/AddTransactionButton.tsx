@@ -45,7 +45,8 @@ export const AddTransactionButton = ({ vault }: AddTransactionButtonProperties) 
     transactionType: 'INCOMING',
     description: '',
     price: 0,
-    currency: vault.currency
+    currency: vault.currency,
+    products: []
   })
   const initialRef = useRef(null)
   const finalRef = useRef(null)
@@ -85,7 +86,8 @@ export const AddTransactionButton = ({ vault }: AddTransactionButtonProperties) 
             transactionType: transactionCreateRequest.transactionType,
             description: transactionCreateRequest.description,
             price: transactionCreateRequest.price,
-            currency: transactionCreateRequest.currency
+            currency: transactionCreateRequest.currency,
+            products: []
         }))
         .then(() => onClose())
         .then(() => {

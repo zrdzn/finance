@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import dev.zrdzn.finance.backend.configuration.domain.ApplicationConfiguration
 import kong.unirest.core.Unirest
 import kong.unirest.jackson.JacksonObjectMapper
 import org.junit.jupiter.api.AfterAll
@@ -79,21 +80,23 @@ open class ApplicationTestRunner {
             .defaultBaseUrl("http://localhost:$port/api")
 
         application = FinanceLauncher().launchApplication(
-            serverPort = port,
-            clientUrl = "http://localhost:3000",
-            databaseUrl = postgresContainer.jdbcUrl,
-            databaseUsername = postgresContainer.username,
-            databasePassword = postgresContainer.password,
-            mailHost = mailhogContainer.host,
-            mailPort = mailhogContainer.getMappedPort(1025),
-            mailUsername = "",
-            mailPassword = "",
-            mailFrom = "test@financeapp.com",
-            storageAccessKey = s3Container.envMap["AWS_ACCESS_KEY_ID"]!!,
-            storageSecretKey = s3Container.envMap["AWS_SECRET_ACCESS_KEY"]!!,
-            storageRegion = s3Container.envMap["DEFAULT_REGION"]!!,
-            storageEndpoint = "http://${s3Container.host}:${s3Container.getMappedPort(4566)}",
-            openAiApiKey = ""
+            ApplicationConfiguration(
+                serverPort = port,
+                clientUrl = "http://localhost:3000",
+                databaseUrl = postgresContainer.jdbcUrl,
+                databaseUsername = postgresContainer.username,
+                databasePassword = postgresContainer.password,
+                mailHost = mailhogContainer.host,
+                mailPort = mailhogContainer.getMappedPort(1025),
+                mailUsername = "",
+                mailPassword = "",
+                mailFrom = "test@financeapp.com",
+                storageAccessKey = s3Container.envMap["AWS_ACCESS_KEY_ID"]!!,
+                storageSecretKey = s3Container.envMap["AWS_SECRET_ACCESS_KEY"]!!,
+                storageRegion = s3Container.envMap["DEFAULT_REGION"]!!,
+                storageEndpoint = "http://${s3Container.host}:${s3Container.getMappedPort(4566)}",
+                openAiApiKey = ""
+            )
         )
     }
 

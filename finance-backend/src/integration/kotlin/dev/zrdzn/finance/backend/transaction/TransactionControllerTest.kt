@@ -1,20 +1,20 @@
 package dev.zrdzn.finance.backend.transaction
 
 import dev.zrdzn.finance.backend.error.FinanceApiError
-import dev.zrdzn.finance.backend.token.domain.TOKEN_COOKIE_NAME
 import dev.zrdzn.finance.backend.shared.Price
-import dev.zrdzn.finance.backend.transaction.application.response.TransactionAmountResponse
-import dev.zrdzn.finance.backend.transaction.application.request.TransactionCreateRequest
-import dev.zrdzn.finance.backend.transaction.application.response.TransactionListResponse
-import dev.zrdzn.finance.backend.transaction.domain.TransactionMethod
-import dev.zrdzn.finance.backend.transaction.application.response.TransactionResponse
-import dev.zrdzn.finance.backend.transaction.domain.TransactionType
-import dev.zrdzn.finance.backend.transaction.application.request.TransactionProductCreateRequest
-import dev.zrdzn.finance.backend.transaction.application.response.TransactionProductListResponse
-import dev.zrdzn.finance.backend.transaction.application.response.TransactionProductResponse
+import dev.zrdzn.finance.backend.token.domain.TOKEN_COOKIE_NAME
 import dev.zrdzn.finance.backend.transaction.application.request.ScheduleCreateRequest
-import dev.zrdzn.finance.backend.transaction.domain.ScheduleInterval
+import dev.zrdzn.finance.backend.transaction.application.request.TransactionCreateRequest
+import dev.zrdzn.finance.backend.transaction.application.request.TransactionProductCreateRequest
+import dev.zrdzn.finance.backend.transaction.application.request.TransactionUpdateRequest
 import dev.zrdzn.finance.backend.transaction.application.response.ScheduleResponse
+import dev.zrdzn.finance.backend.transaction.application.response.TransactionAmountResponse
+import dev.zrdzn.finance.backend.transaction.application.response.TransactionListResponse
+import dev.zrdzn.finance.backend.transaction.application.response.TransactionProductResponse
+import dev.zrdzn.finance.backend.transaction.application.response.TransactionResponse
+import dev.zrdzn.finance.backend.transaction.domain.ScheduleInterval
+import dev.zrdzn.finance.backend.transaction.domain.TransactionMethod
+import dev.zrdzn.finance.backend.transaction.domain.TransactionType
 import java.math.BigDecimal
 import kong.unirest.core.Unirest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -43,17 +43,21 @@ class TransactionControllerTest : TransactionSpecification() {
             transactionType = transactionType,
             description = description,
             price = price,
-            currency = currency
+            currency = currency,
+            products = emptySet(),
         )
 
         // when
-        val response = Unirest.post("/transaction/create")
+        val response = Unirest.post("/transactions/create")
             .contentType("application/json")
             .cookie(TOKEN_COOKIE_NAME, token.value)
             .body(request)
             .asObject(TransactionResponse::class.java)
 
         // then
+        assertEquals(HttpStatus.OK.value(), response.status)
+        assertNotNull(response.body)
+
         val expectedTransaction = transactionRepository.findById(response.body.id)
         assertNotNull(expectedTransaction)
         assertEquals(vault.id, expectedTransaction!!.vaultId)
@@ -62,9 +66,6 @@ class TransactionControllerTest : TransactionSpecification() {
         assertEquals(description, expectedTransaction.description)
         assertEquals(price, expectedTransaction.total)
         assertEquals(currency, expectedTransaction.currency)
-
-        assertNotNull(response.body)
-        assertEquals(HttpStatus.OK.value(), response.status)
     }
 
     @Test
@@ -85,11 +86,12 @@ class TransactionControllerTest : TransactionSpecification() {
             transactionType = transactionType,
             description = description,
             price = price,
-            currency = currency
+            currency = currency,
+            products = emptySet(),
         )
 
         // when
-        val response = Unirest.post("/transaction/create")
+        val response = Unirest.post("/transactions/create")
             .contentType("application/json")
             .cookie(TOKEN_COOKIE_NAME, token.value)
             .body(request)
@@ -97,8 +99,8 @@ class TransactionControllerTest : TransactionSpecification() {
 
         // then
         assertNotNull(response.body)
-        assertEquals(response.body.status, HttpStatus.BAD_REQUEST.value())
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.status)
+        assertEquals(response.body.status, HttpStatus.BAD_REQUEST.value())
     }
 
     @Test
@@ -112,18 +114,13 @@ class TransactionControllerTest : TransactionSpecification() {
             vaultId = vault.id
         )
 
-        val product = createProduct(
-            requesterId = token.userId,
-            vaultId = vault.id,
-            name = "Test product",
-            categoryId = null
-        )
-
+        val name = "Test product"
         val unitAmount = BigDecimal("1.00")
         val quantity = 5
 
         val request = TransactionProductCreateRequest(
-            productId = product.id,
+            name = name,
+            categoryId = null,
             unitAmount = unitAmount,
             quantity = quantity
         )
@@ -136,15 +133,15 @@ class TransactionControllerTest : TransactionSpecification() {
             .asObject(TransactionProductResponse::class.java)
 
         // then
+        assertEquals(HttpStatus.OK.value(), response.status)
+        assertNotNull(response.body)
+
         val expectedTransactionProduct = transactionProductRepository.findById(response.body.id)
         assertNotNull(expectedTransactionProduct)
         assertEquals(transaction.id, expectedTransactionProduct!!.transactionId)
-        assertEquals(product.id, expectedTransactionProduct.name)
+        assertEquals(name, expectedTransactionProduct.name)
         assertEquals(unitAmount, expectedTransactionProduct.unitAmount)
         assertEquals(quantity, expectedTransactionProduct.quantity)
-
-        assertNotNull(response.body)
-        assertEquals(HttpStatus.OK.value(), response.status)
     }
 
     @Test
@@ -169,22 +166,22 @@ class TransactionControllerTest : TransactionSpecification() {
         )
 
         // when
-        val response = Unirest.post("/transactions/${transaction.id}/schedule/create")
+        val response = Unirest.post("/transactions/${transaction.id}/schedules/create")
             .contentType("application/json")
             .cookie(TOKEN_COOKIE_NAME, token.value)
             .body(request)
             .asObject(ScheduleResponse::class.java)
 
         // then
+        assertEquals(HttpStatus.OK.value(), response.status)
+        assertNotNull(response.body)
+
         val expectedSchedule = scheduleRepository.findById(response.body.id)
         assertNotNull(expectedSchedule)
         assertEquals(transaction.id, expectedSchedule!!.transactionId)
         assertEquals(description, expectedSchedule.description)
         assertEquals(interval, expectedSchedule.scheduleInterval)
         assertEquals(amount, expectedSchedule.intervalValue)
-
-        assertNotNull(response.body)
-        assertEquals(HttpStatus.OK.value(), response.status)
     }
 
     @Test
@@ -227,7 +224,7 @@ class TransactionControllerTest : TransactionSpecification() {
         )
 
         // when
-        val response = Unirest.delete("/transactions/${transaction.id}/schedule/${schedule.id}")
+        val response = Unirest.delete("/transactions/schedules/${schedule.id}")
             .cookie(TOKEN_COOKIE_NAME, token.value)
             .asEmpty()
 
@@ -325,34 +322,28 @@ class TransactionControllerTest : TransactionSpecification() {
             vaultId = vault.id
         )
 
-        val product = createProduct(
-            requesterId = token.userId,
-            vaultId = vault.id,
-            name = "Test product",
-            categoryId = null
-        )
-
+        val name = "Test product"
         val unitAmount = BigDecimal("1.00")
         val quantity = 5
 
         createTransactionProduct(
             transactionId = transaction.id,
-            productId = product.id,
+            name = name,
             unitAmount = unitAmount,
             quantity = quantity,
             requesterId = token.userId
         )
 
         // when
-        val response = Unirest.get("/transactions/${transaction.id}/products")
+        val response = Unirest.get("/transactions/${vault.id}")
             .cookie(TOKEN_COOKIE_NAME, token.value)
-            .asObject(TransactionProductListResponse::class.java)
+            .asObject(TransactionListResponse::class.java)
 
         // then
-        val expectedTransactionProduct = response.body.products.firstOrNull()
+        val expectedTransactionProduct = response.body.transactions.first().products.products.firstOrNull()
         assertNotNull(expectedTransactionProduct)
         assertEquals(transaction.id, expectedTransactionProduct!!.transactionId)
-        assertEquals(product.id, expectedTransactionProduct.product.id)
+        assertEquals(name, expectedTransactionProduct.name)
         assertEquals(unitAmount, expectedTransactionProduct.unitAmount)
         assertEquals(quantity, expectedTransactionProduct.quantity)
     }
@@ -376,12 +367,11 @@ class TransactionControllerTest : TransactionSpecification() {
             currency = "PLN"
         )
 
-        val request = TransactionCreateRequest(
-            vaultId = vault.id,
+        val request = TransactionUpdateRequest(
             transactionMethod = transactionMethod,
             transactionType = transactionType,
             description = newDescription,
-            price = newPrice.amount,
+            total = newPrice.amount,
             currency = newPrice.currency
         )
 
@@ -393,6 +383,8 @@ class TransactionControllerTest : TransactionSpecification() {
             .asEmpty()
 
         // then
+        assertEquals(HttpStatus.OK.value(), response.status)
+
         val expectedTransaction = transactionRepository.findById(transaction.id)
         assertNotNull(expectedTransaction)
         assertEquals(vault.id, expectedTransaction!!.vaultId)
@@ -401,9 +393,6 @@ class TransactionControllerTest : TransactionSpecification() {
         assertEquals(newDescription, expectedTransaction.description)
         assertEquals(newPrice.amount, expectedTransaction.total)
         assertEquals(newPrice.currency, expectedTransaction.currency)
-
-        assertNotNull(response.body)
-        assertEquals(HttpStatus.OK.value(), response.status)
     }
 
 }

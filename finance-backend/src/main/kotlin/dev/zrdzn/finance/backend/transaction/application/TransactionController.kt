@@ -131,7 +131,7 @@ class TransactionController(
             quantity = transactionProductCreateRequest.quantity
         )
 
-    @PostMapping("/{transactionId}/schedule/create")
+    @PostMapping("/{transactionId}/schedules/create")
     fun createSchedule(
         @AuthenticationPrincipal userId: Int,
         @PathVariable transactionId: Int,

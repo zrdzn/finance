@@ -2,16 +2,16 @@ package dev.zrdzn.finance.backend.vault
 
 import dev.zrdzn.finance.backend.token.domain.TOKEN_COOKIE_NAME
 import dev.zrdzn.finance.backend.transaction.domain.TransactionMethod
-import dev.zrdzn.finance.backend.vault.application.request.VaultCreateRequest
-import dev.zrdzn.finance.backend.vault.application.response.VaultListResponse
-import dev.zrdzn.finance.backend.vault.application.response.VaultResponse
 import dev.zrdzn.finance.backend.vault.application.VaultRole
-import dev.zrdzn.finance.backend.vault.application.response.VaultRoleResponse
+import dev.zrdzn.finance.backend.vault.application.request.VaultCreateRequest
 import dev.zrdzn.finance.backend.vault.application.request.VaultInvitationCreateRequest
+import dev.zrdzn.finance.backend.vault.application.request.VaultMemberUpdateRequest
 import dev.zrdzn.finance.backend.vault.application.response.VaultInvitationListResponse
 import dev.zrdzn.finance.backend.vault.application.response.VaultInvitationResponse
+import dev.zrdzn.finance.backend.vault.application.response.VaultListResponse
 import dev.zrdzn.finance.backend.vault.application.response.VaultMemberListResponse
-import dev.zrdzn.finance.backend.vault.application.request.VaultMemberUpdateRequest
+import dev.zrdzn.finance.backend.vault.application.response.VaultResponse
+import dev.zrdzn.finance.backend.vault.application.response.VaultRoleResponse
 import kong.unirest.core.Unirest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -133,14 +133,13 @@ class VaultControllerTest : VaultSpecification() {
             .contentType("application/json")
             .cookie(TOKEN_COOKIE_NAME, token.value)
             .body(request)
-            .asObject(VaultInvitationResponse::class.java)
+            .asEmpty()
 
         // then
-        val expectedInvitation = vaultInvitationRepository.findByVaultId(vault.id).firstOrNull()
-        assertNotNull(expectedInvitation)
-        assertEquals(vault.id, expectedInvitation!!.vaultId)
-        assertEquals(user.email, expectedInvitation.userEmail)
-        assertEquals(response.body.id, expectedInvitation.vaultId)
+        val expectedMember = vaultMemberRepository.findByVaultId(vault.id).firstOrNull { it.userId == user.id }
+        assertNotNull(expectedMember)
+        assertEquals(vault.id, expectedMember!!.vaultId)
+        assertEquals(user.id, expectedMember.userId)
         assertEquals(response.status, HttpStatus.OK.value())
     }
 
