@@ -4,7 +4,7 @@ import {
   CardBody,
   CardHeader,
   Flex,
-  Heading, HStack,
+  HStack,
   Link,
   Stack,
   Table, Tag, TagLabel,
@@ -27,8 +27,8 @@ import {FaCaretDown, FaCaretUp, FaClock} from "react-icons/fa";
 import {EditTransactionButton} from "@/components/transaction/EditTransactionButton";
 import {AddScheduleButton} from "@/components/transaction/schedule/AddScheduleButton";
 import toast from "react-hot-toast";
-import {router} from "next/client";
 import {useRouter} from "next/router";
+import {TransactionProductsPopover} from "@/components/transaction/TransactionProductsPopover";
 
 type VaultResponse = Components.Schemas.VaultResponse;
 type TransactionResponse = Components.Schemas.TransactionResponse;
@@ -155,6 +155,7 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
                               {
                                   permissions.includes("TRANSACTION_UPDATE") && <EditTransactionButton transaction={transaction} />
                               }
+                              <TransactionProductsPopover transaction={transaction} permissions={permissions} />
                               <AddScheduleButton transactionId={transaction.id} />
                               {
                                   permissions.includes("TRANSACTION_DELETE") && <DeleteButton onClick={(event) => handleTransactionDelete(event, transaction.id)} />

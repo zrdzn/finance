@@ -27,6 +27,10 @@ import {Components} from "@/api/api";
 import axios from "axios";
 import {useRouter} from "next/router";
 import Image from "next/image";
+import {CurrencySelect} from "@/components/shared/CurrencySelect";
+import {TransactionMethodSelect} from "@/components/transaction/TransactionMethodSelect";
+import {TransactionMethod} from "@/api/types";
+import {PriceInput} from "@/components/shared/PriceInput";
 
 export type VaultResponse = Components.Schemas.VaultResponse;
 export type AnalysedTransactionResponse = Components.Schemas.AnalysedTransactionResponse;
@@ -56,6 +60,9 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
     const router = useRouter()
     const [analysedTransaction, setAnalysedTransaction] = useState<AnalysedTransactionResponse | undefined>(undefined)
     const [editedDescription, setEditedDescription] = useState<string | undefined>(undefined);
+    const [editedTransactionMethod, setEditedTransactionMethod] = useState<TransactionMethod | undefined>(undefined);
+    const [editedTotal, setEditedTotal] = useState<number | undefined>(undefined);
+    const [editedCurrency, setEditedCurrency] = useState<string | undefined>(undefined);
     const [modifiedProducts, setModifiedProducts] = useState<ModifiedProduct[]>([])
     const t = useTranslations("Transactions")
 
@@ -120,6 +127,9 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
               setAnalysedTransaction(response.data);
 
               setEditedDescription(response.data.description);
+              setEditedTransactionMethod(response.data.transactionMethod);
+              setEditedTotal(response.data.total);
+              setEditedCurrency(response.data.currency);
 
               setModifiedProducts(
                 response.data.products.map((product: AnalysedTransactionProductResponse, index: number) => ({
@@ -157,6 +167,21 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
             return
         }
 
+        if (!editedTransactionMethod) {
+            toast(t('import.select-transaction-method'))
+            return
+        }
+
+        if (!editedTotal) {
+            toast(t('import.enter-total'))
+            return
+        }
+
+        if (!editedCurrency) {
+            toast(t('import.select-currency'))
+            return
+        }
+
         const selectedProducts = modifiedProducts.filter(product => product.selected)
         if (selectedProducts.length === 0) {
             toast(t('import.select-products'))
@@ -165,11 +190,11 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
 
         const request: TransactionCreateRequest = {
             vaultId: vault.id,
-            transactionMethod: analysedTransaction.transactionMethod,
+            transactionMethod: editedTransactionMethod,
             transactionType: "OUTGOING",
             description: editedDescription,
-            price: analysedTransaction.total,
-            currency: analysedTransaction.currency,
+            price: editedTotal,
+            currency: editedCurrency,
             products: selectedProducts.map(product => product.request)
         }
 
@@ -264,11 +289,29 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
                         <FormControl isRequired mb={4}>
                             <FormLabel>{t('import.description')}</FormLabel>
                             <Input
-                              name={'description'}
                               value={editedDescription}
                               onChange={event => setEditedDescription(event.target.value)}
-                              placeholder={t("import.edit-description")}
+                              placeholder={analysedTransaction.description}
                             />
+                        </FormControl>
+                        <FormControl mb={4}>
+                            <FormLabel>{t('import.transaction-method')}</FormLabel>
+                            <TransactionMethodSelect
+                              onChange={transactionMethod => setEditedTransactionMethod(transactionMethod)}
+                              defaultValue={analysedTransaction.transactionMethod} />
+                        </FormControl>
+                        <FormControl isRequired mb={4}>
+                            <FormLabel>{t('import.total')}</FormLabel>
+                            <PriceInput
+                              defaultValue={analysedTransaction.total}
+                              onChange={price => setEditedTotal(price)}
+                            />
+                        </FormControl>
+                        <FormControl mb={4}>
+                            <FormLabel>{t('import.currency')}</FormLabel>
+                            <CurrencySelect
+                              onChange={currency => setEditedCurrency(currency)}
+                              defaultValue={analysedTransaction.currency} />
                         </FormControl>
                         <FormControl isRequired>
                             <FormLabel>{t('import.products')}</FormLabel>
