@@ -311,6 +311,7 @@
       "create-modal": {
         "title": "Add a product",
         "product-label": "Product",
+        "product-placeholder": "Choose a name for the product",
         "price-label": "Price per unit",
         "quantity-label": "Quantity",
         "submit": "Add",
