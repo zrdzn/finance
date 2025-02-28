@@ -5,7 +5,7 @@ import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"
 import {useVault} from "@/hooks/useVault"
 import {useApi} from "@/hooks/useApi"
-import {Box} from "@chakra-ui/react"
+import {Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Card, Flex} from "@chakra-ui/react"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
 
@@ -23,6 +23,7 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
   const { details } = useAuthentication();
   const vault = useVault({ publicId });
   const t = useTranslations("Overview")
+  const tBreadcrumb = useTranslations("Breadcrumb")
   const [vaultRole, setVaultRole] = useState<VaultRoleResponse>();
   const [isCollapsed, setIsCollapsed] = useState<boolean | undefined>(undefined);
 
@@ -70,6 +71,35 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
     return <>{t('not-authenticated')}</>;
   }
 
+  const breadcrumbMapping: Record<string, any> = {
+    "/vault": { label: tBreadcrumb("home"), href: `/vault/${vault.publicId}` },
+    "/vault/[publicId]/transactions": { label: tBreadcrumb("transactions") },
+    "/vault/[publicId]/members": { label: tBreadcrumb("members") },
+    "/vault/[publicId]/products": { label: tBreadcrumb("products") },
+    "/vault/[publicId]/audits": { label: tBreadcrumb("audits") },
+    "/vault/[publicId]/settings": { label: tBreadcrumb("settings") },
+  }
+
+  const pathSegments =  router.pathname
+    .split("/")
+    .filter(part => part !== "")
+
+  const breadcrumbs = (
+    <Breadcrumb>
+      {pathSegments.map((_, index) => {
+        const path = `/${pathSegments.slice(0, index + 1).join("/")}`;
+        console.log(path)
+        const breadcrumb = breadcrumbMapping[path];
+
+        return breadcrumb ? (
+          <BreadcrumbItem key={path} isCurrentPage={index === pathSegments.length - 1}>
+            <BreadcrumbLink href={breadcrumb.href || "#"}>{breadcrumb.label}</BreadcrumbLink>
+          </BreadcrumbItem>
+        ) : null;
+      })}
+    </Breadcrumb>
+  );
+
   return (
     <>
       <VaultSidebar vault={vault} vaultRole={vaultRole} isCollapsed={isCollapsed} toggleCollapse={() => setIsCollapsed(!isCollapsed)} />
@@ -78,6 +108,24 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
         transition="margin-left 0.3s"
       >
         <Layout>
+          {
+            breadcrumbs && (
+              <Card
+                margin={4}
+                boxShadow="base"
+                borderRadius="lg"
+                overflow="hidden"
+                backgroundColor="whiteAlpha.900"
+                border="1px solid"
+                borderColor="gray.200"
+                width={'fit-content'}
+              >
+                <Flex p={2}>
+                  {breadcrumbs}
+                </Flex>
+              </Card>
+            )
+          }
           {children(vault, vaultRole)}
         </Layout>
       </Box>

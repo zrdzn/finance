@@ -26,6 +26,14 @@
       }
     }
   },
+  "Breadcrumb": {
+    "home": "Home",
+    "settings": "Settings",
+    "transactions": "Transactions",
+    "products": "Products",
+    "members": "Members",
+    "audits": "Audit Logs"
+  },
   "Homepage": {
     "title": "Finance - Manage Vaults",
     "your-vaults": "Your vaults",

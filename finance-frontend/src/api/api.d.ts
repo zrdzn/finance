@@ -1313,7 +1313,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.ImportTransactionsFromCsv.Responses.$200>
   }
-  ['/api/transactions/{transactionId}/schedule/create']: {
+  ['/api/transactions/{transactionId}/schedules/create']: {
     /**
      * createSchedule
      */
