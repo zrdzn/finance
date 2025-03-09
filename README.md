@@ -81,10 +81,15 @@ that supports future migration to microservices.
   - **Language:** [TypeScript](https://www.typescriptlang.org/)
   - **Framework:** [Next.JS](https://nextjs.org/)
   - **Default port:** 3010
+### AI
+- The AI system is used to analyze images and extract transaction data.
+  - **Service:** [OpenAI](https://openai.com/)
+  - **Client:** [simple-openai](https://github.com/sashirestela/simple-openai)
 ### Database
 - The database stores all data required for the application to function.
   - **Management System:** [PostgreSQL](https://www.postgresql.org/)
-  - **Migration Files:** [View schema](https://github.com/zrdzn/finance/tree/main/finance-backend/src/main/resources/database)
+  - **ORM:** [Hibernate](https://hibernate.org/)
+  - **Migrations:** [Liquibase](https://www.liquibase.com/) ([view files](https://github.com/zrdzn/finance/tree/main/finance-backend/src/main/resources/database))
 ### Storage
 - The storage system is used to store files, such as user avatars.
   - **Service:** [Amazon S3](https://aws.amazon.com/s3/)
@@ -92,7 +97,7 @@ that supports future migration to microservices.
   - **Test client:** [LocalStack](https://localstack.cloud/)
 ### Mailing
 - The mail system is used to send emails to users, such as verification emails.
-  - **Client:** [MailHog](https://github.com/mailhog/MailHog)
+  - **Test client:** [MailHog](https://github.com/mailhog/MailHog)
 ## ⚙️ Environment Variables
 - `SERVER_PORT` - Port on which server will be running
 - `CLIENT_URL` - Frontend URL
