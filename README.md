@@ -10,7 +10,9 @@ With currency conversion and a design optimized for mobile devices,
 **Finance** makes it easy to manage finances on any device.
 The backend is built with Kotlin and offers a REST API, 
 while the frontend uses Next.js with TypeScript.
-Data is securely stored in a PostgreSQL database.
+The project is structured using DDD to organize the system into distinct domains,
+with a [design](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice) 
+that supports future migration to microservices.
 ## 🛠️ Features
 
 ### AI Image Analysis
@@ -108,6 +110,8 @@ Data is securely stored in a PostgreSQL database.
 - `STORAGE_REGION` - S3 region
 - `STORAGE_ENDPOINT` - S3 endpoint
 - `OPENAI_API_KEY` - OpenAI API key
+## 🏛️ Architecture
+
 ## 🚀 Installation
 ### Docker
 **1.** Pull images from Docker Hub
