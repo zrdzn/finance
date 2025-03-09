@@ -53,6 +53,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.Month
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
 import java.util.Locale
 import org.apache.commons.codec.binary.Base64
@@ -610,33 +611,38 @@ class TransactionService(
         val results = transactionRepository.getMonthlyTransactionSums(vaultId)
 
         val today = LocalDate.now(clock)
-        val currentYear = today.year
-        val currentMonth = today.monthValue
 
-        val categories = Array(12) { index ->
-            val month = (currentMonth - index - 1).mod(12) + 1
-            val year = currentYear - if (month > currentMonth) 1 else 0
-            "${Month.of(month).name.substring(0, 3)} ${year}'"
-        }
-        val incomingData = Array(12) { BigDecimal.ZERO }
-        val outgoingData = Array(12) { BigDecimal.ZERO }
-        val differenceData = Array(12) { BigDecimal.ZERO }
+        val monthsData = mutableMapOf<String, Triple<BigDecimal, BigDecimal, BigDecimal>>()
 
-        results.forEach { row ->
-            val month = row[0] as Int
-            val incoming = row[1] as BigDecimal
-            val outgoing = row[2] as BigDecimal
+        val categories = mutableListOf<String>()
+        for (monthIndex in 11 downTo 0) {
+            val monthDate = today.minusMonths(monthIndex.toLong())
+            val monthDisplayName = "${monthDate.month.getDisplayName(TextStyle.SHORT, Locale.ENGLISH)} ${monthDate.year}"
 
-            categories[month - 1] = Month.of(month).name
-            incomingData[month - 1] = incoming
-            outgoingData[month - 1] = outgoing
-            differenceData[month - 1] = incoming.minus(outgoing)
+            categories.add(monthDisplayName)
+            monthsData[monthDisplayName] = Triple(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO)
         }
 
-        when (transactionType) {
-            TransactionType.INCOMING -> return FlowsChartResponse(categories.reversed(), listOf(FlowsChartSeries("Income", incomingData.reversed())))
-            TransactionType.OUTGOING -> return FlowsChartResponse(categories.reversed(), listOf(FlowsChartSeries("Spent", outgoingData.reversed())))
-            else -> return FlowsChartResponse(categories.reversed(), listOf(FlowsChartSeries("Balance", differenceData.reversed())))
+        results.forEach {
+            val month = it[0] as Int
+            val year = it[1] as Int
+            val incoming = it[2] as BigDecimal
+            val outgoing = it[3] as BigDecimal
+
+            val key = "${Month.of(month).getDisplayName(TextStyle.SHORT, Locale.ENGLISH)} $year"
+            if (key in monthsData) {
+                monthsData[key] = Triple(incoming, outgoing, incoming.minus(outgoing))
+            }
+        }
+
+        val incomingData = categories.map { monthsData[it]?.first ?: BigDecimal.ZERO }
+        val outgoingData = categories.map { monthsData[it]?.second ?: BigDecimal.ZERO }
+        val differenceData = categories.map { monthsData[it]?.third ?: BigDecimal.ZERO }
+
+        return when (transactionType) {
+            TransactionType.INCOMING -> FlowsChartResponse(categories, listOf(FlowsChartSeries("Income", incomingData)))
+            TransactionType.OUTGOING -> FlowsChartResponse(categories, listOf(FlowsChartSeries("Spent", outgoingData)))
+            else -> FlowsChartResponse(categories, listOf(FlowsChartSeries("Balance", differenceData)))
         }
     }
 

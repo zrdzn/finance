@@ -56,6 +56,7 @@ interface JpaTransactionRepository : TransactionRepository, Repository<Transacti
     @Query(value = """
         SELECT
             CAST(EXTRACT(MONTH FROM transaction.created_at) AS INTEGER) AS month,
+            CAST(EXTRACT(YEAR FROM transaction.created_at) AS INTEGER) AS year,
             SUM(CASE WHEN transaction.transaction_type = 'INCOMING' THEN transaction.total ELSE 0 END) AS incoming,
             SUM(CASE WHEN transaction.transaction_type = 'OUTGOING' THEN transaction.total ELSE 0 END) AS outgoing
         FROM
@@ -65,9 +66,11 @@ interface JpaTransactionRepository : TransactionRepository, Repository<Transacti
             vault.id = :vaultId
             AND transaction.created_at >= CURRENT_DATE - INTERVAL '12 months'
         GROUP BY
-            CAST(EXTRACT(MONTH FROM transaction.created_at) AS INTEGER)
+            CAST(EXTRACT(MONTH FROM transaction.created_at) AS INTEGER),
+            CAST(EXTRACT(YEAR FROM transaction.created_at) AS INTEGER)
         ORDER BY
-            CAST(EXTRACT(MONTH FROM transaction.created_at) AS INTEGER)
+            CAST(EXTRACT(MONTH FROM transaction.created_at) AS INTEGER),
+            CAST(EXTRACT(YEAR FROM transaction.created_at) AS INTEGER)
     """, nativeQuery = true)
     override fun getMonthlyTransactionSums(
         @Param("vaultId") vaultId: Int
