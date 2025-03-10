@@ -1,10 +1,8 @@
 package dev.zrdzn.finance.backend.user
 
 import dev.zrdzn.finance.backend.ApplicationTestRunner
-import dev.zrdzn.finance.backend.user.application.request.UserCreateRequest
-import dev.zrdzn.finance.backend.user.application.response.UserResponse
-import dev.zrdzn.finance.backend.user.application.UserService
-import dev.zrdzn.finance.backend.user.domain.UserRepository
+import dev.zrdzn.finance.backend.user.dto.UserCreateRequest
+import dev.zrdzn.finance.backend.user.dto.UserResponse
 
 open class UserSpecification : ApplicationTestRunner() {
 

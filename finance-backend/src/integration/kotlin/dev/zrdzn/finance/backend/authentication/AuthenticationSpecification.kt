@@ -1,11 +1,10 @@
 package dev.zrdzn.finance.backend.authentication
 
-import dev.zrdzn.finance.backend.authentication.application.request.AuthenticationLoginRequest
-import dev.zrdzn.finance.backend.authentication.application.AuthenticationService
-import dev.zrdzn.finance.backend.token.domain.TokenRepository
-import dev.zrdzn.finance.backend.token.application.response.AccessTokenResponse
+import dev.zrdzn.finance.backend.authentication.dto.AuthenticationLoginRequest
+import dev.zrdzn.finance.backend.token.TokenRepository
+import dev.zrdzn.finance.backend.token.dto.AccessTokenResponse
 import dev.zrdzn.finance.backend.user.UserSpecification
-import dev.zrdzn.finance.backend.user.application.request.UserCreateRequest
+import dev.zrdzn.finance.backend.user.dto.UserCreateRequest
 
 open class AuthenticationSpecification : UserSpecification() {
 

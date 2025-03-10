@@ -1,7 +1,7 @@
 package dev.zrdzn.finance.backend
 
-import dev.zrdzn.finance.backend.configuration.domain.ApplicationConfiguration
-import dev.zrdzn.finance.backend.configuration.domain.toMap
+import dev.zrdzn.finance.backend.configuration.ApplicationConfiguration
+import dev.zrdzn.finance.backend.configuration.toMap
 import org.springframework.boot.SpringApplication
 import org.springframework.context.ConfigurableApplicationContext
 

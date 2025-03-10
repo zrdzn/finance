@@ -1,8 +1,6 @@
 package dev.zrdzn.finance.backend.category
 
-import dev.zrdzn.finance.backend.category.application.response.CategoryResponse
-import dev.zrdzn.finance.backend.category.application.CategoryService
-import dev.zrdzn.finance.backend.category.domain.CategoryRepository
+import dev.zrdzn.finance.backend.category.dto.CategoryResponse
 import dev.zrdzn.finance.backend.vault.VaultSpecification
 
 open class CategorySpecification : VaultSpecification() {

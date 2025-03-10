@@ -1,18 +1,13 @@
 package dev.zrdzn.finance.backend.transaction
 
 import dev.zrdzn.finance.backend.product.ProductSpecification
+import dev.zrdzn.finance.backend.schedule.ScheduleInterval
+import dev.zrdzn.finance.backend.schedule.ScheduleRepository
 import dev.zrdzn.finance.backend.shared.Price
-import dev.zrdzn.finance.backend.transaction.application.TransactionService
-import dev.zrdzn.finance.backend.transaction.application.request.TransactionProductCreateRequest
-import dev.zrdzn.finance.backend.transaction.application.response.ScheduleResponse
-import dev.zrdzn.finance.backend.transaction.application.response.TransactionProductResponse
-import dev.zrdzn.finance.backend.transaction.application.response.TransactionResponse
-import dev.zrdzn.finance.backend.transaction.domain.ScheduleInterval
-import dev.zrdzn.finance.backend.transaction.domain.ScheduleRepository
-import dev.zrdzn.finance.backend.transaction.domain.TransactionMethod
-import dev.zrdzn.finance.backend.transaction.domain.TransactionProductRepository
-import dev.zrdzn.finance.backend.transaction.domain.TransactionRepository
-import dev.zrdzn.finance.backend.transaction.domain.TransactionType
+import dev.zrdzn.finance.backend.transaction.dto.TransactionProductCreateRequest
+import dev.zrdzn.finance.backend.schedule.dto.ScheduleResponse
+import dev.zrdzn.finance.backend.transaction.dto.TransactionProductResponse
+import dev.zrdzn.finance.backend.transaction.dto.TransactionResponse
 import java.math.BigDecimal
 
 open class TransactionSpecification : ProductSpecification() {

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import dev.zrdzn.finance.backend.configuration.domain.ApplicationConfiguration
+import dev.zrdzn.finance.backend.configuration.ApplicationConfiguration
 import kong.unirest.core.Unirest
 import kong.unirest.jackson.JacksonObjectMapper
 import org.junit.jupiter.api.AfterAll

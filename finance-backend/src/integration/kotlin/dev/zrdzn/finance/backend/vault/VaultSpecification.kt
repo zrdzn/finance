@@ -1,15 +1,10 @@
 package dev.zrdzn.finance.backend.vault
 
 import dev.zrdzn.finance.backend.authentication.AuthenticationSpecification
-import dev.zrdzn.finance.backend.transaction.domain.TransactionMethod
-import dev.zrdzn.finance.backend.vault.application.response.VaultResponse
-import dev.zrdzn.finance.backend.vault.application.VaultRole
-import dev.zrdzn.finance.backend.vault.application.VaultService
-import dev.zrdzn.finance.backend.vault.application.response.VaultInvitationResponse
-import dev.zrdzn.finance.backend.vault.application.response.VaultMemberResponse
-import dev.zrdzn.finance.backend.vault.domain.VaultInvitationRepository
-import dev.zrdzn.finance.backend.vault.domain.VaultMemberRepository
-import dev.zrdzn.finance.backend.vault.domain.VaultRepository
+import dev.zrdzn.finance.backend.transaction.TransactionMethod
+import dev.zrdzn.finance.backend.vault.dto.VaultResponse
+import dev.zrdzn.finance.backend.vault.dto.VaultInvitationResponse
+import dev.zrdzn.finance.backend.vault.dto.VaultMemberResponse
 
 open class VaultSpecification : AuthenticationSpecification() {
 

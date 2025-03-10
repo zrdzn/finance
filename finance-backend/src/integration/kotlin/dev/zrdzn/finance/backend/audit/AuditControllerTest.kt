@@ -1,7 +1,7 @@
 package dev.zrdzn.finance.backend.audit
 
-import dev.zrdzn.finance.backend.audit.application.response.AuditListResponse
-import dev.zrdzn.finance.backend.token.domain.TOKEN_COOKIE_NAME
+import dev.zrdzn.finance.backend.audit.dto.AuditListResponse
+import dev.zrdzn.finance.backend.token.TOKEN_COOKIE_NAME
 import kong.unirest.core.Unirest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
