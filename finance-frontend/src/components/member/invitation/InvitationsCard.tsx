@@ -126,16 +126,7 @@ export const InvitationsCard = ({ vault, permissions }: InvitationsCardPropertie
                                 queriedInvitations.map((invitation) => (
                                     <Tr key={invitation.id}>
                                         <Td>{invitation.userEmail}</Td>
-                                        <Td>
-                                            <Tag size="sm" colorScheme="gray">
-                                                <TagLabel>
-                                                    <HStack>
-                                                        <FaClock />
-                                                        <Text fontSize={{ base: 'xs', md: 'sm' }}>{formatDate(invitation.expiresAt, true)}</Text>
-                                                    </HStack>
-                                                </TagLabel>
-                                            </Tag>
-                                        </Td>
+                                        <Td>{formatDate(invitation.expiresAt, true)}</Td>
                                         <Td>
                                             <HStack spacing={2}>
                                                 {permissions.includes("MEMBER_INVITE_DELETE") && (

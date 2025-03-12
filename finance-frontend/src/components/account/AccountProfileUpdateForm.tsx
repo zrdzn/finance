@@ -77,20 +77,24 @@ export const AccountProfileUpdateForm = ({ user }: AccountProfileUpdateFormPrope
 
     return (
         <Stack spacing='4'>
-            <FormControl>
+          {
+            details && (
+              <FormControl>
                 <FormLabel>{t('profile-card.avatar-label')}</FormLabel>
                 <HStack gap={4}>
-                    <AccountAvatar size={'xl'} username={details?.username} />
-                    <FileUpload handleFile={it => handleAvatarUpload(it)}>
-                        <Button size={'md'}
-                                backgroundColor={theme.primaryColor}
-                                gap={1}
-                                color={'#f8f8f8'} fontWeight={'400'}>
-                            <FaPencil />
-                        </Button>
-                    </FileUpload>
+                  <AccountAvatar size={'xl'} userId={details?.id} />
+                  <FileUpload handleFile={it => handleAvatarUpload(it)}>
+                    <Button size={'md'}
+                            backgroundColor={theme.primaryColor}
+                            gap={1}
+                            color={'#f8f8f8'} fontWeight={'400'}>
+                      <FaPencil />
+                    </Button>
+                  </FileUpload>
                 </HStack>
-            </FormControl>
+              </FormControl>
+            )
+          }
             <FormControl isRequired>
                 <FormLabel>{t('profile-card.email-label')}</FormLabel>
                 <HStack>

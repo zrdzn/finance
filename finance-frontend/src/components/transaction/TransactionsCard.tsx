@@ -33,6 +33,8 @@ import {TransactionProductsPopover} from "@/components/transaction/TransactionPr
 import {ImportButton} from "@/components/transaction/import/ImportButton";
 import {CsvImport} from "@/components/transaction/import/CsvImport";
 import {ImageImport} from "@/components/transaction/import/ImageImport";
+import {ExportButton} from "@/components/transaction/export/ExportButton";
+import {CsvExport} from "@/components/transaction/export/CsvExport";
 
 type VaultResponse = Components.Schemas.VaultResponse;
 type TransactionResponse = Components.Schemas.TransactionResponse;
@@ -51,7 +53,8 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
   const { formatNumber } = useNumberFormatter()
   const { formatDate } = useDateFormatter()
   const router = useRouter()
-  const { isOpen: isCsvOpen, onOpen: onCsvOpen, onClose: onCsvClose } = useDisclosure()
+  const { isOpen: isCsvImportOpen, onOpen: onCsvImportOpen, onClose: onCsvImportClose } = useDisclosure()
+  const { isOpen: isCsvExportOpen, onOpen: onCsvExportOpen, onClose: onCsvExportClose } = useDisclosure()
   const { isOpen: isImageOpen, onOpen: onImageOpen, onClose: onImageClose } = useDisclosure()
 
   useEffect(() => {
@@ -117,9 +120,14 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
           }
           {
             permissions.includes("TRANSACTION_CREATE") &&
-              <ImportButton openCsv={onCsvOpen} openImage={onImageOpen} />
+              <ImportButton openCsv={onCsvImportOpen} openImage={onImageOpen} />
           }
-          <CsvImport vault={vault} isOpen={isCsvOpen} onClose={onCsvClose} permissions={permissions} />
+          {
+            permissions.includes("TRANSACTION_READ") &&
+              <ExportButton openCsv={onCsvExportOpen} />
+          }
+          <CsvImport vault={vault} isOpen={isCsvImportOpen} onClose={onCsvImportClose} permissions={permissions} />
+          <CsvExport vault={vault} isOpen={isCsvExportOpen} onClose={onCsvExportClose} permissions={permissions} />
           <ImageImport vault={vault} isOpen={isImageOpen} onClose={onImageClose} permissions={permissions} />
         </Flex>
           <Box overflowX="auto">
@@ -151,22 +159,13 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
                                   <Tr key={transaction.id}>
                                       <Td>
                                           <HStack>
-                                              <AccountAvatar size={'sm'} username={transaction.user.username} />
+                                              <AccountAvatar size={'sm'} userId={transaction.user.id} />
                                               <Text>
                                                   {transaction.user.username}
                                               </Text>
                                           </HStack>
                                       </Td>
-                                      <Td>
-                                          <Tag size="sm" colorScheme="gray">
-                                              <TagLabel>
-                                                  <HStack>
-                                                      <FaClock />
-                                                      <Text fontSize={{ base: 'xs', md: 'sm' }}>{formatDate(transaction.createdAt, true)}</Text>
-                                                  </HStack>
-                                              </TagLabel>
-                                          </Tag>
-                                      </Td>
+                                      <Td>{formatDate(transaction.createdAt, true)}</Td>
                                       <Td>{transaction.transactionMethod}</Td>
                                       <Td>{transaction.description}</Td>
                                       <Td>

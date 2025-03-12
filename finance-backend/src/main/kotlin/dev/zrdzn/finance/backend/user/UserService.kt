@@ -3,14 +3,14 @@ package dev.zrdzn.finance.backend.user
 import dev.samstevens.totp.code.CodeVerifier
 import dev.zrdzn.finance.backend.storage.StorageClient
 import dev.zrdzn.finance.backend.user.UserMapper.toResponse
-import dev.zrdzn.finance.backend.user.error.TwoFactorAlreadyEnabledError
-import dev.zrdzn.finance.backend.user.error.UserAccessDeniedError
-import dev.zrdzn.finance.backend.user.error.UserEmailAlreadyTakenError
-import dev.zrdzn.finance.backend.user.dto.UserCreateRequest
 import dev.zrdzn.finance.backend.user.dto.TwoFactorSetupResponse
+import dev.zrdzn.finance.backend.user.dto.UserCreateRequest
 import dev.zrdzn.finance.backend.user.dto.UserResponse
 import dev.zrdzn.finance.backend.user.dto.UserWithPasswordResponse
 import dev.zrdzn.finance.backend.user.dto.UsernameResponse
+import dev.zrdzn.finance.backend.user.error.TwoFactorAlreadyEnabledError
+import dev.zrdzn.finance.backend.user.error.UserAccessDeniedError
+import dev.zrdzn.finance.backend.user.error.UserEmailAlreadyTakenError
 import java.io.InputStream
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -169,10 +169,6 @@ class UserService(
             ?: throw UserAccessDeniedError()
 
     @Transactional(readOnly = true)
-    fun getUserId(username: String): Int =
-        userRepository.findIdByUsername(username) ?: throw UserAccessDeniedError()
-
-    @Transactional(readOnly = true)
     fun getUsername(userId: Int): UsernameResponse =
         UsernameResponse(getUser(userId).username)
 
@@ -192,9 +188,7 @@ class UserService(
             }
 
     @Transactional(readOnly = true)
-    fun getUserAvatar(username: String): InputStream =
-        getUserId(username)
-            .let { storageClient.loadFile(avatarsBucket, it.toString()) }
-            ?: throw UserAccessDeniedError()
+    fun getUserAvatar(userId: Int): InputStream =
+        storageClient.loadFile(avatarsBucket, userId.toString()) ?: throw UserAccessDeniedError()
 
 }

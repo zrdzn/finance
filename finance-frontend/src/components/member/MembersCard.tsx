@@ -106,7 +106,7 @@ export const MembersCard = ({ vault, vaultRole }: MembersCardProperties) => {
                             ) : (
                                 queriedMembers.map((member) => (
                                     <Tr key={member.id}>
-                                        <Td><AccountAvatar size={"sm"} username={member.user.username} /></Td>
+                                        <Td><AccountAvatar size={"sm"} userId={member.user.id} /></Td>
                                         <Td>{member.user.username}</Td>
                                         <Td>{member.user.email}</Td>
                                         <Td>

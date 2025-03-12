@@ -96,26 +96,8 @@ export const AuditTable = ({ vault, permissions }: AuditTableProperties) => {
                             </Text>
                           </HStack>
                         </Td>
-                        <Td>
-                          <Tag size="sm" colorScheme="orange">
-                            <TagLabel>
-                              <HStack>
-                                <FaUser />
-                                <Text fontSize={{ base: 'xs', md: 'sm' }}>{audit.user.username}</Text>
-                              </HStack>
-                            </TagLabel>
-                          </Tag>
-                        </Td>
-                        <Td>
-                          <Tag size="sm" colorScheme="gray">
-                            <TagLabel>
-                              <HStack>
-                                <FaClock />
-                                <Text fontSize={{ base: 'xs', md: 'sm' }}>{formatDate(audit.createdAt, true)}</Text>
-                              </HStack>
-                            </TagLabel>
-                          </Tag>
-                        </Td>
+                        <Td>{audit.user.username}</Td>
+                        <Td>{formatDate(audit.createdAt, true)}</Td>
                         <Td>{audit.description}</Td>
                       </Tr>
                   ))

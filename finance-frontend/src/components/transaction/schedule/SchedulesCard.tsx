@@ -134,16 +134,7 @@ export const SchedulesCard = ({ vault, permissions }: SchedulesCardProperties) =
                               .map((schedule) => (
                                   <Tr key={schedule.id}>
                                       <Td>{schedule.description}</Td>
-                                      <Td>
-                                          <Tag size="sm" colorScheme="gray">
-                                              <TagLabel>
-                                                  <HStack>
-                                                      <FaClock />
-                                                      <Text fontSize={{ base: 'xs', md: 'sm' }}>{formatDate(schedule.nextExecution, true)}</Text>
-                                                  </HStack>
-                                              </TagLabel>
-                                          </Tag>
-                                      </Td>
+                                      <Td>{formatDate(schedule.nextExecution, true)}</Td>
                                       <Td>{t('schedules.card.interval-value').replace("%interval%", formatInterval(schedule.amount, schedule.interval))}</Td>
                                       <Td>
                                           <HStack spacing={2}>

@@ -115,22 +115,13 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
                         <Tr key={transaction.id}>
                           <Td>
                             <HStack>
-                              <AccountAvatar size={'sm'} username={transaction.user.username} />
+                              <AccountAvatar size={'sm'} userId={transaction.user.id} />
                               <Text>
                                 {transaction.user.username}
                               </Text>
                             </HStack>
                           </Td>
-                          <Td>
-                            <Tag size="sm" colorScheme="gray">
-                              <TagLabel>
-                                <HStack>
-                                  <FaClock />
-                                  <Text fontSize={{ base: 'xs', md: 'sm' }}>{formatDate(transaction.createdAt, true)}</Text>
-                                </HStack>
-                              </TagLabel>
-                            </Tag>
-                          </Td>
+                          <Td>{formatDate(transaction.createdAt, true)}</Td>
                           <Td>{transaction.transactionMethod}</Td>
                           <Td>{transaction.description}</Td>
                           <Td>

@@ -185,14 +185,18 @@ const ChatBox = ({iconStyle, boxStyle}: ChatBoxProps) => {
                   bg="blue.100"
                   maxW="80%"
                 >
-                  <HStack justify="flex-end">
-                    <Text fontWeight="bold">
-                      {
-                        details?.username
-                      }
-                    </Text>
-                    <AccountAvatar size="sm"/>
-                  </HStack>
+                  {
+                    details && (
+                      <HStack justify="flex-end">
+                        <Text fontWeight="bold">
+                          {
+                            details?.username
+                          }
+                        </Text>
+                        <AccountAvatar size="sm" userId={details?.id} />
+                      </HStack>
+                    )
+                  }
                   <Text>{msg.text}</Text>
                 </Box>
               )

@@ -218,15 +218,15 @@
     "export": {
       "requested-export-success": "Requested transactions export",
       "requested-export-error": "Failed to export transactions",
-      "card": {
-        "title": "Export transactions",
-        "export-type-label": "Choose export type",
-        "export-type-option-csv": "Export to CSV file",
-        "export-range-label": "Choose date range",
-        "export-range-start": "Start date",
-        "export-range-end": "End date",
-        "submit": "Export"
-      }
+      "title": "Export transactions",
+      "export-type-label": "Choose export type",
+      "export-type-option-csv": "Export to CSV file",
+      "export-range-label": "Choose date range",
+      "export-range-start": "Start date",
+      "export-range-end": "End date",
+      "submit": "Export",
+      "button": "Export",
+      "csv": "Export to CSV"
     },
     "import": {
       "imported": "Transactions have been imported",

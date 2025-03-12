@@ -61,3 +61,5 @@ ai:
 logging:
   level:
     org.springframework.orm.jpa.JpaTransactionManager: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.web.csrf: TRACE

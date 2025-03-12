@@ -5,7 +5,7 @@ import React from "react";
 import {useRouter} from "next/router"
 import {ProtectedVault} from "@/components/vault/ProtectedVault"
 import {TransactionsCard} from "@/components/transaction/TransactionsCard"
-import {ExportCard} from "@/components/transaction/export/ExportCard"
+import {CsvExport} from "@/components/transaction/export/CsvExport"
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
 import {SchedulesCard} from "@/components/transaction/schedule/SchedulesCard";
@@ -33,14 +33,6 @@ export default function Transactions(): ReactJSXElement {
                   <SchedulesCard vault={vault} permissions={vaultRole.permissions} />
               )}
             </Flex>
-            <Grid
-              templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
-              gap={4}
-              width="full">
-              {vaultRole.permissions.includes("TRANSACTION_READ") && (
-                  <ExportCard vault={vault} permissions={vaultRole.permissions} />
-              )}
-            </Grid>
           </Flex>
         </>
       }

@@ -105,9 +105,9 @@ class UserController(
     @GetMapping("/{userId}/username")
     fun getUsernameByUserId(@PathVariable userId: Int): UsernameResponse = userService.getUsername(userId)
 
-    @GetMapping("/avatar/{username}")
-    fun getUserAvatar(@PathVariable username: String): ResponseEntity<Resource> =
-        userService.getUserAvatar(username)
+    @GetMapping("/avatar/{userId}")
+    fun getUserAvatar(@PathVariable userId: Int): ResponseEntity<Resource> =
+        userService.getUserAvatar(userId)
             .let { ok().body(InputStreamResource(it)) }
 
 }

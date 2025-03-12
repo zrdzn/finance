@@ -8,33 +8,33 @@ import com.opencsv.CSVWriter
 import com.opencsv.enums.CSVReaderNullFieldIndicator
 import dev.zrdzn.finance.backend.ai.AiClient
 import dev.zrdzn.finance.backend.ai.AiPrompts.ANALYZE_TRANSACTION_FROM_IMAGE
-import dev.zrdzn.finance.backend.audit.AuditService
 import dev.zrdzn.finance.backend.audit.AuditAction
+import dev.zrdzn.finance.backend.audit.AuditService
 import dev.zrdzn.finance.backend.category.CategoryService
 import dev.zrdzn.finance.backend.exchange.ExchangeService
 import dev.zrdzn.finance.backend.schedule.Schedule
 import dev.zrdzn.finance.backend.schedule.ScheduleInterval
 import dev.zrdzn.finance.backend.schedule.ScheduleRepository
+import dev.zrdzn.finance.backend.schedule.dto.ScheduleListResponse
+import dev.zrdzn.finance.backend.schedule.dto.ScheduleResponse
+import dev.zrdzn.finance.backend.schedule.error.ScheduleNotFoundError
 import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.transaction.TransactionMapper.toResponse
-import dev.zrdzn.finance.backend.schedule.error.ScheduleNotFoundError
+import dev.zrdzn.finance.backend.transaction.dto.AnalysedTransactionResponse
+import dev.zrdzn.finance.backend.transaction.dto.FlowsChartResponse
+import dev.zrdzn.finance.backend.transaction.dto.FlowsChartSeries
+import dev.zrdzn.finance.backend.transaction.dto.TransactionAmountResponse
+import dev.zrdzn.finance.backend.transaction.dto.TransactionFlowsResponse
+import dev.zrdzn.finance.backend.transaction.dto.TransactionListResponse
+import dev.zrdzn.finance.backend.transaction.dto.TransactionProductCreateRequest
+import dev.zrdzn.finance.backend.transaction.dto.TransactionProductListResponse
+import dev.zrdzn.finance.backend.transaction.dto.TransactionProductResponse
+import dev.zrdzn.finance.backend.transaction.dto.TransactionResponse
 import dev.zrdzn.finance.backend.transaction.error.TransactionDescriptionRequiredError
 import dev.zrdzn.finance.backend.transaction.error.TransactionImportMappingNotFoundError
 import dev.zrdzn.finance.backend.transaction.error.TransactionNotFoundError
 import dev.zrdzn.finance.backend.transaction.error.TransactionPriceRequiredError
 import dev.zrdzn.finance.backend.transaction.error.TransactionProductNotFoundError
-import dev.zrdzn.finance.backend.transaction.dto.TransactionProductCreateRequest
-import dev.zrdzn.finance.backend.transaction.dto.AnalysedTransactionResponse
-import dev.zrdzn.finance.backend.transaction.dto.FlowsChartResponse
-import dev.zrdzn.finance.backend.transaction.dto.FlowsChartSeries
-import dev.zrdzn.finance.backend.schedule.dto.ScheduleListResponse
-import dev.zrdzn.finance.backend.schedule.dto.ScheduleResponse
-import dev.zrdzn.finance.backend.transaction.dto.TransactionAmountResponse
-import dev.zrdzn.finance.backend.transaction.dto.TransactionFlowsResponse
-import dev.zrdzn.finance.backend.transaction.dto.TransactionListResponse
-import dev.zrdzn.finance.backend.transaction.dto.TransactionProductListResponse
-import dev.zrdzn.finance.backend.transaction.dto.TransactionProductResponse
-import dev.zrdzn.finance.backend.transaction.dto.TransactionResponse
 import dev.zrdzn.finance.backend.user.UserService
 import dev.zrdzn.finance.backend.vault.VaultPermission
 import dev.zrdzn.finance.backend.vault.VaultService
@@ -46,6 +46,7 @@ import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.Month
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
@@ -196,14 +197,23 @@ class TransactionService(
         val writer = StringWriter()
         val csvWriter = CSVWriter(writer)
 
-        val headers = arrayOf("Payer Email", "Vault Name", "Transaction Date", "Transaction Method", "Transaction Type", "Description", "Total", "Currency")
+        val headers = arrayOf(
+            "Payer Email",
+            "Vault Name",
+            "Transaction Date",
+            "Transaction Method",
+            "Transaction Type",
+            "Description",
+            "Total",
+            "Currency"
+        )
         csvWriter.writeNext(headers, false)
 
         transactions.forEach {
             val data = arrayOf(
                 it.user.email,
                 vaultService.getVault(vaultId = vaultId, requesterId = requesterId).name,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(it.createdAt),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").withZone(ZoneId.of("UTC")).format(it.createdAt),
                 it.transactionMethod.toString(),
                 it.transactionType.toString(),
                 it.description ?: "",
