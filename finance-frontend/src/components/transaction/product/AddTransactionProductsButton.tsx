@@ -22,14 +22,14 @@ import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
 import {useRouter} from 'next/router'
 import {PriceInput} from "@/components/shared/PriceInput"
-import {ProductSelectWithAddButton} from "@/components/product/ProductSelectWithAddButton"
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
 import {AddButton} from "@/components/shared/AddButton";
+import {CategorySelect} from "@/components/product/category/CategorySelect";
 
 type TransactionProductCreateRequest = Components.Schemas.TransactionProductCreateRequest;
-type ProductResponse = Components.Schemas.ProductResponse;
+type CategoryResponse = Components.Schemas.CategoryResponse;
 
 interface AddTransactionProductsButtonProperties {
   vaultId: number
@@ -45,6 +45,7 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId, size }: A
   const t = useTranslations("Transactions")
   const [transactionProductCreateRequest, setTransactionProductCreateRequest] = useState<TransactionProductCreateRequest>({
     name: "",
+    categoryId: undefined,
     unitAmount: 0,
     quantity: 1
   })
@@ -53,6 +54,10 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId, size }: A
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTransactionProductCreateRequest({ ...transactionProductCreateRequest, name: event.target.value });
+  }
+
+  const handleCategoryChange = (category: CategoryResponse | null) => {
+    setTransactionProductCreateRequest({ ...transactionProductCreateRequest, categoryId: category?.id });
   }
 
   const handlePriceChange = (price: number) => {
@@ -96,6 +101,11 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId, size }: A
                      onChange={handleNameChange}
                      ref={initialRef}
                      placeholder={t("product.create-modal.product-placeholder")} />
+            </FormControl>
+
+            <FormControl mt={4}>
+              <FormLabel>{t('product.create-modal.category-label')}</FormLabel>
+              <CategorySelect vaultId={vaultId} onChange={handleCategoryChange} />
             </FormControl>
 
             <FormControl mt={4}>

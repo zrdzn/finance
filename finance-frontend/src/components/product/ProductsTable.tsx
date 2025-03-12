@@ -25,6 +25,7 @@ import { DeleteButton } from "@/components/shared/DeleteButton"
 import toast from "react-hot-toast"
 import { AddProductButton } from "@/components/product/AddProductButton"
 import { SearchBar } from "@/components/shared/SearchBar"
+import {useNumberFormatter} from "@/hooks/useNumberFormatter";
 
 type ProductResponse = Components.Schemas.ProductResponse
 type VaultResponse = Components.Schemas.VaultResponse
@@ -34,12 +35,13 @@ interface ProductsTableProperties {
   permissions: string[]
 }
 
-export const ProductsCard = ({ vault, permissions }: ProductsTableProperties) => {
+export const ProductsTable = ({ vault, permissions }: ProductsTableProperties) => {
   const api = useApi()
   const router = useRouter()
   const t = useTranslations("Products")
   const [products, setProducts] = useState<ProductResponse[]>([])
   const [queriedProducts, setQueriedProducts] = useState<ProductResponse[]>([])
+  const { formatNumber } = useNumberFormatter()
 
   useEffect(() => {
     api
@@ -90,9 +92,10 @@ export const ProductsCard = ({ vault, permissions }: ProductsTableProperties) =>
                     <Table variant={'simple'}>
                         <Thead>
                             <Tr>
-                                <Th>{t("table.name")}</Th>
-                                <Th>{t("table.category")}</Th>
-                                <Th>{t("table.actions")}</Th>
+                              <Th>{t("table.name")}</Th>
+                              <Th>{t("table.category")}</Th>
+                              <Th>{t("table.price")}</Th>
+                              <Th>{t("table.actions")}</Th>
                             </Tr>
                         </Thead>
                         <Tbody>
@@ -107,34 +110,29 @@ export const ProductsCard = ({ vault, permissions }: ProductsTableProperties) =>
                             ) : (
                                 queriedProducts.map((product) => (
                                     <Tr key={product.id}>
-                                        <Td>{product.name}</Td>
-                                        <Td>
-                                            {product.categoryName && (
-                                                <Tag size={"sm"} colorScheme="cyan">
-                                                    <TagLabel>{product.categoryName}</TagLabel>
-                                                </Tag>
-                                            )}
-                                        </Td>
-                                        <Td>
-                                            <HStack spacing={2}>
-                                                {permissions.includes("PRODUCT_UPDATE") && (
-                                                    <EditProductButton product={product} />
-                                                )}
-                                                {permissions.includes("PRODUCT_DELETE") && (
-                                                    <DeleteButton
-                                                        onClick={() => {
-                                                            api
-                                                                .then((client) => client.deleteProduct({ productId: product.id }))
-                                                                .then(() => {
-                                                                    toast.success(t("product-deleted-success"))
-                                                                    setTimeout(() => router.reload(), 1000)
-                                                                })
-                                                                .catch((error) => console.error(error))
-                                                        }}
-                                                    />
-                                                )}
-                                            </HStack>
-                                        </Td>
+                                      <Td>{product.name}</Td>
+                                      <Td>{product.categoryName}</Td>
+                                      <Td>{formatNumber(product.unitAmount)}</Td>
+                                      <Td>
+                                        <HStack spacing={2}>
+                                          {permissions.includes("PRODUCT_UPDATE") && (
+                                            <EditProductButton product={product} />
+                                          )}
+                                          {permissions.includes("PRODUCT_DELETE") && (
+                                            <DeleteButton
+                                              onClick={() => {
+                                                api
+                                                  .then((client) => client.deleteProduct({ productId: product.id }))
+                                                  .then(() => {
+                                                    toast.success(t("product-deleted-success"))
+                                                    setTimeout(() => router.reload(), 1000)
+                                                  })
+                                                  .catch((error) => console.error(error))
+                                              }}
+                                            />
+                                          )}
+                                        </HStack>
+                                      </Td>
                                     </Tr>
                                 ))
                             )}

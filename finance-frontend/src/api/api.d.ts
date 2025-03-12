@@ -74,6 +74,7 @@ declare namespace Components {
             name: string;
             vaultId: number; // int32
             categoryId?: number; // int32
+            unitAmount: number;
         }
         export interface ProductListResponse {
             products: ProductResponse[];
@@ -84,9 +85,11 @@ declare namespace Components {
             vaultId: number; // int32
             categoryId?: number; // int32
             categoryName?: string;
+            unitAmount: number;
         }
         export interface ProductUpdateRequest {
             categoryId?: number; // int32
+            unitAmount: number;
         }
         export interface ScheduleCreateRequest {
             description: string;
@@ -525,10 +528,10 @@ declare namespace Paths {
     }
     namespace GetUserAvatar {
         namespace Parameters {
-            export type Username = string;
+            export type UserId = number; // int32
         }
         export interface PathParameters {
-            username: Parameters.Username;
+            userId: Parameters.UserId /* int32 */;
         }
         namespace Responses {
             export type $200 = string; // binary
@@ -1595,7 +1598,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.RequestUserUpdate.Responses.$200>
   }
-  ['/api/users/avatar/{username}']: {
+  ['/api/users/avatar/{userId}']: {
     /**
      * getUserAvatar
      */

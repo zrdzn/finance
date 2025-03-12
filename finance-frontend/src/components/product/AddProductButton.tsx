@@ -13,7 +13,6 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import React, {ChangeEvent, useRef, useState} from "react"
-import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
 import {CategorySelect} from "@/components/product/category/CategorySelect"
@@ -21,6 +20,7 @@ import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
 import {AddButton} from "@/components/shared/AddButton";
+import {PriceInput} from "@/components/shared/PriceInput";
 
 type ProductCreateRequest = Components.Schemas.ProductCreateRequest;
 type CategoryResponse = Components.Schemas.CategoryResponse;
@@ -39,17 +39,22 @@ export const AddProductButton = ({ vaultId, onCreate }: AddProductButtonProperti
   const [productCreateRequest, setProductCreateRequest] = useState<ProductCreateRequest>({
     name: '',
     vaultId: vaultId,
-    categoryId: undefined
+    categoryId: undefined,
+    unitAmount: 0
   })
   const initialRef = useRef(null)
   const finalRef = useRef(null)
 
-  const handleProductChange = (category: CategoryResponse | null) => {
+  const handleCategoryChange = (category: CategoryResponse | null) => {
     setProductCreateRequest({ ...productCreateRequest, categoryId: category?.id });
   }
 
   const handleProductCreateRequestChange = (event: ChangeEvent<HTMLInputElement>) => {
     setProductCreateRequest({ ...productCreateRequest, [event.target.name]: event.target.value });
+  }
+
+  const handlePriceChange = (price: number) => {
+    setProductCreateRequest({ ...productCreateRequest, unitAmount: price });
   }
 
   const handleProductCreate = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -92,7 +97,12 @@ export const AddProductButton = ({ vaultId, onCreate }: AddProductButtonProperti
 
             <FormControl mt={4}>
               <FormLabel>{t('create-modal.category-label')}</FormLabel>
-              <CategorySelect vaultId={vaultId} onChange={handleProductChange} />
+              <CategorySelect vaultId={vaultId} onChange={handleCategoryChange} />
+            </FormControl>
+
+            <FormControl mt={4}>
+              <FormLabel>{t('create-modal.price-label')}</FormLabel>
+              <PriceInput onChange={handlePriceChange} />
             </FormControl>
           </ModalBody>
 

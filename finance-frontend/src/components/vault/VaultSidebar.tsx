@@ -64,6 +64,12 @@ const GetAvailableEndpoints = (vault: VaultResponse, permissions: string[]) => {
       requireAtLeast: ['TRANSACTION_READ', 'SCHEDULE_READ']
     },
     {
+      href: `/vault/${vault.publicId}/products`,
+      icon: FaTags,
+      label: t('products'),
+      requireAtLeast: ['PRODUCT_READ', 'PRODUCT_CREATE']
+    },
+    {
       href: `/vault/${vault.publicId}/members`,
       icon: FaUser,
       label: t('members'),

@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.validation.constraints.Size
+import java.math.BigDecimal
 
 @Entity
 @Table(name = "products")
@@ -25,4 +26,7 @@ data class Product(
 
     @Column(name = "category_id")
     var categoryId: Int?,
+
+    @Column(name = "unit_amount")
+    var unitAmount: BigDecimal,
 )

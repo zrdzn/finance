@@ -1,14 +1,15 @@
 package dev.zrdzn.finance.backend.product
 
-import dev.zrdzn.finance.backend.audit.AuditService
 import dev.zrdzn.finance.backend.audit.AuditAction
+import dev.zrdzn.finance.backend.audit.AuditService
 import dev.zrdzn.finance.backend.category.CategoryService
 import dev.zrdzn.finance.backend.product.ProductMapper.toResponse
-import dev.zrdzn.finance.backend.product.error.ProductNotFoundError
 import dev.zrdzn.finance.backend.product.dto.ProductListResponse
 import dev.zrdzn.finance.backend.product.dto.ProductResponse
+import dev.zrdzn.finance.backend.product.error.ProductNotFoundError
 import dev.zrdzn.finance.backend.vault.VaultPermission
 import dev.zrdzn.finance.backend.vault.VaultService
+import java.math.BigDecimal
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -21,7 +22,7 @@ class ProductService(
 ) {
 
     @Transactional
-    fun createProduct(requesterId: Int, name: String, vaultId: Int, categoryId: Int?): ProductResponse {
+    fun createProduct(requesterId: Int, name: String, vaultId: Int, categoryId: Int?, unitAmount: BigDecimal): ProductResponse {
         vaultService.authorizeMember(vaultId, requesterId, VaultPermission.PRODUCT_CREATE)
 
         return productRepository
@@ -30,7 +31,8 @@ class ProductService(
                     id = null,
                     name = name,
                     vaultId = vaultId,
-                    categoryId = categoryId
+                    categoryId = categoryId,
+                    unitAmount = unitAmount
                 )
             )
             .also {
@@ -45,12 +47,13 @@ class ProductService(
     }
 
     @Transactional
-    fun updateProduct(requesterId: Int, productId: Int, categoryId: Int?) {
+    fun updateProduct(requesterId: Int, productId: Int, categoryId: Int?, unitAmount: BigDecimal) {
         val product = productRepository.findById(productId) ?: throw ProductNotFoundError()
 
         vaultService.authorizeMember(product.vaultId, requesterId, VaultPermission.PRODUCT_UPDATE)
 
         product.categoryId = categoryId
+        product.unitAmount = unitAmount
 
         auditService.createAudit(
             vaultId = product.vaultId,
@@ -83,16 +86,5 @@ class ProductService(
             .map { it.toResponse(it.categoryId?.let { id -> categoryService.getCategoryById(requesterId, id) }?.name) }
             .toSet()
             .let { ProductListResponse(it) }
-
-    @Transactional(readOnly = true)
-    fun getProduct(requesterId: Int, productId: Int): ProductResponse =
-        productRepository
-            .findById(productId)
-            ?.let {
-                vaultService.authorizeMember(it.vaultId, requesterId, VaultPermission.PRODUCT_READ)
-
-                it.toResponse(it.categoryId?.let { id -> categoryService.getCategoryById(requesterId, id) }?.name)
-            }
-            ?: throw ProductNotFoundError()
 
 }

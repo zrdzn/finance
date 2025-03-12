@@ -1,9 +1,9 @@
 package dev.zrdzn.finance.backend.product
 
 import dev.zrdzn.finance.backend.product.dto.ProductCreateRequest
-import dev.zrdzn.finance.backend.product.dto.ProductUpdateRequest
 import dev.zrdzn.finance.backend.product.dto.ProductListResponse
 import dev.zrdzn.finance.backend.product.dto.ProductResponse
+import dev.zrdzn.finance.backend.product.dto.ProductUpdateRequest
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -30,7 +30,8 @@ class ProductController(
                 requesterId = userId,
                 name = productCreateRequest.name,
                 vaultId = productCreateRequest.vaultId,
-                categoryId = productCreateRequest.categoryId
+                categoryId = productCreateRequest.categoryId,
+                unitAmount = productCreateRequest.unitAmount
             )
 
     @PatchMapping("/{productId}")
@@ -43,7 +44,8 @@ class ProductController(
             .updateProduct(
                 requesterId = userId,
                 productId = productId,
-                categoryId = productUpdateRequest.categoryId
+                categoryId = productUpdateRequest.categoryId,
+                unitAmount = productUpdateRequest.unitAmount
             )
 
     @DeleteMapping("/{productId}")

@@ -9,7 +9,8 @@ object ProductMapper {
         name = name,
         vaultId = vaultId,
         categoryId = categoryId,
-        categoryName = categoryName
+        categoryName = categoryName,
+        unitAmount = unitAmount
     )
 
 }
