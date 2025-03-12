@@ -198,7 +198,7 @@ class TransactionService(
         val csvWriter = CSVWriter(writer)
 
         val headers = arrayOf(
-            "Payer Email",
+            "User Email",
             "Vault Name",
             "Transaction Date",
             "Transaction Method",
