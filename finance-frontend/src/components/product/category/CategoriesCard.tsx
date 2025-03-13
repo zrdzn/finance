@@ -26,8 +26,8 @@ import {useRouter} from "next/router";
 import toast from "react-hot-toast";
 import {DeleteButton} from "@/components/shared/DeleteButton";
 
-type ProductResponse = Components.Schemas.ProductResponse
 type VaultResponse = Components.Schemas.VaultResponse
+type CategoryResponse = Components.Schemas.CategoryResponse;
 
 interface CategoriesCardProperties {
     vault: VaultResponse
@@ -38,8 +38,8 @@ export const CategoriesCard = ({ vault, permissions }: CategoriesCardProperties)
     const api = useApi()
     const router = useRouter()
     const t = useTranslations("Categories")
-    const [categories, setCategories] = useState<ProductResponse[]>([])
-    const [queriedCategories, setQueriedCategories] = useState<ProductResponse[]>([])
+    const [categories, setCategories] = useState<CategoryResponse[]>([])
+    const [queriedCategories, setQueriedCategories] = useState<CategoryResponse[]>([])
 
     useEffect(() => {
         api
@@ -52,7 +52,7 @@ export const CategoriesCard = ({ vault, permissions }: CategoriesCardProperties)
             .catch((error) => console.error(error))
     }, [api, vault.id])
 
-    const handleSearchResults = (results: ProductResponse[]) => {
+    const handleSearchResults = (results: CategoryResponse[]) => {
         setQueriedCategories(results)
     }
 

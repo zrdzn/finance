@@ -35,7 +35,7 @@ declare namespace Components {
             createdAt: string; // date-time
             vault: VaultResponse;
             user: UserResponse;
-            auditAction: "TRANSACTION_CREATED" | "TRANSACTION_UPDATED" | "TRANSACTION_DELETED" | "TRANSACTION_IMPORTED" | "TRANSACTION_EXPORTED" | "TRANSACTION_PRODUCT_CREATED" | "SCHEDULE_CREATED" | "SCHEDULE_DELETED" | "CATEGORY_CREATED" | "CATEGORY_DELETED" | "PRODUCT_CREATED" | "PRODUCT_UPDATED" | "PRODUCT_DELETED";
+            auditAction: "TRANSACTION_CREATED" | "TRANSACTION_UPDATED" | "TRANSACTION_DELETED" | "TRANSACTION_IMPORTED" | "TRANSACTION_EXPORTED" | "TRANSACTION_PRODUCT_CREATED" | "TRANSACTION_PRODUCT_UPDATED" | "TRANSACTION_PRODUCT_DELETED" | "SCHEDULE_CREATED" | "SCHEDULE_DELETED" | "CATEGORY_CREATED" | "CATEGORY_DELETED" | "PRODUCT_CREATED" | "PRODUCT_UPDATED" | "PRODUCT_DELETED";
             description: string;
         }
         export interface AuthenticationLoginRequest {
@@ -83,8 +83,7 @@ declare namespace Components {
             id: number; // int32
             name: string;
             vaultId: number; // int32
-            categoryId?: number; // int32
-            categoryName?: string;
+            category?: CategoryResponse;
             unitAmount: number;
         }
         export interface ProductUpdateRequest {
@@ -139,7 +138,13 @@ declare namespace Components {
             id: number; // int32
             transactionId: number; // int32
             name: string;
-            categoryName?: string;
+            category?: CategoryResponse;
+            unitAmount: number;
+            quantity: number; // int32
+        }
+        export interface TransactionProductUpdateRequest {
+            name: string;
+            categoryId?: number; // int32
             unitAmount: number;
             quantity: number; // int32
         }
@@ -384,6 +389,20 @@ declare namespace Paths {
         }
         export interface PathParameters {
             transactionId: Parameters.TransactionId /* int32 */;
+        }
+        namespace Responses {
+            export interface $200 {
+            }
+        }
+    }
+    namespace DeleteTransactionProduct {
+        namespace Parameters {
+            export type ProductId = number; // int32
+            export type TransactionId = number; // int32
+        }
+        export interface PathParameters {
+            transactionId: Parameters.TransactionId /* int32 */;
+            productId: Parameters.ProductId /* int32 */;
         }
         namespace Responses {
             export interface $200 {
@@ -732,6 +751,21 @@ declare namespace Paths {
             }
         }
     }
+    namespace UpdateTransactionProduct {
+        namespace Parameters {
+            export type ProductId = number; // int32
+            export type TransactionId = number; // int32
+        }
+        export interface PathParameters {
+            transactionId: Parameters.TransactionId /* int32 */;
+            productId: Parameters.ProductId /* int32 */;
+        }
+        export type RequestBody = Components.Schemas.TransactionProductUpdateRequest;
+        namespace Responses {
+            export interface $200 {
+            }
+        }
+    }
     namespace UpdateUserAvatar {
         export interface RequestBody {
             avatar: string; // binary
@@ -1019,6 +1053,22 @@ export interface OperationMethods {
     data?: any,
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.DeleteTransaction.Responses.$200>
+  /**
+   * updateTransactionProduct
+   */
+  'updateTransactionProduct'(
+    parameters: Parameters<Paths.UpdateTransactionProduct.PathParameters>,
+    data?: Paths.UpdateTransactionProduct.RequestBody,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.UpdateTransactionProduct.Responses.$200>
+  /**
+   * deleteTransactionProduct
+   */
+  'deleteTransactionProduct'(
+    parameters: Parameters<Paths.DeleteTransactionProduct.PathParameters>,
+    data?: any,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.DeleteTransactionProduct.Responses.$200>
   /**
    * updateProduct
    */
@@ -1489,6 +1539,24 @@ export interface PathsDictionary {
       data?: Paths.UpdateTransaction.RequestBody,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.UpdateTransaction.Responses.$200>
+  }
+  ['/api/transactions/{transactionId}/products/{productId}']: {
+    /**
+     * deleteTransactionProduct
+     */
+    'delete'(
+      parameters: Parameters<Paths.DeleteTransactionProduct.PathParameters>,
+      data?: any,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.DeleteTransactionProduct.Responses.$200>
+    /**
+     * updateTransactionProduct
+     */
+    'patch'(
+      parameters: Parameters<Paths.UpdateTransactionProduct.PathParameters>,
+      data?: Paths.UpdateTransactionProduct.RequestBody,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.UpdateTransactionProduct.Responses.$200>
   }
   ['/api/products/{productId}']: {
     /**

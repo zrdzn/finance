@@ -5,7 +5,6 @@ import {Components} from "@/api/api";
 import {SelectOptionProperties, SelectProperties} from "@/api/types";
 
 type CategoryResponse = Components.Schemas.CategoryResponse;
-type ProductResponse = Components.Schemas.ProductResponse;
 
 interface ProductCategorySelectProperties {
   vaultId: number
@@ -29,7 +28,7 @@ export const CategorySelect = ({ vaultId, onChange, defaultValue }: ProductCateg
           setCategories(response.data.categories)
 
           const newOptions = response.data.categories
-            .map((category: ProductResponse) => ({
+            .map((category: CategoryResponse) => ({
               value: category.id.toString(),
               label: category.name
             }))

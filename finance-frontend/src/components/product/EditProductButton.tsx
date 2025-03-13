@@ -38,7 +38,7 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
   const t = useTranslations("Products")
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [productUpdateRequest, setProductUpdateRequest] = useState<ProductUpdateRequest>({
-    categoryId: product.categoryId,
+    categoryId: product.category?.id,
     unitAmount: product.unitAmount,
   })
   const initialRef = useRef(null)
@@ -85,8 +85,8 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
               <CategorySelect vaultId={product.vaultId}
                               onChange={handleCategoryChange}
                               defaultValue={{
-                                id: product.categoryId ?? 0,
-                                name: product.categoryName ?? 'None',
+                                id: product.category?.id ?? 0,
+                                name: product.category?.name ?? 'None',
                                 vaultId: product.vaultId
                               }} />
             </FormControl>

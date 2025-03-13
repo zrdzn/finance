@@ -20,14 +20,14 @@ data class TransactionProduct(
     val transactionId: Int,
 
     @Column(name = "name")
-    val name: String,
+    var name: String,
 
     @Column(name = "category_id")
-    val categoryId: Int?,
+    var categoryId: Int?,
 
     @Column(name = "unit_amount")
-    val unitAmount: BigDecimal,
+    var unitAmount: BigDecimal,
 
     @Column(name = "quantity")
-    val quantity: Int,
+    var quantity: Int,
 )

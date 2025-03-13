@@ -8,8 +8,8 @@ interface TransactionProductRepository : Repository<TransactionProduct, Int> {
 
     fun findById(transactionProductId: Int): TransactionProduct?
 
-    fun findByName(transactionProductName: String): TransactionProduct?
-
     fun findByTransactionId(transactionId: Int): Set<TransactionProduct>
+
+    fun deleteById(transactionProductId: Int)
 
 }

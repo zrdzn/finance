@@ -43,7 +43,9 @@ class ProductService(
                     description = name
                 )
             }
-            .toResponse(if (categoryId != null) categoryService.getCategoryById(requesterId, categoryId).name else null)
+            .toResponse(
+                category = categoryId?.let { id -> categoryService.getCategoryById(requesterId, id) }
+            )
     }
 
     @Transactional
@@ -83,7 +85,11 @@ class ProductService(
     fun getProducts(requesterId: Int, vaultId: Int): ProductListResponse =
         productRepository
             .findByVaultId(vaultId)
-            .map { it.toResponse(it.categoryId?.let { id -> categoryService.getCategoryById(requesterId, id) }?.name) }
+            .map {
+                it.toResponse(
+                    category = it.categoryId?.let { id -> categoryService.getCategoryById(requesterId, id) }
+                )
+            }
             .toSet()
             .let { ProductListResponse(it) }
 

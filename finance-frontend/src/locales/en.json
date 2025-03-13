@@ -308,14 +308,30 @@
       "search-placeholder": "Search products",
       "product-added-success": "Product has been added to the transaction",
       "product-added-error": "Failed to add product to the transaction",
+      "product-updated-success": "Product has been updated",
+      "product-updated-error": "Failed to update product",
+      "product-deleted-success": "Product has been deleted from the transaction",
+      "product-deleted-error": "Failed to delete product from the transaction",
       "create-modal": {
         "title": "Add a product",
+        "preset-label": "Preset product",
         "product-label": "Product",
         "product-placeholder": "Choose a name for the product",
         "category-label": "Category",
         "price-label": "Price per unit",
         "quantity-label": "Quantity",
         "submit": "Add",
+        "cancel": "Cancel"
+      },
+      "update-modal": {
+        "title": "Update product",
+        "preset-label": "Preset product",
+        "product-label": "Product",
+        "product-placeholder": "Choose a name for the product",
+        "category-label": "Category",
+        "price-label": "Price per unit",
+        "quantity-label": "Quantity",
+        "submit": "Save",
         "cancel": "Cancel"
       }
     },

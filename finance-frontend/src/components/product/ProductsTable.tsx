@@ -101,7 +101,7 @@ export const ProductsTable = ({ vault, permissions }: ProductsTableProperties) =
                         <Tbody>
                             {queriedProducts.length === 0 ? (
                                 <Tr>
-                                    <Td colSpan={3}>
+                                    <Td colSpan={4}>
                                         <Text textAlign="center" size="sm">
                                             {t("card.no-products")}
                                         </Text>
@@ -111,7 +111,7 @@ export const ProductsTable = ({ vault, permissions }: ProductsTableProperties) =
                                 queriedProducts.map((product) => (
                                     <Tr key={product.id}>
                                       <Td>{product.name}</Td>
-                                      <Td>{product.categoryName}</Td>
+                                      <Td>{product.category?.name}</Td>
                                       <Td>{formatNumber(product.unitAmount)}</Td>
                                       <Td>
                                         <HStack spacing={2}>

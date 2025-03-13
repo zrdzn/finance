@@ -6,10 +6,11 @@ import {useTheme} from "@/hooks/useTheme";
 
 interface EditButtonProperties {
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
+  hideText?: boolean
 }
 
 export const EditButton = ({
-  onClick
+  onClick, hideText
 }: EditButtonProperties) => {
   const theme = useTheme()
   const t = useTranslations('Global')
@@ -21,9 +22,13 @@ export const EditButton = ({
             gap={1}
             onClick={onClick}>
       <FaEdit />
-      <Text>
-        {t('edit-button')}
-      </Text>
+      {
+        hideText ? null : (
+          <Text>
+            {t('edit-button')}
+          </Text>
+        )
+      }
     </Button>
   )
 }

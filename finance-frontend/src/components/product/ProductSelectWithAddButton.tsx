@@ -9,7 +9,7 @@ type ProductResponse = Components.Schemas.ProductResponse;
 
 interface ProductSelectWithAddButtonProperties {
   vaultId: number
-  onChange: (product: ProductResponse) => void
+  onChange: (product: ProductResponse | null) => void
 }
 
 export const ProductSelectWithAddButton = ({ vaultId, onChange }: ProductSelectWithAddButtonProperties) => {

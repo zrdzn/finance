@@ -146,7 +146,7 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
                               {
                                   permissions.includes("TRANSACTION_UPDATE") && <EditTransactionButton transaction={transaction} />
                               }
-                              <TransactionProductsPopover transaction={transaction} permissions={permissions} />
+                              <TransactionProductsPopover vault={vault} transaction={transaction} permissions={permissions} />
                               <AddScheduleButton transactionId={transaction.id} />
                               {
                                   permissions.includes("TRANSACTION_DELETE") && <DeleteButton onClick={(event) => handleTransactionDelete(event, transaction.id)} />
