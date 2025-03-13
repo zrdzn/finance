@@ -4,7 +4,7 @@ import {Flex, Grid} from "@chakra-ui/react";
 import React from "react";
 import {useRouter} from "next/router"
 import {ProtectedVault} from "@/components/vault/ProtectedVault"
-import {ProductsCard} from "@/components/product/ProductsCard"
+import {ProductsTable} from "@/components/product/ProductsTable"
 import {CategoriesCard} from "@/components/product/category/CategoriesCard"
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
@@ -27,7 +27,7 @@ export default function Products(): ReactJSXElement {
               gap={4}
               width="full">
               {vaultRole.permissions.includes("PRODUCT_READ") && (
-                <ProductsCard vault={vault} permissions={vaultRole.permissions} />
+                <ProductsTable vault={vault} permissions={vaultRole.permissions} />
               )}
               {vaultRole.permissions.includes("CATEGORY_READ") && (
                 <CategoriesCard vault={vault} permissions={vaultRole.permissions} />

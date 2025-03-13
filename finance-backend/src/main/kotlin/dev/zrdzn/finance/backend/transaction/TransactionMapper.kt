@@ -1,5 +1,6 @@
 package dev.zrdzn.finance.backend.transaction
 
+import dev.zrdzn.finance.backend.category.dto.CategoryResponse
 import dev.zrdzn.finance.backend.transaction.dto.TransactionProductListResponse
 import dev.zrdzn.finance.backend.transaction.dto.TransactionProductResponse
 import dev.zrdzn.finance.backend.transaction.dto.TransactionResponse
@@ -26,11 +27,11 @@ object TransactionMapper {
         currency = this.currency
     )
 
-    fun TransactionProduct.toResponse(categoryName: String?) = TransactionProductResponse(
+    fun TransactionProduct.toResponse(category: CategoryResponse?) = TransactionProductResponse(
         id = id!!,
         transactionId = transactionId,
         name = name,
-        categoryName = categoryName,
+        category = category,
         unitAmount = unitAmount,
         quantity = quantity
     )

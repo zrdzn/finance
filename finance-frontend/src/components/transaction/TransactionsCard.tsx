@@ -102,7 +102,11 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
               </Text>
           </CardHeader>
       <CardBody>
-        <Flex justifyContent={'space-between'} gap={4} mb={4}>
+        <Flex
+          direction={{ base: "column", md: "row" }}
+          justifyContent={'space-between'}
+          gap={4}
+          mb={4}>
           <SearchBar
             placeholder={t('card.search-placeholder')}
             content={transactions}
@@ -115,17 +119,19 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
               return transaction.description.toLowerCase().includes(query.toLowerCase())}
             }
           />
-          {
-            permissions.includes("TRANSACTION_CREATE") && <AddTransactionButton vault={vault} />
-          }
-          {
-            permissions.includes("TRANSACTION_CREATE") &&
-              <ImportButton openCsv={onCsvImportOpen} openImage={onImageOpen} />
-          }
-          {
-            permissions.includes("TRANSACTION_READ") &&
-              <ExportButton openCsv={onCsvExportOpen} />
-          }
+          <Flex wrap="wrap" gap={2} justifyContent={{ base: "flex-start", md: "flex-end" }}>
+            {
+              permissions.includes("TRANSACTION_CREATE") && <AddTransactionButton vault={vault} />
+            }
+            {
+              permissions.includes("TRANSACTION_CREATE") &&
+                <ImportButton openCsv={onCsvImportOpen} openImage={onImageOpen} />
+            }
+            {
+              permissions.includes("TRANSACTION_READ") &&
+                <ExportButton openCsv={onCsvExportOpen} />
+            }
+          </Flex>
           <CsvImport vault={vault} isOpen={isCsvImportOpen} onClose={onCsvImportClose} permissions={permissions} />
           <CsvExport vault={vault} isOpen={isCsvExportOpen} onClose={onCsvExportClose} permissions={permissions} />
           <ImageImport vault={vault} isOpen={isImageOpen} onClose={onImageClose} permissions={permissions} />
@@ -186,16 +192,16 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
                                           </HStack>
                                       </Td>
                                       <Td>
-                                          <HStack spacing={2}>
-                                              {
-                                                  permissions.includes("TRANSACTION_UPDATE") && <EditTransactionButton transaction={transaction} />
-                                              }
-                                              <TransactionProductsPopover transaction={transaction} permissions={permissions} />
-                                              <AddScheduleButton transactionId={transaction.id} />
-                                              {
-                                                  permissions.includes("TRANSACTION_DELETE") && <DeleteButton onClick={(event) => handleTransactionDelete(event, transaction.id)} />
-                                              }
-                                          </HStack>
+                                        <Flex wrap="wrap" gap={2} justifyContent="flex-start">
+                                          {
+                                            permissions.includes("TRANSACTION_UPDATE") && <EditTransactionButton transaction={transaction} />
+                                          }
+                                          <TransactionProductsPopover vault={vault} transaction={transaction} permissions={permissions} />
+                                          <AddScheduleButton transactionId={transaction.id} />
+                                          {
+                                            permissions.includes("TRANSACTION_DELETE") && <DeleteButton onClick={(event) => handleTransactionDelete(event, transaction.id)} />
+                                          }
+                                        </Flex>
                                       </Td>
                                   </Tr>
                               ))

@@ -5,10 +5,11 @@ import {useTranslations} from "next-intl";
 
 interface DeleteButtonProperties {
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
+  hideText?: boolean
 }
 
 export const DeleteButton = ({
-  onClick
+  onClick, hideText
 }: DeleteButtonProperties) => {
   const t = useTranslations('Global')
   return (
@@ -18,9 +19,13 @@ export const DeleteButton = ({
             gap={1}
             onClick={onClick}>
       <FaTrash />
-      <Text>
-        {t('delete-button')}
-      </Text>
+      {
+        hideText ? null : (
+          <Text>
+            {t('delete-button')}
+          </Text>
+        )
+      }
     </Button>
   )
 }

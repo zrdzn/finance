@@ -13,7 +13,6 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import React, {useRef, useState} from "react"
-import {FaEdit} from "react-icons/fa"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
 import {CategorySelect} from "@/components/product/category/CategorySelect"
@@ -22,6 +21,7 @@ import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
 import {EditButton} from "@/components/shared/EditButton";
+import {PriceInput} from "@/components/shared/PriceInput";
 
 type ProductResponse = Components.Schemas.ProductResponse;
 type ProductUpdateRequest = Components.Schemas.ProductUpdateRequest;
@@ -38,13 +38,18 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
   const t = useTranslations("Products")
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [productUpdateRequest, setProductUpdateRequest] = useState<ProductUpdateRequest>({
-    categoryId: product.categoryId
+    categoryId: product.category?.id,
+    unitAmount: product.unitAmount,
   })
   const initialRef = useRef(null)
   const finalRef = useRef(null)
 
   const handleCategoryChange = (category: CategoryResponse | null) => {
     setProductUpdateRequest({ ...productUpdateRequest, categoryId: category?.id });
+  }
+
+  const handlePriceChange = (price: number) => {
+    setProductUpdateRequest({ ...productUpdateRequest, unitAmount: price });
   }
 
   const handleProductUpdate = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -80,10 +85,14 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
               <CategorySelect vaultId={product.vaultId}
                               onChange={handleCategoryChange}
                               defaultValue={{
-                                id: product.categoryId ?? 0,
-                                name: product.categoryName ?? 'None',
+                                id: product.category?.id ?? 0,
+                                name: product.category?.name ?? 'None',
                                 vaultId: product.vaultId
                               }} />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>{t('update-modal.price-label')}</FormLabel>
+              <PriceInput onChange={handlePriceChange} defaultValue={product.unitAmount} />
             </FormControl>
           </ModalBody>
 

@@ -17,18 +17,19 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import React, {useRef, useState} from "react"
-import {FaPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/useTheme"
 import {useApi} from "@/hooks/useApi"
 import {useRouter} from 'next/router'
 import {PriceInput} from "@/components/shared/PriceInput"
-import {ProductSelectWithAddButton} from "@/components/product/ProductSelectWithAddButton"
 import toast from "react-hot-toast"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
 import {AddButton} from "@/components/shared/AddButton";
+import {CategorySelect} from "@/components/product/category/CategorySelect";
+import {ProductSelectWithAddButton} from "@/components/product/ProductSelectWithAddButton";
 
 type TransactionProductCreateRequest = Components.Schemas.TransactionProductCreateRequest;
+type CategoryResponse = Components.Schemas.CategoryResponse;
 type ProductResponse = Components.Schemas.ProductResponse;
 
 interface AddTransactionProductsButtonProperties {
@@ -45,14 +46,31 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId, size }: A
   const t = useTranslations("Transactions")
   const [transactionProductCreateRequest, setTransactionProductCreateRequest] = useState<TransactionProductCreateRequest>({
     name: "",
+    categoryId: undefined,
     unitAmount: 0,
     quantity: 1
   })
+  const [category, setCategory] = useState<CategoryResponse | undefined>(undefined)
   const initialRef = useRef(null)
   const finalRef = useRef(null)
 
+  const handlePresetChange = (product: ProductResponse | null) => {
+    setTransactionProductCreateRequest({
+      name: product?.name ?? "",
+      categoryId: product?.category?.id ?? undefined,
+      unitAmount: product?.unitAmount ?? 0,
+      quantity: 1
+    })
+
+    setCategory(product?.category)
+  }
+
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTransactionProductCreateRequest({ ...transactionProductCreateRequest, name: event.target.value });
+  }
+
+  const handleCategoryChange = (category: CategoryResponse | null) => {
+    setTransactionProductCreateRequest({ ...transactionProductCreateRequest, categoryId: category?.id });
   }
 
   const handlePriceChange = (price: number) => {
@@ -91,16 +109,26 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId, size }: A
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
+              <FormLabel>{t('product.create-modal.preset-label')}</FormLabel>
+              <ProductSelectWithAddButton vaultId={vaultId} onChange={handlePresetChange} />
+            </FormControl>
+            <FormControl mt={4}>
               <FormLabel>{t('product.create-modal.product-label')}</FormLabel>
               <Input name={'name'}
                      onChange={handleNameChange}
                      ref={initialRef}
+                     value={transactionProductCreateRequest.name}
                      placeholder={t("product.create-modal.product-placeholder")} />
             </FormControl>
 
             <FormControl mt={4}>
+              <FormLabel>{t('product.create-modal.category-label')}</FormLabel>
+              <CategorySelect vaultId={vaultId} onChange={handleCategoryChange} defaultValue={category} />
+            </FormControl>
+
+            <FormControl mt={4}>
               <FormLabel>{t('product.create-modal.price-label')}</FormLabel>
-              <PriceInput onChange={handlePriceChange} />
+              <PriceInput onChange={handlePriceChange} defaultValue={transactionProductCreateRequest.unitAmount} />
             </FormControl>
 
             <FormControl mt={4}>

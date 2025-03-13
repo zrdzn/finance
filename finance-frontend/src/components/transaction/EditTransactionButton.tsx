@@ -69,7 +69,7 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
     setTransactionUpdateRequest((previous) => ({ ...previous, currency: currency }))
   }
 
-  const handleProductUpdate = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleTransactionUpdate = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
     api
@@ -138,7 +138,7 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={handleProductUpdate}
+            <Button onClick={handleTransactionUpdate}
                     backgroundColor={theme.primaryColor}
                     color={'#f8f8f8'} fontWeight={'400'}
                     mr={3}>

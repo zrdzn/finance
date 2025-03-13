@@ -2,20 +2,21 @@ package dev.zrdzn.finance.backend.transaction
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.schedule.dto.ScheduleCreateRequest
-import dev.zrdzn.finance.backend.transaction.dto.TransactionCreateRequest
-import dev.zrdzn.finance.backend.transaction.dto.TransactionProductCreateRequest
-import dev.zrdzn.finance.backend.transaction.dto.TransactionUpdateRequest
-import dev.zrdzn.finance.backend.transaction.dto.AnalysedTransactionResponse
-import dev.zrdzn.finance.backend.transaction.dto.FlowsChartResponse
 import dev.zrdzn.finance.backend.schedule.dto.ScheduleListResponse
 import dev.zrdzn.finance.backend.schedule.dto.ScheduleResponse
+import dev.zrdzn.finance.backend.shared.Price
+import dev.zrdzn.finance.backend.transaction.dto.AnalysedTransactionResponse
+import dev.zrdzn.finance.backend.transaction.dto.FlowsChartResponse
 import dev.zrdzn.finance.backend.transaction.dto.TransactionAmountResponse
+import dev.zrdzn.finance.backend.transaction.dto.TransactionCreateRequest
 import dev.zrdzn.finance.backend.transaction.dto.TransactionFlowsResponse
 import dev.zrdzn.finance.backend.transaction.dto.TransactionListResponse
+import dev.zrdzn.finance.backend.transaction.dto.TransactionProductCreateRequest
 import dev.zrdzn.finance.backend.transaction.dto.TransactionProductResponse
+import dev.zrdzn.finance.backend.transaction.dto.TransactionProductUpdateRequest
 import dev.zrdzn.finance.backend.transaction.dto.TransactionResponse
+import dev.zrdzn.finance.backend.transaction.dto.TransactionUpdateRequest
 import java.time.Instant
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -161,6 +162,23 @@ class TransactionController(
             )
         )
 
+    @PatchMapping("/{transactionId}/products/{productId}")
+    fun updateTransactionProduct(
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable transactionId: Int,
+        @PathVariable productId: Int,
+        @RequestBody transactionProductUpdateRequest: TransactionProductUpdateRequest
+    ): Unit =
+        transactionService.updateTransactionProduct(
+            requesterId = userId,
+            transactionId = transactionId,
+            productId = productId,
+            name = transactionProductUpdateRequest.name,
+            categoryId = transactionProductUpdateRequest.categoryId,
+            unitAmount = transactionProductUpdateRequest.unitAmount,
+            quantity = transactionProductUpdateRequest.quantity
+        )
+
     @GetMapping("/{vaultId}")
     fun getTransactionsByVaultId(
         @AuthenticationPrincipal userId: Int,
@@ -210,7 +228,14 @@ class TransactionController(
     fun deleteTransaction(
         @AuthenticationPrincipal userId: Int,
         @PathVariable transactionId: Int
-    ): Unit = transactionService.deleteTransaction(transactionId)
+    ): Unit = transactionService.deleteTransaction(userId, transactionId)
+
+    @DeleteMapping("/{transactionId}/products/{productId}")
+    fun deleteTransactionProduct(
+        @AuthenticationPrincipal userId: Int,
+        @PathVariable transactionId: Int,
+        @PathVariable productId: Int
+    ): Unit = transactionService.deleteTransactionProduct(userId, productId)
 
     @DeleteMapping("/schedules/{scheduleId}")
     fun deleteScheduleById(

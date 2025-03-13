@@ -342,8 +342,6 @@ class TransactionService(
 
         vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_CREATE)
 
-        val categoryName = categoryId?.let { categoryService.getCategoryById(requesterId, it).name }
-
         return transactionProductRepository
             .save(
                 TransactionProduct(
@@ -363,7 +361,7 @@ class TransactionService(
                     description = name
                 )
             }
-            .toResponse(categoryName)
+            .toResponse(categoryId?.let { categoryService.getCategoryById(requesterId, it) })
     }
 
     @Transactional
@@ -430,18 +428,75 @@ class TransactionService(
     }
 
     @Transactional
-    fun deleteTransaction(transactionId: Int) {
+    fun updateTransactionProduct(
+        requesterId: Int,
+        transactionId: Int,
+        productId: Int,
+        name: String,
+        categoryId: Int?,
+        unitAmount: BigDecimal,
+        quantity: Int
+    ) {
+        val transactionProduct = transactionProductRepository.findById(productId) ?: throw TransactionProductNotFoundError()
+        val transaction = getTransaction(requesterId, transactionId)
+
+        vaultService.authorizeMember(
+            vaultId = transaction.vaultId,
+            userId = requesterId,
+            requiredPermission = VaultPermission.TRANSACTION_UPDATE
+        )
+
+        transactionProduct.name = name
+        transactionProduct.categoryId = categoryId
+        transactionProduct.unitAmount = unitAmount
+        transactionProduct.quantity = quantity
+
+        auditService.createAudit(
+            vaultId = transaction.vaultId,
+            userId = requesterId,
+            auditAction = AuditAction.TRANSACTION_PRODUCT_UPDATED,
+            description = name
+        )
+    }
+
+    @Transactional
+    fun deleteTransaction(requesterId: Int, transactionId: Int) {
         val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundError()
 
-        vaultService.authorizeMember(transaction.vaultId, transaction.userId, VaultPermission.TRANSACTION_DELETE)
+        vaultService.authorizeMember(
+            vaultId = transaction.vaultId,
+            userId = requesterId,
+            requiredPermission = VaultPermission.TRANSACTION_DELETE
+        )
 
         transactionRepository.deleteById(transactionId)
 
         auditService.createAudit(
             vaultId = transaction.vaultId,
-            userId = transaction.userId,
+            userId = requesterId,
             auditAction = AuditAction.TRANSACTION_DELETED,
             description = transaction.description ?: "Transaction ID $transactionId"
+        )
+    }
+
+    @Transactional
+    fun deleteTransactionProduct(requesterId: Int, transactionProductId: Int) {
+        val transactionProduct = transactionProductRepository.findById(transactionProductId) ?: throw TransactionProductNotFoundError()
+        val transaction = getTransaction(requesterId, transactionProduct.transactionId)
+
+        vaultService.authorizeMember(
+            vaultId = transaction.vaultId,
+            userId = requesterId,
+            requiredPermission = VaultPermission.TRANSACTION_UPDATE
+        )
+
+        transactionProductRepository.deleteById(transactionProductId)
+
+        auditService.createAudit(
+            vaultId = transaction.vaultId,
+            userId = requesterId,
+            auditAction = AuditAction.TRANSACTION_PRODUCT_DELETED,
+            description = transactionProduct.name
         )
     }
 
@@ -513,29 +568,9 @@ class TransactionService(
 
         return transactionProductRepository
             .findByTransactionId(transactionId)
-            .map {
-                val categoryName = it.categoryId?.let { id -> categoryService.getCategoryById(requesterId, id).name }
-
-                it.toResponse(categoryName)
-            }
+            .map { it.toResponse(it.categoryId?.let { id -> categoryService.getCategoryById(requesterId, id) }) }
             .toSet()
             .let { TransactionProductListResponse(it) }
-    }
-
-    @Transactional(readOnly = true)
-    fun getTransactionProductForcefully(name: String): TransactionProductResponse {
-        val product = transactionProductRepository.findByName(name) ?: throw TransactionProductNotFoundError()
-
-        val categoryName = product.categoryId?.let { categoryService.getCategoryById(product.transactionId, it).name }
-
-        return TransactionProductResponse(
-            id = product.id!!,
-            transactionId = product.transactionId,
-            name = product.name,
-            categoryName = categoryName,
-            unitAmount = product.unitAmount,
-            quantity = product.quantity
-        )
     }
 
     @Transactional(readOnly = true)

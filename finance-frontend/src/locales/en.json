@@ -308,13 +308,30 @@
       "search-placeholder": "Search products",
       "product-added-success": "Product has been added to the transaction",
       "product-added-error": "Failed to add product to the transaction",
+      "product-updated-success": "Product has been updated",
+      "product-updated-error": "Failed to update product",
+      "product-deleted-success": "Product has been deleted from the transaction",
+      "product-deleted-error": "Failed to delete product from the transaction",
       "create-modal": {
         "title": "Add a product",
+        "preset-label": "Preset product",
         "product-label": "Product",
         "product-placeholder": "Choose a name for the product",
+        "category-label": "Category",
         "price-label": "Price per unit",
         "quantity-label": "Quantity",
         "submit": "Add",
+        "cancel": "Cancel"
+      },
+      "update-modal": {
+        "title": "Update product",
+        "preset-label": "Preset product",
+        "product-label": "Product",
+        "product-placeholder": "Choose a name for the product",
+        "category-label": "Category",
+        "price-label": "Price per unit",
+        "quantity-label": "Quantity",
+        "submit": "Save",
         "cancel": "Cancel"
       }
     },
@@ -390,30 +407,33 @@
   },
   "Products": {
     "title": "Finance - Products",
-    "product-created-success": "Product %name% has been created",
-    "product-updated-success": "Product updated",
-    "product-deleted-success": "Product deleted",
+    "product-created-success": "Preset product %name% has been created",
+    "product-updated-success": "Preset product updated",
+    "product-deleted-success": "Preset product deleted",
     "card": {
-      "title": "Products",
-      "no-products": "There are no products",
-      "search-placeholder": "Search products"
+      "title": "Preset Products",
+      "no-products": "There are no preset products",
+      "search-placeholder": "Search preset products"
     },
     "table": {
       "name": "Name",
       "category": "Category",
+      "price": "Price (per unit)",
       "actions": "Actions"
     },
     "create-modal": {
-      "title": "Add a new product",
+      "title": "Add a new preset product",
       "name-label": "Name",
-      "name-placeholder": "Name of the product",
+      "name-placeholder": "Name of the preset product",
       "category-label": "Category",
+      "price-label": "Price per unit",
       "submit": "Add",
       "cancel": "Cancel"
     },
     "update-modal": {
-      "title": "Update product",
+      "title": "Update preset product",
       "category-label": "Category",
+      "price-label": "Price per unit",
       "submit": "Save",
       "cancel": "Cancel"
     }

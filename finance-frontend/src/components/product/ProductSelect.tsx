@@ -8,7 +8,7 @@ type ProductResponse = Components.Schemas.ProductResponse;
 interface ProductSelectProperties {
   vaultId: number
   products: ProductResponse[]
-  onChange: (product: ProductResponse) => void
+  onChange: (product: ProductResponse | null) => void
 }
 
 const noneProduct = { value: 'none', label: 'None' }
@@ -38,6 +38,11 @@ export const ProductSelect = ({products, onChange }: ProductSelectProperties) =>
     }
 
     setSelectedProduct(newValue)
+
+    if (newValue.label === "None") {
+      onChange(null)
+      return
+    }
 
     const product = products.find(product => product.id.toString() === newValue.value)
     if (!product) {
