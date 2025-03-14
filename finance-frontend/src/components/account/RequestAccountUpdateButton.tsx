@@ -211,7 +211,8 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
         onClose={requestOnClose}
       >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent backgroundColor={theme.background.secondary}
+                      color={theme.text.primary}>
           <ModalHeader>{t('profile-modal.steps.verify.title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
@@ -242,7 +243,8 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
         onClose={verificationOnClose}
       >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent backgroundColor={theme.background.secondary}
+                      color={theme.text.primary}>
           <ModalHeader>
             {steps[activeStep].title}
           </ModalHeader>
@@ -375,7 +377,8 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
              isOpen={twoFactorSetupIsOpen}
              onClose={twoFactorSetupOnClose}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent backgroundColor={theme.background.secondary}
+                      color={theme.text.primary}>
           <ModalHeader>{t('profile-modal.steps.two-factor.code-title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>

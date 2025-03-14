@@ -54,21 +54,6 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
         .catch(error => console.error(error))
   }, [api, vault.id]);
 
-  const handleTransactionDelete = (event: React.MouseEvent<HTMLButtonElement>, transactionId: number) => {
-    event.preventDefault()
-
-    api
-        .then(client => client.deleteTransaction({ transactionId: transactionId }))
-        .then(() => {
-          toast.success(t('transaction-deleted-success'))
-          setTimeout(() => router.reload(), 1000)
-        })
-        .catch(error => {
-          console.error(error)
-          toast.error(t('transaction-deleted-error'))
-        })
-  }
-
   return (
       <Card
           margin={4}
@@ -94,7 +79,6 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
                   <Th>{t("recent.table.method")}</Th>
                   <Th>{t("recent.table.description")}</Th>
                   <Th>{t("recent.table.total")}</Th>
-                  <Th>{t("recent.table.actions")}</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -138,18 +122,6 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
                               <Text fontSize={'lg'} fontWeight={'600'}>
                                 {transaction.currency}
                               </Text>
-                            </HStack>
-                          </Td>
-                          <Td>
-                            <HStack spacing={2}>
-                              {
-                                  permissions.includes("TRANSACTION_UPDATE") && <EditTransactionButton transaction={transaction} />
-                              }
-                              <TransactionProductsPopover vault={vault} transaction={transaction} permissions={permissions} />
-                              <AddScheduleButton transactionId={transaction.id} />
-                              {
-                                  permissions.includes("TRANSACTION_DELETE") && <DeleteButton onClick={(event) => handleTransactionDelete(event, transaction.id)} />
-                              }
                             </HStack>
                           </Td>
                         </Tr>

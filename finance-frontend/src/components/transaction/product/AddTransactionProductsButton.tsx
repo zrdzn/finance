@@ -104,7 +104,8 @@ export const AddTransactionProductsButton = ({ vaultId, transactionId, size }: A
         onClose={onClose}
       >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent backgroundColor={theme.background.secondary}
+                      color={theme.text.primary}>
           <ModalHeader>{t('product.create-modal.title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>

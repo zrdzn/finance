@@ -72,7 +72,7 @@ export const themeColors: ThemeColors = {
     },
     background: {
       primary: '#303030',
-      secondary: 'rgba(120,120,120,0.32)'
+      secondary: 'rgb(66,66,66)'
     },
     primary: '#205e20',
     secondary: 'rgba(8,159,66,0.84)'

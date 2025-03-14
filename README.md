@@ -66,8 +66,9 @@ The project is structured using **DDD** (Domain Driven Development) to organize 
 - View real exchange rates to display financial data in different currencies
 - Exchange rates are displayed based on currency set in vault settings
 
-### Responsive Design
+### Design
 - The application follows a mobile-first approach, ensuring full responsiveness and accessibility on all devices
+- The application supports light/dark theme switching
 ## 🛠️ Infrastructure
 ### Backend
 - The backend provides access to other infrastructure elements, such as the database, and offers a REST API for clients.

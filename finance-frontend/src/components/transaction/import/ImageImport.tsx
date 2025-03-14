@@ -225,6 +225,8 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
       >
           <ModalOverlay />
           <ModalContent
+            backgroundColor={theme.background.secondary}
+            color={theme.text.primary}
             maxWidth={modifiedProducts.length > 0 ? "90%" : undefined}
             width="100%"
             overflow={'hidden'}>

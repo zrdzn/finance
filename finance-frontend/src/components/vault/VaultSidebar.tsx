@@ -291,15 +291,20 @@ const BaseView = ({vault, vaultRole, aiEnabled}: VaultSidebarProperties) => {
                       fontWeight={'400'} />
             </Flex>
           </DrawerHeader>
-          <DrawerBody padding={0}>
+          <DrawerBody padding={0} backgroundColor={theme.background.primary}>
             <Flex direction={'column'} mt={5}>
               {GetAvailableEndpoints(vault, vaultRole.permissions).map(({href, icon: Icon, label}) => (
                 <Flex key={href} width={'full'} marginY={3}>
-                  <Link href={href} style={{width: 'inherit'}}>
+                  <Link href={href}
+                        color={router.asPath === href ? theme.primary : theme.text.primary}
+                        borderLeft={router.asPath === href ? `4px solid ${theme.primary}` : "none"}
+                        paddingLeft={router.asPath === href ? "0" : "4px"}
+                        style={{width: 'inherit'}}>
                     <Button
-                      backgroundColor={router.asPath === href ? theme.secondary : theme.background.primary}
+                      backgroundColor={theme.background.primary}
                       onClick={() => router.push(href)}
                       width={'full'}
+                      color={router.asPath === href ? theme.secondary : theme.text.primary}
                       borderRadius={0}
                     >
                       <Flex alignItems={'center'} width={'full'} columnGap={2}>

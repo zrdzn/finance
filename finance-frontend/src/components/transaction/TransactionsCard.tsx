@@ -27,7 +27,6 @@ import {DeleteButton} from "@/components/shared/DeleteButton";
 import {useNumberFormatter} from "@/hooks/useNumberFormatter";
 import {useDateFormatter} from "@/hooks/useDateFormatter";
 import toast from "react-hot-toast";
-import {router} from "next/client";
 import {useRouter} from "next/router";
 import {TransactionProductsPopover} from "@/components/transaction/TransactionProductsPopover";
 import {ImportButton} from "@/components/transaction/import/ImportButton";

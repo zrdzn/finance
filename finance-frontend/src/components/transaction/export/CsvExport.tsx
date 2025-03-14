@@ -82,6 +82,8 @@ export const CsvExport = ({ vault, isOpen, onClose, permissions }: CsvExportProp
     >
       <ModalOverlay />
       <ModalContent
+        backgroundColor={theme.background.secondary}
+        color={theme.text.primary}
         width="100%"
         overflow={'hidden'}>
           <ModalHeader>{t("export.title")}</ModalHeader>

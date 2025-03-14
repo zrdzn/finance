@@ -82,6 +82,7 @@ export const TransactionProductsPopover = ({vault, transaction, permissions}: Tr
               width={{ base: "300px", md: "350px" }}
               maxWidth={{ base: "95vw", md: "md" }}
               boxShadow="lg"
+              backgroundColor={theme.background.secondary}
             >
                 <PopoverHeader fontWeight="semibold">
                     {t('table.products.title')}
@@ -96,11 +97,9 @@ export const TransactionProductsPopover = ({vault, transaction, permissions}: Tr
                                 <Box
                                     key={product.id}
                                     p={4}
-                                    borderWidth="1px"
                                     borderRadius="md"
-                                    boxShadow="sm"
-                                    bg="white"
-                                    _hover={{ boxShadow: "md" }}
+                                    boxShadow="md"
+                                    backgroundColor={theme.background.primary}
                                 >
                                     <Flex justify={'space-between'}>
                                         <Text fontWeight="bold" maxWidth="160px" isTruncated>

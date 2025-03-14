@@ -169,7 +169,8 @@ export const CsvImport = ({ vault, isOpen, onClose, permissions }: CsvImportProp
         onClose={onClose}
       >
           <ModalOverlay />
-          <ModalContent>
+          <ModalContent backgroundColor={theme.background.secondary}
+                        color={theme.text.primary}>
               <ModalHeader>{t('import.csv')}</ModalHeader>
               <ModalCloseButton />
               <ModalBody pb={6}>

@@ -96,7 +96,8 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
         onClose={onClose}
       >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent backgroundColor={theme.background.secondary}
+                      color={theme.text.primary}>
           <ModalHeader>{t('update-modal.title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
