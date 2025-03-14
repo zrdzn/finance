@@ -139,8 +139,9 @@ export const EditTransactionButton = ({ transaction }: EditTransactionButtonProp
 
           <ModalFooter>
             <Button onClick={handleTransactionUpdate}
-                    backgroundColor={theme.primaryColor}
-                    color={'#f8f8f8'} fontWeight={'400'}
+                    backgroundColor={theme.secondary}
+                    color={'#f8f8f8'}
+                    fontWeight={'400'}
                     mr={3}>
               {t('update-modal.submit')}
             </Button>

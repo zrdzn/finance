@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react"
 import {useApi} from "@/hooks/useApi"
 import {Components} from "@/api/api";
 import {SelectOptionProperties, SelectProperties} from "@/api/types";
+import {ThemedSelect} from "@/components/shared/ThemedSelect";
 
 type CategoryResponse = Components.Schemas.CategoryResponse;
 
@@ -60,9 +61,12 @@ export const CategorySelect = ({ vaultId, onChange, defaultValue }: ProductCateg
   }
 
   return (
-    <Select onChange={handleCategoryChange}
-            defaultValue={selectedCategory}
-            required
-            options={options} />
+    <ThemedSelect
+      onChange={handleCategoryChange}
+      defaultValue={selectedCategory}
+      required
+      options={options}
+      isClearable
+    />
   )
 }

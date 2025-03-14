@@ -1,6 +1,7 @@
 import React, {useState} from "react"
 import currencyCodes from 'currency-codes'
 import Select from "react-select"
+import {ThemedSelect} from "@/components/shared/ThemedSelect";
 
 interface CurrencyOption {
   value: string
@@ -30,11 +31,13 @@ export const CurrencySelect = ({ onChange, defaultValue, isDisabled }: CurrencyS
   }
 
   return (
-    <Select defaultValue={selectedCurrency}
-            onChange={handleChange}
-            required
-            isDisabled={isDisabled}
-            options={currencies}
-            isClearable />
+    <ThemedSelect
+      defaultValue={selectedCurrency}
+      onChange={handleChange}
+      required
+      isDisabled={isDisabled}
+      options={currencies}
+      isClearable
+    />
   )
 }

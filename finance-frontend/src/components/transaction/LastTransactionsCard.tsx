@@ -75,9 +75,8 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
           boxShadow="base"
           borderRadius="lg"
           overflow="hidden"
-          backgroundColor="whiteAlpha.900"
-          border="1px solid"
-          borderColor="gray.200"
+          backgroundColor={theme.background.secondary}
+          color={theme.text.primary}
       >
         <CardHeader>
           <Text fontSize="sm" fontWeight={"600"}>
@@ -126,15 +125,15 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
                           <Td>{transaction.description}</Td>
                           <Td>
                             <HStack>
-                              <Text fontSize={{ base: 'lg', md: 'xl' }}>
-                                {
-                                  transaction.transactionType === 'INCOMING' ? <FaCaretUp color="green" /> : <FaCaretDown color="crimson" />
-                                }
-                              </Text>
                               {
                                 transaction.transactionType === 'INCOMING' ?
-                                    <Text fontSize={'lg'} fontWeight={'600'} color={'green'}>{formatNumber(transaction.total)}</Text> :
-                                    <Text fontSize={'lg'} fontWeight={'600'} color={'crimson'}>{formatNumber(transaction.total)}</Text>
+                                  <Text fontSize={{ base: 'lg', md: 'xl' }} color={theme.text.green}><FaCaretUp /></Text> :
+                                  <Text fontSize={{ base: 'lg', md: 'xl' }} color={theme.text.red}><FaCaretDown /></Text>
+                              }
+                              {
+                                transaction.transactionType === 'INCOMING' ?
+                                    <Text fontSize={'lg'} fontWeight={'600'} color={theme.text.green}>{formatNumber(transaction.total)}</Text> :
+                                    <Text fontSize={'lg'} fontWeight={'600'} color={theme.text.red}>{formatNumber(transaction.total)}</Text>
                               }
                               <Text fontSize={'lg'} fontWeight={'600'}>
                                 {transaction.currency}
@@ -162,7 +161,7 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
           <Box paddingTop={4}>
             <Flex justifyContent={'space-between'}>
               <Box />
-              <Link color={'dimgray'}
+              <Link color={theme.text.secondary}
                     fontSize={'sm'}
                     href={`/vault/${vault.publicId}/transactions`}
                     letterSpacing={0.5}>

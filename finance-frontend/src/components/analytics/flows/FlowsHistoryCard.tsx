@@ -9,7 +9,7 @@ import {
   Stat,
   StatLabel,
   StatNumber,
-  StatHelpText, StatArrow, HStack
+  StatHelpText, StatArrow, HStack, theme
 } from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {useTranslations} from "next-intl";
@@ -17,6 +17,7 @@ import {TransactionFlowsRange, TransactionType} from "@/api/types";
 import {useNumberFormatter} from "@/hooks/useNumberFormatter";
 import {useApi} from "@/hooks/useApi";
 import {Components} from "@/api/api";
+import {useTheme} from "@/hooks/useTheme";
 
 type VaultResponse = Components.Schemas.VaultResponse;
 type TransactionFlowsResponse = Components.Schemas.TransactionFlowsResponse;
@@ -32,6 +33,7 @@ export const FlowsHistoryCard = ({
                                    flowsRange }: FlowsHistoryCardProperties) => {
   const api = useApi()
   const t = useTranslations("Analytics")
+  const theme = useTheme()
   const { formatNumber } = useNumberFormatter()
   const [flows, setFlows] = useState<TransactionFlowsResponse>({
     total: {
@@ -61,9 +63,9 @@ export const FlowsHistoryCard = ({
   }, [api, transactionType, flowsRange, vault.id])
 
   const getColor = () => {
-    if (transactionType === "INCOMING") return "green";
-    if (transactionType === "OUTGOING") return "crimson";
-    return flows.total.amount > 0 ? "green" : flows.total.amount < 0 ? "crimson" : "black";
+    if (transactionType === "INCOMING") return theme.text.green;
+    if (transactionType === "OUTGOING") return theme.text.red;
+    return flows.total.amount > 0 ? theme.text.green : flows.total.amount < 0 ? theme.text.red : theme.text.primary;
   };
 
   const getArrowType = () => {
@@ -78,9 +80,8 @@ export const FlowsHistoryCard = ({
           boxShadow="base"
           borderRadius="lg"
           overflow="hidden"
-          backgroundColor="whiteAlpha.900"
-          border="1px solid"
-          borderColor="gray.200"
+          backgroundColor={theme.background.secondary}
+          color={theme.text.primary}
       >
         <CardBody>
           <Stat>
@@ -121,13 +122,13 @@ export const FlowsHistoryCard = ({
               )}
             </StatNumber>
 
-            <StatHelpText fontSize="sm" color="gray.600" mt={2}>
+            <StatHelpText fontSize="sm" color={theme.text.secondary} mt={2}>
               {flows && flows.total.amount === 0
                   ? t('no-transactions')
                   : (
                       <>
                         {t('transactions-amount')}{" "}
-                        <Text as="span" fontSize={'md'} ml={1} color={'black'} fontWeight={flows.count.amount > 0 ? "bold" : "normal"}>
+                        <Text as="span" fontSize={'md'} ml={1} color={theme.text.primary} fontWeight={flows.count.amount > 0 ? "bold" : "normal"}>
                           {flows.count.amount}
                         </Text>
                       </>

@@ -48,9 +48,8 @@ export default function AccountSettings(): ReactJSXElement {
               boxShadow="base"
               borderRadius="lg"
               overflow="hidden"
-              backgroundColor="whiteAlpha.900"
-              border="1px solid"
-              borderColor="gray.200"
+              backgroundColor={theme.background.secondary}
+              color={theme.text.primary}
           >
             <CardHeader>
               <Text fontSize="sm" fontWeight="600">

@@ -22,6 +22,7 @@ interface MembersCardProperties {
 export const MembersCard = ({ vault, vaultRole }: MembersCardProperties) => {
     const api = useApi();
     const t = useTranslations("Members");
+    const theme = useTheme()
     const [members, setMembers] = useState<VaultMemberResponse[]>([])
     const [queriedMembers, setQueriedMembers] = useState<VaultMemberResponse[]>([])
 
@@ -61,9 +62,8 @@ export const MembersCard = ({ vault, vaultRole }: MembersCardProperties) => {
             boxShadow="base"
             borderRadius="lg"
             overflow="hidden"
-            backgroundColor="whiteAlpha.900"
-            border="1px solid"
-            borderColor="gray.200"
+            backgroundColor={theme.background.secondary}
+            color={theme.text.primary}
         >
             <CardHeader>
                 <Text fontSize="sm" fontWeight="600">

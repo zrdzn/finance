@@ -16,6 +16,7 @@ import {useDateFormatter} from "@/hooks/useDateFormatter"
 import {useTranslations} from "next-intl";
 import {useIntervalFormatter} from "@/hooks/useIntervalFormatter";
 import {Components} from "@/api/api";
+import {useTheme} from "@/hooks/useTheme";
 
 type ScheduleResponse = Components.Schemas.ScheduleResponse;
 
@@ -34,6 +35,7 @@ export const SchedulesCardItem = ({
   const { formatDate } = useDateFormatter()
   const { formatInterval } = useIntervalFormatter()
   const t = useTranslations("Transactions")
+  const theme = useTheme()
 
   const handleDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -72,12 +74,12 @@ export const SchedulesCardItem = ({
                 </HStack>
               </Flex>
               <Flex justifyContent={'space-between'}>
-                <Text color={'dimgray'}
+                <Text color={theme.text.secondary}
                       fontSize={'sm'}
                       letterSpacing={0.2}>
                   {t('schedules.card.next-execution').replace("%date%", formatDate(schedule.nextExecution, true))}
                 </Text>
-                <Text color={'dimgray'}
+                <Text color={theme.text.secondary}
                       fontSize={'sm'}
                       letterSpacing={0.5}>
                   {t('schedules.card.interval')}

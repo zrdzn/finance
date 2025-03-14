@@ -1,6 +1,6 @@
 import {
     Card,
-    CardBody, CardHeader, Text,
+    CardBody, CardHeader, Text, useColorMode,
 } from "@chakra-ui/react"
 import React, {useEffect, useState} from "react"
 import {Components} from "@/api/api";
@@ -8,6 +8,7 @@ import {AnalyticsOverviewStatisticType, TransactionType} from "@/api/types";
 import dynamic from "next/dynamic";
 import {useTranslations} from "next-intl";
 import {useApi} from "@/hooks/useApi";
+import {useTheme} from "@/hooks/useTheme";
 const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 type VaultResponse = Components.Schemas.VaultResponse;
@@ -20,6 +21,8 @@ interface AnalyticsChartProperties {
 }
 
 export const AnalyticsChart = ({ vault, permissions, transactionType }: AnalyticsChartProperties) => {
+    const theme = useTheme()
+    const { colorMode } = useColorMode()
     const t = useTranslations("Analytics");
     const api = useApi()
     const [chartData, setChartData] = useState<FlowsChartResponse>({
@@ -40,9 +43,8 @@ export const AnalyticsChart = ({ vault, permissions, transactionType }: Analytic
             boxShadow="base"
             borderRadius="lg"
             overflow="hidden"
-            backgroundColor="whiteAlpha.900"
-            border="1px solid"
-            borderColor="gray.200"
+            backgroundColor={theme.background.secondary}
+            color={theme.text.primary}
         >
             <CardHeader>
                 <Text fontSize="sm" fontWeight="600">
@@ -59,10 +61,18 @@ export const AnalyticsChart = ({ vault, permissions, transactionType }: Analytic
                                options={{
                                    chart: {
                                        id: 'apexchart-analytic',
+                                       foreColor: theme.text.primary,
+                                       toolbar: {
+                                           show: false
+                                       }
                                    },
                                    xaxis: {
                                        categories: chartData.categories
                                    },
+                                   theme: {
+                                       mode: colorMode,
+                                       palette: 'palette1'
+                                   }
                                }}
                                series={chartData.series} />
                 }

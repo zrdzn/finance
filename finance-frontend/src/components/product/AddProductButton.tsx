@@ -108,8 +108,9 @@ export const AddProductButton = ({ vaultId, onCreate }: AddProductButtonProperti
 
           <ModalFooter>
             <Button onClick={handleProductCreate}
-                    backgroundColor={theme.primaryColor}
-                    color={'#f8f8f8'} fontWeight={'400'}
+                    backgroundColor={theme.secondary}
+                    color={'#f8f8f8'}
+                    fontWeight={'400'}
                     mr={3}>
               {t('create-modal.submit')}
             </Button>

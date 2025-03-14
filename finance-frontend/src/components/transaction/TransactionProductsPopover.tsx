@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 import {useApi} from "@/hooks/useApi";
 import {useRouter} from "next/router";
 import {EditTransactionProductButton} from "@/components/transaction/product/EditTransactionProductButton";
+import {useTheme} from "@/hooks/useTheme";
 
 type VaultResponse = Components.Schemas.VaultResponse;
 type TransactionResponse = Components.Schemas.TransactionResponse;
@@ -34,6 +35,7 @@ interface TransactionProductsPopoverProperties {
 export const TransactionProductsPopover = ({vault, transaction, permissions}: TransactionProductsPopoverProperties) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const t = useTranslations('Transactions')
+    const theme = useTheme()
     const { formatNumber } = useNumberFormatter()
     const api = useApi()
     const router = useRouter()
@@ -114,7 +116,7 @@ export const TransactionProductsPopover = ({vault, transaction, permissions}: Tr
                                           </HStack>
                                         )}
                                     </Flex>
-                                    <Text fontSize="sm" color="gray.600">
+                                    <Text fontSize="sm" color={theme.text.secondary}>
                                         {product.category?.name}
                                     </Text>
                                     <Flex justify="space-between" mt={2}>

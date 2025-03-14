@@ -15,7 +15,8 @@ export const DeleteButton = ({
   return (
     <Button backgroundColor={'#ea2323'}
             size={'sm'}
-            color={'#f8f8f8'} fontWeight={'400'}
+            color={'#f8f8f8'}
+            fontWeight={'400'}
             gap={1}
             onClick={onClick}>
       <FaTrash />

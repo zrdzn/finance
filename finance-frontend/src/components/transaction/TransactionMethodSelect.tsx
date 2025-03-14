@@ -1,6 +1,6 @@
 import React, {useState} from "react"
-import Select from "react-select"
 import {SelectProperties, TransactionMethod} from "@/api/types";
+import {ThemedSelect} from "@/components/shared/ThemedSelect";
 
 interface TransactionMethodSelectProperties {
   onChange: (transactionMethod: TransactionMethod) => void
@@ -30,11 +30,13 @@ export const TransactionMethodSelect = ({ onChange, defaultValue, isDisabled }: 
   }
 
   return (
-    <Select onChange={handleTransactionMethodChange}
-            defaultValue={selectedTransactionMethod}
-            required
-            isDisabled={isDisabled}
-            options={options}
+    <ThemedSelect
+      onChange={handleTransactionMethodChange}
+      defaultValue={selectedTransactionMethod}
+      required
+      isDisabled={isDisabled}
+      options={options}
+      isClearable
     />
   )
 }

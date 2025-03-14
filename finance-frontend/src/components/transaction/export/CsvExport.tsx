@@ -139,7 +139,12 @@ export const CsvExport = ({ vault, isOpen, onClose, permissions }: CsvExportProp
             </FormControl>
         </ModalBody>
         <ModalFooter>
-          <Button mt={8} onClick={handleExport} backgroundColor={theme.primaryColor} width="full" color={'#f8f8f8'} fontWeight={'400'}>
+          <Button mt={8}
+                  onClick={handleExport}
+                  backgroundColor={theme.secondary}
+                  color={'#f8f8f8'}
+                  width="full"
+                  fontWeight={'400'}>
             {t('export.submit')}
           </Button>
         </ModalFooter>

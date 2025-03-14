@@ -1,6 +1,7 @@
 import React, {useState} from "react"
 import Select from "react-select"
 import {ScheduleInterval} from "@/api/types";
+import {ThemedSelect} from "@/components/shared/ThemedSelect";
 
 interface IntervalOption {
   value: string
@@ -30,11 +31,13 @@ export const IntervalSelect = ({ onChange, defaultValue, isDisabled }: IntervalS
   }
 
   return (
-    <Select defaultValue={selectedInterval}
-            onChange={handleChange}
-            required
-            isDisabled={isDisabled}
-            options={intervals}
-            isClearable />
+    <ThemedSelect
+      defaultValue={selectedInterval}
+      onChange={handleChange}
+      required
+      isDisabled={isDisabled}
+      options={intervals}
+      isClearable
+    />
   )
 }

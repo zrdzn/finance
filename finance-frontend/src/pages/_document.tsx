@@ -2,7 +2,6 @@ import {ColorModeScript, ThemeConfig} from '@chakra-ui/react';
 import {Head, Html, Main, NextScript} from 'next/document';
 import React from 'react';
 import {ReactJSXElement} from '@emotion/react/types/jsx-namespace';
-import {themeColors} from "@/hooks/useTheme";
 
 const config: ThemeConfig = {
   initialColorMode: 'light',
@@ -12,12 +11,13 @@ const config: ThemeConfig = {
 export default function Document(): ReactJSXElement {
   return (
     <Html lang="en">
-      <Head/>
-      <body style={{backgroundColor: themeColors.lightBackground}}>
+      <Head>
+      </Head>
+      <body>
       <ColorModeScript initialColorMode={config.initialColorMode}/>
       <Main/>
       <NextScript/>
       </body>
     </Html>
-  );
+  )
 }

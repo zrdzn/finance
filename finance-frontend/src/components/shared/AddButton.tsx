@@ -16,7 +16,8 @@ export const AddButton = ({
   const t = useTranslations('Global')
   return (
     <Button
-      backgroundColor={theme.primaryColor}
+      variant={'plain'}
+      backgroundColor={theme.secondary}
       color={'#f8f8f8'}
       fontWeight={'400'}
       size={size || 'md'}

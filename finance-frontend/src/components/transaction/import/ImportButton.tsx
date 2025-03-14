@@ -18,7 +18,7 @@ export const ImportButton = ({
   return (
     <Menu>
       <MenuButton>
-        <Button backgroundColor={theme.primaryColor}
+        <Button backgroundColor={theme.secondary}
                 color={'#f8f8f8'}
                 fontWeight={'400'}
                 size={size || 'md'}

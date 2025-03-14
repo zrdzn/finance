@@ -1,7 +1,7 @@
-import Select from "react-select"
 import React, {useEffect, useState} from "react"
 import {Components} from "@/api/api";
 import {SelectOptionProperties, SelectProperties} from "@/api/types";
+import {ThemedSelect} from "@/components/shared/ThemedSelect";
 
 type ProductResponse = Components.Schemas.ProductResponse;
 
@@ -54,13 +54,16 @@ export const ProductSelect = ({products, onChange }: ProductSelectProperties) =>
   }
 
   return (
-    <Select onChange={handleProductChange}
-            defaultValue={noneProduct}
-            value={selectedProduct}
-            required
-            styles={{
-              container: (provided) => ({ width: '100%', ...provided }),
-            }}
-            options={options} />
+    <ThemedSelect
+      onChange={handleProductChange}
+      defaultValue={noneProduct}
+      value={selectedProduct}
+      required
+      styles={{
+        container: (provided: any) => ({ width: '100%', ...provided }),
+      }}
+      options={options}
+      isClearable
+    />
   )
 }

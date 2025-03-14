@@ -195,7 +195,11 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
 
   return details && (
     <>
-      <Button backgroundColor={theme.primaryColor} onClick={requestOnOpen} gap={1} color={'#f8f8f8'} fontWeight={'400'}>
+      <Button backgroundColor={theme.secondary}
+              color={'#f8f8f8'}
+              onClick={requestOnOpen}
+              gap={1}
+              fontWeight={'400'}>
         {icon && icon}
         {text && text}
       </Button>
@@ -219,9 +223,10 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
           <ModalFooter>
             <Button
               onClick={handleSecurityCodeSend}
-              backgroundColor={theme.primaryColor}
+              backgroundColor={theme.secondary}
+              color={'#f8f8f8'}
               mr={3}
-              color={'#f8f8f8'} fontWeight={'400'}
+              fontWeight={'400'}
             >
               {t('profile-modal.steps.verify.submit')}
             </Button>
@@ -330,16 +335,18 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
             )}
             {activeStep < steps.length - 1 ? (
               <Button
-                backgroundColor={theme.primaryColor}
+                backgroundColor={theme.secondary}
+                color={'#f8f8f8'}
                 onClick={handleNextStep}
                 mr={3}
-                color={'#f8f8f8'} fontWeight={'400'}
+                fontWeight={'400'}
               >
                 {t('profile-modal.steps.next-button')}
               </Button>
             ) : (
               <Button
-                backgroundColor={theme.primaryColor}
+                backgroundColor={theme.secondary}
+                color={'#f8f8f8'}
                 onClick={event => {
                   switch (accountUpdateType) {
                     case 'EMAIL':
@@ -354,7 +361,7 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
                   }
                 }}
                 mr={3}
-                color={'#f8f8f8'} fontWeight={'400'}
+                fontWeight={'400'}
               >
                 {t('profile-modal.steps.submit-button')}
               </Button>
@@ -420,10 +427,11 @@ export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: Re
           </ModalBody>
           <ModalFooter>
             <Button
-              backgroundColor={theme.primaryColor}
+              backgroundColor={theme.secondary}
+              color={'#f8f8f8'}
               onClick={handleTwoFactorCodeVerify}
               mr={3}
-              color={'#f8f8f8'} fontWeight={'400'}
+              fontWeight={'400'}
             >
               {t('profile-modal.steps.submit-button')}
             </Button>

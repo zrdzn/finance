@@ -57,11 +57,13 @@ export const VaultInvitationCard = ({ invitation }: VaultInvitationCardPropertie
 
   return (
     <Card width={{ base: '100%', sm: 'sm' }}
+          backgroundColor={theme.background.secondary}
+          color={theme.text.primary}
           mt={8}>
       <CardBody>
         <Stack mt='6' spacing='3'>
           <Text fontSize='md' fontWeight={'600'}>{invitation.vault.name}</Text>
-          <Text color={'dimgray'}>
+          <Text color={theme.text.secondary}>
               {t('invitation-card.created-by').replace("%username%", username?.username ?? "Unknown")}
           </Text>
         </Stack>
@@ -69,13 +71,15 @@ export const VaultInvitationCard = ({ invitation }: VaultInvitationCardPropertie
       <Divider />
       <CardFooter justifyContent={'end'}
                   gap={2}>
-        <Button backgroundColor={theme.primaryColor}
-                color={'#f8f8f8'} fontWeight={'400'}
+        <Button backgroundColor={theme.secondary}
+                color={'#f8f8f8'}
+                fontWeight={'400'}
                 onClick={handleJoin}>
             {t('invitation-card.join')}
         </Button>
         <Button backgroundColor={'red.400'}
-                color={'#f8f8f8'} fontWeight={'400'}
+                color={'#f8f8f8'}
+                fontWeight={'400'}
                 onClick={handleCancel}>
             {t('invitation-card.cancel')}
         </Button>
