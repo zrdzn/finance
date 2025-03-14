@@ -8,6 +8,7 @@ import {useApi} from "@/hooks/useApi"
 import {Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Card, Flex} from "@chakra-ui/react"
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
+import {useTheme} from "@/hooks/useTheme";
 
 type VaultResponse = Components.Schemas.VaultResponse;
 type VaultRoleResponse = Components.Schemas.VaultRoleResponse;
@@ -20,6 +21,7 @@ interface ProtectedVaultProperties {
 export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties) => {
   const router = useRouter();
   const api = useApi();
+  const theme = useTheme()
   const { details } = useAuthentication();
   const vault = useVault({ publicId });
   const t = useTranslations("Overview")
@@ -115,9 +117,8 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
                 boxShadow="base"
                 borderRadius="lg"
                 overflow="hidden"
-                backgroundColor="whiteAlpha.900"
-                border="1px solid"
-                borderColor="gray.200"
+                backgroundColor={theme.background.secondary}
+                color={theme.text.primary}
                 width={'fit-content'}
               >
                 <Flex p={2}>

@@ -53,9 +53,8 @@ export const AuditTable = ({ vault, permissions }: AuditTableProperties) => {
           boxShadow="base"
           borderRadius="lg"
           overflow="hidden"
-          backgroundColor="whiteAlpha.900"
-          border="1px solid"
-          borderColor="gray.200"
+          backgroundColor={theme.background.secondary}
+          color={theme.text.primary}
       >
         <CardHeader>
           <Text fontSize="sm" fontWeight={"600"}>
@@ -89,7 +88,7 @@ export const AuditTable = ({ vault, permissions }: AuditTableProperties) => {
                         <Td>
                           <HStack>
                             <Text fontSize={{ base: 'lg', md: 'xl' }} pr={2}>
-                              <FaCircleCheck color="green" />
+                              <FaCircleCheck color={theme.text.green} />
                             </Text>
                             <Text size="sm">
                               {formatAuditAction(audit.auditAction)}

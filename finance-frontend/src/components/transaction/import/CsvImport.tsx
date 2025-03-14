@@ -43,6 +43,7 @@ import {TransactionMethodSelect} from "@/components/transaction/TransactionMetho
 import Select from "react-select";
 import axios from "axios";
 import {useRouter} from "next/router";
+import {ThemedSelect} from "@/components/shared/ThemedSelect";
 
 export type VaultResponse = Components.Schemas.VaultResponse;
 
@@ -168,7 +169,8 @@ export const CsvImport = ({ vault, isOpen, onClose, permissions }: CsvImportProp
         onClose={onClose}
       >
           <ModalOverlay />
-          <ModalContent>
+          <ModalContent backgroundColor={theme.background.secondary}
+                        color={theme.text.primary}>
               <ModalHeader>{t('import.csv')}</ModalHeader>
               <ModalCloseButton />
               <ModalBody pb={6}>
@@ -184,8 +186,8 @@ export const CsvImport = ({ vault, isOpen, onClose, permissions }: CsvImportProp
                           <FileUpload handleFile={handleCsvUpload}>
                               <Button
                                 size="md"
-                                backgroundColor={theme.primaryColor}
-                                color="#f8f8f8"
+                                backgroundColor={theme.secondary}
+                                color={'#f8f8f8'}
                                 fontWeight="400"
                                 width={{ base: '100%', lg: 'auto' }}
                                 textAlign="center"
@@ -210,7 +212,6 @@ export const CsvImport = ({ vault, isOpen, onClose, permissions }: CsvImportProp
                                       borderColor="gray.300"
                                       borderRadius="md"
                                       cursor="pointer"
-                                      _hover={{ borderColor: theme.secondaryColor }}
                                       width={{ base: '100%', lg: 'auto' }}
                                       flex="0 1 auto"
                                     >
@@ -249,7 +250,7 @@ export const CsvImport = ({ vault, isOpen, onClose, permissions }: CsvImportProp
                                     <Text fontWeight="400" mr={2} minW="120px">{field.label}:</Text>
 
                                     <Box flex="1" minW={{ base: '100%', md: '45%' }}>
-                                        <Select
+                                        <ThemedSelect
                                           placeholder={t('import.select-column')}
                                           value={{
                                               value: mappedFields[field.value] || '',
@@ -299,7 +300,7 @@ export const CsvImport = ({ vault, isOpen, onClose, permissions }: CsvImportProp
                   <Button
                     mt={8}
                     onClick={handleCsvImport}
-                    backgroundColor={theme.primaryColor}
+                    backgroundColor={theme.secondary}
                     color={'#f8f8f8'}
                     fontWeight={'400'}
                   >

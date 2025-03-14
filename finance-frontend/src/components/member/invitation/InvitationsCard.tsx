@@ -27,6 +27,7 @@ import { useDateFormatter } from "@/hooks/useDateFormatter";
 import toast from "react-hot-toast";
 import { Components } from "@/api/api";
 import {FaClock} from "react-icons/fa";
+import {useTheme} from "@/hooks/useTheme";
 
 type VaultResponse = Components.Schemas.VaultResponse;
 type VaultInvitationResponse = Components.Schemas.VaultInvitationResponse;
@@ -38,6 +39,7 @@ interface InvitationsCardProperties {
 
 export const InvitationsCard = ({ vault, permissions }: InvitationsCardProperties) => {
     const api = useApi();
+    const theme = useTheme()
     const t = useTranslations("Invitations");
     const { formatDate } = useDateFormatter();
     const [invitations, setInvitations] = useState<VaultInvitationResponse[]>([]);
@@ -81,9 +83,8 @@ export const InvitationsCard = ({ vault, permissions }: InvitationsCardPropertie
             boxShadow="base"
             borderRadius="lg"
             overflow="hidden"
-            backgroundColor="whiteAlpha.900"
-            border="1px solid"
-            borderColor="gray.200"
+            backgroundColor={theme.background.secondary}
+            color={theme.text.primary}
         >
             <CardHeader>
                 <Text fontSize="sm" fontWeight="600">

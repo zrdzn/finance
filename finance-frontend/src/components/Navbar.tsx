@@ -1,7 +1,7 @@
 import {useAuthentication} from "@/hooks/useAuthentication"
 import {useRouter} from "next/router"
 import {
-  Box,
+  Box, Button,
   Flex,
   HStack,
   Link,
@@ -10,9 +10,10 @@ import {
   MenuItem,
   MenuList,
   Text,
+  useColorMode,
   useMediaQuery
 } from "@chakra-ui/react"
-import {FaLayerGroup, FaUser, FaUserPlus} from "react-icons/fa"
+import {FaLayerGroup, FaMoon, FaSun, FaUser, FaUserPlus} from "react-icons/fa"
 import {useTheme} from "@/hooks/useTheme"
 import React from "react"
 import {FaArrowRightToBracket} from "react-icons/fa6"
@@ -24,6 +25,7 @@ export const Navbar = () => {
   const theme = useTheme();
   const router = useRouter();
   const t = useTranslations("Navbar")
+  const { colorMode, toggleColorMode } = useColorMode()
   const [isMobile] = useMediaQuery("(max-width: 768px)");
 
   const handleLogout = () => {
@@ -38,8 +40,8 @@ export const Navbar = () => {
       width="100%"
       paddingY={3.5}
       paddingX={8}
-      backgroundColor={theme.secondaryColor}
-      color={theme.textColor}
+      backgroundColor={theme.primary}
+      color={theme.text}
       boxShadow={'lg'}
     >
       <Flex alignItems="center">
@@ -89,6 +91,9 @@ export const Navbar = () => {
                 </Link>
             </HStack>
         }
+        <Button onClick={toggleColorMode}>
+          { colorMode === "dark" ? <FaSun /> : <FaMoon /> }
+        </Button>
       </Flex>
     </Flex>
   )

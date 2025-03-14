@@ -39,19 +39,22 @@ export const VaultCard = ({ publicId, ownerId, name }: VaultCardProperties) => {
 
   return (
     <Card width={{ base: '100%', sm: 'sm' }}
+          backgroundColor={theme.background.secondary}
+          color={theme.text.primary}
           mt={8}>
       <CardBody>
         <Stack mt='6' spacing='3'>
           <Text fontSize='md' fontWeight={'600'}>{name}</Text>
-          <Text color={'dimgray'}>
+          <Text color={theme.text.secondary}>
             {t('vault-card.created-by').replace("%username%", username?.username ?? "Unknown")}
           </Text>
         </Stack>
       </CardBody>
       <Divider />
       <CardFooter justifyContent={'end'}>
-        <Button backgroundColor={theme.primaryColor}
-                color={'#f8f8f8'} fontWeight={'400'}
+        <Button backgroundColor={theme.secondary}
+                color={'#f8f8f8'}
+                fontWeight={'400'}
                 onClick={handleRedirect}>
           {t('vault-card.redirect')}
         </Button>

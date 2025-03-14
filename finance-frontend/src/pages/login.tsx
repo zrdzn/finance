@@ -98,9 +98,8 @@ export default function Login(): ReactJSXElement {
               boxShadow="base"
               borderRadius="lg"
               overflow="hidden"
-              backgroundColor="whiteAlpha.900"
-              border="1px solid"
-              borderColor="gray.200"
+              backgroundColor={theme.background.secondary}
+              color={theme.text.primary}
           >
             <CardHeader>
               <Text fontSize="md" fontWeight="600">
@@ -141,8 +140,8 @@ export default function Login(): ReactJSXElement {
                 }
 
                 <Flex mt={2} justifyContent={'space-between'} gap={3}>
-                  <Button fontWeight={'400'} onClick={() => router.push("/register")}>{t('form.register-redirect')}</Button>
-                  <Button color={'#f8f8f8'} fontWeight={'400'} backgroundColor={theme.primaryColor} onClick={handleLogin}>{t('form.submit')}</Button>
+                  <Button color={'#f8f8f8'} fontWeight={'400'} onClick={() => router.push("/register")}>{t('form.register-redirect')}</Button>
+                  <Button color={'#f8f8f8'} fontWeight={'400'} backgroundColor={theme.secondary} onClick={handleLogin}>{t('form.submit')}</Button>
                 </Flex>
               </Stack>
             </CardBody>

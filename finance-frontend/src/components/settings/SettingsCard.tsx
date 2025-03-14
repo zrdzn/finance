@@ -97,9 +97,8 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
           boxShadow="base"
           borderRadius="lg"
           overflow="hidden"
-          backgroundColor="whiteAlpha.900"
-          border="1px solid"
-          borderColor="gray.200"
+          backgroundColor={theme.background.secondary}
+          color={theme.text.primary}
       >
         <CardHeader>
           <Text fontSize="sm" fontWeight={"600"}>
@@ -143,8 +142,9 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
             {
               permissions.includes("DELETE") &&
                 <Button
-                    backgroundColor={'red.300'}
-                    color={'#f8f8f8'} fontWeight={'400'}
+                    backgroundColor={theme.text.red}
+                    color={'#f8f8f8'}
+                    fontWeight={'400'}
                     onClick={handleVaultDelete}>
                   {t('vault-delete-button')}
                 </Button>
@@ -152,8 +152,9 @@ export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => 
             {
               permissions.includes("SETTINGS_UPDATE") &&
                 <Button
-                    backgroundColor={theme.primaryColor}
-                    color={'#f8f8f8'} fontWeight={'400'}
+                    backgroundColor={theme.secondary}
+                    color={'#f8f8f8'}
+                    fontWeight={'400'}
                     onClick={handleVaultUpdate}>
                   {t('form.submit')}
                 </Button>

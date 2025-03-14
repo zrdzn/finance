@@ -85,9 +85,10 @@ export const AccountProfileUpdateForm = ({ user }: AccountProfileUpdateFormPrope
                   <AccountAvatar size={'xl'} userId={details?.id} />
                   <FileUpload handleFile={it => handleAvatarUpload(it)}>
                     <Button size={'md'}
-                            backgroundColor={theme.primaryColor}
-                            gap={1}
-                            color={'#f8f8f8'} fontWeight={'400'}>
+                            backgroundColor={theme.secondary}
+                            color={'#f8f8f8'}
+                            fontWeight={'400'}
+                            gap={1}>
                       <FaPencil />
                     </Button>
                   </FileUpload>
@@ -117,8 +118,9 @@ export const AccountProfileUpdateForm = ({ user }: AccountProfileUpdateFormPrope
                         isDisabled={!isEditingUsername}
                     />
                     <Button
-                        backgroundColor={theme.primaryColor}
-                        onClick={event => {
+                      backgroundColor={theme.secondary}
+                      color={'#f8f8f8'}
+                      onClick={event => {
                             if (isEditingUsername) {
                                 handleUserProfileUpdate(event)
                             }
@@ -126,7 +128,7 @@ export const AccountProfileUpdateForm = ({ user }: AccountProfileUpdateFormPrope
                             setIsEditingUsername(!isEditingUsername)}
                         }
                         size={'md'}
-                        color={'#f8f8f8'} fontWeight={'400'}
+                        fontWeight={'400'}
                     >
                         {
                             isEditingUsername ? <FaSave /> : <FaPencil />
@@ -143,7 +145,7 @@ export const AccountProfileUpdateForm = ({ user }: AccountProfileUpdateFormPrope
             <FormControl>
                 <FormLabel>{t('profile-card.verify-label')}</FormLabel>
                 <HStack>
-                    {user.verified && <Text fontSize={'sm'} color={'green'}>{t('profile-card.already-verified')}</Text>}
+                    {user.verified && <Text fontSize={'sm'} color={theme.text.green}>{t('profile-card.already-verified')}</Text>}
                     {!user.verified && (
                         <RequestAccountVerificationButton icon={<FaEnvelope />} text={t('profile-card.verify-link')} />
                     )}
@@ -152,7 +154,7 @@ export const AccountProfileUpdateForm = ({ user }: AccountProfileUpdateFormPrope
             <FormControl>
                 <FormLabel>{t('profile-card.two-factor-setup-label')}</FormLabel>
                 <HStack>
-                    {user.isTwoFactorEnabled && <Text fontSize={'sm'} color={'green'}>{t('profile-card.two-factor-already-enabled')}</Text>}
+                    {user.isTwoFactorEnabled && <Text fontSize={'sm'} color={theme.text.green}>{t('profile-card.two-factor-already-enabled')}</Text>}
                     {!user.isTwoFactorEnabled && (
                         <RequestAccountUpdateButton icon={<FaLock />} text={t('profile-card.two-factor-setup-button-label')}  accountUpdateType={"TWO_FACTOR"}/>
                     )}
@@ -187,11 +189,12 @@ export const AccountProfileUpdateForm = ({ user }: AccountProfileUpdateFormPrope
                 </RadioGroup>
             </FormControl>
             <Button
-                backgroundColor={theme.primaryColor}
-                onClick={handleUserProfileUpdate}
-                size={'md'}
-                gap={1}
-                color={'#f8f8f8'} fontWeight={'400'}
+              backgroundColor={theme.secondary}
+              color={'#f8f8f8'}
+              onClick={handleUserProfileUpdate}
+              size={'md'}
+              gap={1}
+              fontWeight={'400'}
             >
                 <FaSave />
                 <Text>{t('profile-card.save-preferences')}</Text>

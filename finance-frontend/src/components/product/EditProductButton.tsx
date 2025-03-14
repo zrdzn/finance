@@ -76,7 +76,8 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
         onClose={onClose}
       >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent backgroundColor={theme.background.secondary}
+                      color={theme.text.primary}>
           <ModalHeader>{t('update-modal.title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
@@ -98,8 +99,9 @@ export const EditProductButton = ({ product }: EditProductButtonProperties) => {
 
           <ModalFooter>
             <Button onClick={handleProductUpdate}
-                    backgroundColor={theme.primaryColor}
-                    color={'#f8f8f8'} fontWeight={'400'}
+                    backgroundColor={theme.secondary}
+                    color={'#f8f8f8'}
+                    fontWeight={'400'}
                     mr={3}>
               {t('update-modal.submit')}
             </Button>

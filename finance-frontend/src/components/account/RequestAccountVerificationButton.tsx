@@ -30,7 +30,11 @@ export const RequestAccountVerificationButton = ({ icon, text }: RequestAccountV
   }
 
   return details && (
-      <Button backgroundColor={theme.primaryColor} onClick={handleVerificationLinkSend} gap={1} color={'#f8f8f8'} fontWeight={'400'}>
+      <Button backgroundColor={theme.secondary}
+              color={'#f8f8f8'}
+              onClick={handleVerificationLinkSend}
+              gap={1}
+              fontWeight={'400'}>
         {icon && icon}
         {text && text}
       </Button>

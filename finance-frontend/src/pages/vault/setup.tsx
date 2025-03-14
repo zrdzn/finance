@@ -101,9 +101,8 @@ export default function SetupVault(): ReactJSXElement {
               boxShadow="base"
               borderRadius="lg"
               overflow="hidden"
-              backgroundColor="whiteAlpha.900"
-              border="1px solid"
-              borderColor="gray.200"
+              backgroundColor={theme.background.secondary}
+              color={theme.text.primary}
           >
             <CardHeader>
               <Text fontSize="md" fontWeight="600">
@@ -133,9 +132,10 @@ export default function SetupVault(): ReactJSXElement {
 
                 <Flex mt={2} justifyContent={'space-between'} gap={3}>
                   <Button
-                    backgroundColor={theme.primaryColor}
+                    backgroundColor={theme.secondary}
+                    color={'#f8f8f8'}
                     onClick={handleVaultSetup}
-                    color={'#f8f8f8'} fontWeight={'400'}
+                    fontWeight={'400'}
                   >
                     {t('form.submit')}
                   </Button>

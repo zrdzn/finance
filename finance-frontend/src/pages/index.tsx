@@ -1,6 +1,6 @@
 import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
-import {Button, Flex, Heading, HStack, Link, Text} from "@chakra-ui/react";
+import {Button, Flex, HStack, Link, Text} from "@chakra-ui/react";
 import React, {useEffect, useState} from "react";
 import {useApi} from "@/hooks/useApi"
 import {VaultCard} from "@/components/vault/VaultCard"
@@ -92,8 +92,9 @@ export default function Homepage(): ReactJSXElement {
                 </>
             }
             <HStack mt={8}>
-              <Button backgroundColor={theme.primaryColor}
-                      color={'#f8f8f8'} fontWeight={'400'}>
+              <Button backgroundColor={theme.secondary}
+                      color={'#f8f8f8'}
+                      fontWeight={'400'}>
                 <Link href={'/vault/setup'}>{t('create-vault')}</Link>
               </Button>
             </HStack>

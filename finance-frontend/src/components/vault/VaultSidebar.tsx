@@ -98,6 +98,7 @@ interface ChatBoxProps {
 }
 
 const ChatBox = ({iconStyle, boxStyle}: ChatBoxProps) => {
+  const theme = useTheme()
   const [isOpen, setIsOpen] = useState(false);
   const t = useTranslations("VaultSidebar");
   const {details} = useAuthentication()
@@ -122,8 +123,9 @@ const ChatBox = ({iconStyle, boxStyle}: ChatBoxProps) => {
         width={iconStyle.width}
         height={iconStyle.height}
         fontSize={iconStyle.fontSize}
-        backgroundColor={'#007bff'}
-        color={'#f8f8f8'} fontWeight={'400'}
+        backgroundColor={theme.secondary}
+        color={'#f8f8f8'}
+        fontWeight={'400'}
         borderRadius="full"
         display="flex"
         onClick={() => setIsOpen(!isOpen)}
@@ -263,8 +265,9 @@ const BaseView = ({vault, vaultRole, aiEnabled}: VaultSidebarProperties) => {
         aria-label="Open Menu"
         width={12}
         height={12}
-        backgroundColor={theme.primaryColor}
-        color={'#f8f8f8'} fontWeight={'400'}
+        backgroundColor={theme.secondary}
+        color={'#f8f8f8'}
+        fontWeight={'400'}
         borderRadius="full"
         display="flex"
         alignItems="center"
@@ -275,23 +278,33 @@ const BaseView = ({vault, vaultRole, aiEnabled}: VaultSidebarProperties) => {
 
       <Drawer placement={'left'} onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay/>
-        <DrawerContent color={theme.textColor}>
-          <DrawerHeader backgroundColor={theme.primaryColor}>
+        <DrawerContent color={theme.text}>
+          <DrawerHeader backgroundColor={theme.primary}>
             <Flex justifyContent={'space-between'} width={'full'} alignItems={'center'}>
               <SidebarLogo vault={vault} isCollapsed={false}/>
-              <Button backgroundColor={theme.primaryColor} padding={3.5} variant={'unstyled'} onClick={onClose}
-                      leftIcon={<FaX/>} color={'#f8f8f8'} fontWeight={'400'}/>
+              <Button backgroundColor={theme.secondary}
+                      color={'#f8f8f8'}
+                      padding={3.5}
+                      variant={'unstyled'}
+                      onClick={onClose}
+                      leftIcon={<FaX/>}
+                      fontWeight={'400'} />
             </Flex>
           </DrawerHeader>
-          <DrawerBody padding={0}>
+          <DrawerBody padding={0} backgroundColor={theme.background.primary}>
             <Flex direction={'column'} mt={5}>
               {GetAvailableEndpoints(vault, vaultRole.permissions).map(({href, icon: Icon, label}) => (
                 <Flex key={href} width={'full'} marginY={3}>
-                  <Link href={href} style={{width: 'inherit'}}>
+                  <Link href={href}
+                        color={router.asPath === href ? theme.primary : theme.text.primary}
+                        borderLeft={router.asPath === href ? `4px solid ${theme.primary}` : "none"}
+                        paddingLeft={router.asPath === href ? "0" : "4px"}
+                        style={{width: 'inherit'}}>
                     <Button
-                      backgroundColor={router.asPath === href ? theme.secondaryColor : theme.backgroundColor}
+                      backgroundColor={theme.background.primary}
                       onClick={() => router.push(href)}
                       width={'full'}
+                      color={router.asPath === href ? theme.secondary : theme.text.primary}
                       borderRadius={0}
                     >
                       <Flex alignItems={'center'} width={'full'} columnGap={2}>
@@ -326,7 +339,8 @@ const DesktopView = (
       left="0"
       height="100vh"
       width={isCollapsed ? "80px" : "250px"}
-      color={theme.textColor}
+      color={theme.text}
+      backgroundColor={theme.background.primary}
       transition="width 0.3s"
       zIndex="1000"
       boxShadow="4px 0 8px rgba(0, 0, 0, 0.1)"
@@ -357,9 +371,9 @@ const DesktopView = (
         justifyContent="center"
         alignItems="center"
         padding="4"
-        height="64px"
-        backgroundColor={theme.primaryColor}
-        borderBottom={`1px solid ${theme.secondaryColor}`}
+        height="68px"
+        backgroundColor={theme.secondary}
+        color={theme.text}
       >
         {isCollapsed && <Button variant="unstyled" onClick={toggleCollapse} leftIcon={<FaAngleRight/>}/>}
         {!isCollapsed && <Button variant="unstyled" onClick={toggleCollapse} leftIcon={<FaAngleLeft/>}/>}
@@ -370,18 +384,28 @@ const DesktopView = (
         mt={5}
         paddingX={isCollapsed ? 0 : 4}
         rowGap={5}
+        backgroundColor={theme.background.primary}
         alignItems={isCollapsed ? "center" : "flex-start"}
         flexGrow={1}
       >
         {GetAvailableEndpoints(vault, vaultRole.permissions).map(({href, icon: Icon, label}) => (
-          <Link key={href} href={href} style={{width: "100%"}}
-                backgroundColor={isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}>
+          <Link
+            key={href}
+            href={href}
+            style={{width: "100%"}}
+            backgroundColor={theme.background.primary}
+            color={router.asPath === href ? theme.primary : theme.text.primary}
+            borderLeft={!isCollapsed && router.asPath === href ? `4px solid ${theme.primary}` : "none"}
+            paddingLeft={!isCollapsed && router.asPath === href ? "0" : "4px"}
+          >
             <Button
               variant="ghost"
               width="100%"
               justifyContent={isCollapsed ? "center" : "flex-start"}
-              leftIcon={<Icon/>}
-              backgroundColor={!isCollapsed && router.asPath === href ? theme.secondaryColor : 'white'}
+              leftIcon={<Icon color={router.asPath === href ? theme.primary : theme.text.primary} />}
+              backgroundColor={theme.background.primary}
+              color={router.asPath === href ? theme.secondary : theme.text.primary}
+              fontWeight={router.asPath === href ? "600" : "400"}
             >
               {!isCollapsed && label}
             </Button>

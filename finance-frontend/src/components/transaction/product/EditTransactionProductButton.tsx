@@ -125,7 +125,8 @@ export const EditTransactionProductButton = ({ vault, transactionProduct }: Edit
         onClose={onClose}
       >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent backgroundColor={theme.background.secondary}
+                      color={theme.text.primary}>
           <ModalHeader>{t('update-modal.title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
@@ -172,8 +173,9 @@ export const EditTransactionProductButton = ({ vault, transactionProduct }: Edit
 
           <ModalFooter>
             <Button onClick={handleTransactionProductUpdate}
-                    backgroundColor={theme.primaryColor}
-                    color={'#f8f8f8'} fontWeight={'400'}
+                    backgroundColor={theme.secondary}
+                    color={'#f8f8f8'}
+                    fontWeight={'400'}
                     mr={3}>
               {t('update-modal.submit')}
             </Button>

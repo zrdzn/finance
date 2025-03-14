@@ -1,6 +1,6 @@
-import Select from "react-select"
 import React, {useState} from "react"
 import {SelectProperties, VaultRole} from "@/api/types";
+import {ThemedSelect} from "@/components/shared/ThemedSelect";
 
 interface VaultRoleSelectProperties {
   onChange: (vaultRole: VaultRole) => void
@@ -35,9 +35,10 @@ export const VaultRoleSelect = ({ onChange, defaultValue }: VaultRoleSelectPrope
   }
 
   return (
-    <Select onChange={handleRoleChange}
-            defaultValue={selectedRole}
-            required
-            options={options} />
+    <ThemedSelect
+      onChange={handleRoleChange}
+      defaultValue={selectedRole}
+      required
+      options={options} />
   )
 }

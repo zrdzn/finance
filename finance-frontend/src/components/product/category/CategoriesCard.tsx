@@ -36,6 +36,7 @@ interface CategoriesCardProperties {
 
 export const CategoriesCard = ({ vault, permissions }: CategoriesCardProperties) => {
     const api = useApi()
+    const theme = useTheme()
     const router = useRouter()
     const t = useTranslations("Categories")
     const [categories, setCategories] = useState<CategoryResponse[]>([])
@@ -75,9 +76,8 @@ export const CategoriesCard = ({ vault, permissions }: CategoriesCardProperties)
             boxShadow="base"
             borderRadius="lg"
             overflow="hidden"
-            backgroundColor="whiteAlpha.900"
-            border="1px solid"
-            borderColor="gray.200"
+            backgroundColor={theme.background.secondary}
+            color={theme.text.primary}
         >
             <CardHeader>
                 <Text fontSize="sm" fontWeight={"600"}>

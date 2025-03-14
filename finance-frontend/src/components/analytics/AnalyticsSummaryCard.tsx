@@ -17,6 +17,7 @@ import {Components} from "@/api/api";
 import {useApi} from "@/hooks/useApi";
 import {useNumberFormatter} from "@/hooks/useNumberFormatter";
 import {AnalyticsOverviewStatisticType} from "@/api/types";
+import {useTheme} from "@/hooks/useTheme";
 
 type VaultResponse = Components.Schemas.VaultResponse;
 type TransactionFlowsResponse = Components.Schemas.TransactionFlowsResponse;
@@ -30,6 +31,7 @@ interface AnalyticsSummaryCardProperties {
 export const AnalyticsSummaryCard = ({ vault, permissions, statisticType }: AnalyticsSummaryCardProperties) => {
     const api = useApi();
     const t = useTranslations("Analytics");
+    const theme = useTheme()
     const { formatNumber } = useNumberFormatter();
     const [flows, setFlows] = useState<TransactionFlowsResponse>({
         total: {
@@ -76,9 +78,9 @@ export const AnalyticsSummaryCard = ({ vault, permissions, statisticType }: Anal
     }, [api, statisticType, vault.createdAt, vault.id]);
 
     const getColor = () => {
-        if (statisticType === "INCOME") return "green";
-        if (statisticType === "EXPENSES") return "crimson";
-        return flows.total.amount >= 0 ? "green" : flows.total.amount < 0 ? "crimson" : "black";
+        if (statisticType === "INCOME") return theme.text.green;
+        if (statisticType === "EXPENSES") return theme.text.red;
+        return flows.total.amount >= 0 ? theme.text.green : flows.total.amount < 0 ? theme.text.red : theme.text.primary;
     };
 
     const getArrowType = () => {
@@ -93,9 +95,8 @@ export const AnalyticsSummaryCard = ({ vault, permissions, statisticType }: Anal
             boxShadow="base"
             borderRadius="lg"
             overflow="hidden"
-            backgroundColor="whiteAlpha.900"
-            border="1px solid"
-            borderColor="gray.200"
+            backgroundColor={theme.background.secondary}
+            color={theme.text.primary}
         >
             <CardBody>
                 <Stat>
@@ -127,13 +128,13 @@ export const AnalyticsSummaryCard = ({ vault, permissions, statisticType }: Anal
                             </HStack>
                         )}
                     </StatNumber>
-                    <StatHelpText fontSize="sm" color="gray.600" mt={2}>
+                    <StatHelpText fontSize="sm" color={theme.text.secondary} mt={2}>
                         {flows && flows.total.amount === 0
                             ? t('no-transactions')
                             : (
                                 <>
                                     {t('transactions-amount')}{" "}
-                                    <Text as="span" color={'black'} ml={1} fontWeight={flows.count.amount > 0 ? "bold" : "normal"}>
+                                    <Text as="span" color={theme.text.primary} ml={1} fontWeight={flows.count.amount > 0 ? "bold" : "normal"}>
                                         {flows.count.amount}
                                     </Text>
                                 </>

@@ -26,6 +26,7 @@ import toast from "react-hot-toast"
 import { AddProductButton } from "@/components/product/AddProductButton"
 import { SearchBar } from "@/components/shared/SearchBar"
 import {useNumberFormatter} from "@/hooks/useNumberFormatter";
+import {useTheme} from "@/hooks/useTheme";
 
 type ProductResponse = Components.Schemas.ProductResponse
 type VaultResponse = Components.Schemas.VaultResponse
@@ -38,6 +39,7 @@ interface ProductsTableProperties {
 export const ProductsTable = ({ vault, permissions }: ProductsTableProperties) => {
   const api = useApi()
   const router = useRouter()
+  const theme = useTheme()
   const t = useTranslations("Products")
   const [products, setProducts] = useState<ProductResponse[]>([])
   const [queriedProducts, setQueriedProducts] = useState<ProductResponse[]>([])
@@ -67,9 +69,8 @@ export const ProductsTable = ({ vault, permissions }: ProductsTableProperties) =
             boxShadow="base"
             borderRadius="lg"
             overflow="hidden"
-            backgroundColor="whiteAlpha.900"
-            border="1px solid"
-            borderColor="gray.200"
+            backgroundColor={theme.background.secondary}
+            color={theme.text.primary}
         >
             <CardHeader>
                 <Text fontSize="sm" fontWeight={"600"}>

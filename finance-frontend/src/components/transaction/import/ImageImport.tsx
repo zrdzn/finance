@@ -225,6 +225,8 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
       >
           <ModalOverlay />
           <ModalContent
+            backgroundColor={theme.background.secondary}
+            color={theme.text.primary}
             maxWidth={modifiedProducts.length > 0 ? "90%" : undefined}
             width="100%"
             overflow={'hidden'}>
@@ -236,8 +238,8 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
                       <FileUpload handleFile={handleImageUpload}>
                           <Button
                             size="md"
-                            backgroundColor={theme.primaryColor}
-                            color="#f8f8f8"
+                            backgroundColor={theme.secondary}
+                            color={'#f8f8f8'}
                             fontWeight="400"
                             textAlign="center"
                             width="full"
@@ -273,7 +275,7 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
                           <FormLabel mb={2}>{t('import.analyze-label')}</FormLabel>
                           <Button
                             onClick={handleImageAnalysis}
-                            backgroundColor={theme.primaryColor}
+                            backgroundColor={theme.secondary}
                             color={'#f8f8f8'}
                             fontWeight={'400'}
                             width="full"
@@ -390,7 +392,7 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
                       <Button
                         mt={8}
                         onClick={handleImageImport}
-                        backgroundColor={theme.primaryColor}
+                        backgroundColor={theme.secondary}
                         color={'#f8f8f8'}
                         fontWeight={'400'}
                       >

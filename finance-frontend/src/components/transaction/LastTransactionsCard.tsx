@@ -54,30 +54,14 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
         .catch(error => console.error(error))
   }, [api, vault.id]);
 
-  const handleTransactionDelete = (event: React.MouseEvent<HTMLButtonElement>, transactionId: number) => {
-    event.preventDefault()
-
-    api
-        .then(client => client.deleteTransaction({ transactionId: transactionId }))
-        .then(() => {
-          toast.success(t('transaction-deleted-success'))
-          setTimeout(() => router.reload(), 1000)
-        })
-        .catch(error => {
-          console.error(error)
-          toast.error(t('transaction-deleted-error'))
-        })
-  }
-
   return (
       <Card
           margin={4}
           boxShadow="base"
           borderRadius="lg"
           overflow="hidden"
-          backgroundColor="whiteAlpha.900"
-          border="1px solid"
-          borderColor="gray.200"
+          backgroundColor={theme.background.secondary}
+          color={theme.text.primary}
       >
         <CardHeader>
           <Text fontSize="sm" fontWeight={"600"}>
@@ -95,7 +79,6 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
                   <Th>{t("recent.table.method")}</Th>
                   <Th>{t("recent.table.description")}</Th>
                   <Th>{t("recent.table.total")}</Th>
-                  <Th>{t("recent.table.actions")}</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -126,31 +109,19 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
                           <Td>{transaction.description}</Td>
                           <Td>
                             <HStack>
-                              <Text fontSize={{ base: 'lg', md: 'xl' }}>
-                                {
-                                  transaction.transactionType === 'INCOMING' ? <FaCaretUp color="green" /> : <FaCaretDown color="crimson" />
-                                }
-                              </Text>
                               {
                                 transaction.transactionType === 'INCOMING' ?
-                                    <Text fontSize={'lg'} fontWeight={'600'} color={'green'}>{formatNumber(transaction.total)}</Text> :
-                                    <Text fontSize={'lg'} fontWeight={'600'} color={'crimson'}>{formatNumber(transaction.total)}</Text>
+                                  <Text fontSize={{ base: 'lg', md: 'xl' }} color={theme.text.green}><FaCaretUp /></Text> :
+                                  <Text fontSize={{ base: 'lg', md: 'xl' }} color={theme.text.red}><FaCaretDown /></Text>
+                              }
+                              {
+                                transaction.transactionType === 'INCOMING' ?
+                                    <Text fontSize={'lg'} fontWeight={'600'} color={theme.text.green}>{formatNumber(transaction.total)}</Text> :
+                                    <Text fontSize={'lg'} fontWeight={'600'} color={theme.text.red}>{formatNumber(transaction.total)}</Text>
                               }
                               <Text fontSize={'lg'} fontWeight={'600'}>
                                 {transaction.currency}
                               </Text>
-                            </HStack>
-                          </Td>
-                          <Td>
-                            <HStack spacing={2}>
-                              {
-                                  permissions.includes("TRANSACTION_UPDATE") && <EditTransactionButton transaction={transaction} />
-                              }
-                              <TransactionProductsPopover vault={vault} transaction={transaction} permissions={permissions} />
-                              <AddScheduleButton transactionId={transaction.id} />
-                              {
-                                  permissions.includes("TRANSACTION_DELETE") && <DeleteButton onClick={(event) => handleTransactionDelete(event, transaction.id)} />
-                              }
                             </HStack>
                           </Td>
                         </Tr>
@@ -162,7 +133,7 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
           <Box paddingTop={4}>
             <Flex justifyContent={'space-between'}>
               <Box />
-              <Link color={'dimgray'}
+              <Link color={theme.text.secondary}
                     fontSize={'sm'}
                     href={`/vault/${vault.publicId}/transactions`}
                     letterSpacing={0.5}>

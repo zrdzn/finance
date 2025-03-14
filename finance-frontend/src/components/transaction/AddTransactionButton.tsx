@@ -111,7 +111,8 @@ export const AddTransactionButton = ({ vault }: AddTransactionButtonProperties) 
         onClose={onClose}
       >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent backgroundColor={theme.background.secondary}
+                      color={theme.text.primary}>
           <ModalHeader>{t('create-modal.title')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
@@ -150,8 +151,9 @@ export const AddTransactionButton = ({ vault }: AddTransactionButtonProperties) 
 
           <ModalFooter>
             <Button onClick={handleTransactionCreate}
-                    backgroundColor={theme.primaryColor}
-                    color={'#f8f8f8'} fontWeight={'400'}
+                    backgroundColor={theme.secondary}
+                    color={'#f8f8f8'}
+                    fontWeight={'400'}
                     mr={3}>
               {t('create-modal.submit')}
             </Button>
