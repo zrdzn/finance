@@ -1,4 +1,4 @@
 #!/bin/bash
 set -x
-/app/replace-variables.sh
-npm run start
+bash /app/replace-variables.sh
+exec npm run start
