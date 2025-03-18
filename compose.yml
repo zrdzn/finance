@@ -1,4 +1,42 @@
 services:
+  backend:
+    depends_on:
+      - database
+      - storage
+    image: backend-test:latest
+    ports:
+      - "8100:8095"
+    expose:
+      - "8095"
+    environment:
+      SERVER_PORT: ${SERVER_PORT}
+      CLIENT_URL: ${CLIENT_URL}
+      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_FROM: ${MAIL_FROM}
+      STORAGE_ACCESS_KEY: ${STORAGE_ACCESS_KEY}
+      STORAGE_SECRET_KEY: ${STORAGE_SECRET_KEY}
+      STORAGE_REGION: ${STORAGE_REGION}
+      STORAGE_ENDPOINT: ${STORAGE_ENDPOINT}
+    env_file:
+      - .env
+  frontend:
+    depends_on:
+      - backend
+    image: frontend-test:latest
+    ports:
+      - "3010:3010"
+    expose:
+      - "3010"
+    env_file:
+      - .env
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
   database:
     image: postgres
     restart: always
@@ -12,12 +50,6 @@ services:
       - '5432:5432'
     expose:
       - '5432'
-  mailhog:
-    image: mailhog/mailhog:latest
-    restart: always
-    ports:
-      - "1025:1025"
-      - "8025:8025"
   storage:
     image: minio/minio
     restart: always
