@@ -11,6 +11,10 @@ With currency conversion and a design optimized for mobile devices,
 The backend is built with **Kotlin** and offers a REST API, 
 while the frontend uses Next.js with **TypeScript**.
 The project is structured using **DDD** (Domain Driven Development) to organize the system into distinct domains.
+
+## 🌐 Demo
+You can try out the live demo of **Finance** at: https://finance.zrdzn.dev.
+
 ## 🛠️ Features
 
 ### AI Image Analysis

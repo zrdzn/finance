@@ -1288,7 +1288,7 @@ export interface OperationMethods {
 }
 
 export interface PathsDictionary {
-  ['/api/users/avatar']: {
+  ['/v1/users/avatar']: {
     /**
      * updateUserAvatar
      */
@@ -1298,7 +1298,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.UpdateUserAvatar.Responses.$200>
   }
-  ['/api/vaults/{vaultId}/invitations']: {
+  ['/v1/vaults/{vaultId}/invitations']: {
     /**
      * getVaultInvitations
      */
@@ -1316,7 +1316,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.CreateVaultInvitation.Responses.$200>
   }
-  ['/api/vaults/invitations/{invitationId}/accept']: {
+  ['/v1/vaults/invitations/{invitationId}/accept']: {
     /**
      * acceptVaultInvitation
      */
@@ -1326,7 +1326,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.AcceptVaultInvitation.Responses.$200>
   }
-  ['/api/vaults/create']: {
+  ['/v1/vaults/create']: {
     /**
      * createVault
      */
@@ -1336,7 +1336,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.CreateVault.Responses.$200>
   }
-  ['/api/users/2fa/setup']: {
+  ['/v1/users/2fa/setup']: {
     /**
      * requestUserTwoFactorSetup
      */
@@ -1346,7 +1346,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.RequestUserTwoFactorSetup.Responses.$200>
   }
-  ['/api/users/2fa/setup/verify']: {
+  ['/v1/users/2fa/setup/verify']: {
     /**
      * verifyUserTwoFactorSetup
      */
@@ -1356,7 +1356,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.VerifyUserTwoFactorSetup.Responses.$200>
   }
-  ['/api/transactions/{vaultId}/import/csv']: {
+  ['/v1/transactions/{vaultId}/import/csv']: {
     /**
      * importTransactionsFromCsv
      */
@@ -1366,7 +1366,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.ImportTransactionsFromCsv.Responses.$200>
   }
-  ['/api/transactions/{transactionId}/schedules/create']: {
+  ['/v1/transactions/{transactionId}/schedules/create']: {
     /**
      * createSchedule
      */
@@ -1376,7 +1376,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.CreateSchedule.Responses.$200>
   }
-  ['/api/transactions/{transactionId}/products/create']: {
+  ['/v1/transactions/{transactionId}/products/create']: {
     /**
      * createTransactionProduct
      */
@@ -1386,7 +1386,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.CreateTransactionProduct.Responses.$200>
   }
-  ['/api/transactions/image-analysis']: {
+  ['/v1/transactions/image-analysis']: {
     /**
      * analyzeImage
      */
@@ -1396,7 +1396,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.AnalyzeImage.Responses.$200>
   }
-  ['/api/transactions/create']: {
+  ['/v1/transactions/create']: {
     /**
      * createTransaction
      */
@@ -1406,7 +1406,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.CreateTransaction.Responses.$200>
   }
-  ['/api/products/create']: {
+  ['/v1/products/create']: {
     /**
      * createProduct
      */
@@ -1416,7 +1416,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.CreateProduct.Responses.$200>
   }
-  ['/api/categories/create']: {
+  ['/v1/categories/create']: {
     /**
      * createCategory
      */
@@ -1426,7 +1426,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.CreateCategory.Responses.$200>
   }
-  ['/api/authentication/register']: {
+  ['/v1/authentication/register']: {
     /**
      * register
      */
@@ -1436,7 +1436,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.Register.Responses.$200>
   }
-  ['/api/authentication/logout']: {
+  ['/v1/authentication/logout']: {
     /**
      * logout
      */
@@ -1446,7 +1446,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.Logout.Responses.$200>
   }
-  ['/api/authentication/login']: {
+  ['/v1/authentication/login']: {
     /**
      * login
      */
@@ -1456,7 +1456,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.Login.Responses.$200>
   }
-  ['/api/vaults/{vaultId}']: {
+  ['/v1/vaults/{vaultId}']: {
     /**
      * removeVault
      */
@@ -1474,7 +1474,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.UpdateVault.Responses.$200>
   }
-  ['/api/vaults/{vaultId}/members/{userId}']: {
+  ['/v1/vaults/{vaultId}/members/{userId}']: {
     /**
      * removeVaultMember
      */
@@ -1492,7 +1492,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.UpdateVaultMember.Responses.$200>
   }
-  ['/api/users/update/password']: {
+  ['/v1/users/update/password']: {
     /**
      * updateUserPassword
      */
@@ -1502,7 +1502,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.UpdateUserPassword.Responses.$200>
   }
-  ['/api/users/update/email']: {
+  ['/v1/users/update/email']: {
     /**
      * updateUserEmail
      */
@@ -1512,7 +1512,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.UpdateUserEmail.Responses.$200>
   }
-  ['/api/users/profile']: {
+  ['/v1/users/profile']: {
     /**
      * updateUserProfile
      */
@@ -1522,7 +1522,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.UpdateUserProfile.Responses.$200>
   }
-  ['/api/transactions/{transactionId}']: {
+  ['/v1/transactions/{transactionId}']: {
     /**
      * deleteTransaction
      */
@@ -1540,7 +1540,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.UpdateTransaction.Responses.$200>
   }
-  ['/api/transactions/{transactionId}/products/{productId}']: {
+  ['/v1/transactions/{transactionId}/products/{productId}']: {
     /**
      * deleteTransactionProduct
      */
@@ -1558,7 +1558,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.UpdateTransactionProduct.Responses.$200>
   }
-  ['/api/products/{productId}']: {
+  ['/v1/products/{productId}']: {
     /**
      * deleteProduct
      */
@@ -1576,7 +1576,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.UpdateProduct.Responses.$200>
   }
-  ['/api/vaults']: {
+  ['/v1/vaults']: {
     /**
      * getVaults
      */
@@ -1586,7 +1586,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetVaults.Responses.$200>
   }
-  ['/api/vaults/{vaultPublicId}']: {
+  ['/v1/vaults/{vaultPublicId}']: {
     /**
      * getVaultByPublicId
      */
@@ -1596,7 +1596,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetVaultByPublicId.Responses.$200>
   }
-  ['/api/vaults/{vaultId}/role']: {
+  ['/v1/vaults/{vaultId}/role']: {
     /**
      * getVaultRole
      */
@@ -1606,7 +1606,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetVaultRole.Responses.$200>
   }
-  ['/api/vaults/{vaultId}/members']: {
+  ['/v1/vaults/{vaultId}/members']: {
     /**
      * getVaultMembers
      */
@@ -1616,7 +1616,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetVaultMembers.Responses.$200>
   }
-  ['/api/vaults/invitations/{userEmail}']: {
+  ['/v1/vaults/invitations/{userEmail}']: {
     /**
      * getVaultInvitationsByUserEmail
      */
@@ -1626,7 +1626,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetVaultInvitationsByUserEmail.Responses.$200>
   }
-  ['/api/users/{userId}/username']: {
+  ['/v1/users/{userId}/username']: {
     /**
      * getUsernameByUserId
      */
@@ -1636,7 +1636,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetUsernameByUserId.Responses.$200>
   }
-  ['/api/users/verify']: {
+  ['/v1/users/verify']: {
     /**
      * verifyUser
      */
@@ -1646,7 +1646,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.VerifyUser.Responses.$200>
   }
-  ['/api/users/verify/request']: {
+  ['/v1/users/verify/request']: {
     /**
      * requestUserVerification
      */
@@ -1656,7 +1656,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.RequestUserVerification.Responses.$200>
   }
-  ['/api/users/update/request']: {
+  ['/v1/users/update/request']: {
     /**
      * requestUserUpdate
      */
@@ -1666,7 +1666,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.RequestUserUpdate.Responses.$200>
   }
-  ['/api/users/avatar/{userId}']: {
+  ['/v1/users/avatar/{userId}']: {
     /**
      * getUserAvatar
      */
@@ -1676,7 +1676,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetUserAvatar.Responses.$200>
   }
-  ['/api/transactions/{vaultId}']: {
+  ['/v1/transactions/{vaultId}']: {
     /**
      * getTransactionsByVaultId
      */
@@ -1686,7 +1686,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetTransactionsByVaultId.Responses.$200>
   }
-  ['/api/transactions/{vaultId}/flows']: {
+  ['/v1/transactions/{vaultId}/flows']: {
     /**
      * getFlowsByVaultId
      */
@@ -1696,7 +1696,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetFlowsByVaultId.Responses.$200>
   }
-  ['/api/transactions/{vaultId}/flows/chart']: {
+  ['/v1/transactions/{vaultId}/flows/chart']: {
     /**
      * getFlowsChart
      */
@@ -1706,7 +1706,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetFlowsChart.Responses.$200>
   }
-  ['/api/transactions/{vaultId}/export']: {
+  ['/v1/transactions/{vaultId}/export']: {
     /**
      * exportTransactions
      */
@@ -1716,7 +1716,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.ExportTransactions.Responses.$200>
   }
-  ['/api/transactions/{vaultId}/amount']: {
+  ['/v1/transactions/{vaultId}/amount']: {
     /**
      * getTransactionsAmountByVaultId
      */
@@ -1726,7 +1726,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetTransactionsAmountByVaultId.Responses.$200>
   }
-  ['/api/transactions/schedules/{vaultId}']: {
+  ['/v1/transactions/schedules/{vaultId}']: {
     /**
      * getSchedulesByVaultId
      */
@@ -1736,7 +1736,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetSchedulesByVaultId.Responses.$200>
   }
-  ['/api/products/{vaultId}']: {
+  ['/v1/products/{vaultId}']: {
     /**
      * getProductsByVaultId
      */
@@ -1746,7 +1746,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetProductsByVaultId.Responses.$200>
   }
-  ['/api/config']: {
+  ['/v1/config']: {
     /**
      * getConfiguration
      */
@@ -1756,7 +1756,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetConfiguration.Responses.$200>
   }
-  ['/api/categories/{categoryId}']: {
+  ['/v1/categories/{categoryId}']: {
     /**
      * getCategoryById
      */
@@ -1774,7 +1774,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.DeleteCategory.Responses.$200>
   }
-  ['/api/categories/vault/{vaultId}']: {
+  ['/v1/categories/vault/{vaultId}']: {
     /**
      * getCategoriesByVaultId
      */
@@ -1784,7 +1784,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetCategoriesByVaultId.Responses.$200>
   }
-  ['/api/authentication/details']: {
+  ['/v1/authentication/details']: {
     /**
      * getAuthenticationDetails
      */
@@ -1794,7 +1794,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetAuthenticationDetails.Responses.$200>
   }
-  ['/api/audits/{vaultId}']: {
+  ['/v1/audits/{vaultId}']: {
     /**
      * getAudits
      */
@@ -1804,7 +1804,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetAudits.Responses.$200>
   }
-  ['/api/vaults/{vaultId}/invitations/{userEmail}']: {
+  ['/v1/vaults/{vaultId}/invitations/{userEmail}']: {
     /**
      * removeVaultInvitation
      */
@@ -1814,7 +1814,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.RemoveVaultInvitation.Responses.$200>
   }
-  ['/api/transactions/schedules/{scheduleId}']: {
+  ['/v1/transactions/schedules/{scheduleId}']: {
     /**
      * deleteScheduleById
      */

@@ -77,7 +77,7 @@ open class ApplicationTestRunner {
                         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 )
             )
-            .defaultBaseUrl("http://localhost:$port/api")
+            .defaultBaseUrl("http://localhost:$port/v1")
 
         application = FinanceLauncher().launchApplication(
             ApplicationConfiguration(

@@ -28,8 +28,8 @@ class SecurityConfiguration(
         http
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/api/authentication/register").permitAll()
-                    .requestMatchers("/api/authentication/login").permitAll()
+                    .requestMatchers("/v1/authentication/register").permitAll()
+                    .requestMatchers("/v1/authentication/login").permitAll()
                     .requestMatchers("/swagger").permitAll()
                     .requestMatchers("/swagger-ui.html").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()

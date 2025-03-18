@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/v1/products")
 class ProductController(
     private val productService: ProductService
 ) {

@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/v1/users")
 class UserController(
     private val userService: UserService,
     @Value("\${client.url}") private val clientUrl: String
@@ -42,7 +42,7 @@ class UserController(
 
     @GetMapping("/verify/request")
     fun requestUserVerification(@AuthenticationPrincipal userId: Int, request: HttpServletRequest): Unit =
-        userService.requestUserVerification(userId, "${request.getBaseUrl()}/api/users/verify")
+        userService.requestUserVerification(userId, "${request.getBaseUrl()}/v1/users/verify")
 
     @PostMapping("/2fa/setup")
     fun requestUserTwoFactorSetup(
