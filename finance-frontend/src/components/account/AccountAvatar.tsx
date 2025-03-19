@@ -7,4 +7,4 @@ interface AvatarProperties {
 }
 
 export const AccountAvatar = ({ size, userId }: AvatarProperties) =>
-    <Avatar size={size} src={`${process.env.NEXT_PUBLIC_API_URL}/api/users/avatar/${userId}`} />
+    <Avatar size={size} src={`${process.env.NEXT_PUBLIC_API_URL}/v1/users/avatar/${userId}`} />

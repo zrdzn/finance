@@ -115,7 +115,7 @@ export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImport
         formData.append('file', imageBlob, 'file.png');
 
         api
-          .then(client => client.api.client.post(`/api/transactions/image-analysis`, formData, {
+          .then(client => client.api.client.post(`/v1/transactions/image-analysis`, formData, {
               headers: {
                   'Content-Type': 'multipart/form-data'
               }
