@@ -2,7 +2,8 @@
   "Global": {
     "add-button": "Add",
     "delete-button": "Delete",
-    "edit-button": "Edit"
+    "edit-button": "Edit",
+    "loading-spinner": "Loading..."
   },
   "Units": {
     "dates": {

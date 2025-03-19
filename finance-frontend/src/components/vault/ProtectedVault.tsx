@@ -9,6 +9,7 @@ import {Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Card, Flex} from "@chak
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
 import {useTheme} from "@/hooks/useTheme";
+import {LoadingSpinner} from "@/components/shared/LoadingSpinner";
 
 type VaultResponse = Components.Schemas.VaultResponse;
 type VaultRoleResponse = Components.Schemas.VaultRoleResponse;
@@ -24,7 +25,6 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
   const theme = useTheme()
   const { details } = useAuthentication();
   const vault = useVault({ publicId });
-  const t = useTranslations("Overview")
   const tBreadcrumb = useTranslations("Breadcrumb")
   const [vaultRole, setVaultRole] = useState<VaultRoleResponse>();
   const [isCollapsed, setIsCollapsed] = useState<boolean | undefined>(undefined);
@@ -62,15 +62,15 @@ export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties)
   }, [isCollapsed]);
 
   if (vault === undefined) {
-    return <>{t('vault-loading')}</>;
+    return <LoadingSpinner />;
   }
 
   if (vault === null) {
-    return <>{t('vault-not-found')}</>;
+    return <LoadingSpinner />;
   }
 
   if (details === null || vaultRole === undefined) {
-    return <>{t('not-authenticated')}</>;
+    return <LoadingSpinner />;
   }
 
   const breadcrumbMapping: Record<string, any> = {
