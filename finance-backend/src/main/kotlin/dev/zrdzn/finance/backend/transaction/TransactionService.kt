@@ -172,7 +172,7 @@ class TransactionService(
                     transactionMethod = transactionMethod,
                     transactionType = transactionType,
                     description = description,
-                    total = total,
+                    total = total.abs(),
                     currency = finalCurrency
                 )
             )
@@ -252,7 +252,7 @@ class TransactionService(
                     transactionMethod = transaction.transactionMethod,
                     transactionType = transaction.transactionType,
                     description = transaction.description,
-                    total = transaction.total,
+                    total = transaction.total.abs(),
                     currency = transaction.currency
                 )
             )
@@ -299,7 +299,7 @@ class TransactionService(
                 transactionMethod = transactionMethod,
                 transactionType = transactionType,
                 description = description,
-                total = price.amount,
+                total = price.amount.abs(),
                 currency = price.currency
             )
         )
