@@ -67,7 +67,7 @@ export const AccountProfileUpdateForm = ({ user }: AccountProfileUpdateFormPrope
         form.append("avatar", avatarFile)
 
         api
-            .then(client => client.api.client.put("api/users/avatar", form))
+            .then(client => client.api.client.put("/v1/users/avatar", form))
             .then(() => router.reload())
             .catch(error => {
                 const errorMessage = error.response?.data?.message
