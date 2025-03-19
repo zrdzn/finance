@@ -140,7 +140,7 @@ export const CsvImport = ({ vault, isOpen, onClose, permissions }: CsvImportProp
         formData.append('applyTransactionMethod', appliedTransactionMethod);
 
         api
-            .then(client => client.api.client.post(`/v1/transactions/${vault.id}/import`, formData, {
+            .then(client => client.api.client.post(`/v1/transactions/${vault.id}/import/csv`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
