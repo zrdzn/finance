@@ -3,7 +3,7 @@ services:
     depends_on:
       - database
       - storage
-    image: backend-test:latest
+    image: zrdzn/finance-backend:latest
     ports:
       - "8100:8095"
     expose:
@@ -28,7 +28,7 @@ services:
   frontend:
     depends_on:
       - backend
-    image: frontend-test:latest
+    image: zrdzn/finance-frontend:latest
     ports:
       - "3010:3010"
     expose:

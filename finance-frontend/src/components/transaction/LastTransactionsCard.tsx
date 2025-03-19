@@ -93,7 +93,7 @@ export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCar
                 ) : (
                     transactions
                         .sort((transactions, nextTransaction) => new Date(nextTransaction.createdAt).getTime() - new Date(transactions.createdAt).getTime())
-                        .slice(0, 3)
+                        .slice(0, 5)
                         .map((transaction) => (
                         <Tr key={transaction.id}>
                           <Td>

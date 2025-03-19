@@ -158,7 +158,8 @@ export const TransactionsCard = ({ vault, permissions }: TransactionsCardPropert
                       ) : (
                           queriedTransactions
                               .sort((transactions, nextTransaction) => new Date(nextTransaction.createdAt).getTime() - new Date(transactions.createdAt).getTime())
-                              .slice(0, 3)
+                            // todo add pagination
+                              .slice(0, 50)
                               .map((transaction) => (
                                   <Tr key={transaction.id}>
                                       <Td>
