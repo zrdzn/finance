@@ -226,7 +226,11 @@ export const CsvImport = ({ vault, isOpen, onClose, permissions }: CsvImportProp
                   {csvColumns.length > 0 && (
                     <Box mt={6}>
                         <FormLabel fontSize={'lg'}>{t('import.configure-mappings')}</FormLabel>
-                        <VStack spacing={6} align="stretch" bg="gray.50" p={4} borderRadius="md">
+                        <VStack spacing={6}
+                                align="stretch"
+                                backgroundColor={theme.background.primary}
+                                p={4}
+                                borderRadius="md">
                             {requiredFields
                               .filter(
                                 (field) => {
