@@ -4,15 +4,15 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.2.5"
-    id("io.spring.dependency-management") version "1.1.4"
-    id("org.jetbrains.kotlin.plugin.noarg") version "2.0.0-Beta1"
-    id("com.coditory.integration-test") version "1.4.5"
+    id("com.coditory.integration-test") version "2.2.5"
+    id("org.springframework.boot") version "3.4.3"
+    id("io.spring.dependency-management") version "1.1.7"
+    id("org.jetbrains.kotlin.plugin.noarg") version "2.1.20"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    kotlin("jvm") version "1.9.23"
+    kotlin("jvm") version "2.1.20"
     kotlin("plugin.spring") version "1.9.23"
-    kotlin("plugin.allopen") version "1.9.23"
-    kotlin("plugin.jpa") version "1.9.23"
+    kotlin("plugin.allopen") version "2.1.20"
+    kotlin("plugin.jpa") version "2.1.20"
 }
 
 group = "dev.zrdzn.finance"
@@ -40,34 +40,34 @@ dependencies {
     implementation("dev.samstevens.totp:totp-spring-boot-starter:1.7.1")
 
     // Serialization
-    val jackson = "2.15.3"
+    val jackson = "2.18.3"
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jackson")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson")
-    implementation("com.konghq:unirest-java-core:4.2.4")
     implementation("com.konghq:unirest-objectmapper-jackson:4.2.9")
+    implementation("com.konghq:unirest-java-core:4.4.5")
 
     // Database
-    implementation("org.liquibase:liquibase-core:4.26.0")
-    implementation("org.postgresql:postgresql:42.6.0")
+    implementation("org.postgresql:postgresql:42.7.5")
+    implementation("org.liquibase:liquibase-core:4.31.1")
 
     // Storage
-    implementation("software.amazon.awssdk:s3:2.29.17")
+    implementation("software.amazon.awssdk:s3:2.31.4")
 
     // Authentication
-    implementation("com.auth0:java-jwt:4.4.0")
+    implementation("com.auth0:java-jwt:4.5.0")
 
     // Cache
-    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
 
     // Reflection
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     // CSV
-    implementation("com.opencsv:opencsv:5.9")
+    implementation("com.opencsv:opencsv:5.10")
 
     // AI
-    implementation("io.github.sashirestela:simple-openai:3.18.0") {
+    implementation("io.github.sashirestela:simple-openai:3.19.4") {
         exclude(group = "ch.qos.logback", module = "logback-classic")
         exclude(group = "org.slf4j", module = "slf4j-api")
         exclude(group = "org.slf4j", module = "slf4j-simple")
