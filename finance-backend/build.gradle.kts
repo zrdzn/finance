@@ -12,7 +12,7 @@ plugins {
     kotlin("jvm") version "2.1.20"
     kotlin("plugin.spring") version "1.9.23"
     kotlin("plugin.allopen") version "1.9.23"
-    kotlin("plugin.jpa") version "1.9.23"
+    kotlin("plugin.jpa") version "2.1.20"
 }
 
 group = "dev.zrdzn.finance"
