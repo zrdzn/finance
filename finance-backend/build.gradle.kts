@@ -67,7 +67,7 @@ dependencies {
     implementation("com.opencsv:opencsv:5.9")
 
     // AI
-    implementation("io.github.sashirestela:simple-openai:3.18.0") {
+    implementation("io.github.sashirestela:simple-openai:3.19.4") {
         exclude(group = "ch.qos.logback", module = "logback-classic")
         exclude(group = "org.slf4j", module = "slf4j-api")
         exclude(group = "org.slf4j", module = "slf4j-simple")
