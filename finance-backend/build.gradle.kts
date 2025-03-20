@@ -4,15 +4,15 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.2.5"
-    id("io.spring.dependency-management") version "1.1.4"
+    id("org.springframework.boot") version "3.4.3"
+    id("io.spring.dependency-management") version "1.1.7"
     id("org.jetbrains.kotlin.plugin.noarg") version "2.0.0-Beta1"
     id("com.coditory.integration-test") version "1.4.5"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    kotlin("jvm") version "1.9.23"
+    kotlin("jvm") version "2.1.20"
     kotlin("plugin.spring") version "1.9.23"
     kotlin("plugin.allopen") version "2.1.20"
-    kotlin("plugin.jpa") version "1.9.23"
+    kotlin("plugin.jpa") version "2.1.20"
 }
 
 group = "dev.zrdzn.finance"
@@ -44,7 +44,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jackson")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson")
-    implementation("com.konghq:unirest-java-core:4.2.4")
+    implementation("com.konghq:unirest-java-core:4.4.5")
     implementation("com.konghq:unirest-objectmapper-jackson:4.2.4")
 
     // Database
@@ -52,7 +52,7 @@ dependencies {
     implementation("org.postgresql:postgresql:42.6.0")
 
     // Storage
-    implementation("software.amazon.awssdk:s3:2.29.17")
+    implementation("software.amazon.awssdk:s3:2.31.4")
 
     // Authentication
     implementation("com.auth0:java-jwt:4.4.0")
@@ -67,7 +67,7 @@ dependencies {
     implementation("com.opencsv:opencsv:5.9")
 
     // AI
-    implementation("io.github.sashirestela:simple-openai:3.18.0") {
+    implementation("io.github.sashirestela:simple-openai:3.19.4") {
         exclude(group = "ch.qos.logback", module = "logback-classic")
         exclude(group = "org.slf4j", module = "slf4j-api")
         exclude(group = "org.slf4j", module = "slf4j-simple")
