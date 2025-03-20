@@ -9,7 +9,7 @@
     "generate:types": "curl http://localhost:8080/v3/api-docs > ./src/api/openapi.json && typegen ./src/api/openapi.json > src/api/api.d.ts"
   },
   "dependencies": {
-    "@chakra-ui/next-js": "^2.1.5",
+    "@chakra-ui/next-js": "^2.4.4",
     "@chakra-ui/react": "^2.8.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
