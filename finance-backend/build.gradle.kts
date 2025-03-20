@@ -4,7 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.2.5"
+    id("org.springframework.boot") version "3.4.3"
     id("io.spring.dependency-management") version "1.1.4"
     id("org.jetbrains.kotlin.plugin.noarg") version "2.0.0-Beta1"
     id("com.coditory.integration-test") version "1.4.5"
