@@ -49,7 +49,7 @@ dependencies {
 
     // Database
     implementation("org.liquibase:liquibase-core:4.26.0")
-    implementation("org.postgresql:postgresql:42.6.0")
+    implementation("org.postgresql:postgresql:42.7.5")
 
     // Storage
     implementation("software.amazon.awssdk:s3:2.29.17")
