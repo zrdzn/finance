@@ -64,7 +64,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     // CSV
-    implementation("com.opencsv:opencsv:5.9")
+    implementation("com.opencsv:opencsv:5.10")
 
     // AI
     implementation("io.github.sashirestela:simple-openai:3.19.4") {
