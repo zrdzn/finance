@@ -48,8 +48,8 @@ dependencies {
     implementation("com.konghq:unirest-objectmapper-jackson:4.2.4")
 
     // Database
+    implementation("org.postgresql:postgresql:42.7.5")
     implementation("org.liquibase:liquibase-core:4.31.1")
-    implementation("org.postgresql:postgresql:42.6.0")
 
     // Storage
     implementation("software.amazon.awssdk:s3:2.31.4")
