@@ -11,7 +11,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
-    kotlin("plugin.allopen") version "1.9.23"
+    kotlin("plugin.allopen") version "2.1.20"
     kotlin("plugin.jpa") version "1.9.23"
 }
 
