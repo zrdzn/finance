@@ -7,7 +7,7 @@ plugins {
     id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.4"
     id("org.jetbrains.kotlin.plugin.noarg") version "2.0.0-Beta1"
-    id("com.coditory.integration-test") version "1.4.5"
+    id("com.coditory.integration-test") version "2.2.5"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
