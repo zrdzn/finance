@@ -9,7 +9,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.noarg") version "2.0.0-Beta1"
     id("com.coditory.integration-test") version "1.4.5"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    kotlin("jvm") version "1.9.23"
+    kotlin("jvm") version "2.1.20"
     kotlin("plugin.spring") version "1.9.23"
     kotlin("plugin.allopen") version "1.9.23"
     kotlin("plugin.jpa") version "1.9.23"
