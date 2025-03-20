@@ -12,3 +12,8 @@ updates:
       interval: daily
       time: "04:00"
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types: [ "version-update:semver-patch" ]
+      - dependency-name: "*"
+        update-types: [ "lockfile-only" ]
