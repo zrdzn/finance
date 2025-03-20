@@ -58,7 +58,7 @@ dependencies {
     implementation("com.auth0:java-jwt:4.4.0")
 
     // Cache
-    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
 
     // Reflection
     implementation("org.jetbrains.kotlin:kotlin-reflect")
