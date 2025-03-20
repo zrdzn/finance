@@ -48,7 +48,7 @@ dependencies {
     implementation("com.konghq:unirest-objectmapper-jackson:4.2.4")
 
     // Database
-    implementation("org.liquibase:liquibase-core:4.26.0")
+    implementation("org.liquibase:liquibase-core:4.31.1")
     implementation("org.postgresql:postgresql:42.6.0")
 
     // Storage
