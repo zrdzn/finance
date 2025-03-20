@@ -60,5 +60,5 @@ ai:
   api-key: ${OPENAI_API_KEY}
 logging:
   level:
-    org.springframework.security: TRACE
+    org.springframework.security: DEBUG
     org.springframework.security.web.csrf: TRACE
