@@ -45,7 +45,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson")
     implementation("com.konghq:unirest-java-core:4.2.4")
-    implementation("com.konghq:unirest-objectmapper-jackson:4.2.4")
+    implementation("com.konghq:unirest-objectmapper-jackson:4.2.9")
 
     // Database
     implementation("org.liquibase:liquibase-core:4.26.0")
