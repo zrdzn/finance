@@ -40,7 +40,7 @@ dependencies {
     implementation("dev.samstevens.totp:totp-spring-boot-starter:1.7.1")
 
     // Serialization
-    val jackson = "2.15.3"
+    val jackson = "2.18.3"
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jackson")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson")
