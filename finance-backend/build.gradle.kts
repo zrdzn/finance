@@ -52,7 +52,7 @@ dependencies {
     implementation("org.postgresql:postgresql:42.6.0")
 
     // Storage
-    implementation("software.amazon.awssdk:s3:2.29.17")
+    implementation("software.amazon.awssdk:s3:2.31.4")
 
     // Authentication
     implementation("com.auth0:java-jwt:4.4.0")
