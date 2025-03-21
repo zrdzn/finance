@@ -4,14 +4,6 @@ import dev.zrdzn.finance.backend.shared.createRandomToken
 import dev.zrdzn.finance.backend.transaction.TransactionMethod
 import dev.zrdzn.finance.backend.user.UserService
 import dev.zrdzn.finance.backend.vault.VaultMapper.toResponse
-import dev.zrdzn.finance.backend.vault.error.UserNotMemberError
-import dev.zrdzn.finance.backend.vault.error.VaultCannotUpdateMemberError
-import dev.zrdzn.finance.backend.vault.error.VaultInsufficientPermissionError
-import dev.zrdzn.finance.backend.vault.error.VaultInvitationNotFoundError
-import dev.zrdzn.finance.backend.vault.error.VaultInvitationNotOwnedError
-import dev.zrdzn.finance.backend.vault.error.VaultMemberNotFoundError
-import dev.zrdzn.finance.backend.vault.error.VaultNotFoundByPublicIdError
-import dev.zrdzn.finance.backend.vault.error.VaultNotFoundError
 import dev.zrdzn.finance.backend.vault.dto.VaultInvitationListResponse
 import dev.zrdzn.finance.backend.vault.dto.VaultInvitationResponse
 import dev.zrdzn.finance.backend.vault.dto.VaultListResponse
@@ -19,6 +11,15 @@ import dev.zrdzn.finance.backend.vault.dto.VaultMemberListResponse
 import dev.zrdzn.finance.backend.vault.dto.VaultMemberResponse
 import dev.zrdzn.finance.backend.vault.dto.VaultResponse
 import dev.zrdzn.finance.backend.vault.dto.VaultRoleResponse
+import dev.zrdzn.finance.backend.vault.error.UserNotMemberError
+import dev.zrdzn.finance.backend.vault.error.VaultCannotDeleteMemberError
+import dev.zrdzn.finance.backend.vault.error.VaultCannotUpdateMemberError
+import dev.zrdzn.finance.backend.vault.error.VaultInsufficientPermissionError
+import dev.zrdzn.finance.backend.vault.error.VaultInvitationNotFoundError
+import dev.zrdzn.finance.backend.vault.error.VaultInvitationNotOwnedError
+import dev.zrdzn.finance.backend.vault.error.VaultMemberNotFoundError
+import dev.zrdzn.finance.backend.vault.error.VaultNotFoundByPublicIdError
+import dev.zrdzn.finance.backend.vault.error.VaultNotFoundError
 import java.time.Clock
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -34,24 +35,21 @@ class VaultService(
     private val clock: Clock
 ) {
 
-    @Transactional
-    fun authorizeMember(vaultId: Int, userId: Int, requiredPermission: VaultPermission): VaultMemberResponse {
+    fun <T> withAuthorization(
+        vaultId: Int,
+        userId: Int,
+        requiredPermission: VaultPermission,
+        block: (VaultMemberResponse) -> T
+    ): T {
         val member = vaultMemberRepository.findByVaultIdAndUserId(vaultId, userId)
-            ?.let {
-                VaultMemberResponse(
-                    id = it.id!!,
-                    vaultId = vaultId,
-                    user = userService.getUser(it.userId),
-                    vaultRole = it.vaultRole
-                )
-            }
+            ?.let { it.toResponse(userService.getUser(it.userId)) }
             ?: throw UserNotMemberError()
 
-        when {
-            !member.vaultRole.hasPermission(requiredPermission) -> throw VaultInsufficientPermissionError()
+        if (!member.vaultRole.hasPermission(requiredPermission)) {
+            throw VaultInsufficientPermissionError()
         }
 
-        return member
+        return block(member)
     }
 
     @Transactional
@@ -95,51 +93,53 @@ class VaultService(
     }
 
     @Transactional
-    fun createVaultInvitation(vaultId: Int, requesterId: Int, userEmail: String): VaultInvitationResponse {
-        authorizeMember(vaultId, requesterId, VaultPermission.MEMBER_INVITE_CREATE)
+    fun createVaultInvitation(vaultId: Int, requesterId: Int, userEmail: String): VaultInvitationResponse =
+        withAuthorization(vaultId, requesterId, VaultPermission.MEMBER_INVITE_CREATE) {
+            val vault = getVault(vaultId, requesterId)
 
-        val vault = getVault(vaultId, requesterId)
-
-        val invitation = vaultInvitationRepository
-            .save(
-                VaultInvitation(
-                    id = null,
-                    vaultId = vault.id,
-                    userEmail = userEmail,
-                    expiresAt = Instant.now(clock).plus(1, ChronoUnit.DAYS)
+            val invitation = vaultInvitationRepository
+                .save(
+                    VaultInvitation(
+                        id = null,
+                        vaultId = vault.id,
+                        userEmail = userEmail,
+                        expiresAt = Instant.now(clock).plus(1, ChronoUnit.DAYS)
+                    )
                 )
-            )
 
-        return invitation.toResponse(vault)
-    }
-
-    @Transactional
-    fun updateVault(requesterId: Int, vaultId: Int, name: String, currency: String, transactionMethod: TransactionMethod) {
-        val vault = vaultRepository.findById(vaultId) ?: throw VaultNotFoundError()
-
-        authorizeMember(vaultId, requesterId, VaultPermission.SETTINGS_UPDATE)
-
-        vault.name = name
-        vault.currency = currency
-        vault.transactionMethod = transactionMethod
-    }
-
-    @Transactional
-    fun updateVaultMember(requesterId: Int, vaultId: Int, vaultMemberId: Int, vaultRole: VaultRole) {
-        val requester = authorizeMember(vaultId, requesterId, VaultPermission.MEMBER_UPDATE)
-        val vaultMember = vaultMemberRepository.findById(vaultMemberId) ?: throw VaultMemberNotFoundError()
-
-        // check if the requester has higher role than the user he wants to update
-        if (!requester.vaultRole.isHigherThan(vaultMember.vaultRole)) {
-            throw VaultCannotUpdateMemberError()
+            invitation.toResponse(vault)
         }
 
-        if (vaultRole.isOwner()) {
-            throw VaultCannotUpdateMemberError()
+    @Transactional
+    fun updateVault(requesterId: Int, vaultId: Int, name: String, currency: String, transactionMethod: TransactionMethod) =
+        withAuthorization(vaultId, requesterId, VaultPermission.SETTINGS_UPDATE) {
+            val vault = vaultRepository.findById(vaultId) ?: throw VaultNotFoundError()
+
+            vault.name = name
+            vault.currency = currency
+            vault.transactionMethod = transactionMethod
         }
 
-        vaultMember.vaultRole = vaultRole
-    }
+    @Transactional
+    fun updateVaultMember(requesterId: Int, vaultId: Int, vaultMemberId: Int, vaultRole: VaultRole) =
+        withAuthorization(vaultId, requesterId, VaultPermission.MEMBER_UPDATE) {
+            val vaultMember = vaultMemberRepository.findById(vaultMemberId) ?: throw VaultMemberNotFoundError()
+
+            // check if the requester has higher role than the user he wants to update
+            if (!it.vaultRole.isHigherThan(vaultMember.vaultRole)) {
+                throw VaultCannotUpdateMemberError()
+            }
+
+            if (vaultRole.isOwner()) {
+                throw VaultCannotUpdateMemberError()
+            }
+
+            if (requesterId == vaultMemberId) {
+                throw VaultCannotUpdateMemberError()
+            }
+
+            vaultMember.vaultRole = vaultRole
+        }
 
     @Transactional
     fun acceptVaultInvitation(requesterId: Int, invitationId: Int) {
@@ -170,61 +170,56 @@ class VaultService(
     }
 
     @Transactional(readOnly = true)
-    fun getVault(vaultId: Int, requesterId: Int): VaultResponse {
-        authorizeMember(vaultId, requesterId, VaultPermission.DETAILS_READ)
-
-        return getVaultForcefully(vaultId)
-    }
+    fun getVault(vaultId: Int, requesterId: Int): VaultResponse =
+        withAuthorization(vaultId, requesterId, VaultPermission.DETAILS_READ) {
+            getVaultForcefully(vaultId)
+        }
 
     @Transactional(readOnly = true)
     fun getVaultsByVaultMemberUserId(requesterId: Int): VaultListResponse {
         return VaultListResponse(
             vaultMemberRepository.findVaultsByUserId(requesterId)
                 .map {
-                    authorizeMember(it.id!!, requesterId, VaultPermission.DETAILS_READ)
-
-                    it.toResponse()
+                    withAuthorization(it.id!!, requesterId, VaultPermission.DETAILS_READ) { _ ->
+                        it.toResponse()
+                    }
                 }
                 .toSet()
         )
     }
 
     @Transactional(readOnly = true)
-    fun getVaultForcefully(publicId: String): VaultResponse? {
-        return vaultRepository.findByPublicId(publicId)
-            ?.toResponse()
-    }
+    fun getVaultForcefully(publicId: String): VaultResponse? =
+        vaultRepository.findByPublicId(publicId)?.toResponse()
 
     @Transactional(readOnly = true)
     fun getVault(publicId: String, requesterId: Int): VaultResponse? {
         val vault = getVaultForcefully(publicId) ?: throw VaultNotFoundByPublicIdError()
 
-        authorizeMember(vault.id, requesterId, VaultPermission.DETAILS_READ)
-
-        return vault
+        return withAuthorization(vault.id, requesterId, VaultPermission.DETAILS_READ) {
+            vault
+        }
     }
 
     @Transactional(readOnly = true)
-    fun getVaultMembers(vaultId: Int, requesterId: Int): VaultMemberListResponse {
-        authorizeMember(vaultId, requesterId, VaultPermission.MEMBER_READ)
-
-        return VaultMemberListResponse(
-            vaultMemberRepository.findByVaultId(vaultId)
-                .map { it.toResponse(userService.getUser(it.userId)) }
-                .toSet()
-        )
-    }
+    fun getVaultMembers(vaultId: Int, requesterId: Int): VaultMemberListResponse =
+        withAuthorization(vaultId, requesterId, VaultPermission.MEMBER_READ) {
+            VaultMemberListResponse(
+                vaultMemberRepository.findByVaultId(vaultId)
+                    .map { it.toResponse(userService.getUser(it.userId)) }
+                    .toSet()
+            )
+        }
 
     @Transactional(readOnly = true)
-    fun getVaultInvitations(vaultId: Int, requesterId: Int): VaultInvitationListResponse {
-        authorizeMember(vaultId, requesterId, VaultPermission.MEMBER_INVITE_READ)
-
-        return VaultInvitationListResponse(
-            vaultInvitationRepository.findByVaultId(vaultId)
-                .map { it.toResponse(getVault(vaultId = vaultId, requesterId = requesterId)) }
-                .toSet()
-        )
-    }
+    fun getVaultInvitations(vaultId: Int, requesterId: Int): VaultInvitationListResponse =
+        withAuthorization(vaultId, requesterId, VaultPermission.MEMBER_INVITE_READ) {
+            VaultInvitationListResponse(
+                vaultInvitationRepository.findByVaultId(vaultId)
+                    .map { it.toResponse(getVault(vaultId = vaultId, requesterId = requesterId)) }
+                    .toSet()
+            )
+        }
 
     @Transactional(readOnly = true)
     fun getVaultInvitations(requesterId: Int, userEmail: String): VaultInvitationListResponse {
@@ -256,23 +251,22 @@ class VaultService(
     }
 
     @Transactional
-    fun removeVault(vaultId: Int, requesterId: Int) {
-        authorizeMember(vaultId, requesterId, VaultPermission.DELETE)
-
-        vaultRepository.deleteById(vaultId)
-    }
-
-    @Transactional
-    fun removeVaultMember(vaultId: Int, requesterId: Int, userId: Int) {
-        val requester = authorizeMember(vaultId, requesterId, VaultPermission.MEMBER_REMOVE)
-        val vaultMember = vaultMemberRepository.findById(userId) ?: throw VaultMemberNotFoundError()
-
-        if (!requester.vaultRole.isHigherThan(vaultMember.vaultRole)) {
-            throw VaultCannotDeleteMemberError()
+    fun removeVault(vaultId: Int, requesterId: Int) =
+        withAuthorization(vaultId, requesterId, VaultPermission.DELETE) {
+            vaultRepository.deleteById(vaultId)
         }
 
-        vaultMemberRepository.deleteByVaultIdAndUserId(vaultId, userId)
-    }
+    @Transactional
+    fun removeVaultMember(vaultId: Int, requesterId: Int, userId: Int) =
+        withAuthorization(vaultId, requesterId, VaultPermission.MEMBER_REMOVE) {
+            val vaultMember = vaultMemberRepository.findById(userId) ?: throw VaultMemberNotFoundError()
+
+            if (!it.vaultRole.isHigherThan(vaultMember.vaultRole)) {
+                throw VaultCannotDeleteMemberError()
+            }
+
+            vaultMemberRepository.deleteByVaultIdAndUserId(vaultId, userId)
+        }
 
     @Transactional
     fun removeVaultInvitationForcefully(vaultId: Int, userEmail: String) {
@@ -282,13 +276,15 @@ class VaultService(
     @Transactional
     fun removeVaultInvitation(vaultId: Int, requesterId: Int, userEmail: String) {
         val user = userService.getUser(requesterId)
+        // remove invitation by the invited user
         if (user.email == userEmail) {
             removeVaultInvitationForcefully(vaultId, userEmail)
             return
         }
 
-        authorizeMember(vaultId, requesterId, VaultPermission.MEMBER_INVITE_DELETE)
-            .also { removeVaultInvitationForcefully(vaultId, userEmail) }
+        return withAuthorization(vaultId, requesterId, VaultPermission.MEMBER_INVITE_DELETE) {
+            removeVaultInvitationForcefully(vaultId, userEmail)
+        }
     }
 
 }

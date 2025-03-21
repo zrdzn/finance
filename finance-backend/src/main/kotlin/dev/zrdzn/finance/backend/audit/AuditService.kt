@@ -37,18 +37,17 @@ class AuditService(
                 )
             }
 
-    fun getAudits(requesterId: Int, vaultId: Int): AuditListResponse {
-        vaultService.authorizeMember(vaultId = vaultId, userId = requesterId, requiredPermission = VaultPermission.AUDIT_READ)
-
-        return auditRepository.findByVaultId(vaultId)
-            .map {
-                it.toResponse(
-                    vault = vaultService.getVault(it.vaultId, requesterId),
-                    user = userService.getUser(it.userId)
-                )
-            }
-            .toSet()
-            .let { AuditListResponse(it) }
-    }
+    fun getAudits(requesterId: Int, vaultId: Int): AuditListResponse =
+        vaultService.withAuthorization(vaultId, requesterId, VaultPermission.AUDIT_READ) {
+            auditRepository.findByVaultId(vaultId)
+                .map {
+                    it.toResponse(
+                        vault = vaultService.getVault(it.vaultId, requesterId),
+                        user = userService.getUser(it.userId)
+                    )
+                }
+                .toSet()
+                .let { AuditListResponse(it) }
+        }
 
 }

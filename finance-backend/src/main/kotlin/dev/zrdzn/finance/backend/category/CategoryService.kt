@@ -19,51 +19,50 @@ class CategoryService(
 ) {
 
     @Transactional
-    fun createCategory(requesterId: Int, name: String, vaultId: Int): CategoryResponse {
-        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.CATEGORY_CREATE)
-
-        return categoryRepository
-            .save(
-                Category(
-                    id = null,
-                    name = name,
-                    vaultId = vaultId
+    fun createCategory(requesterId: Int, name: String, vaultId: Int): CategoryResponse =
+        vaultService.withAuthorization(vaultId, requesterId, VaultPermission.CATEGORY_CREATE) {
+            categoryRepository
+                .save(
+                    Category(
+                        id = null,
+                        name = name,
+                        vaultId = vaultId
+                    )
                 )
-            )
-            .also {
-                auditService.createAudit(
-                    vaultId = vaultId,
-                    userId = requesterId,
-                    auditAction = AuditAction.CATEGORY_CREATED,
-                    description = name
-                )
-            }
-            .toResponse()
-    }
+                .also {
+                    auditService.createAudit(
+                        vaultId = vaultId,
+                        userId = requesterId,
+                        auditAction = AuditAction.CATEGORY_CREATED,
+                        description = name
+                    )
+                }
+                .toResponse()
+        }
 
     @Transactional
     fun deleteCategory(requesterId: Int, categoryId: Int) {
         val category = getCategoryById(requesterId, categoryId)
 
-        vaultService.authorizeMember(category.vaultId, requesterId, VaultPermission.CATEGORY_DELETE)
+        return vaultService.withAuthorization(category.vaultId, requesterId, VaultPermission.CATEGORY_DELETE) {
+            categoryRepository.deleteById(categoryId)
 
-        categoryRepository.deleteById(categoryId)
-
-        auditService.createAudit(
-            vaultId = category.vaultId,
-            userId = requesterId,
-            auditAction = AuditAction.CATEGORY_DELETED,
-            description = category.name
-        )
+            auditService.createAudit(
+                vaultId = category.vaultId,
+                userId = requesterId,
+                auditAction = AuditAction.CATEGORY_DELETED,
+                description = category.name
+            )
+        }
     }
 
     @Transactional(readOnly = true)
     fun getCategoryById(requesterId: Int, categoryId: Int): CategoryResponse =
         categoryRepository.findById(categoryId)
             ?.let {
-                vaultService.authorizeMember(it.vaultId, requesterId, VaultPermission.CATEGORY_READ)
-
-                it.toResponse()
+                vaultService.withAuthorization(it.vaultId, requesterId, VaultPermission.CATEGORY_READ) { _ ->
+                    it.toResponse()
+                }
             }
             ?: throw CategoryNotFoundError()
 
@@ -71,9 +70,9 @@ class CategoryService(
     fun getCategoriesByVaultId(requesterId: Int, vaultId: Int): CategoryListResponse =
         categoryRepository.findAllByVaultId(vaultId)
             .map {
-                vaultService.authorizeMember(vaultId, requesterId, VaultPermission.CATEGORY_READ)
-
-                it.toResponse()
+                vaultService.withAuthorization(vaultId, requesterId, VaultPermission.CATEGORY_READ) { _ ->
+                    it.toResponse()
+                }
             }
             .toSet()
             .let { CategoryListResponse(it) }

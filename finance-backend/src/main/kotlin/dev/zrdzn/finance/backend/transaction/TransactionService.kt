@@ -31,6 +31,7 @@ import dev.zrdzn.finance.backend.transaction.dto.TransactionProductListResponse
 import dev.zrdzn.finance.backend.transaction.dto.TransactionProductResponse
 import dev.zrdzn.finance.backend.transaction.dto.TransactionResponse
 import dev.zrdzn.finance.backend.transaction.error.TransactionDescriptionRequiredError
+import dev.zrdzn.finance.backend.transaction.error.TransactionImportFileEmptyError
 import dev.zrdzn.finance.backend.transaction.error.TransactionImportMappingNotFoundError
 import dev.zrdzn.finance.backend.transaction.error.TransactionNotFoundError
 import dev.zrdzn.finance.backend.transaction.error.TransactionPriceRequiredError
@@ -92,103 +93,102 @@ class TransactionService(
         file: InputStream,
         mappings: Map<String, String>,
         applyTransactionMethod: TransactionMethod?
-    ) {
-        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_CREATE)
+    ) =
+        vaultService.withAuthorization(vaultId, requesterId, VaultPermission.TRANSACTION_CREATE) {
+            val reader = InputStreamReader(file)
 
-        val reader = InputStreamReader(file)
+            val csvParser = CSVParserBuilder()
+                .withSeparator(separator)
+                .withQuoteChar('"')
+                .withEscapeChar('\\')
+                .withStrictQuotes(false)
+                .withIgnoreLeadingWhiteSpace(true)
+                .withIgnoreQuotations(false)
+                .withFieldAsNull(CSVReaderNullFieldIndicator.NEITHER)
+                .withErrorLocale(Locale.getDefault())
+                .build()
 
-        val csvParser = CSVParserBuilder()
-            .withSeparator(separator)
-            .withQuoteChar('"')
-            .withEscapeChar('\\')
-            .withStrictQuotes(false)
-            .withIgnoreLeadingWhiteSpace(true)
-            .withIgnoreQuotations(false)
-            .withFieldAsNull(CSVReaderNullFieldIndicator.NEITHER)
-            .withErrorLocale(Locale.getDefault())
-            .build()
+            val csvReader = CSVReaderBuilder(reader)
+                .withCSVParser(csvParser)
+                .build()
 
-        val csvReader = CSVReaderBuilder(reader)
-            .withCSVParser(csvParser)
-            .build()
-
-        val csvRecords = csvReader.readAll()
-        if (csvRecords.isEmpty()) {
-            return
-        }
-
-        val header = csvRecords.first()
-        val columns = mappings.mapValues { (_, columnName) ->
-            header.indexOf(columnName).takeIf { it >= 0 } ?: throw IllegalArgumentException("Column $columnName not found in CSV header")
-        }
-
-        val transactions = mutableSetOf<Transaction>()
-
-        for (csvRecord in csvRecords.drop(1)) {
-            val values = try {
-                mapOf(
-                    "createdAt" to csvRecord.getOrNull(columns["createdAt"] ?: -1),
-                    "transactionMethod" to csvRecord.getOrNull(columns["transactionMethod"] ?: -1),
-                    "description" to csvRecord.getOrNull(columns["description"] ?: -1),
-                    "total" to csvRecord.getOrNull(columns["total"] ?: -1),
-                    "currency" to csvRecord.getOrNull(columns["currency"] ?: -1),
-                    "rawPrice" to csvRecord.getOrNull(columns["rawPrice"] ?: -1)
-                )
-            } catch (e: NoSuchElementException) {
-                throw TransactionImportMappingNotFoundError()
+            val csvRecords = csvReader.readAll()
+            if (csvRecords.isEmpty()) {
+                throw TransactionImportFileEmptyError()
             }
 
-            val transactionMethod = applyTransactionMethod ?: values["transactionMethod"]
-                ?.let { TransactionMethod.valueOf(it) }
+            val header = csvRecords.first()
+            val columns = mappings.mapValues { (_, columnName) ->
+                header.indexOf(columnName).takeIf { it >= 0 } ?: throw IllegalArgumentException("Column $columnName not found in CSV header")
+            }
+
+            val transactions = mutableSetOf<Transaction>()
+
+            for (csvRecord in csvRecords.drop(1)) {
+                val values = try {
+                    mapOf(
+                        "createdAt" to csvRecord.getOrNull(columns["createdAt"] ?: -1),
+                        "transactionMethod" to csvRecord.getOrNull(columns["transactionMethod"] ?: -1),
+                        "description" to csvRecord.getOrNull(columns["description"] ?: -1),
+                        "total" to csvRecord.getOrNull(columns["total"] ?: -1),
+                        "currency" to csvRecord.getOrNull(columns["currency"] ?: -1),
+                        "rawPrice" to csvRecord.getOrNull(columns["rawPrice"] ?: -1)
+                    )
+                } catch (e: NoSuchElementException) {
+                    throw TransactionImportMappingNotFoundError()
+                }
+
+                val transactionMethod = applyTransactionMethod ?: values["transactionMethod"]
+                    ?.let { TransactionMethod.valueOf(it) }
                 ?: throw TransactionImportMappingNotFoundError()
-            val description = values["description"] ?: throw TransactionImportMappingNotFoundError()
-            val totalString = values["total"]
-            val currency = values["currency"]
-            val rawPrice = values["rawPrice"]
+                val description = values["description"] ?: throw TransactionImportMappingNotFoundError()
+                val totalString = values["total"]
+                val currency = values["currency"]
+                val rawPrice = values["rawPrice"]
 
-            val (total, finalCurrency) = when {
-                !rawPrice.isNullOrBlank() -> {
-                    val (parsedTotal, parsedCurrency) = parseRawPrice(rawPrice)
-                    parsedTotal to (currency ?: parsedCurrency)
+                val (total, finalCurrency) = when {
+                    !rawPrice.isNullOrBlank() -> {
+                        val (parsedTotal, parsedCurrency) = parseRawPrice(rawPrice)
+                        parsedTotal to (currency ?: parsedCurrency)
+                    }
+                    !totalString.isNullOrBlank() -> {
+                        totalString.replace(" ", "").replace(",", ".").toBigDecimal() to (currency ?: throw TransactionImportMappingNotFoundError())
+                    }
+                    else -> throw TransactionPriceRequiredError()
                 }
-                !totalString.isNullOrBlank() -> {
-                    totalString.replace(" ", "").replace(",", ".").toBigDecimal() to (currency ?: throw TransactionImportMappingNotFoundError())
+
+                val transactionType = when {
+                    total > BigDecimal.ZERO -> TransactionType.INCOMING
+                    total < BigDecimal.ZERO -> TransactionType.OUTGOING
+                    else -> throw TransactionPriceRequiredError()
                 }
-                else -> throw TransactionPriceRequiredError()
-            }
 
-            val transactionType = when {
-                total > BigDecimal.ZERO -> TransactionType.INCOMING
-                total < BigDecimal.ZERO -> TransactionType.OUTGOING
-                else -> throw TransactionPriceRequiredError()
-            }
-
-            transactions.add(
-                Transaction(
-                    id = null,
-                    userId = requesterId,
-                    vaultId = vaultId,
-                    createdAt = Instant.now(clock),
-                    transactionMethod = transactionMethod,
-                    transactionType = transactionType,
-                    description = description,
-                    total = total.abs(),
-                    currency = finalCurrency
+                transactions.add(
+                    Transaction(
+                        id = null,
+                        userId = requesterId,
+                        vaultId = vaultId,
+                        createdAt = Instant.now(clock),
+                        transactionMethod = transactionMethod,
+                        transactionType = transactionType,
+                        description = description,
+                        total = total.abs(),
+                        currency = finalCurrency
+                    )
                 )
+            }
+
+            transactions.forEach {
+                transactionRepository.save(it)
+            }
+
+            auditService.createAudit(
+                vaultId = vaultId,
+                userId = requesterId,
+                auditAction = AuditAction.TRANSACTION_IMPORTED,
+                description = "Transactions amount ${transactions.size}"
             )
         }
-
-        transactions.forEach {
-            transactionRepository.save(it)
-        }
-
-        auditService.createAudit(
-            vaultId = vaultId,
-            userId = requesterId,
-            auditAction = AuditAction.TRANSACTION_IMPORTED,
-            description = "Transactions amount ${transactions.size}"
-        )
-    }
 
     @Transactional
     fun exportTransactionsToCsv(requesterId: Int, vaultId: Int, startDate: Instant, endDate: Instant): String {
@@ -283,51 +283,50 @@ class TransactionService(
         description: String,
         price: Price,
         products: Set<TransactionProductCreateRequest>
-    ): TransactionResponse {
-        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_CREATE)
+    ): TransactionResponse =
+        vaultService.withAuthorization(vaultId, requesterId, VaultPermission.TRANSACTION_CREATE) {
+            if (description.isEmpty()) {
+                throw TransactionDescriptionRequiredError()
+            }
 
-        if (description.isEmpty()) {
-            throw TransactionDescriptionRequiredError()
-        }
+            val transaction = transactionRepository.save(
+                Transaction(
+                    id = null,
+                    userId = requesterId,
+                    vaultId = vaultId,
+                    createdAt = Instant.now(clock),
+                    transactionMethod = transactionMethod,
+                    transactionType = transactionType,
+                    description = description,
+                    total = price.amount.abs(),
+                    currency = price.currency
+                )
+            )
 
-        val transaction = transactionRepository.save(
-            Transaction(
-                id = null,
-                userId = requesterId,
+            products.forEach {
+                createTransactionProduct(
+                    requesterId = requesterId,
+                    transactionId = transaction.id!!,
+                    name = it.name,
+                    categoryId = it.categoryId,
+                    unitAmount = it.unitAmount,
+                    quantity = it.quantity
+                )
+            }
+
+            auditService.createAudit(
                 vaultId = vaultId,
-                createdAt = Instant.now(clock),
-                transactionMethod = transactionMethod,
-                transactionType = transactionType,
-                description = description,
-                total = price.amount.abs(),
-                currency = price.currency
+                userId = requesterId,
+                auditAction = AuditAction.TRANSACTION_CREATED,
+                description = description
             )
-        )
 
-        products.forEach {
-            createTransactionProduct(
-                requesterId = requesterId,
-                transactionId = transaction.id!!,
-                name = it.name,
-                categoryId = it.categoryId,
-                unitAmount = it.unitAmount,
-                quantity = it.quantity
+            transaction.toResponse(
+                user = userService.getUser(requesterId),
+                products = getTransactionProducts(requesterId, transaction.id!!),
+                totalInVaultCurrency = exchangeService.convertCurrency(transaction.total, transaction.currency, "PLN").amount
             )
         }
-
-        auditService.createAudit(
-            vaultId = vaultId,
-            userId = requesterId,
-            auditAction = AuditAction.TRANSACTION_CREATED,
-            description = description
-        )
-
-        return transaction.toResponse(
-            user = userService.getUser(requesterId),
-            products = getTransactionProducts(requesterId, transaction.id!!),
-            totalInVaultCurrency = exchangeService.convertCurrency(transaction.total, transaction.currency, "PLN").amount
-        )
-    }
 
     @Transactional
     fun createTransactionProduct(
@@ -340,64 +339,64 @@ class TransactionService(
     ): TransactionProductResponse {
         val transaction = getTransaction(requesterId, transactionId)
 
-        vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_CREATE)
-
-        return transactionProductRepository
-            .save(
-                TransactionProduct(
-                    id = null,
-                    transactionId = transactionId,
-                    name = name,
-                    categoryId = categoryId,
-                    unitAmount = unitAmount,
-                    quantity = quantity,
+        return vaultService.withAuthorization(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_CREATE) {
+            transactionProductRepository
+                .save(
+                    TransactionProduct(
+                        id = null,
+                        transactionId = transactionId,
+                        name = name,
+                        categoryId = categoryId,
+                        unitAmount = unitAmount,
+                        quantity = quantity,
+                    )
                 )
-            )
-            .also {
-                auditService.createAudit(
-                    vaultId = transaction.vaultId,
-                    userId = requesterId,
-                    auditAction = AuditAction.TRANSACTION_PRODUCT_CREATED,
-                    description = name
-                )
-            }
-            .toResponse(categoryId?.let { categoryService.getCategoryById(requesterId, it) })
+                .also {
+                    auditService.createAudit(
+                        vaultId = transaction.vaultId,
+                        userId = requesterId,
+                        auditAction = AuditAction.TRANSACTION_PRODUCT_CREATED,
+                        description = name
+                    )
+                }
+                .toResponse(categoryId?.let { categoryService.getCategoryById(requesterId, it) })
+        }
     }
 
     @Transactional
     fun createSchedule(requesterId: Int, transactionId: Int, description: String, interval: ScheduleInterval, amount: Int): ScheduleResponse {
         val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundError()
 
-        vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.SCHEDULE_CREATE)
+        return vaultService.withAuthorization(transaction.vaultId, requesterId, VaultPermission.SCHEDULE_CREATE) {
+            val nextExecutionDate = calculateNextExecutionDate(interval, amount)
 
-        val nextExecutionDate = calculateNextExecutionDate(interval, amount)
-
-        val schedule = scheduleRepository.save(
-            Schedule(
-                id = null,
-                transactionId = transaction.id!!,
-                description = description,
-                nextExecution = nextExecutionDate,
-                scheduleInterval = interval,
-                intervalValue = amount
+            val schedule = scheduleRepository.save(
+                Schedule(
+                    id = null,
+                    transactionId = transaction.id!!,
+                    description = description,
+                    nextExecution = nextExecutionDate,
+                    scheduleInterval = interval,
+                    intervalValue = amount
+                )
             )
-        )
 
-        auditService.createAudit(
-            vaultId = transaction.vaultId,
-            userId = requesterId,
-            auditAction = AuditAction.SCHEDULE_CREATED,
-            description = description
-        )
+            auditService.createAudit(
+                vaultId = transaction.vaultId,
+                userId = requesterId,
+                auditAction = AuditAction.SCHEDULE_CREATED,
+                description = description
+            )
 
-        return ScheduleResponse(
-            id = schedule.id!!,
-            transactionId = schedule.transactionId,
-            description = schedule.description,
-            nextExecution = schedule.nextExecution,
-            interval = schedule.scheduleInterval,
-            amount = schedule.intervalValue
-        )
+            ScheduleResponse(
+                id = schedule.id!!,
+                transactionId = schedule.transactionId,
+                description = schedule.description,
+                nextExecution = schedule.nextExecution,
+                interval = schedule.scheduleInterval,
+                amount = schedule.intervalValue
+            )
+        }
     }
 
     @Transactional
@@ -411,20 +410,20 @@ class TransactionService(
     ) {
         val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundError()
 
-        vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_UPDATE)
+        return vaultService.withAuthorization(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_UPDATE) {
+            transaction.transactionMethod = transactionMethod
+            transaction.transactionType = transactionType
+            transaction.description = description
+            transaction.total = price.amount
+            transaction.currency = price.currency
 
-        transaction.transactionMethod = transactionMethod
-        transaction.transactionType = transactionType
-        transaction.description = description
-        transaction.total = price.amount
-        transaction.currency = price.currency
-
-        auditService.createAudit(
-            vaultId = transaction.vaultId,
-            userId = requesterId,
-            auditAction = AuditAction.TRANSACTION_UPDATED,
-            description = description ?: "Transaction ID $transactionId"
-        )
+            auditService.createAudit(
+                vaultId = transaction.vaultId,
+                userId = requesterId,
+                auditAction = AuditAction.TRANSACTION_UPDATED,
+                description = description ?: "Transaction ID $transactionId"
+            )
+        }
     }
 
     @Transactional
@@ -437,46 +436,39 @@ class TransactionService(
         unitAmount: BigDecimal,
         quantity: Int
     ) {
-        val transactionProduct = transactionProductRepository.findById(productId) ?: throw TransactionProductNotFoundError()
         val transaction = getTransaction(requesterId, transactionId)
 
-        vaultService.authorizeMember(
-            vaultId = transaction.vaultId,
-            userId = requesterId,
-            requiredPermission = VaultPermission.TRANSACTION_UPDATE
-        )
+        return vaultService.withAuthorization(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_UPDATE) {
+            val transactionProduct = transactionProductRepository.findById(productId) ?: throw TransactionProductNotFoundError()
 
-        transactionProduct.name = name
-        transactionProduct.categoryId = categoryId
-        transactionProduct.unitAmount = unitAmount
-        transactionProduct.quantity = quantity
+            transactionProduct.name = name
+            transactionProduct.categoryId = categoryId
+            transactionProduct.unitAmount = unitAmount
+            transactionProduct.quantity = quantity
 
-        auditService.createAudit(
-            vaultId = transaction.vaultId,
-            userId = requesterId,
-            auditAction = AuditAction.TRANSACTION_PRODUCT_UPDATED,
-            description = name
-        )
+            auditService.createAudit(
+                vaultId = transaction.vaultId,
+                userId = requesterId,
+                auditAction = AuditAction.TRANSACTION_PRODUCT_UPDATED,
+                description = name
+            )
+        }
     }
 
     @Transactional
     fun deleteTransaction(requesterId: Int, transactionId: Int) {
         val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundError()
 
-        vaultService.authorizeMember(
-            vaultId = transaction.vaultId,
-            userId = requesterId,
-            requiredPermission = VaultPermission.TRANSACTION_DELETE
-        )
+        return vaultService.withAuthorization(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_DELETE) {
+            transactionRepository.deleteById(transactionId)
 
-        transactionRepository.deleteById(transactionId)
-
-        auditService.createAudit(
-            vaultId = transaction.vaultId,
-            userId = requesterId,
-            auditAction = AuditAction.TRANSACTION_DELETED,
-            description = transaction.description ?: "Transaction ID $transactionId"
-        )
+            auditService.createAudit(
+                vaultId = transaction.vaultId,
+                userId = requesterId,
+                auditAction = AuditAction.TRANSACTION_DELETED,
+                description = transaction.description ?: "Transaction ID $transactionId"
+            )
+        }
     }
 
     @Transactional
@@ -484,55 +476,49 @@ class TransactionService(
         val transactionProduct = transactionProductRepository.findById(transactionProductId) ?: throw TransactionProductNotFoundError()
         val transaction = getTransaction(requesterId, transactionProduct.transactionId)
 
-        vaultService.authorizeMember(
-            vaultId = transaction.vaultId,
-            userId = requesterId,
-            requiredPermission = VaultPermission.TRANSACTION_UPDATE
-        )
+        return vaultService.withAuthorization(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_UPDATE) {
+            transactionProductRepository.deleteById(transactionProductId)
 
-        transactionProductRepository.deleteById(transactionProductId)
-
-        auditService.createAudit(
-            vaultId = transaction.vaultId,
-            userId = requesterId,
-            auditAction = AuditAction.TRANSACTION_PRODUCT_DELETED,
-            description = transactionProduct.name
-        )
+            auditService.createAudit(
+                vaultId = transaction.vaultId,
+                userId = requesterId,
+                auditAction = AuditAction.TRANSACTION_PRODUCT_DELETED,
+                description = transactionProduct.name
+            )
+        }
     }
 
     @Transactional(readOnly = true)
-    fun getTransactions(requesterId: Int, vaultId: Int): TransactionListResponse {
-        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_READ)
-
-        return transactionRepository
-            .findByVaultId(vaultId)
-            .map {
-                it.toResponse(
-                    user = userService.getUser(it.userId),
-                    products = getTransactionProducts(requesterId, it.id!!),
-                    totalInVaultCurrency = exchangeService.convertCurrency(it.total, it.currency, "PLN").amount
-                )
-            }
-            .toSet()
-            .let { TransactionListResponse(it) }
-    }
+    fun getTransactions(requesterId: Int, vaultId: Int): TransactionListResponse =
+        vaultService.withAuthorization(vaultId, requesterId, VaultPermission.TRANSACTION_READ) { _ ->
+            transactionRepository
+                .findByVaultId(vaultId)
+                .map {
+                    it.toResponse(
+                        user = userService.getUser(it.userId),
+                        products = getTransactionProducts(requesterId, it.id!!),
+                        totalInVaultCurrency = exchangeService.convertCurrency(it.total, it.currency, "PLN").amount
+                    )
+                }
+                .toSet()
+                .let { TransactionListResponse(it) }
+        }
 
     @Transactional(readOnly = true)
-    fun getTransactions(requesterId: Int, vaultId: Int, startDate: Instant, endDate: Instant): TransactionListResponse {
-        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_READ)
-
-        return transactionRepository
-            .findByVaultIdAndCreatedAtBetween(vaultId, startDate, endDate)
-            .map {
-                it.toResponse(
-                    user = userService.getUser(it.userId),
-                    products = getTransactionProducts(requesterId, it.id!!),
-                    totalInVaultCurrency = exchangeService.convertCurrency(it.total, it.currency, "PLN").amount
-                )
-            }
-            .toSet()
-            .let { TransactionListResponse(it) }
-    }
+    fun getTransactions(requesterId: Int, vaultId: Int, startDate: Instant, endDate: Instant): TransactionListResponse =
+        vaultService.withAuthorization(vaultId, requesterId, VaultPermission.TRANSACTION_READ) {
+            transactionRepository
+                .findByVaultIdAndCreatedAtBetween(vaultId, startDate, endDate)
+                .map {
+                    it.toResponse(
+                        user = userService.getUser(it.userId),
+                        products = getTransactionProducts(requesterId, it.id!!),
+                        totalInVaultCurrency = exchangeService.convertCurrency(it.total, it.currency, "PLN").amount
+                    )
+                }
+                .toSet()
+                .let { TransactionListResponse(it) }
+        }
 
     @Transactional(readOnly = true)
     fun getTransaction(requesterId: Int, transactionId: Int): TransactionResponse {
@@ -546,52 +532,50 @@ class TransactionService(
             }
             ?: throw TransactionNotFoundError()
 
-        vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_READ)
-
-        return transaction
+        return vaultService.withAuthorization(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_READ) {
+            transaction
+        }
     }
 
     @Transactional(readOnly = true)
-    fun getTransactionsAmount(requesterId: Int, vaultId: Int): TransactionAmountResponse {
-        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_READ)
-
-        return transactionRepository
-            .countByVaultId(vaultId)
-            .let { TransactionAmountResponse(it.toInt()) }
-    }
+    fun getTransactionsAmount(requesterId: Int, vaultId: Int): TransactionAmountResponse =
+        vaultService.withAuthorization(vaultId, requesterId, VaultPermission.TRANSACTION_READ) {
+            transactionRepository
+                .countByVaultId(vaultId)
+                .let { TransactionAmountResponse(it.toInt()) }
+        }
 
     @Transactional(readOnly = true)
     fun getTransactionProducts(requesterId: Int, transactionId: Int): TransactionProductListResponse {
         val transaction = transactionRepository.findById(transactionId) ?: throw TransactionNotFoundError()
 
-        vaultService.authorizeMember(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_READ)
-
-        return transactionProductRepository
-            .findByTransactionId(transactionId)
-            .map { it.toResponse(it.categoryId?.let { id -> categoryService.getCategoryById(requesterId, id) }) }
-            .toSet()
-            .let { TransactionProductListResponse(it) }
+        return vaultService.withAuthorization(transaction.vaultId, requesterId, VaultPermission.TRANSACTION_READ) {
+            transactionProductRepository
+                .findByTransactionId(transactionId)
+                .map { it.toResponse(it.categoryId?.let { id -> categoryService.getCategoryById(requesterId, id) }) }
+                .toSet()
+                .let { TransactionProductListResponse(it) }
+        }
     }
 
     @Transactional(readOnly = true)
-    fun getSchedules(requesterId: Int, vaultId: Int): ScheduleListResponse {
-        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.SCHEDULE_READ)
-
-        return scheduleRepository
-            .findByVaultId(vaultId)
-            .map {
-                ScheduleResponse(
-                    id = it.id!!,
-                    transactionId = it.transactionId,
-                    description = it.description,
-                    nextExecution = it.nextExecution,
-                    interval = it.scheduleInterval,
-                    amount = it.intervalValue
-                )
-            }
-            .toSet()
-            .let { ScheduleListResponse(it) }
-    }
+    fun getSchedules(requesterId: Int, vaultId: Int): ScheduleListResponse =
+        vaultService.withAuthorization(vaultId, requesterId, VaultPermission.SCHEDULE_READ) {
+            scheduleRepository
+                .findByVaultId(vaultId)
+                .map {
+                    ScheduleResponse(
+                        id = it.id!!,
+                        transactionId = it.transactionId,
+                        description = it.description,
+                        nextExecution = it.nextExecution,
+                        interval = it.scheduleInterval,
+                        amount = it.intervalValue
+                    )
+                }
+                .toSet()
+                .let { ScheduleListResponse(it) }
+        }
 
     @Transactional(readOnly = true)
     fun getScheduleForcefully(scheduleId: Int): ScheduleResponse =
@@ -644,46 +628,45 @@ class TransactionService(
         requesterId: Int,
         vaultId: Int,
         transactionType: TransactionType?
-    ): FlowsChartResponse {
-        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.TRANSACTION_READ)
+    ): FlowsChartResponse =
+        vaultService.withAuthorization(vaultId, requesterId, VaultPermission.TRANSACTION_READ) {
+            val results = transactionRepository.getMonthlyTransactionSums(vaultId)
 
-        val results = transactionRepository.getMonthlyTransactionSums(vaultId)
+            val today = LocalDate.now(clock)
 
-        val today = LocalDate.now(clock)
+            val monthsData = mutableMapOf<String, Triple<BigDecimal, BigDecimal, BigDecimal>>()
 
-        val monthsData = mutableMapOf<String, Triple<BigDecimal, BigDecimal, BigDecimal>>()
+            val categories = mutableListOf<String>()
+            for (monthIndex in 11 downTo 0) {
+                val monthDate = today.minusMonths(monthIndex.toLong())
+                val monthDisplayName = "${monthDate.month.getDisplayName(TextStyle.SHORT, Locale.ENGLISH)} ${monthDate.year}"
 
-        val categories = mutableListOf<String>()
-        for (monthIndex in 11 downTo 0) {
-            val monthDate = today.minusMonths(monthIndex.toLong())
-            val monthDisplayName = "${monthDate.month.getDisplayName(TextStyle.SHORT, Locale.ENGLISH)} ${monthDate.year}"
+                categories.add(monthDisplayName)
+                monthsData[monthDisplayName] = Triple(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO)
+            }
 
-            categories.add(monthDisplayName)
-            monthsData[monthDisplayName] = Triple(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO)
-        }
+            results.forEach {
+                val month = it[0] as Int
+                val year = it[1] as Int
+                val incoming = it[2] as BigDecimal
+                val outgoing = it[3] as BigDecimal
 
-        results.forEach {
-            val month = it[0] as Int
-            val year = it[1] as Int
-            val incoming = it[2] as BigDecimal
-            val outgoing = it[3] as BigDecimal
+                val key = "${Month.of(month).getDisplayName(TextStyle.SHORT, Locale.ENGLISH)} $year"
+                if (key in monthsData) {
+                    monthsData[key] = Triple(incoming, outgoing, incoming.minus(outgoing))
+                }
+            }
 
-            val key = "${Month.of(month).getDisplayName(TextStyle.SHORT, Locale.ENGLISH)} $year"
-            if (key in monthsData) {
-                monthsData[key] = Triple(incoming, outgoing, incoming.minus(outgoing))
+            val incomingData = categories.map { monthsData[it]?.first ?: BigDecimal.ZERO }
+            val outgoingData = categories.map { monthsData[it]?.second ?: BigDecimal.ZERO }
+            val differenceData = categories.map { monthsData[it]?.third ?: BigDecimal.ZERO }
+
+            when (transactionType) {
+                TransactionType.INCOMING -> FlowsChartResponse(categories, listOf(FlowsChartSeries("Income", incomingData)))
+                TransactionType.OUTGOING -> FlowsChartResponse(categories, listOf(FlowsChartSeries("Spent", outgoingData)))
+                else -> FlowsChartResponse(categories, listOf(FlowsChartSeries("Balance", differenceData)))
             }
         }
-
-        val incomingData = categories.map { monthsData[it]?.first ?: BigDecimal.ZERO }
-        val outgoingData = categories.map { monthsData[it]?.second ?: BigDecimal.ZERO }
-        val differenceData = categories.map { monthsData[it]?.third ?: BigDecimal.ZERO }
-
-        return when (transactionType) {
-            TransactionType.INCOMING -> FlowsChartResponse(categories, listOf(FlowsChartSeries("Income", incomingData)))
-            TransactionType.OUTGOING -> FlowsChartResponse(categories, listOf(FlowsChartSeries("Spent", outgoingData)))
-            else -> FlowsChartResponse(categories, listOf(FlowsChartSeries("Balance", differenceData)))
-        }
-    }
 
     @Transactional
     fun deleteSchedule(requesterId: Int, scheduleId: Int) {

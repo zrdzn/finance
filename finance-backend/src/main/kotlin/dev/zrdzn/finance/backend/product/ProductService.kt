@@ -22,63 +22,62 @@ class ProductService(
 ) {
 
     @Transactional
-    fun createProduct(requesterId: Int, name: String, vaultId: Int, categoryId: Int?, unitAmount: BigDecimal): ProductResponse {
-        vaultService.authorizeMember(vaultId, requesterId, VaultPermission.PRODUCT_CREATE)
-
-        return productRepository
-            .save(
-                Product(
-                    id = null,
-                    name = name,
-                    vaultId = vaultId,
-                    categoryId = categoryId,
-                    unitAmount = unitAmount
+    fun createProduct(requesterId: Int, name: String, vaultId: Int, categoryId: Int?, unitAmount: BigDecimal): ProductResponse =
+        vaultService.withAuthorization(vaultId, requesterId, VaultPermission.PRODUCT_CREATE) {
+            productRepository
+                .save(
+                    Product(
+                        id = null,
+                        name = name,
+                        vaultId = vaultId,
+                        categoryId = categoryId,
+                        unitAmount = unitAmount
+                    )
                 )
-            )
-            .also {
-                auditService.createAudit(
-                    vaultId = vaultId,
-                    userId = requesterId,
-                    auditAction = AuditAction.PRODUCT_CREATED,
-                    description = name
+                .also {
+                    auditService.createAudit(
+                        vaultId = vaultId,
+                        userId = requesterId,
+                        auditAction = AuditAction.PRODUCT_CREATED,
+                        description = name
+                    )
+                }
+                .toResponse(
+                    category = categoryId?.let { id -> categoryService.getCategoryById(requesterId, id) }
                 )
-            }
-            .toResponse(
-                category = categoryId?.let { id -> categoryService.getCategoryById(requesterId, id) }
-            )
-    }
+        }
 
     @Transactional
     fun updateProduct(requesterId: Int, productId: Int, categoryId: Int?, unitAmount: BigDecimal) {
         val product = productRepository.findById(productId) ?: throw ProductNotFoundError()
 
-        vaultService.authorizeMember(product.vaultId, requesterId, VaultPermission.PRODUCT_UPDATE)
+        return vaultService.withAuthorization(product.vaultId, requesterId, VaultPermission.PRODUCT_UPDATE) {
+            product.categoryId = categoryId
+            product.unitAmount = unitAmount
 
-        product.categoryId = categoryId
-        product.unitAmount = unitAmount
-
-        auditService.createAudit(
-            vaultId = product.vaultId,
-            userId = requesterId,
-            auditAction = AuditAction.PRODUCT_UPDATED,
-            description = product.name
-        )
+            auditService.createAudit(
+                vaultId = product.vaultId,
+                userId = requesterId,
+                auditAction = AuditAction.PRODUCT_UPDATED,
+                description = product.name
+            )
+        }
     }
 
     @Transactional
     fun deleteProduct(requesterId: Int, productId: Int) {
         val product = productRepository.findById(productId) ?: throw ProductNotFoundError()
 
-        vaultService.authorizeMember(product.vaultId, requesterId, VaultPermission.PRODUCT_DELETE)
+        return vaultService.withAuthorization(product.vaultId, requesterId, VaultPermission.PRODUCT_DELETE) {
+            productRepository.deleteById(productId)
 
-        productRepository.deleteById(productId)
-
-        auditService.createAudit(
-            vaultId = product.vaultId,
-            userId = requesterId,
-            auditAction = AuditAction.PRODUCT_DELETED,
-            description = product.name
-        )
+            auditService.createAudit(
+                vaultId = product.vaultId,
+                userId = requesterId,
+                auditAction = AuditAction.PRODUCT_DELETED,
+                description = product.name
+            )
+        }
     }
 
     @Transactional(readOnly = true)

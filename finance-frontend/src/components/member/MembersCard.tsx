@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { AccountAvatar } from "../account/AccountAvatar"
 import { EditMemberButton } from "./EditMemberButton"
 import {DeleteButton} from "@/components/shared/DeleteButton";
+import {useAuthentication} from "@/hooks/useAuthentication";
 
 type VaultResponse = Components.Schemas.VaultResponse;
 type VaultRoleResponse = Components.Schemas.VaultRoleResponse;
@@ -25,6 +26,7 @@ export const MembersCard = ({ vault, vaultRole }: MembersCardProperties) => {
     const theme = useTheme()
     const [members, setMembers] = useState<VaultMemberResponse[]>([])
     const [queriedMembers, setQueriedMembers] = useState<VaultMemberResponse[]>([])
+    const { details } = useAuthentication()
 
     useEffect(() => {
         api
@@ -127,12 +129,15 @@ export const MembersCard = ({ vault, vaultRole }: MembersCardProperties) => {
                                             )}
                                         </Td>
                                         <Td>
-                                            <HStack spacing={2}>
-                                                {vaultRole.permissions.includes("MEMBER_UPDATE") && <EditMemberButton member={member} />}
-                                                {vaultRole.permissions.includes("MEMBER_REMOVE") && (
-                                                    <DeleteButton onClick={() => handleMemberDelete(member)} />
-                                                )}
-                                            </HStack>
+                                            {
+                                                details?.id !== member.user.id &&
+                                                  <HStack spacing={2}>
+                                                      {vaultRole.permissions.includes("MEMBER_UPDATE") && <EditMemberButton member={member} />}
+                                                      {vaultRole.permissions.includes("MEMBER_REMOVE") && (
+                                                        <DeleteButton onClick={() => handleMemberDelete(member)} />
+                                                      )}
+                                                  </HStack>
+                                            }
                                         </Td>
                                     </Tr>
                                 ))
