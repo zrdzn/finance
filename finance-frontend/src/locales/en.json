@@ -3,7 +3,10 @@
     "add-button": "Add",
     "delete-button": "Delete",
     "edit-button": "Edit",
-    "loading-spinner": "Loading..."
+    "loading-spinner": "Loading...",
+    "validation": {
+      "length": "Length "
+    }
   },
   "Units": {
     "dates": {

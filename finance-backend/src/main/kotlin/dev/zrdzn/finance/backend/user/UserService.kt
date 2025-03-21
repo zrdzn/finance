@@ -11,6 +11,11 @@ import dev.zrdzn.finance.backend.user.dto.UsernameResponse
 import dev.zrdzn.finance.backend.user.error.TwoFactorAlreadyEnabledError
 import dev.zrdzn.finance.backend.user.error.UserAccessDeniedError
 import dev.zrdzn.finance.backend.user.error.UserEmailAlreadyTakenError
+import dev.zrdzn.finance.backend.user.error.UserEmailInvalidError
+import dev.zrdzn.finance.backend.user.error.UserPasswordTooLongError
+import dev.zrdzn.finance.backend.user.error.UserPasswordTooShortError
+import dev.zrdzn.finance.backend.user.error.UserUsernameTooLongError
+import dev.zrdzn.finance.backend.user.error.UserUsernameTooShortError
 import java.io.InputStream
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -27,9 +32,21 @@ class UserService(
 ) {
 
     private val avatarsBucket = "avatars"
+    private val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$".toRegex()
 
     @Transactional
     fun createUser(userCreateRequest: UserCreateRequest): UserResponse {
+        if (userCreateRequest.username.length <= 3) throw UserUsernameTooShortError()
+        if (userCreateRequest.username.length >= 20) throw UserUsernameTooLongError()
+        if (userCreateRequest.password.length <= 6) throw UserPasswordTooShortError()
+        if (userCreateRequest.password.length >= 100) throw UserPasswordTooLongError()
+
+        // validate email
+        if (!userCreateRequest.email.matches(emailRegex)) {
+            throw UserEmailInvalidError()
+        }
+
+        // check if user already exists
         if (doesUserExist(userCreateRequest.email)) {
             throw UserEmailAlreadyTakenError()
         }

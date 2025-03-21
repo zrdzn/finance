@@ -5,7 +5,7 @@ import {
   CardBody,
   CardHeader,
   Flex,
-  FormControl,
+  FormControl, FormHelperText,
   FormLabel,
   Input,
   Stack, Text
@@ -32,6 +32,7 @@ export default function Register() {
   const api = useApi()
   const router = useRouter()
   const t = useTranslations("Register")
+  const tValidation = useTranslations("Global.validation")
   const theme = useTheme()
   const [registrationForm, setRegistrationForm] = useState<RegistrationForm>({
     email: '',
@@ -146,6 +147,15 @@ export default function Register() {
                     onChange={handleRegistrationFormUpdate}
                     placeholder={t('form.username-placeholder')}
                   />
+                  <FormHelperText
+                    color={
+                      registrationForm.username.length >= 3 && registrationForm.username.length <= 20 ?
+                        theme.text.green :
+                        theme.text.red
+                    }
+                  >
+                    {tValidation('length')} (3-20)
+                  </FormHelperText>
                 </FormControl>
 
                 <FormControl isRequired>
@@ -156,6 +166,15 @@ export default function Register() {
                     onChange={handleRegistrationFormUpdate}
                     placeholder={t('form.password-placeholder')}
                   />
+                  <FormHelperText
+                    color={
+                      registrationForm.username.length >= 6 && registrationForm.username.length <= 100 ?
+                        theme.text.green :
+                        theme.text.red
+                    }
+                  >
+                    {tValidation('length')} (6-100)
+                  </FormHelperText>
                 </FormControl>
 
                 <FormControl isRequired>
