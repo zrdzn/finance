@@ -263,9 +263,16 @@ class VaultService(
     }
 
     @Transactional
-    fun removeVaultMember(vaultId: Int, requesterId: Int, userId: Int) =
-        authorizeMember(vaultId, requesterId, VaultPermission.MEMBER_REMOVE)
-            .also { vaultMemberRepository.deleteByVaultIdAndUserId(vaultId, userId) }
+    fun removeVaultMember(vaultId: Int, requesterId: Int, userId: Int) {
+        val requester = authorizeMember(vaultId, requesterId, VaultPermission.MEMBER_REMOVE)
+        val vaultMember = vaultMemberRepository.findById(userId) ?: throw VaultMemberNotFoundError()
+
+        if (!requester.vaultRole.isHigherThan(vaultMember.vaultRole)) {
+            throw VaultCannotDeleteMemberError()
+        }
+
+        vaultMemberRepository.deleteByVaultIdAndUserId(vaultId, userId)
+    }
 
     @Transactional
     fun removeVaultInvitationForcefully(vaultId: Int, userEmail: String) {
