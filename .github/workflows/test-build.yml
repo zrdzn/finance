@@ -20,9 +20,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
+      - name: Grant execute permission for gradlew
+        working-directory: ./finance-backend
+        run: chmod +x gradlew
       - name: Run integration tests
         working-directory: ./finance-backend
-        run: ./gradlew integrationTest
+        run: ./gradlew test integrationTest
 
   frontend-build-test:
     runs-on: ubuntu-latest
