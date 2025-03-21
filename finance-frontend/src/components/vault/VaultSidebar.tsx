@@ -13,7 +13,6 @@ import {
   useDisclosure,
   useMediaQuery, VStack
 } from "@chakra-ui/react";
-import {ReactJSXElement} from "@emotion/react/types/jsx-namespace"
 import {useTheme} from "@/hooks/useTheme"
 import React, {useEffect, useState} from "react"
 import {FaAngleLeft, FaAngleRight, FaBars, FaBook, FaHistory, FaRobot, FaTags, FaUser} from "react-icons/fa"
@@ -420,7 +419,7 @@ export const VaultSidebar = (
   {
     vault, vaultRole, isCollapsed = false, toggleCollapse,
   }: VaultSidebarProperties
-): ReactJSXElement => {
+) => {
   const [isMobile] = useMediaQuery("(max-width: 768px)");
   const api = useApi()
   const [aiEnabled, setAiEnabled] = useState(false)

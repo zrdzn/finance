@@ -1,4 +1,3 @@
-import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
 import {Card, CardBody, Flex, Grid, Stat, StatHelpText, StatLabel, StatNumber} from "@chakra-ui/react";
 import React from "react";
@@ -11,7 +10,7 @@ import {useTranslations} from "next-intl";
 import {FlowsHistoryCard} from "@/components/analytics/flows/FlowsHistoryCard";
 import { AnalyticsChart } from "@/components/analytics/AnalyticsChart";
 
-export default function Dashboard(): ReactJSXElement {
+export default function Dashboard() {
   const router = useRouter()
   const publicId = router.query.publicId
   const t = useTranslations("Overview")

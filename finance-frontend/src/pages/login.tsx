@@ -1,4 +1,3 @@
-import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
 import {
   Button,
@@ -24,7 +23,7 @@ import axios from "axios";
 
 type AuthenticationLoginRequest = Components.Schemas.AuthenticationLoginRequest;
 
-export default function Login(): ReactJSXElement {
+export default function Login() {
   const { details, login } = useAuthentication()
   const router = useRouter()
   const theme = useTheme()

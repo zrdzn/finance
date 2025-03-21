@@ -1,4 +1,3 @@
-import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
 import {Flex} from "@chakra-ui/react";
 import React from "react";
@@ -8,7 +7,7 @@ import {AuditTable} from "@/components/audit/AuditTable"
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
 
-export default function Audits(): ReactJSXElement {
+export default function Audits() {
   const router = useRouter()
   const publicId = router.query.publicId
   const t = useTranslations("Audits")

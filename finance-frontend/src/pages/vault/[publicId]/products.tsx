@@ -1,4 +1,3 @@
-import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
 import {Flex, Grid} from "@chakra-ui/react";
 import React from "react";
@@ -9,7 +8,7 @@ import {CategoriesCard} from "@/components/product/category/CategoriesCard"
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
 
-export default function Products(): ReactJSXElement {
+export default function Products() {
   const router = useRouter()
   const publicId = router.query.publicId
   const t = useTranslations("Products")

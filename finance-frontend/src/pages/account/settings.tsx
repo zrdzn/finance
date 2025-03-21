@@ -1,4 +1,3 @@
-import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
 import {
   Card,
@@ -14,10 +13,9 @@ import {useAuthentication} from "@/hooks/useAuthentication"
 import {Layout} from "@/components/Layout"
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
-import {Components} from "@/api/api"
 import {AccountProfileUpdateForm} from "@/components/account/AccountProfileUpdateForm";
 
-export default function AccountSettings(): ReactJSXElement {
+export default function AccountSettings() {
   const { details } = useAuthentication()
   const router = useRouter()
   const theme = useTheme()

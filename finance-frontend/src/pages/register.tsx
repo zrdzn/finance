@@ -1,4 +1,3 @@
-import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
 import {
   Button,
@@ -28,7 +27,7 @@ interface RegistrationForm {
   confirmPassword: string;
 }
 
-export default function Register(): ReactJSXElement {
+export default function Register() {
   const { details, login } = useAuthentication()
   const api = useApi()
   const router = useRouter()

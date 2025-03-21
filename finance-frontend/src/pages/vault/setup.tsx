@@ -1,4 +1,3 @@
-import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
 import {
   Button,
@@ -29,7 +28,7 @@ import {TransactionMethod} from "@/api/types";
 
 type VaultCreateRequest = Components.Schemas.VaultCreateRequest;
 
-export default function SetupVault(): ReactJSXElement {
+export default function SetupVault() {
   const { details } = useAuthentication()
   const api = useApi()
   const router = useRouter()

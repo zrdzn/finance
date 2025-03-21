@@ -1,4 +1,3 @@
-import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
 import {Button, Flex, HStack, Link, Text} from "@chakra-ui/react";
 import React, {useEffect, useState} from "react";
@@ -22,7 +21,7 @@ interface VaultResponse {
   name: string
 }
 
-export default function Homepage(): ReactJSXElement {
+export default function Homepage() {
   const api = useApi()
   const theme = useTheme()
   const [yourVaults, setYourVaults] = useState<VaultResponse[]>([])

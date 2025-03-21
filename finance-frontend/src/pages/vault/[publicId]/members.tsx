@@ -1,4 +1,3 @@
-import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
 import {Flex, Grid} from "@chakra-ui/react";
 import React from "react";
@@ -9,7 +8,7 @@ import {InvitationsCard} from "@/components/member/invitation/InvitationsCard"
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
 
-export default function Members(): ReactJSXElement {
+export default function Members() {
   const router = useRouter()
   const publicId = router.query.publicId
   const t = useTranslations("Members")

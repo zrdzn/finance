@@ -1,16 +1,14 @@
-import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import Head from 'next/head';
 import {Flex, Grid} from "@chakra-ui/react";
 import React from "react";
 import {useRouter} from "next/router"
 import {ProtectedVault} from "@/components/vault/ProtectedVault"
 import {TransactionsCard} from "@/components/transaction/TransactionsCard"
-import {CsvExport} from "@/components/transaction/export/CsvExport"
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
 import {SchedulesCard} from "@/components/transaction/schedule/SchedulesCard";
 
-export default function Transactions(): ReactJSXElement {
+export default function Transactions() {
   const router = useRouter()
   const publicId = router.query.publicId
   const t = useTranslations("Transactions")
