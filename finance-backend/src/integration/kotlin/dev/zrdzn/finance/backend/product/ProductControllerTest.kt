@@ -1,10 +1,10 @@
 package dev.zrdzn.finance.backend.product
 
-import dev.zrdzn.finance.backend.token.TOKEN_COOKIE_NAME
 import dev.zrdzn.finance.backend.product.dto.ProductCreateRequest
 import dev.zrdzn.finance.backend.product.dto.ProductListResponse
 import dev.zrdzn.finance.backend.product.dto.ProductResponse
 import dev.zrdzn.finance.backend.product.dto.ProductUpdateRequest
+import dev.zrdzn.finance.backend.token.TOKEN_COOKIE_NAME
 import dev.zrdzn.finance.backend.transaction.TransactionMethod
 import kong.unirest.core.Unirest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -31,11 +31,13 @@ class ProductControllerTest : ProductSpecification() {
         )
 
         val name = "Test product"
+        val unitAmount = 1.00.toBigDecimal()
 
         val request = ProductCreateRequest(
             vaultId = vault.id,
             name = name,
-            categoryId = null
+            categoryId = null,
+            unitAmount = unitAmount
         )
 
         // when
@@ -46,14 +48,15 @@ class ProductControllerTest : ProductSpecification() {
             .asObject(ProductResponse::class.java)
 
         // then
+        assertEquals(HttpStatus.OK.value(), response.status)
+        assertNotNull(response.body)
+
         val expectedProduct = productRepository.findById(response.body.id)
         assertNotNull(expectedProduct)
         assertEquals(vault.id, expectedProduct!!.vaultId)
         assertEquals(name, expectedProduct.name)
         assertNull(expectedProduct.categoryId)
-
-        assertNotNull(response.body)
-        assertEquals(HttpStatus.OK.value(), response.status)
+        assertEquals(getPricesDifference(expectedProduct.unitAmount, unitAmount), 0)
     }
 
     @Test
@@ -72,6 +75,7 @@ class ProductControllerTest : ProductSpecification() {
         )
 
         val name = "Test product"
+        val unitAmount = 1.00.toBigDecimal()
 
         val category = createCategory(
             requesterId = token.userId,
@@ -82,7 +86,8 @@ class ProductControllerTest : ProductSpecification() {
         val request = ProductCreateRequest(
             vaultId = vault.id,
             name = name,
-            categoryId = category.id
+            categoryId = category.id,
+            unitAmount = unitAmount
         )
 
         // when
@@ -93,14 +98,15 @@ class ProductControllerTest : ProductSpecification() {
             .asObject(ProductResponse::class.java)
 
         // then
+        assertEquals(HttpStatus.OK.value(), response.status)
+        assertNotNull(response.body)
+
         val expectedProduct = productRepository.findById(response.body.id)
         assertNotNull(expectedProduct)
         assertEquals(vault.id, expectedProduct!!.vaultId)
         assertEquals(name, expectedProduct.name)
         assertEquals(category.id, expectedProduct.categoryId)
-
-        assertNotNull(response.body)
-        assertEquals(HttpStatus.OK.value(), response.status)
+        assertEquals(getPricesDifference(expectedProduct.unitAmount, unitAmount), 0)
     }
 
     @Test
@@ -119,12 +125,14 @@ class ProductControllerTest : ProductSpecification() {
         )
 
         val name = "Test product"
+        val unitAmount = 1.00.toBigDecimal()
 
         val product = createProduct(
             requesterId = token.userId,
             vaultId = vault.id,
             name = name,
-            categoryId = null
+            categoryId = null,
+            unitAmount = unitAmount
         )
 
         val newCategoryId = createCategory(
@@ -134,7 +142,8 @@ class ProductControllerTest : ProductSpecification() {
         ).id
 
         val request = ProductUpdateRequest(
-            categoryId = newCategoryId
+            categoryId = newCategoryId,
+            unitAmount = unitAmount
         )
 
         // when
@@ -145,13 +154,14 @@ class ProductControllerTest : ProductSpecification() {
             .asEmpty()
 
         // then
+        assertEquals(HttpStatus.OK.value(), response.status)
+
         val expectedProduct = productRepository.findById(product.id)
         assertNotNull(expectedProduct)
         assertEquals(vault.id, expectedProduct!!.vaultId)
         assertEquals(newCategoryId, expectedProduct.categoryId)
         assertNotNull(expectedProduct.categoryId)
-
-        assertEquals(HttpStatus.OK.value(), response.status)
+        assertEquals(getPricesDifference(expectedProduct.unitAmount, unitAmount), 0)
     }
 
     @Test
@@ -170,12 +180,14 @@ class ProductControllerTest : ProductSpecification() {
         )
 
         val name = "Test product"
+        val unitAmount = 1.00.toBigDecimal()
 
         val product = createProduct(
             requesterId = token.userId,
             vaultId = vault.id,
             name = name,
-            categoryId = null
+            categoryId = null,
+            unitAmount = unitAmount
         )
 
         // when
@@ -206,12 +218,14 @@ class ProductControllerTest : ProductSpecification() {
         )
 
         val name = "Test product"
+        val unitAmount = 1.00.toBigDecimal()
 
         val product = createProduct(
             requesterId = token.userId,
             vaultId = vault.id,
             name = name,
-            categoryId = null
+            categoryId = null,
+            unitAmount = unitAmount
         )
 
         // when
@@ -225,7 +239,7 @@ class ProductControllerTest : ProductSpecification() {
         assertEquals(product.id, expectedProduct!!.id)
         assertEquals(vault.id, expectedProduct.vaultId)
         assertEquals(name, expectedProduct.name)
-        assertNull(expectedProduct.categoryId)
+        assertNull(expectedProduct.category)
     }
 
 }

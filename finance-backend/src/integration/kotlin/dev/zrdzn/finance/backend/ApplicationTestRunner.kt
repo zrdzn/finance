@@ -9,14 +9,17 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import dev.zrdzn.finance.backend.configuration.ApplicationConfiguration
+import java.math.BigDecimal
+import kong.unirest.core.HttpResponse
 import kong.unirest.core.Unirest
-import kong.unirest.jackson.JacksonObjectMapper
+import kong.unirest.modules.jackson.JacksonObjectMapper
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.slf4j.LoggerFactory
 import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.http.HttpStatus
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
@@ -112,5 +115,9 @@ open class ApplicationTestRunner {
         mailhogContainer.stop()
         s3Container.stop()
     }
+
+    protected fun HttpResponse<String>.containsError(status: HttpStatus) = this.body.contains(status.value().toString())
+
+    protected fun getPricesDifference(expected: BigDecimal, actual: BigDecimal) = expected.compareTo(actual)
 
 }

@@ -1,6 +1,5 @@
 package dev.zrdzn.finance.backend.authentication
 
-import dev.zrdzn.finance.backend.error.FinanceApiError
 import dev.zrdzn.finance.backend.token.TOKEN_COOKIE_NAME
 import dev.zrdzn.finance.backend.token.dto.AccessTokenResponse
 import dev.zrdzn.finance.backend.user.dto.UserResponse
@@ -9,6 +8,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 
@@ -57,7 +57,7 @@ class AuthenticationControllerTest : AuthenticationSpecification() {
         val response = Unirest.post("/authentication/register")
             .contentType("application/json")
             .body(request)
-            .asObject(FinanceApiError::class.java)
+            .asString()
 
         // then
         val expectedUserId = userRepository.findIdByUsername(username)
@@ -65,7 +65,7 @@ class AuthenticationControllerTest : AuthenticationSpecification() {
 
         assertNotNull(response.body)
         assertEquals(HttpStatus.CONFLICT.value(), response.status)
-        assertEquals(response.body.status, HttpStatus.CONFLICT.value())
+        assertTrue(response.containsError(HttpStatus.CONFLICT))
         assertEquals(user.email, user.email)
         assertEquals(user.username, user.username)
     }
@@ -116,15 +116,15 @@ class AuthenticationControllerTest : AuthenticationSpecification() {
         val response = Unirest.post("/authentication/login")
             .contentType("application/json")
             .body(request)
-            .asObject(FinanceApiError::class.java)
+            .asString()
 
         // then
         val expectedTokens = tokenRepository.findByUserId(user.id)
         assertNull(expectedTokens.firstOrNull())
 
         assertNotNull(response.body)
-        assertEquals(response.body.status, HttpStatus.UNAUTHORIZED.value())
         assertEquals(HttpStatus.UNAUTHORIZED.value(), response.status)
+        assertTrue(response.containsError(HttpStatus.UNAUTHORIZED))
     }
 
     @Test
