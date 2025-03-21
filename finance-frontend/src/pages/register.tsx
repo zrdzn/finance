@@ -168,7 +168,7 @@ export default function Register() {
                   />
                   <FormHelperText
                     color={
-                      registrationForm.username.length >= 6 && registrationForm.username.length <= 100 ?
+                      registrationForm.password.length >= 6 && registrationForm.password.length <= 100 ?
                         theme.text.green :
                         theme.text.red
                     }
