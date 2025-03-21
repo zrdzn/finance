@@ -10,7 +10,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.noarg") version "2.1.20"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     kotlin("jvm") version "2.1.20"
-    kotlin("plugin.spring") version "1.9.23"
+    kotlin("plugin.spring") version "2.1.20"
     kotlin("plugin.allopen") version "2.1.20"
     kotlin("plugin.jpa") version "2.1.20"
 }
