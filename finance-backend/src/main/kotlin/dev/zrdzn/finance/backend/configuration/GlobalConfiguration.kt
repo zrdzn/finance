@@ -11,7 +11,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import java.time.Clock
 import kong.unirest.core.Unirest
-import kong.unirest.jackson.JacksonObjectMapper
+import kong.unirest.modules.jackson.JacksonObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder

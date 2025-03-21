@@ -1,23 +1,23 @@
 package dev.zrdzn.finance.backend.transaction
 
-import dev.zrdzn.finance.backend.error.FinanceApiError
 import dev.zrdzn.finance.backend.schedule.ScheduleInterval
+import dev.zrdzn.finance.backend.schedule.dto.ScheduleCreateRequest
+import dev.zrdzn.finance.backend.schedule.dto.ScheduleResponse
 import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.token.TOKEN_COOKIE_NAME
-import dev.zrdzn.finance.backend.schedule.dto.ScheduleCreateRequest
-import dev.zrdzn.finance.backend.transaction.dto.TransactionCreateRequest
-import dev.zrdzn.finance.backend.transaction.dto.TransactionProductCreateRequest
-import dev.zrdzn.finance.backend.transaction.dto.TransactionUpdateRequest
-import dev.zrdzn.finance.backend.schedule.dto.ScheduleResponse
 import dev.zrdzn.finance.backend.transaction.dto.TransactionAmountResponse
+import dev.zrdzn.finance.backend.transaction.dto.TransactionCreateRequest
 import dev.zrdzn.finance.backend.transaction.dto.TransactionListResponse
+import dev.zrdzn.finance.backend.transaction.dto.TransactionProductCreateRequest
 import dev.zrdzn.finance.backend.transaction.dto.TransactionProductResponse
 import dev.zrdzn.finance.backend.transaction.dto.TransactionResponse
+import dev.zrdzn.finance.backend.transaction.dto.TransactionUpdateRequest
 import java.math.BigDecimal
 import kong.unirest.core.Unirest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 
@@ -93,12 +93,12 @@ class TransactionControllerTest : TransactionSpecification() {
             .contentType("application/json")
             .cookie(TOKEN_COOKIE_NAME, token.value)
             .body(request)
-            .asObject(FinanceApiError::class.java)
+            .asString()
 
         // then
         assertNotNull(response.body)
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.status)
-        assertEquals(response.body.status, HttpStatus.BAD_REQUEST.value())
+        assertTrue(response.containsError(HttpStatus.BAD_REQUEST))
     }
 
     @Test
@@ -277,12 +277,12 @@ class TransactionControllerTest : TransactionSpecification() {
         // when
         val response = Unirest.get("/transactions/0")
             .cookie(TOKEN_COOKIE_NAME, token.value)
-            .asObject(FinanceApiError::class.java)
+            .asString()
 
         // then
         assertNotNull(response.body)
-        assertEquals(response.body.status, HttpStatus.FORBIDDEN.value())
         assertEquals(HttpStatus.FORBIDDEN.value(), response.status)
+        assertTrue(response.containsError(HttpStatus.FORBIDDEN))
     }
 
     @Test
