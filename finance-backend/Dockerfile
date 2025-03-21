@@ -1,4 +1,4 @@
-FROM gradle:jdk21-focal as builder
+FROM gradle:jdk21 as builder
 WORKDIR /app
 COPY . /app
 RUN gradle bootJar
