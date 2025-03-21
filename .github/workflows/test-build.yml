@@ -27,7 +27,7 @@ jobs:
         working-directory: ./finance-backend
         run: ./gradlew test integrationTest
 
-  frontend-build-test:
+  frontend-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
