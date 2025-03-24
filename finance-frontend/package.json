@@ -19,7 +19,7 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@fortawesome/free-regular-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
-    "@next/env": "^14.2.5",
+    "@next/env": "^15.2.3",
     "apexcharts": "^4.5.0",
     "axios": "^1.8.4",
     "currency-codes": "^2.2.0",
