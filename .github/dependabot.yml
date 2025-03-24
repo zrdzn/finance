@@ -3,13 +3,13 @@ updates:
   - package-ecosystem: gradle
     directory: "/finance-backend"
     schedule:
-      interval: daily
+      interval: weekly
       time: "04:00"
     open-pull-requests-limit: 5
   - package-ecosystem: npm
     directory: "/finance-frontend"
     schedule:
-      interval: daily
+      interval: weekly
       time: "04:00"
     open-pull-requests-limit: 5
     ignore:
