@@ -11,6 +11,19 @@ spring:
       max-request-size: 10MB
   main:
     banner-mode: off
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${OAUTH_CLIENT_ID_GITHUB}
+            client-secret: ${OAUTH_CLIENT_SECRET_GITHUB}
+          google:
+            client-id: ${OAUTH_CLIENT_ID_GOOGLE}
+            client-secret: ${OAUTH_CLIENT_SECRET_GOOGLE}
+          discord:
+            client-id: ${OAUTH_CLIENT_ID_DISCORD}
+            client-secret: ${OAUTH_CLIENT_SECRET_DISCORD}
   liquibase:
     change-log: database/changelog-master.xml
   datasource:

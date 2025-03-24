@@ -23,7 +23,12 @@ open class AuthenticationSpecification : UserSpecification() {
         )
 
     fun createUserAndAuthenticate(userCreateRequest: UserCreateRequest = createUserCreateRequest(), ipAddress: String = "192.168.8.10"): AccessTokenResponse =
-        userService.createUser(userCreateRequest)
+        userService
+            .createUser(
+                email = userCreateRequest.email,
+                username = userCreateRequest.username,
+                password = userCreateRequest.password
+            )
             .let {
                 authenticationService.authenticate(
                     authenticationLoginRequest = createAuthenticationLoginRequest(

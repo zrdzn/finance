@@ -26,11 +26,9 @@ open class UserSpecification : ApplicationTestRunner() {
         password: String = "password"
     ): UserResponse =
         userService.createUser(
-            createUserCreateRequest(
-                email = email,
-                username = username,
-                password = password
-            )
+            email = email,
+            username = username,
+            password = password
         )
 
 }

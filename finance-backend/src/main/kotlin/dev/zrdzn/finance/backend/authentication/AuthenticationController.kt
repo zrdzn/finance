@@ -28,7 +28,12 @@ class AuthenticationController(
         @RequestBody userCreateRequest: UserCreateRequest,
         response: HttpServletResponse
     ): UserResponse =
-        userService.createUser(userCreateRequest)
+        userService.createUser(
+            authenticationProvider = AuthenticationProvider.APPLICATION,
+            email = userCreateRequest.email,
+            username = userCreateRequest.username,
+            password = userCreateRequest.password
+        )
 
     @PostMapping("/login")
     fun login(
