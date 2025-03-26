@@ -25,6 +25,7 @@ open class AuthenticationSpecification : UserSpecification() {
     fun createUserAndAuthenticate(userCreateRequest: UserCreateRequest = createUserCreateRequest(), ipAddress: String = "192.168.8.10"): AccessTokenResponse =
         userService
             .createUser(
+                authenticationProvider = AuthenticationProvider.APPLICATION,
                 email = userCreateRequest.email,
                 username = userCreateRequest.username,
                 password = userCreateRequest.password

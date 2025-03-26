@@ -1,6 +1,7 @@
 package dev.zrdzn.finance.backend.user
 
 import dev.zrdzn.finance.backend.ApplicationTestRunner
+import dev.zrdzn.finance.backend.authentication.AuthenticationProvider
 import dev.zrdzn.finance.backend.user.dto.UserCreateRequest
 import dev.zrdzn.finance.backend.user.dto.UserResponse
 
@@ -26,6 +27,7 @@ open class UserSpecification : ApplicationTestRunner() {
         password: String = "password"
     ): UserResponse =
         userService.createUser(
+            AuthenticationProvider.APPLICATION,
             email = email,
             username = username,
             password = password
