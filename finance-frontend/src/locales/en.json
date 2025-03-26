@@ -66,6 +66,8 @@
       "totp-placeholder": "Enter your 2FA code",
       "register-redirect": "Don't have an account?",
       "submit": "Sign in",
+      "or": "OR",
+      "google": "Sign in with Google",
       "validation": {
         "missing-email": "You need to provide an e-mail",
         "missing-password": "You need to provide a password",
@@ -87,6 +89,8 @@
       "confirm-password-placeholder": "Confirm your password",
       "login-redirect": "Already have an account?",
       "submit": "Sign up",
+      "or": "OR",
+      "google": "Sign up with Google",
       "submit-success": "You've successfully signed up",
       "submit-error": "An error occurred while signing up",
       "validation": {

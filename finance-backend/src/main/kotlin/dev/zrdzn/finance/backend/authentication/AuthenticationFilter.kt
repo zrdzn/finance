@@ -1,8 +1,8 @@
 package dev.zrdzn.finance.backend.authentication
 
+import dev.zrdzn.finance.backend.token.TOKEN_COOKIE_NAME
 import dev.zrdzn.finance.backend.token.TokenService
 import dev.zrdzn.finance.backend.token.dto.AccessTokenCreateRequest
-import dev.zrdzn.finance.backend.token.TOKEN_COOKIE_NAME
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
@@ -27,7 +27,7 @@ class AuthenticationFilter(
         val authenticationHeader = request.getHeader("Authorization") ?: ""
 
         var accessToken: String
-        // Check if there is an access token provided
+        // check if there is an access token provided
         if (authenticationHeader.startsWith("Bearer ")) {
             accessToken = authenticationHeader.substring(7)
         } else {
@@ -44,19 +44,19 @@ class AuthenticationFilter(
 
         val now = Instant.now(clock)
 
-        // Check if the access token is expired
+        // check if the access token is expired
         if (accessTokenDetails.expiresAt.isBefore(now)) {
             val refreshToken = tokenService.getRefreshToken(accessTokenDetails.refreshTokenId)
-            // Check if the refresh token is expired
+            // check if the refresh token is expired
             if (refreshToken == null || refreshToken.expiresAt.isBefore(now)) {
-                // Remove the refresh token from the database
+                // remove the refresh token from the database
                 tokenService.removeRefreshToken(accessTokenDetails.refreshTokenId)
 
                 filterChain.doFilter(request, response)
                 return
             }
 
-            // Create a new access token
+            // create a new access token
             accessToken = tokenService.createAccessToken(
                 AccessTokenCreateRequest(
                     userId = refreshToken.userId,
@@ -72,7 +72,7 @@ class AuthenticationFilter(
         }
 
         if (SecurityContextHolder.getContext().authentication == null) {
-            // We pass user id only, because very often in endpoints we don't need the whole user object
+            // we pass user id only, because very often in endpoints we don't need the whole user object
             val authenticationToken =
                 UsernamePasswordAuthenticationToken(accessTokenDetails.userId, accessToken, emptyList())
             authenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request)

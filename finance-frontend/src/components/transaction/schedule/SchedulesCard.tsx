@@ -42,7 +42,7 @@ interface SchedulesCardProperties {
 
 export const SchedulesCard = ({ vault, permissions }: SchedulesCardProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const t = useTranslations("Transactions")
   const [schedules, setSchedules] = useState<ScheduleResponse[]>([])
   const [queriedSchedules, setQueriedSchedules] = useState<ScheduleResponse[]>([])

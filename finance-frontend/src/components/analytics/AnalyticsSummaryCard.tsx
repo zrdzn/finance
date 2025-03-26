@@ -29,7 +29,7 @@ interface AnalyticsSummaryCardProperties {
 }
 
 export const AnalyticsSummaryCard = ({ vault, permissions, statisticType }: AnalyticsSummaryCardProperties) => {
-    const api = useApi();
+    const { api } = useApi();
     const t = useTranslations("Analytics");
     const theme = useTheme()
     const { formatNumber } = useNumberFormatter();

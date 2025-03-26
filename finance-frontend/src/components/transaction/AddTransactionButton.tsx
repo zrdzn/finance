@@ -35,7 +35,7 @@ interface AddTransactionButtonProperties {
 
 export const AddTransactionButton = ({ vault }: AddTransactionButtonProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const t = useTranslations("Transactions")

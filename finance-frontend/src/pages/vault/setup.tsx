@@ -30,7 +30,7 @@ type VaultCreateRequest = Components.Schemas.VaultCreateRequest;
 
 export default function SetupVault() {
   const { details } = useAuthentication()
-  const api = useApi()
+  const { api } = useApi()
   const router = useRouter()
   const t = useTranslations("VaultSetup")
   const theme = useTheme()

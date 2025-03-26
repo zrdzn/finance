@@ -22,7 +22,7 @@ interface AccountProfileUpdateFormProperties {
 }
 
 export const AccountProfileUpdateForm = ({ user }: AccountProfileUpdateFormProperties) => {
-    const api = useApi()
+    const { api } = useApi()
     const t = useTranslations("AccountSettings")
     const router = useRouter()
     const theme = useTheme()

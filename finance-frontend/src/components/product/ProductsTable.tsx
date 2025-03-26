@@ -37,7 +37,7 @@ interface ProductsTableProperties {
 }
 
 export const ProductsTable = ({ vault, permissions }: ProductsTableProperties) => {
-  const api = useApi()
+  const { api } = useApi()
   const router = useRouter()
   const theme = useTheme()
   const t = useTranslations("Products")

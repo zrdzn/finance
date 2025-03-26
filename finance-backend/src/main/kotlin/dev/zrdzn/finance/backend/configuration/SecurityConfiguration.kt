@@ -2,7 +2,6 @@ package dev.zrdzn.finance.backend.configuration
 
 import dev.zrdzn.finance.backend.authentication.AuthenticationFilter
 import dev.zrdzn.finance.backend.authentication.AuthenticationService
-import dev.zrdzn.finance.backend.authentication.OAuthService
 import dev.zrdzn.finance.backend.authentication.OAuthSuccessHandler
 import dev.zrdzn.finance.backend.token.TokenService
 import dev.zrdzn.finance.backend.user.UserService
@@ -37,9 +36,10 @@ class SecurityConfiguration(
         http
             .authorizeHttpRequests { auth ->
                 auth
+                    .requestMatchers("/login/oauth2/code/*").permitAll()
+                    .requestMatchers("/v1/oauth/authorize/google").permitAll()
                     .requestMatchers("/v1/authentication/register").permitAll()
                     .requestMatchers("/v1/authentication/login").permitAll()
-                    .requestMatchers("/v1/oauth/**").permitAll()
                     .requestMatchers("/swagger").permitAll()
                     .requestMatchers("/swagger-ui.html").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
@@ -71,15 +71,10 @@ class SecurityConfiguration(
                     }
                 )
             }
-            .addFilterBefore(
-                AuthenticationFilter(tokenService, clock),
-                UsernamePasswordAuthenticationFilter::class.java
-            )
             .oauth2Login { login ->
                 login
-                    .userInfoEndpoint { it.userService(OAuthService(authenticationService = authenticationService)) }
                     .authorizationEndpoint { it.baseUri("/v1/oauth/authorize") }
-                    .redirectionEndpoint { it.baseUri("/v1/oauth/redirect/*") }
+                    .redirectionEndpoint { it.baseUri("/login/oauth2/code/*") }
                     .successHandler(
                         OAuthSuccessHandler(
                             authenticationService = authenticationService,
@@ -92,6 +87,10 @@ class SecurityConfiguration(
                         response.sendRedirect("${clientUrl}/login")
                     }
             }
+            .addFilterBefore(
+                AuthenticationFilter(tokenService, clock),
+                UsernamePasswordAuthenticationFilter::class.java
+            )
             .exceptionHandling {
                 it.authenticationEntryPoint { _, response, _ ->
                     response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.reasonPhrase)

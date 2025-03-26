@@ -3,11 +3,11 @@ import {
   Button,
   Card,
   CardBody,
-  CardHeader,
+  CardHeader, Divider,
   Flex,
   FormControl,
   FormLabel,
-  Input,
+  Input, Link,
   Stack, Text
 } from "@chakra-ui/react";
 import React, {ChangeEvent, useEffect, useState} from "react";
@@ -20,12 +20,16 @@ import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
 import {Components} from "@/api/api";
 import axios from "axios";
+import {useApi} from "@/hooks/useApi";
+import {FaGoogle} from "react-icons/fa";
+import {FcGoogle} from "react-icons/fc";
 
 type AuthenticationLoginRequest = Components.Schemas.AuthenticationLoginRequest;
 
 export default function Login() {
   const { details, login } = useAuthentication()
   const router = useRouter()
+  const { apiUrl } = useApi()
   const theme = useTheme()
   const t = useTranslations('Login')
   const [totpRequired, setTotpRequired] = useState(false)
@@ -143,6 +147,31 @@ export default function Login() {
                   <Button color={'#f8f8f8'} fontWeight={'400'} backgroundColor={theme.secondary} onClick={handleLogin}>{t('form.submit')}</Button>
                 </Flex>
               </Stack>
+              <Flex
+                alignItems="center"
+                justifyContent="center"
+                mt={6}
+              >
+                <Divider w="40%" />
+                <Text mx={4}>{t('form.or')}</Text>
+                <Divider w="40%" />
+              </Flex>
+              <Link href={`${apiUrl}/v1/oauth/authorize/google`}>
+                <Button
+                  w="full"
+                  mt={6}
+                  leftIcon={<FcGoogle />}
+                  size={'lg'}
+                  border={'1px solid'}
+                  borderColor={theme.border}
+                  color={theme.text.primary}
+                  backgroundColor={theme.background.primary}
+                >
+                  <Text w="full" fontSize="sm">
+                    {t('form.google')}
+                  </Text>
+                </Button>
+              </Link>
             </CardBody>
           </Card>
         </Flex>

@@ -9,7 +9,7 @@ interface VaultAccessorProperties {
 }
 
 export const useVault = ({ publicId }: VaultAccessorProperties) => {
-  const api = useApi()
+  const { api } = useApi()
   const [vault, setVault] = useState<VaultResponse | undefined>(undefined)
 
   useEffect(() => {

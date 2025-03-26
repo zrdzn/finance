@@ -33,7 +33,7 @@ interface EditProductButtonProperties {
 
 export const EditProductButton = ({ product }: EditProductButtonProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const router = useRouter()
   const t = useTranslations("Products")
   const { isOpen, onOpen, onClose } = useDisclosure()

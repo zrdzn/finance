@@ -15,6 +15,7 @@ import dev.zrdzn.finance.backend.user.dto.UserResponse
 import dev.zrdzn.finance.backend.user.dto.UserWithPasswordResponse
 import java.time.Clock
 import java.time.Instant
+import org.slf4j.LoggerFactory
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,6 +28,8 @@ class AuthenticationService(
     private val clock: Clock,
     private val authenticationAttemptRepository: AuthenticationAttemptRepository
 ) {
+
+    private val logger = LoggerFactory.getLogger(AuthenticationService::class.java)
 
     @Transactional(noRollbackFor = [
         AuthenticationCredentialsInvalidError::class,
@@ -67,14 +70,20 @@ class AuthenticationService(
 
     fun authenticateWithOAuth(authenticationProvider: AuthenticationProvider, email: String): Int {
         val user = userService.findUser(email)
-            ?: return userService
-                .createUser(
-                    authenticationProvider = authenticationProvider,
-                    email = email,
-                    username = email.split("@").first(),
-                    password = null
-                )
-                .id
+        if (user == null) {
+            val newUser = userService.createUser(
+                authenticationProvider = authenticationProvider,
+                email = email,
+                username = email.split("@").first(),
+                password = null
+            ).id
+
+            logger.info("User with email '$email' created with OAuth provider $authenticationProvider")
+
+            return newUser
+        }
+
+        logger.info("User with email '$email' authenticated with OAuth provider $authenticationProvider")
 
         return user.id
     }

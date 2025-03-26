@@ -37,7 +37,7 @@ export const TransactionProductsPopover = ({vault, transaction, permissions}: Tr
     const t = useTranslations('Transactions')
     const theme = useTheme()
     const { formatNumber } = useNumberFormatter()
-    const api = useApi()
+    const { api } = useApi()
     const router = useRouter()
 
     const handleTransactionProductDelete = (transactionProductId: number) => {

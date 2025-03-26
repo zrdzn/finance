@@ -421,7 +421,7 @@ export const VaultSidebar = (
   }: VaultSidebarProperties
 ) => {
   const [isMobile] = useMediaQuery("(max-width: 768px)");
-  const api = useApi()
+  const { api } = useApi()
   const [aiEnabled, setAiEnabled] = useState(false)
 
   useEffect(() => {

@@ -15,4 +15,9 @@ client.then(apiClient => {
   apiClient.defaults.withCredentials = true
 })
 
-export const useApi = (): Promise<Client> => client;
+export const useApi = () => {
+  return {
+    apiUrl: process.env.NEXT_PUBLIC_API_URL,
+    api: client
+  }
+};

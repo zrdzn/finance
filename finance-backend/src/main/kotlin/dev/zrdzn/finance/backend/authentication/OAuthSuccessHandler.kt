@@ -32,7 +32,17 @@ class OAuthSuccessHandler(
 
         val email = oAuthToken.principal.attributes["email"].toString()
 
-        val user = userService.findUser(email)
+        val userId = authenticationService.authenticateWithOAuth(
+            authenticationProvider = when(oAuthToken.authorizedClientRegistrationId) {
+                "github" -> AuthenticationProvider.GITHUB
+                "google" -> AuthenticationProvider.GOOGLE
+                "discord" -> AuthenticationProvider.DISCORD
+                else -> throw IllegalArgumentException("Unsupported OAuth provider")
+            },
+            email = email
+        )
+
+        val user = userService.findUser(userId)
         if (user == null) {
             logger.error("User not found with email '$email' taken from OAuth token")
             return

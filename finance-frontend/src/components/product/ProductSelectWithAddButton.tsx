@@ -13,7 +13,7 @@ interface ProductSelectWithAddButtonProperties {
 }
 
 export const ProductSelectWithAddButton = ({ vaultId, onChange }: ProductSelectWithAddButtonProperties) => {
-  const api = useApi()
+  const { api } = useApi()
   const [products, setProducts] = useState<ProductResponse[] | undefined>(undefined)
 
   useEffect(() => {

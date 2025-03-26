@@ -35,7 +35,7 @@ interface CategoriesCardProperties {
 }
 
 export const CategoriesCard = ({ vault, permissions }: CategoriesCardProperties) => {
-    const api = useApi()
+    const { api } = useApi()
     const theme = useTheme()
     const router = useRouter()
     const t = useTranslations("Categories")

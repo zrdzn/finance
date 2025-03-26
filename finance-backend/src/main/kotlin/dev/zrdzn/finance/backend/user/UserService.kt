@@ -185,6 +185,11 @@ class UserService(
             ?: throw UserAccessDeniedError()
 
     @Transactional(readOnly = true)
+    fun findUser(userId: Int): UserResponse? =
+        userRepository.findById(userId)
+            ?.toResponse()
+
+    @Transactional(readOnly = true)
     fun findUser(email: String): UserResponse? =
         userRepository.findByEmail(email)
             ?.toResponse()
@@ -202,7 +207,7 @@ class UserService(
                     id = it.id!!,
                     email = it.email,
                     username = it.username,
-                    password = it.password,
+                    password = it.password ?: return@let null,
                     verified = it.verified,
                     totpSecret = it.totpSecret
                 )

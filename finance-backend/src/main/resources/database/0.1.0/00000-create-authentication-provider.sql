@@ -2,7 +2,5 @@
 --changeset finance:0
 CREATE TYPE "authentication_provider" AS ENUM (
     'APPLICATION',
-    'GITHUB',
-    'GOOGLE',
-    'DISCORD'
+    'GOOGLE'
 );

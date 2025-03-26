@@ -52,7 +52,7 @@ interface ImageImportProperties {
 }
 
 export const ImageImport = ({ vault, isOpen, onClose, permissions }: ImageImportProperties) => {
-    const api = useApi()
+    const { api } = useApi()
     const [imageBlob, setImageBlob] = useState<Blob | undefined>(undefined);
     const initialRef = useRef(null)
     const finalRef = useRef(null)

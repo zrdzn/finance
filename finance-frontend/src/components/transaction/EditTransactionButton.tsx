@@ -35,7 +35,7 @@ interface EditTransactionButtonProperties {
 
 export const EditTransactionButton = ({ transaction }: EditTransactionButtonProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const router = useRouter()
   const t = useTranslations("Transactions")
   const { isOpen, onOpen, onClose } = useDisclosure()

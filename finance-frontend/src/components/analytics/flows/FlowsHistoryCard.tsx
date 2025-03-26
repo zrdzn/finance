@@ -31,7 +31,7 @@ interface FlowsHistoryCardProperties {
 export const FlowsHistoryCard = ({
                                    vault, transactionType,
                                    flowsRange }: FlowsHistoryCardProperties) => {
-  const api = useApi()
+  const { api } = useApi()
   const t = useTranslations("Analytics")
   const theme = useTheme()
   const { formatNumber } = useNumberFormatter()

@@ -14,7 +14,7 @@ interface ProductCategorySelectProperties {
 }
 
 export const CategorySelect = ({ vaultId, onChange, defaultValue }: ProductCategorySelectProperties) => {
-  const api = useApi()
+  const { api } = useApi()
   const [categories, setCategories] = useState<CategoryResponse[]>()
   const [selectedCategory, setSelectedCategory] = useState<SelectProperties>({
     value: defaultValue?.id.toString() ?? 'None',

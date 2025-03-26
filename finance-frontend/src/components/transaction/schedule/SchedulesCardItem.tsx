@@ -30,7 +30,7 @@ export const SchedulesCardItem = ({
   schedule,
   permissions
 }: SchedulesCardItemProperties) => {
-  const api = useApi()
+  const { api } = useApi()
   const router = useRouter()
   const { formatDate } = useDateFormatter()
   const { formatInterval } = useIntervalFormatter()
