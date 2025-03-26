@@ -74,7 +74,7 @@ class SecurityConfiguration(
             .oauth2Login { login ->
                 login
                     .authorizationEndpoint { it.baseUri("/v1/oauth/authorize") }
-                    .redirectionEndpoint { it.baseUri("/login/oauth2/code/*") }
+                    .redirectionEndpoint { it.baseUri("/v1/login/oauth2/code/*") }
                     .successHandler(
                         OAuthSuccessHandler(
                             authenticationService = authenticationService,
