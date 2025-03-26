@@ -10,8 +10,10 @@ import dev.zrdzn.finance.backend.user.dto.UserWithPasswordResponse
 import dev.zrdzn.finance.backend.user.dto.UsernameResponse
 import dev.zrdzn.finance.backend.user.error.TwoFactorAlreadyEnabledError
 import dev.zrdzn.finance.backend.user.error.UserAccessDeniedError
+import dev.zrdzn.finance.backend.user.error.UserDecimalSeparatorInvalidError
 import dev.zrdzn.finance.backend.user.error.UserEmailAlreadyTakenError
 import dev.zrdzn.finance.backend.user.error.UserEmailInvalidError
+import dev.zrdzn.finance.backend.user.error.UserGroupSeparatorInvalidError
 import dev.zrdzn.finance.backend.user.error.UserPasswordTooLongError
 import dev.zrdzn.finance.backend.user.error.UserPasswordTooShortError
 import dev.zrdzn.finance.backend.user.error.UserUsernameTooLongError
@@ -129,12 +131,20 @@ class UserService(
             throw UserAccessDeniedError()
         }
 
+        // validate email
+        if (!email.matches(emailRegex)) {
+            throw UserEmailInvalidError()
+        }
+
         user.email = email
     }
 
     @Transactional
     fun updateUserPassword(requesterId: Int, securityCode: String, oldPassword: String, newPassword: String) {
         val user = userRepository.findById(requesterId) ?: throw UserAccessDeniedError()
+
+        if (newPassword.length <= 6) throw UserPasswordTooShortError()
+        if (newPassword.length >= 100) throw UserPasswordTooLongError()
 
         if (!userProtectionService.isAccessGranted(userId = user.id!!, securityCode = securityCode)) {
             throw UserAccessDeniedError()
@@ -150,6 +160,11 @@ class UserService(
     @Transactional
     fun updateUserProfile(requesterId: Int, username: String, decimalSeparator: String, groupSeparator: String) {
         val user = userRepository.findById(requesterId) ?: throw UserAccessDeniedError()
+
+        if (username.length <= 3) throw UserUsernameTooShortError()
+        if (username.length >= 20) throw UserUsernameTooLongError()
+        if (decimalSeparator.length != 1) throw UserDecimalSeparatorInvalidError()
+        if (groupSeparator.length != 1) throw UserGroupSeparatorInvalidError()
 
         user.username = username
         user.decimalSeparator = decimalSeparator

@@ -1,6 +1,6 @@
 import {Components} from "@/api/api";
 import React, {useState} from "react";
-import {Button, FormControl, FormLabel, HStack, Input, Radio, RadioGroup, Stack, Text} from "@chakra-ui/react";
+import {Button, FormControl, FormLabel, HStack, Input, Radio, RadioGroup, Stack, Text, theme} from "@chakra-ui/react";
 import {AccountAvatar} from "@/components/account/AccountAvatar";
 import {FileUpload} from "@/components/shared/FileUpload";
 import {FaPencil} from "react-icons/fa6";
@@ -13,6 +13,7 @@ import {useRouter} from "next/router";
 import {useTranslations} from "next-intl";
 import {useTheme} from "@/hooks/useTheme";
 import {useAuthentication} from "@/hooks/useAuthentication";
+import axios from "axios";
 
 export type UserProfileUpdateRequest = Components.Schemas.UserProfileUpdateRequest;
 export type UserResponse = Components.Schemas.UserResponse;
@@ -52,12 +53,18 @@ export const AccountProfileUpdateForm = ({ user }: AccountProfileUpdateFormPrope
         api
             .then(client => client.updateUserProfile(null, userProfileUpdateRequest)
                 .then(() => {
-                    toast.success(t('profile-card.updated-success'))
-                    setTimeout(() => router.reload(), 1000)
-                }))
+                  toast.success(t('profile-card.updated-success'))
+                  setTimeout(() => router.reload(), 1000)
+                })
+            )
             .catch(error => {
-                console.error(error)
-                toast.error(t('profile-card.updated-error'))
+              handleUsernameChange(user.username)
+              if (axios.isAxiosError(error) && error.response) {
+                const errorMessage = error.response.data.description || "An error occurred while logging in"
+                toast.error(errorMessage)
+              } else {
+                toast.error("An unexpected error occurred")
+              }
             })
     }
 
@@ -121,15 +128,14 @@ export const AccountProfileUpdateForm = ({ user }: AccountProfileUpdateFormPrope
                       backgroundColor={theme.secondary}
                       color={'#f8f8f8'}
                       onClick={event => {
-                            if (isEditingUsername) {
-                                handleUserProfileUpdate(event)
-                            }
-
-                            setIsEditingUsername(!isEditingUsername)}
+                        if (isEditingUsername) {
+                          handleUserProfileUpdate(event)
                         }
-                        size={'md'}
-                        fontWeight={'400'}
-                    >
+
+                        setIsEditingUsername(!isEditingUsername)
+                      }}
+                      size={'md'}
+                      fontWeight={'400'}>
                         {
                             isEditingUsername ? <FaSave /> : <FaPencil />
                         }

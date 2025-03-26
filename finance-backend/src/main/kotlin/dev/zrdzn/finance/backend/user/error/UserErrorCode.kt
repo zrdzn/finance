@@ -9,5 +9,7 @@ enum class UserErrorCode(val status: Int, val code: String, val description: Str
     USERNAME_TOO_SHORT(HttpStatus.BAD_REQUEST.value(), "USER_USERNAME_TOO_SHORT", "Provided username is too short"),
     USERNAME_TOO_LONG(HttpStatus.BAD_REQUEST.value(), "USER_USERNAME_TOO_LONG", "Provided username is too long"),
     PASSWORD_TOO_SHORT(HttpStatus.BAD_REQUEST.value(), "USER_PASSWORD_TOO_SHORT", "Provided password is too short"),
-    PASSWORD_TOO_LONG(HttpStatus.BAD_REQUEST.value(), "USER_PASSWORD_TOO_LONG", "Provided password is too long")
+    PASSWORD_TOO_LONG(HttpStatus.BAD_REQUEST.value(), "USER_PASSWORD_TOO_LONG", "Provided password is too long"),
+    DECIMAL_SEPARATOR_INVALID(HttpStatus.BAD_REQUEST.value(), "USER_DECIMAL_SEPARATOR_INVALID", "Provided decimal separator is invalid"),
+    GROUP_SEPARATOR_INVALID(HttpStatus.BAD_REQUEST.value(), "USER_GROUP_SEPARATOR_INVALID", "Provided group separator is invalid"),
 }
