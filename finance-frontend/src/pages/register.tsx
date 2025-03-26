@@ -20,6 +20,7 @@ import { Layout } from "@/components/Layout";
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
 import {FaGoogle} from "react-icons/fa";
+import {FcGoogle} from "react-icons/fc";
 
 interface RegistrationForm {
   email: string;
@@ -199,7 +200,7 @@ export default function Register() {
                 <Flex
                   alignItems="center"
                   justifyContent="center"
-                  mt={4}
+                  mt={6}
                 >
                   <Divider w="40%" />
                   <Text mx={4}>{t('form.or')}</Text>
@@ -208,10 +209,13 @@ export default function Register() {
                 <Link href={`${apiUrl}/v1/oauth/authorize/google`}>
                   <Button
                     w="full"
-                    mt={4}
-                    leftIcon={<FaGoogle />}
-                    color={'#f8f8f8'}
-                    backgroundColor={'#4285F4'}
+                    mt={6}
+                    leftIcon={<FcGoogle />}
+                    size={'lg'}
+                    border={'1px solid'}
+                    borderColor={theme.border}
+                    color={theme.text.primary}
+                    backgroundColor={theme.background.primary}
                   >
                     <Text w="full" fontSize="sm">
                       {t('form.google')}
