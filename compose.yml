@@ -3,7 +3,7 @@ services:
     depends_on:
       - database
       - storage
-    image: zrdzn/finance-backend:latest
+    image: test-backend
     ports:
       - "8100:8095"
     expose:
@@ -23,18 +23,21 @@ services:
       STORAGE_SECRET_KEY: ${STORAGE_SECRET_KEY}
       STORAGE_REGION: ${STORAGE_REGION}
       STORAGE_ENDPOINT: ${STORAGE_ENDPOINT}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OAUTH_CLIENT_ID_GOOGLE: ${OAUTH_CLIENT_ID_GOOGLE}
+      OAUTH_CLIENT_SECRET_GOOGLE: ${OAUTH_CLIENT_SECRET_GOOGLE}
     env_file:
-      - .env
+      - .docker.env
   frontend:
     depends_on:
       - backend
-    image: zrdzn/finance-frontend:latest
+    image: test-frontend
     ports:
       - "3010:3010"
     expose:
       - "3010"
     env_file:
-      - .env
+      - .docker.env
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
   database:
