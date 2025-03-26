@@ -21,7 +21,7 @@ interface MembersCardProperties {
 }
 
 export const MembersCard = ({ vault, vaultRole }: MembersCardProperties) => {
-    const api = useApi();
+    const { api } = useApi();
     const t = useTranslations("Members");
     const theme = useTheme()
     const [members, setMembers] = useState<VaultMemberResponse[]>([])

@@ -32,7 +32,7 @@ interface EditMemberButtonProperties {
 
 export const EditMemberButton = ({ member }: EditMemberButtonProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const t = useTranslations("Members")

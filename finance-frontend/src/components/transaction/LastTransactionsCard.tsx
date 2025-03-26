@@ -40,7 +40,7 @@ interface LastTransactionsCardProperties {
 
 export const LastTransactionsCard = ({ vault, permissions }: LastTransactionsCardProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const t = useTranslations("Transactions")
   const [transactions, setTransactions] = useState<TransactionResponse[]>([])
   const { formatNumber } = useNumberFormatter()

@@ -3,11 +3,11 @@ import {
   Button,
   Card,
   CardBody,
-  CardHeader,
+  CardHeader, Divider,
   Flex,
   FormControl, FormHelperText,
   FormLabel,
-  Input,
+  Input, Link,
   Stack, Text
 } from "@chakra-ui/react";
 import React, {ChangeEvent, useEffect, useState} from "react";
@@ -19,6 +19,7 @@ import toast from "react-hot-toast"
 import { Layout } from "@/components/Layout";
 import {GetStaticPropsContext} from "next";
 import {useTranslations} from "next-intl";
+import {FaGoogle} from "react-icons/fa";
 
 interface RegistrationForm {
   email: string;
@@ -29,7 +30,7 @@ interface RegistrationForm {
 
 export default function Register() {
   const { details, login } = useAuthentication()
-  const api = useApi()
+  const { api, apiUrl } = useApi()
   const router = useRouter()
   const t = useTranslations("Register")
   const tValidation = useTranslations("Global.validation")
@@ -147,15 +148,17 @@ export default function Register() {
                     onChange={handleRegistrationFormUpdate}
                     placeholder={t('form.username-placeholder')}
                   />
-                  <FormHelperText
-                    color={
-                      registrationForm.username.length >= 3 && registrationForm.username.length <= 20 ?
-                        theme.text.green :
-                        theme.text.red
-                    }
-                  >
-                    {tValidation('length')} (3-20)
-                  </FormHelperText>
+                  {
+                    registrationForm.username !== '' && <FormHelperText
+                      color={
+                        registrationForm.username.length >= 3 && registrationForm.username.length <= 20 ?
+                          theme.text.green :
+                          theme.text.red
+                      }
+                    >
+                      {tValidation('length')} (3-20)
+                    </FormHelperText>
+                  }
                 </FormControl>
 
                 <FormControl isRequired>
@@ -166,15 +169,17 @@ export default function Register() {
                     onChange={handleRegistrationFormUpdate}
                     placeholder={t('form.password-placeholder')}
                   />
-                  <FormHelperText
-                    color={
-                      registrationForm.password.length >= 6 && registrationForm.password.length <= 100 ?
-                        theme.text.green :
-                        theme.text.red
-                    }
-                  >
-                    {tValidation('length')} (6-100)
-                  </FormHelperText>
+                  {
+                    registrationForm.password !== '' && <FormHelperText
+                      color={
+                        registrationForm.password.length >= 6 && registrationForm.password.length <= 100 ?
+                          theme.text.green :
+                          theme.text.red
+                      }
+                    >
+                      {tValidation('length')} (6-100)
+                    </FormHelperText>
+                  }
                 </FormControl>
 
                 <FormControl isRequired>
@@ -191,6 +196,28 @@ export default function Register() {
                   <Button color={theme.text} fontWeight={'400'} onClick={() => router.push("/login")}>{t('form.login-redirect')}</Button>
                   <Button color={'#f8f8f8'} fontWeight={'400'} backgroundColor={theme.secondary} onClick={handleRegistration}>{t('form.submit')}</Button>
                 </Flex>
+                <Flex
+                  alignItems="center"
+                  justifyContent="center"
+                  mt={4}
+                >
+                  <Divider w="40%" />
+                  <Text mx={4}>{t('form.or')}</Text>
+                  <Divider w="40%" />
+                </Flex>
+                <Link href={`${apiUrl}/v1/oauth/authorize/google`}>
+                  <Button
+                    w="full"
+                    mt={4}
+                    leftIcon={<FaGoogle />}
+                    color={'#f8f8f8'}
+                    backgroundColor={'#4285F4'}
+                  >
+                    <Text w="full" fontSize="sm">
+                      {t('form.google')}
+                    </Text>
+                  </Button>
+                </Link>
               </Stack>
             </CardBody>
           </Card>

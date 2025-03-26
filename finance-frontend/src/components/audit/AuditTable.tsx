@@ -34,7 +34,7 @@ interface AuditTableProperties {
 
 export const AuditTable = ({ vault, permissions }: AuditTableProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const [audits, setAudits] = useState<AuditResponse[]>([])
   const { formatDate } = useDateFormatter()
   const t = useTranslations("Audits")

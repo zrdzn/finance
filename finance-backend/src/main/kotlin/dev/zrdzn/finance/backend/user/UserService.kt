@@ -1,10 +1,10 @@
 package dev.zrdzn.finance.backend.user
 
 import dev.samstevens.totp.code.CodeVerifier
+import dev.zrdzn.finance.backend.authentication.AuthenticationProvider
 import dev.zrdzn.finance.backend.storage.StorageClient
 import dev.zrdzn.finance.backend.user.UserMapper.toResponse
 import dev.zrdzn.finance.backend.user.dto.TwoFactorSetupResponse
-import dev.zrdzn.finance.backend.user.dto.UserCreateRequest
 import dev.zrdzn.finance.backend.user.dto.UserResponse
 import dev.zrdzn.finance.backend.user.dto.UserWithPasswordResponse
 import dev.zrdzn.finance.backend.user.dto.UsernameResponse
@@ -35,19 +35,27 @@ class UserService(
     private val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$".toRegex()
 
     @Transactional
-    fun createUser(userCreateRequest: UserCreateRequest): UserResponse {
-        if (userCreateRequest.username.length <= 3) throw UserUsernameTooShortError()
-        if (userCreateRequest.username.length >= 20) throw UserUsernameTooLongError()
-        if (userCreateRequest.password.length <= 6) throw UserPasswordTooShortError()
-        if (userCreateRequest.password.length >= 100) throw UserPasswordTooLongError()
+    fun createUser(
+        authenticationProvider: AuthenticationProvider,
+        email: String,
+        username: String,
+        password: String?
+    ): UserResponse {
+        if (username.length <= 3) throw UserUsernameTooShortError()
+        if (username.length >= 20) throw UserUsernameTooLongError()
+
+        if (password != null) {
+            if (password.length <= 6) throw UserPasswordTooShortError()
+            if (password.length >= 100) throw UserPasswordTooLongError()
+        }
 
         // validate email
-        if (!userCreateRequest.email.matches(emailRegex)) {
+        if (!email.matches(emailRegex)) {
             throw UserEmailInvalidError()
         }
 
         // check if user already exists
-        if (doesUserExist(userCreateRequest.email)) {
+        if (doesUserExist(email)) {
             throw UserEmailAlreadyTakenError()
         }
 
@@ -55,13 +63,14 @@ class UserService(
             .save(
                 User(
                     id = null,
-                    email = userCreateRequest.email,
-                    username = userCreateRequest.username,
-                    password = passwordEncoder.encode(userCreateRequest.password),
+                    email = email,
+                    username = username,
+                    password = password?.let { passwordEncoder.encode(it) },
                     verified = false,
                     totpSecret = null,
                     decimalSeparator = ".",
-                    groupSeparator = ","
+                    groupSeparator = ",",
+                    authenticationProvider = authenticationProvider
                 )
             )
             .toResponse()
@@ -172,18 +181,18 @@ class UserService(
     @Transactional(readOnly = true)
     fun getUser(userId: Int): UserResponse =
         userRepository.findById(userId)
-            ?.let {
-                UserResponse(
-                    id = it.id!!,
-                    email = it.email,
-                    username = it.username,
-                    verified = it.verified,
-                    isTwoFactorEnabled = it.totpSecret != null,
-                    decimalSeparator = it.decimalSeparator,
-                    groupSeparator = it.groupSeparator
-                )
-            }
+            ?.toResponse()
             ?: throw UserAccessDeniedError()
+
+    @Transactional(readOnly = true)
+    fun findUser(userId: Int): UserResponse? =
+        userRepository.findById(userId)
+            ?.toResponse()
+
+    @Transactional(readOnly = true)
+    fun findUser(email: String): UserResponse? =
+        userRepository.findByEmail(email)
+            ?.toResponse()
 
     @Transactional(readOnly = true)
     fun getUsername(userId: Int): UsernameResponse =
@@ -198,7 +207,7 @@ class UserService(
                     id = it.id!!,
                     email = it.email,
                     username = it.username,
-                    password = it.password,
+                    password = it.password ?: return@let null,
                     verified = it.verified,
                     totpSecret = it.totpSecret
                 )

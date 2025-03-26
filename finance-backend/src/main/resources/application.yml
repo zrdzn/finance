@@ -11,6 +11,16 @@ spring:
       max-request-size: 10MB
   main:
     banner-mode: off
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH_CLIENT_ID_GOOGLE}
+            client-secret: ${OAUTH_CLIENT_SECRET_GOOGLE}
+          scope:
+            - email
+            - profile
   liquibase:
     change-log: database/changelog-master.xml
   datasource:

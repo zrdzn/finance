@@ -13,6 +13,7 @@ interface Theme {
   }
   primary: string
   secondary: string
+  border: string
 }
 
 interface ThemeColors {
@@ -29,6 +30,7 @@ interface ThemeColors {
     }
     primary: string
     secondary: string
+    border: string
   }
 
   dark: {
@@ -44,6 +46,7 @@ interface ThemeColors {
     }
     primary: string
     secondary: string
+    border: string
   }
 }
 
@@ -60,7 +63,8 @@ export const themeColors: ThemeColors = {
       secondary: '#ffffff'
     },
     primary: '#4CAF50',
-    secondary: 'rgb(68,166,68)'
+    secondary: 'rgb(68,166,68)',
+    border: 'gainsboro'
   },
 
   dark: {
@@ -75,7 +79,8 @@ export const themeColors: ThemeColors = {
       secondary: 'rgb(66,66,66)'
     },
     primary: '#205e20',
-    secondary: 'rgba(8,159,66,0.84)'
+    secondary: 'rgba(8,159,66,0.84)',
+    border: 'rgba(255, 255, 255, 0.16)'
   }
 }
 
@@ -89,6 +94,7 @@ export const themeExtension = extendTheme({
     'light-background-secondary': themeColors.light.background.secondary,
     'light-primary': themeColors.light.primary,
     'light-secondary': themeColors.light.secondary,
+    'light-border': themeColors.light.border,
 
     'dark-text-primary': themeColors.dark.text.primary,
     'dark-text-secondary': themeColors.dark.text.secondary,
@@ -97,7 +103,8 @@ export const themeExtension = extendTheme({
     'dark-background-primary': themeColors.dark.background.primary,
     'dark-background-secondary': themeColors.dark.background.secondary,
     'dark-primary': themeColors.dark.primary,
-    'dark-secondary': themeColors.dark.secondary
+    'dark-secondary': themeColors.dark.secondary,
+    'dark-border': themeColors.dark.border
   },
   styles: {
     global: (props: any) => ({
@@ -122,6 +129,8 @@ export const useTheme = (): Theme => {
   const primaryColor = useColorModeValue('light-primary', 'dark-primary')
   const secondaryColor = useColorModeValue('light-secondary', 'dark-secondary')
 
+  const borderColor = useColorModeValue('light-border', 'dark-border')
+
   return {
     text: {
       primary: textPrimary,
@@ -134,6 +143,7 @@ export const useTheme = (): Theme => {
       secondary: backgroundSecondary,
     },
     primary: primaryColor,
-    secondary: secondaryColor
+    secondary: secondaryColor,
+    border: borderColor
   }
 }

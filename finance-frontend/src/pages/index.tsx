@@ -22,7 +22,7 @@ interface VaultResponse {
 }
 
 export default function Homepage() {
-  const api = useApi()
+  const { api } = useApi()
   const theme = useTheme()
   const [yourVaults, setYourVaults] = useState<VaultResponse[]>([])
   const [vaultInvitations, setVaultInvitations] = useState<VaultInvitationResponse[]>([])

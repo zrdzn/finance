@@ -1,8 +1,12 @@
 package dev.zrdzn.finance.backend.configuration
 
 import dev.zrdzn.finance.backend.authentication.AuthenticationFilter
+import dev.zrdzn.finance.backend.authentication.AuthenticationService
+import dev.zrdzn.finance.backend.authentication.OAuthSuccessHandler
 import dev.zrdzn.finance.backend.token.TokenService
+import dev.zrdzn.finance.backend.user.UserService
 import java.time.Clock
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -19,15 +23,21 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 class SecurityConfiguration(
     private val tokenService: TokenService,
+    private val authenticationService: AuthenticationService,
+    private val userService: UserService,
     private val clock: Clock,
     @Value("\${client.url}") private val clientUrl: String
 ) {
+
+    private val logger = LoggerFactory.getLogger(SecurityConfiguration::class.java)
 
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain =
         http
             .authorizeHttpRequests { auth ->
                 auth
+                    .requestMatchers("/login/oauth2/code/*").permitAll()
+                    .requestMatchers("/v1/oauth/authorize/google").permitAll()
                     .requestMatchers("/v1/authentication/register").permitAll()
                     .requestMatchers("/v1/authentication/login").permitAll()
                     .requestMatchers("/swagger").permitAll()
@@ -60,6 +70,22 @@ class SecurityConfiguration(
                         )
                     }
                 )
+            }
+            .oauth2Login { login ->
+                login
+                    .authorizationEndpoint { it.baseUri("/v1/oauth/authorize") }
+                    .redirectionEndpoint { it.baseUri("/login/oauth2/code/*") }
+                    .successHandler(
+                        OAuthSuccessHandler(
+                            authenticationService = authenticationService,
+                            userService = userService,
+                            clientUrl = clientUrl
+                        )
+                    )
+                    .failureHandler { _, response, exception ->
+                        logger.debug("(OAuth) Authentication failed", exception)
+                        response.sendRedirect("${clientUrl}/login")
+                    }
             }
             .addFilterBefore(
                 AuthenticationFilter(tokenService, clock),

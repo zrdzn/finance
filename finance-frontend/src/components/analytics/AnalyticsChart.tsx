@@ -24,7 +24,7 @@ export const AnalyticsChart = ({ vault, permissions, transactionType }: Analytic
     const theme = useTheme()
     const { colorMode } = useColorMode()
     const t = useTranslations("Analytics");
-    const api = useApi()
+    const { api } = useApi()
     const [chartData, setChartData] = useState<FlowsChartResponse>({
         categories: [],
         series: []

@@ -55,7 +55,7 @@ interface CsvImportProperties {
 }
 
 export const CsvImport = ({ vault, isOpen, onClose, permissions }: CsvImportProperties) => {
-    const api = useApi()
+    const { api } = useApi()
     const [csvColumns, setCsvColumns] = useState<string[]>([]);
     const [mappedFields, setMappedFields] = useState<{[name: string]: string}>({});
     const [csvBlob, setCsvBlob] = useState<Blob | undefined>(undefined);

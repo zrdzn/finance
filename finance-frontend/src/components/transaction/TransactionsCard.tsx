@@ -45,7 +45,7 @@ interface TransactionsCardProperties {
 
 export const TransactionsCard = ({ vault, permissions }: TransactionsCardProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const t = useTranslations("Transactions")
   const [transactions, setTransactions] = useState<TransactionResponse[]>([])
   const [queriedTransactions, setQueriedTransactions] = useState<TransactionResponse[]>([])

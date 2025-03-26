@@ -21,7 +21,7 @@ interface ProtectedVaultProperties {
 
 export const ProtectedVault = ({ children, publicId }: ProtectedVaultProperties) => {
   const router = useRouter();
-  const api = useApi();
+  const { api } = useApi();
   const theme = useTheme()
   const { details } = useAuthentication();
   const vault = useVault({ publicId });

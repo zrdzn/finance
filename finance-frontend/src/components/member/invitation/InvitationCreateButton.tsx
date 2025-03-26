@@ -30,7 +30,7 @@ interface InvitationCreateButtonProperties {
 
 export const InvitationCreateButton = ({ vaultId }: InvitationCreateButtonProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [vaultInvitationCreateRequest, setVaultInvitationCreateRequest] = useState<VaultInvitationCreateRequest>({

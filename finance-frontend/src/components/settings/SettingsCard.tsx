@@ -32,7 +32,7 @@ interface SettingsCardProperties {
 
 export const SettingsCard = ({ vault, permissions }: SettingsCardProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const router = useRouter()
   const t = useTranslations("VaultSettings")
   const [vaultUpdateRequest, setVaultUpdateRequest] = useState<VaultUpdateRequest>({

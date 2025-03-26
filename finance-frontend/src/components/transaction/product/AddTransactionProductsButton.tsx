@@ -40,7 +40,7 @@ interface AddTransactionProductsButtonProperties {
 
 export const AddTransactionProductsButton = ({ vaultId, transactionId, size }: AddTransactionProductsButtonProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const t = useTranslations("Transactions")

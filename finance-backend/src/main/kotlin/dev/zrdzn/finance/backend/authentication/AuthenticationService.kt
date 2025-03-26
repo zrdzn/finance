@@ -1,20 +1,21 @@
 package dev.zrdzn.finance.backend.authentication
 
+import dev.zrdzn.finance.backend.authentication.dto.AuthenticationLoginRequest
 import dev.zrdzn.finance.backend.authentication.error.AuthenticationAttemptNotFoundError
 import dev.zrdzn.finance.backend.authentication.error.AuthenticationCredentialsInvalidError
 import dev.zrdzn.finance.backend.authentication.error.AuthenticationTotpInvalidError
 import dev.zrdzn.finance.backend.authentication.error.AuthenticationTotpRequiredError
-import dev.zrdzn.finance.backend.authentication.dto.AuthenticationLoginRequest
 import dev.zrdzn.finance.backend.token.TokenService
 import dev.zrdzn.finance.backend.token.dto.AccessTokenCreateRequest
-import dev.zrdzn.finance.backend.token.dto.RefreshTokenCreateRequest
 import dev.zrdzn.finance.backend.token.dto.AccessTokenResponse
+import dev.zrdzn.finance.backend.token.dto.RefreshTokenCreateRequest
 import dev.zrdzn.finance.backend.token.dto.RefreshTokenResponse
 import dev.zrdzn.finance.backend.user.UserService
 import dev.zrdzn.finance.backend.user.dto.UserResponse
 import dev.zrdzn.finance.backend.user.dto.UserWithPasswordResponse
 import java.time.Clock
 import java.time.Instant
+import org.slf4j.LoggerFactory
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,6 +28,8 @@ class AuthenticationService(
     private val clock: Clock,
     private val authenticationAttemptRepository: AuthenticationAttemptRepository
 ) {
+
+    private val logger = LoggerFactory.getLogger(AuthenticationService::class.java)
 
     @Transactional(noRollbackFor = [
         AuthenticationCredentialsInvalidError::class,
@@ -54,11 +57,35 @@ class AuthenticationService(
         }
 
         val refreshToken = createRefreshToken(user.id)
-        val accessToken = createAccessToken(user, refreshToken.id)
+        val accessToken = createAccessToken(
+            userId = user.id,
+            userEmail = user.email,
+            refreshTokenId = refreshToken.id
+        )
 
         updateAuthenticationAttempt(authenticationAttempt.id!!, authenticatedAt = Instant.now(clock))
 
         return accessToken
+    }
+
+    fun authenticateWithOAuth(authenticationProvider: AuthenticationProvider, email: String): Int {
+        val user = userService.findUser(email)
+        if (user == null) {
+            val newUser = userService.createUser(
+                authenticationProvider = authenticationProvider,
+                email = email,
+                username = email.split("@").first(),
+                password = null
+            ).id
+
+            logger.info("User with email '$email' created with OAuth provider $authenticationProvider")
+
+            return newUser
+        }
+
+        logger.info("User with email '$email' authenticated with OAuth provider $authenticationProvider")
+
+        return user.id
     }
 
     @Transactional
@@ -97,15 +124,16 @@ class AuthenticationService(
 
     @Transactional
     fun createAccessToken(
-        userWithPasswordResponse: UserWithPasswordResponse,
+        userId: Int,
+        userEmail: String,
         refreshTokenId: String
     ): AccessTokenResponse =
         tokenService
             .createAccessToken(
                 AccessTokenCreateRequest(
-                    userId = userWithPasswordResponse.id,
+                    userId = userId,
                     refreshTokenId = refreshTokenId,
-                    email = userWithPasswordResponse.email
+                    email = userEmail
                 )
             )
             .let { tokenService.getAccessTokenDetails(it.value) }

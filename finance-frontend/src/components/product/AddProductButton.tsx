@@ -33,7 +33,7 @@ interface AddProductButtonProperties {
 
 export const AddProductButton = ({ vaultId, onCreate }: AddProductButtonProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const t = useTranslations("Products")
   const [productCreateRequest, setProductCreateRequest] = useState<ProductCreateRequest>({

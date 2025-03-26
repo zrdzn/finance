@@ -16,7 +16,7 @@ interface VaultInvitationCardProperties {
 
 export const VaultInvitationCard = ({ invitation }: VaultInvitationCardProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const router = useRouter()
   const t = useTranslations("Overview")
   const [username, setUsername] = useState<UsernameResponse | undefined>(undefined)

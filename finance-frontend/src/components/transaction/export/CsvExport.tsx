@@ -34,7 +34,7 @@ interface CsvExportProperties {
 
 export const CsvExport = ({ vault, isOpen, onClose, permissions }: CsvExportProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const [fileType, setFileType] = useState('CSV')
   const initialRef = useRef(null)
   const finalRef = useRef(null)

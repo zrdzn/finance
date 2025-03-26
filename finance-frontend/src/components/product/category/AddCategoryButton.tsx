@@ -30,7 +30,7 @@ interface AddCategoryButtonProperties {
 
 export const AddCategoryButton = ({ vaultId }: AddCategoryButtonProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const router = useRouter()
   const t = useTranslations("Categories")
   const { isOpen, onOpen, onClose } = useDisclosure()

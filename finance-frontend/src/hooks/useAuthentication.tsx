@@ -18,7 +18,7 @@ const DefaultAuthenticationContext = createContext<AuthenticationContext>({
 });
 
 export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const api = useApi()
+  const { api } = useApi()
   const [details, setDetails] = useState<UserResponse | null | undefined>(undefined)
 
   useEffect(() => {

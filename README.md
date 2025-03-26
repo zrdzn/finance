@@ -117,7 +117,10 @@ You can try out the live demo of **Finance** at: https://finance.zrdzn.dev.
 - `STORAGE_SECRET_KEY` - S3 secret key
 - `STORAGE_REGION` - S3 region
 - `STORAGE_ENDPOINT` - S3 endpoint
-- `OPENAI_API_KEY` - OpenAI API key
+- `OPENAI_API_KEY` - (Optional) OpenAI API key
+- `OAUTH_CLIENT_ID_GOOGLE` - Google OAuth client id
+- `OAUTH_CLIENT_SECRET_GOOGLE` - Google OAuth client secret
+- `OAUTH_REDIRECT_URI_GOOGLE` - Google OAuth redirect URI
 ## 🏛️ Architecture
 
 ## 🚀 Installation

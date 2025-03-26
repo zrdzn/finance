@@ -37,7 +37,7 @@ interface RequestAccountUpdateButtonProperties {
 
 export const RequestAccountUpdateButton = ({ icon, text, accountUpdateType }: RequestAccountUpdateButtonProperties) => {
   const theme = useTheme();
-  const api = useApi();
+  const { api } = useApi();
   const router = useRouter();
   const { details } = useAuthentication();
   const { isOpen: requestIsOpen, onOpen: requestOnOpen, onClose: requestOnClose } = useDisclosure();

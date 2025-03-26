@@ -38,7 +38,7 @@ interface InvitationsCardProperties {
 }
 
 export const InvitationsCard = ({ vault, permissions }: InvitationsCardProperties) => {
-    const api = useApi();
+    const { api } = useApi();
     const theme = useTheme()
     const t = useTranslations("Invitations");
     const { formatDate } = useDateFormatter();

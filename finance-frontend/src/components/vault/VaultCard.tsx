@@ -17,7 +17,7 @@ interface VaultCardProperties {
 
 export const VaultCard = ({ publicId, ownerId, name }: VaultCardProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const t = useTranslations("Overview")
   const router = useRouter()
   const [username, setUsername] = useState<UsernameResponse | undefined>(undefined)

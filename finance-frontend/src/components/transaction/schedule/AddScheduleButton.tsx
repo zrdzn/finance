@@ -38,7 +38,7 @@ interface AddScheduleButtonProperties {
 
 export const AddScheduleButton = ({ transactionId }: AddScheduleButtonProperties) => {
   const theme = useTheme()
-  const api = useApi()
+  const { api } = useApi()
   const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { formatInterval } = useIntervalFormatter()

@@ -16,7 +16,7 @@ interface RequestAccountVerificationButtonProperties {
 
 export const RequestAccountVerificationButton = ({ icon, text }: RequestAccountVerificationButtonProperties) => {
   const theme = useTheme();
-  const api = useApi();
+  const { api } = useApi();
   const { details } = useAuthentication()
   const t = useTranslations("AccountSettings")
 
