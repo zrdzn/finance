@@ -35,19 +35,11 @@ interface TransactionRepository : Repository<Transaction, Int> {
         SELECT NEW dev.zrdzn.finance.backend.shared.Price(SUM(transaction.total), transaction.currency)
         FROM Transaction transaction
         WHERE transaction.vaultId = :vaultId
-        AND transaction.transactionType = :transactionType
-        AND transaction.createdAt >= :start
+            AND transaction.transactionType = :transactionType
+            AND transaction.createdAt >= :start
         GROUP BY transaction.currency
     """)
     fun sumAndGroupFlowsByVaultIdAndTransactionType(vaultId: Int, transactionType: TransactionType, start: Instant): List<Price>
-
-    @Query(
-        """
-        SELECT GREATEST(TIMESTAMPDIFF(DAY, MIN(transaction.createdAt), MAX(transaction.createdAt)), 1)
-        FROM Transaction transaction
-        WHERE transaction.vaultId = :vaultId
-    """)
-    fun countTotalDaysByVaultId(vaultId: Int): Long
 
     @Query(value = """
         SELECT
@@ -55,11 +47,8 @@ interface TransactionRepository : Repository<Transaction, Int> {
             CAST(EXTRACT(YEAR FROM transaction.created_at) AS INTEGER) AS year,
             SUM(CASE WHEN transaction.transaction_type = 'INCOMING' THEN transaction.total ELSE 0 END) AS incoming,
             SUM(CASE WHEN transaction.transaction_type = 'OUTGOING' THEN transaction.total ELSE 0 END) AS outgoing
-        FROM
-            transactions transaction,
-            vaults vault
-        WHERE
-            vault.id = :vaultId
+        FROM transactions transaction
+        WHERE transaction.vault_id = :vaultId 
             AND transaction.created_at >= CURRENT_DATE - INTERVAL '12 months'
         GROUP BY
             CAST(EXTRACT(MONTH FROM transaction.created_at) AS INTEGER),
