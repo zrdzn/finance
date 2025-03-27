@@ -14,10 +14,8 @@ import dev.zrdzn.finance.backend.user.error.UserDecimalSeparatorInvalidError
 import dev.zrdzn.finance.backend.user.error.UserEmailAlreadyTakenError
 import dev.zrdzn.finance.backend.user.error.UserEmailInvalidError
 import dev.zrdzn.finance.backend.user.error.UserGroupSeparatorInvalidError
-import dev.zrdzn.finance.backend.user.error.UserPasswordTooLongError
-import dev.zrdzn.finance.backend.user.error.UserPasswordTooShortError
-import dev.zrdzn.finance.backend.user.error.UserUsernameTooLongError
-import dev.zrdzn.finance.backend.user.error.UserUsernameTooShortError
+import dev.zrdzn.finance.backend.user.error.UserPasswordLengthInvalidError
+import dev.zrdzn.finance.backend.user.error.UserUsernameLengthInvalidError
 import java.io.InputStream
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -33,6 +31,13 @@ class UserService(
     private val storageClient: StorageClient
 ) {
 
+    companion object {
+        const val MIN_USERNAME_LENGTH = 3
+        const val MAX_USERNAME_LENGTH = 20
+        const val MIN_PASSWORD_LENGTH = 6
+        const val MAX_PASSWORD_LENGTH = 100
+    }
+
     private val avatarsBucket = "avatars"
     private val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$".toRegex()
 
@@ -43,12 +48,10 @@ class UserService(
         username: String,
         password: String?
     ): UserResponse {
-        if (username.length <= 3) throw UserUsernameTooShortError()
-        if (username.length >= 20) throw UserUsernameTooLongError()
+        if (username.length <= MIN_USERNAME_LENGTH || username.length >= MAX_USERNAME_LENGTH) throw UserUsernameLengthInvalidError()
 
         if (password != null) {
-            if (password.length <= 6) throw UserPasswordTooShortError()
-            if (password.length >= 100) throw UserPasswordTooLongError()
+            if (password.length <= MIN_PASSWORD_LENGTH || password.length >= MAX_PASSWORD_LENGTH) throw UserPasswordLengthInvalidError()
         }
 
         // validate email
@@ -143,8 +146,7 @@ class UserService(
     fun updateUserPassword(requesterId: Int, securityCode: String, oldPassword: String, newPassword: String) {
         val user = userRepository.findById(requesterId) ?: throw UserAccessDeniedError()
 
-        if (newPassword.length <= 6) throw UserPasswordTooShortError()
-        if (newPassword.length >= 100) throw UserPasswordTooLongError()
+        if (newPassword.length <= MIN_PASSWORD_LENGTH || newPassword.length >= MAX_PASSWORD_LENGTH) throw UserPasswordLengthInvalidError()
 
         if (!userProtectionService.isAccessGranted(userId = user.id!!, securityCode = securityCode)) {
             throw UserAccessDeniedError()
@@ -161,8 +163,7 @@ class UserService(
     fun updateUserProfile(requesterId: Int, username: String, decimalSeparator: String, groupSeparator: String) {
         val user = userRepository.findById(requesterId) ?: throw UserAccessDeniedError()
 
-        if (username.length <= 3) throw UserUsernameTooShortError()
-        if (username.length >= 20) throw UserUsernameTooLongError()
+        if (username.length <= MIN_USERNAME_LENGTH || username.length >= MAX_USERNAME_LENGTH) throw UserUsernameLengthInvalidError()
         if (decimalSeparator.length != 1) throw UserDecimalSeparatorInvalidError()
         if (groupSeparator.length != 1) throw UserGroupSeparatorInvalidError()
 
