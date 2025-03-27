@@ -5,7 +5,7 @@ import kotlin.reflect.full.memberProperties
 
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Environment(val key: String)
+annotation class Environment(val key: String, val optional: Boolean = false)
 
 data class ApplicationConfiguration(
     @Environment("SERVER_PORT") val serverPort: Int,
@@ -22,11 +22,26 @@ data class ApplicationConfiguration(
     @Environment("STORAGE_SECRET_KEY") val storageSecretKey: String,
     @Environment("STORAGE_REGION") val storageRegion: String,
     @Environment("STORAGE_ENDPOINT") val storageEndpoint: String,
-    @Environment("OPENAI_API_KEY") val openAiApiKey: String
+    @Environment("OPENAI_API_KEY") val openAiApiKey: String,
+    @Environment("OAUTH_CLIENT_ID_GOOGLE", optional = true) val oauthClientIdGoogle: String,
+    @Environment("OAUTH_CLIENT_SECRET_GOOGLE", optional = true) val oauthClientSecretGoogle: String,
+    @Environment("OAUTH_CLIENT_REDIRECT_URI_GOOGLE", optional = true) val oauthClientRedirectUriGoogle: String,
+    @Environment("DOCS_SWAGGER_PATH") val docsSwaggerPath: String,
+    @Environment("DOCS_OPENAPI_PATH") val docsOpenApiPath: String,
 )
 
-inline fun <reified CONFIGURATION : Any> CONFIGURATION.toMap(): Map<String, Any?> =
-    CONFIGURATION::class.memberProperties.associate {
-        val key = it.findAnnotation<Environment>()?.key ?: it.name
-        key to it.get(this)
-    }
+inline fun <reified CONFIGURATION : Any> CONFIGURATION.toConfigurationMap(): Map<String, Any?> =
+    CONFIGURATION::class.memberProperties
+        .mapNotNull {
+            val annotation = it.findAnnotation<Environment>()
+                ?: throw IllegalArgumentException("Property ${it.name} is missing @Environment annotation")
+
+            val value = it.get(this)
+
+            if (annotation.optional && value.toString().isEmpty()) {
+                return@mapNotNull null
+            }
+
+            annotation.key to value
+        }
+        .toMap()
