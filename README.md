@@ -121,6 +121,8 @@ You can try out the live demo of **Finance** at: https://finance.zrdzn.dev.
 - `OAUTH_CLIENT_ID_GOOGLE` - Google OAuth client id
 - `OAUTH_CLIENT_SECRET_GOOGLE` - Google OAuth client secret
 - `OAUTH_REDIRECT_URI_GOOGLE` - Google OAuth redirect URI
+- `DOCS_SWAGGER_PATH` - Path to Swagger UI
+- `DOCS_OPENAPI_PATH` - Path to OpenAPI specification
 ## 🏛️ Architecture
 
 ## 🚀 Installation
@@ -147,8 +149,8 @@ OPENAI_API_KEY=your-api-key
 ```
 ## 🧑‍💻 Developers
 ### API Documentation
-- You can access the **Swagger** UI for detailed API documentation at `<backend-url>/swagger-ui.html`.
-- Additionally, an **OpenAPI** specification is available at `<backend-url>/v3/api-docs` for integration and development purposes.
+- You can access the **Swagger** UI for detailed API documentation at `env DOCS_SWAGGER_PATH`.
+- Additionally, an **OpenAPI** specification is available at `env DOCS_OPENAPI_PATH`.
 ### Building from Source
 To build the backend from source, you can follow these simple steps:
 

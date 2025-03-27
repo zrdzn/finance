@@ -59,7 +59,9 @@ storage:
     - "avatars"
 springdoc:
   swagger-ui:
-    path: "/swagger.html"
+    path: ${DOCS_SWAGGER_PATH}
+  api-docs:
+    path: ${DOCS_OPENAPI_PATH}
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
 totp:

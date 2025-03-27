@@ -57,6 +57,7 @@ declare namespace Components {
         }
         export interface ConfigurationResponse {
             aiEnabled: boolean;
+            applicationVersion: string;
         }
         export interface FlowsChartResponse {
             categories: string[];
@@ -178,8 +179,6 @@ declare namespace Components {
         export interface TwoFactorVerifyRequest {
             secret: string;
             oneTimePassword: string;
-        }
-        export interface Unit {
         }
         export interface UserCreateRequest {
             email: string;
@@ -656,11 +655,6 @@ declare namespace Paths {
             export type $200 = Components.Schemas.AccessTokenResponse;
         }
     }
-    namespace Logout {
-        namespace Responses {
-            export type $200 = Components.Schemas.Unit;
-        }
-    }
     namespace Register {
         export type RequestBody = Components.Schemas.UserCreateRequest;
         namespace Responses {
@@ -831,9 +825,6 @@ declare namespace Paths {
         export interface QueryParameters {
             securityCode: Parameters.SecurityCode;
         }
-        namespace Responses {
-            export type $200 = Components.Schemas.Unit;
-        }
     }
     namespace VerifyUserTwoFactorSetup {
         export type RequestBody = Components.Schemas.TwoFactorVerifyRequest;
@@ -972,7 +963,7 @@ export interface OperationMethods {
     parameters?: Parameters<UnknownParamsObject> | null,
     data?: any,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.Logout.Responses.$200>
+  ): OperationResponse<any>
   /**
    * login
    */
@@ -1140,7 +1131,7 @@ export interface OperationMethods {
     parameters?: Parameters<Paths.VerifyUser.QueryParameters> | null,
     data?: any,
     config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.VerifyUser.Responses.$200>
+  ): OperationResponse<any>
   /**
    * requestUserVerification
    */
@@ -1444,7 +1435,7 @@ export interface PathsDictionary {
       parameters?: Parameters<UnknownParamsObject> | null,
       data?: any,
       config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.Logout.Responses.$200>
+    ): OperationResponse<any>
   }
   ['/v1/authentication/login']: {
     /**
@@ -1644,7 +1635,7 @@ export interface PathsDictionary {
       parameters?: Parameters<Paths.VerifyUser.QueryParameters> | null,
       data?: any,
       config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.VerifyUser.Responses.$200>
+    ): OperationResponse<any>
   }
   ['/v1/users/verify/request']: {
     /**

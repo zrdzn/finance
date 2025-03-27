@@ -87,6 +87,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
+springBoot {
+    buildInfo()
+}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         languageVersion = "1.9"

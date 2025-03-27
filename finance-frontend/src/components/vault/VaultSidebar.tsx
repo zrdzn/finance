@@ -26,13 +26,14 @@ import {useApi} from "@/hooks/useApi";
 
 type VaultResponse = Components.Schemas.VaultResponse;
 type VaultRoleResponse = Components.Schemas.VaultRoleResponse;
+type ConfigurationResponse = Components.Schemas.ConfigurationResponse;
 
 interface VaultSidebarProperties {
   vault: VaultResponse;
   vaultRole: VaultRoleResponse;
   isCollapsed?: boolean;
   toggleCollapse?: () => void;
-  aiEnabled?: boolean;
+  configuration?: ConfigurationResponse;
 }
 
 const SidebarLogo = ({vault, isCollapsed}: { vault: VaultResponse, isCollapsed?: boolean }) => (
@@ -225,7 +226,7 @@ const ChatBox = ({iconStyle, boxStyle}: ChatBoxProps) => {
   )
 }
 
-const BaseView = ({vault, vaultRole, aiEnabled}: VaultSidebarProperties) => {
+const BaseView = ({vault, vaultRole, configuration}: VaultSidebarProperties) => {
   const {isOpen, onOpen, onClose} = useDisclosure();
   const theme = useTheme();
   const router = useRouter();
@@ -315,6 +316,11 @@ const BaseView = ({vault, vaultRole, aiEnabled}: VaultSidebarProperties) => {
                 </Flex>
               ))}
             </Flex>
+            <Flex position={'absolute'} bottom={'2'} left={'2'}>
+              <Text color={theme.text.primary} fontSize={'sm'}>
+                Finance v{configuration?.applicationVersion}
+              </Text>
+            </Flex>
           </DrawerBody>
         </DrawerContent>
       </Drawer>
@@ -324,7 +330,7 @@ const BaseView = ({vault, vaultRole, aiEnabled}: VaultSidebarProperties) => {
 
 const DesktopView = (
   {
-    vault, vaultRole, isCollapsed = false, toggleCollapse, aiEnabled
+    vault, vaultRole, isCollapsed = false, toggleCollapse, configuration
   }: VaultSidebarProperties
 ) => {
   const theme = useTheme();
@@ -411,6 +417,11 @@ const DesktopView = (
           </Link>
         ))}
       </Flex>
+      <Flex position={'absolute'} bottom={'2'} left={'2'}>
+        <Text color={theme.text.primary} fontSize={'sm'}>
+          Finance v{configuration?.applicationVersion}
+        </Text>
+      </Flex>
     </Flex>
   );
 };
@@ -422,20 +433,20 @@ export const VaultSidebar = (
 ) => {
   const [isMobile] = useMediaQuery("(max-width: 768px)");
   const { api } = useApi()
-  const [aiEnabled, setAiEnabled] = useState(false)
+  const [configuration, setConfiguration] = useState<ConfigurationResponse>()
 
   useEffect(() => {
     api
       .then(client => client.getConfiguration())
-      .then(({data}) => setAiEnabled(data.aiEnabled))
+      .then(response => setConfiguration(response.data))
       .catch(console.error)
   }, [api])
 
   if (isMobile) {
     return <BaseView vault={vault} vaultRole={vaultRole} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse}
-                     aiEnabled={aiEnabled}/>;
+                     configuration={configuration}/>;
   } else {
     return <DesktopView vault={vault} vaultRole={vaultRole} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse}
-                        aiEnabled={aiEnabled}/>;
+                        configuration={configuration}/>;
   }
 };
