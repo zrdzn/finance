@@ -83,6 +83,7 @@ export default function Homepage() {
                 <>
                     <Flex wrap={"wrap"}
                           columnGap={4}
+                          width={'80%'}
                           justifyContent={'center'}>
                       {yourVaults.map((vault) =>
                         <VaultCard key={vault.id} publicId={vault.publicId} ownerId={vault.ownerId} name={vault.name} />
@@ -112,6 +113,7 @@ export default function Homepage() {
                 <>
                     <Flex wrap={"wrap"}
                           columnGap={4}
+                          width={'80%'}
                           justifyContent={'center'}>
                       {vaultInvitations.map((invitation) =>
                         <VaultInvitationCard key={invitation.id} invitation={invitation} />
