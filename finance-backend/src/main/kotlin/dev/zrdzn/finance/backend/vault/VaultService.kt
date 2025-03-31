@@ -19,7 +19,7 @@ import dev.zrdzn.finance.backend.vault.error.VaultInsufficientPermissionError
 import dev.zrdzn.finance.backend.vault.error.VaultInvitationNotFoundError
 import dev.zrdzn.finance.backend.vault.error.VaultInvitationNotOwnedError
 import dev.zrdzn.finance.backend.vault.error.VaultMemberNotFoundError
-import dev.zrdzn.finance.backend.vault.error.VaultNameLengthInvalidError
+import dev.zrdzn.finance.backend.vault.error.VaultNameInvalidError
 import dev.zrdzn.finance.backend.vault.error.VaultNotFoundByPublicIdError
 import dev.zrdzn.finance.backend.vault.error.VaultNotFoundError
 import java.time.Clock
@@ -61,7 +61,7 @@ class VaultService(
 
     @Transactional
     fun createVault(ownerId: Int, name: String, currency: String, defaultTransactionMethod: TransactionMethod): VaultResponse {
-        if (name.length <= MIN_NAME_LENGTH || name.length >= MAX_NAME_LENGTH) throw VaultNameLengthInvalidError()
+        if (name.length !in MIN_NAME_LENGTH..MAX_NAME_LENGTH) throw VaultNameInvalidError()
         if (currency.length != 3) throw VaultCurrencyInvalidError()
 
         return vaultRepository
@@ -126,7 +126,7 @@ class VaultService(
         withAuthorization(vaultId, requesterId, VaultPermission.SETTINGS_UPDATE) {
             val vault = vaultRepository.findById(vaultId) ?: throw VaultNotFoundError()
 
-            if (name.length <= MIN_NAME_LENGTH || name.length >= MAX_NAME_LENGTH) throw VaultNameLengthInvalidError()
+            if (name.length !in MIN_NAME_LENGTH..MAX_NAME_LENGTH) throw VaultNameInvalidError()
             if (currency.length != 3) throw VaultCurrencyInvalidError()
 
             vault.name = name

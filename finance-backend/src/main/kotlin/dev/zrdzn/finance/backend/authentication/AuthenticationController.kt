@@ -43,7 +43,13 @@ class AuthenticationController(
     ): AccessTokenResponse {
         val ipAddress = request.getHeader("X-Forwarded-For") ?: request.remoteAddr
 
-        return authenticationService.authenticate(authenticationLoginRequest, ipAddress = ipAddress)
+        return authenticationService
+            .authenticate(
+                email = authenticationLoginRequest.email,
+                password = authenticationLoginRequest.password,
+                oneTimePassword = authenticationLoginRequest.oneTimePassword,
+                ipAddress = ipAddress
+            )
             .also { addAuthenticationCookie(response, it.value) }
     }
 

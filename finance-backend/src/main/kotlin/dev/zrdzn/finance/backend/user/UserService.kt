@@ -14,8 +14,8 @@ import dev.zrdzn.finance.backend.user.error.UserDecimalSeparatorInvalidError
 import dev.zrdzn.finance.backend.user.error.UserEmailAlreadyTakenError
 import dev.zrdzn.finance.backend.user.error.UserEmailInvalidError
 import dev.zrdzn.finance.backend.user.error.UserGroupSeparatorInvalidError
-import dev.zrdzn.finance.backend.user.error.UserPasswordLengthInvalidError
-import dev.zrdzn.finance.backend.user.error.UserUsernameLengthInvalidError
+import dev.zrdzn.finance.backend.user.error.UserPasswordInvalidError
+import dev.zrdzn.finance.backend.user.error.UserUsernameInvalidError
 import java.io.InputStream
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -48,10 +48,10 @@ class UserService(
         username: String,
         password: String?
     ): UserResponse {
-        if (username.length <= MIN_USERNAME_LENGTH || username.length >= MAX_USERNAME_LENGTH) throw UserUsernameLengthInvalidError()
+        if (username.length !in MIN_USERNAME_LENGTH..MAX_USERNAME_LENGTH) throw UserUsernameInvalidError()
 
         if (password != null) {
-            if (password.length <= MIN_PASSWORD_LENGTH || password.length >= MAX_PASSWORD_LENGTH) throw UserPasswordLengthInvalidError()
+            if (password.length !in MIN_PASSWORD_LENGTH..MAX_PASSWORD_LENGTH) throw UserPasswordInvalidError()
         }
 
         // validate email
@@ -146,7 +146,7 @@ class UserService(
     fun updateUserPassword(requesterId: Int, securityCode: String, oldPassword: String, newPassword: String) {
         val user = userRepository.findById(requesterId) ?: throw UserAccessDeniedError()
 
-        if (newPassword.length <= MIN_PASSWORD_LENGTH || newPassword.length >= MAX_PASSWORD_LENGTH) throw UserPasswordLengthInvalidError()
+        if (newPassword.length !in MIN_PASSWORD_LENGTH..MAX_PASSWORD_LENGTH) throw UserPasswordInvalidError()
 
         if (!userProtectionService.isAccessGranted(userId = user.id!!, securityCode = securityCode)) {
             throw UserAccessDeniedError()
@@ -163,7 +163,7 @@ class UserService(
     fun updateUserProfile(requesterId: Int, username: String, decimalSeparator: String, groupSeparator: String) {
         val user = userRepository.findById(requesterId) ?: throw UserAccessDeniedError()
 
-        if (username.length <= MIN_USERNAME_LENGTH || username.length >= MAX_USERNAME_LENGTH) throw UserUsernameLengthInvalidError()
+        if (username.length !in MIN_USERNAME_LENGTH..MAX_USERNAME_LENGTH) throw UserUsernameInvalidError()
         if (decimalSeparator.length != 1) throw UserDecimalSeparatorInvalidError()
         if (groupSeparator.length != 1) throw UserGroupSeparatorInvalidError()
 
