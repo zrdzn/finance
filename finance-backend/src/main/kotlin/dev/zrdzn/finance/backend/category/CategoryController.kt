@@ -40,7 +40,7 @@ class CategoryController(
         @AuthenticationPrincipal userId: Int,
         @PathVariable categoryId: Int
     ): CategoryResponse =
-        categoryService.getCategoryById(userId, categoryId)
+        categoryService.getCategory(userId, categoryId)
 
     @GetMapping("/vault/{vaultId}")
     fun getCategoriesByVaultId(

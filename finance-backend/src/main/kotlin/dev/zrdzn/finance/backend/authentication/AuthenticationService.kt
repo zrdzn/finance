@@ -1,6 +1,5 @@
 package dev.zrdzn.finance.backend.authentication
 
-import dev.zrdzn.finance.backend.authentication.dto.AuthenticationLoginRequest
 import dev.zrdzn.finance.backend.authentication.error.AuthenticationAttemptNotFoundError
 import dev.zrdzn.finance.backend.authentication.error.AuthenticationCredentialsInvalidError
 import dev.zrdzn.finance.backend.authentication.error.AuthenticationTotpInvalidError
@@ -36,21 +35,21 @@ class AuthenticationService(
         AuthenticationTotpRequiredError::class,
         AuthenticationTotpInvalidError::class
     ])
-    fun authenticate(authenticationLoginRequest: AuthenticationLoginRequest, ipAddress: String): AccessTokenResponse {
+    fun authenticate(email: String, password: String, oneTimePassword: String?, ipAddress: String): AccessTokenResponse {
         // validate password and create authentication attempt
-        val (authenticationAttempt, user) = getValidatedUser(authenticationLoginRequest, ipAddress)
+        val (authenticationAttempt, user) = getValidatedUser(email, password, oneTimePassword, ipAddress)
 
         // check if the user has two-factor authentication enabled
         if (user.totpSecret != null) {
             // check if the user is trying to authenticate from the same IP address
             if (!doesIpAddressExist(user.id, ipAddress)) {
                 // check if the user provided a one-time password
-                if (authenticationLoginRequest.oneTimePassword == null) {
+                if (oneTimePassword == null) {
                     throw AuthenticationTotpRequiredError()
                 }
 
                 // validate the one-time password
-                if (!userService.verifyUserTwoFactorCode(user.totpSecret, authenticationLoginRequest.oneTimePassword)) {
+                if (!userService.verifyUserTwoFactorCode(user.totpSecret, oneTimePassword)) {
                     throw AuthenticationTotpInvalidError()
                 }
             }
@@ -139,12 +138,12 @@ class AuthenticationService(
             .let { tokenService.getAccessTokenDetails(it.value) }
 
     @Transactional
-    fun getValidatedUser(authenticationLoginRequest: AuthenticationLoginRequest, ipAddress: String): Pair<AuthenticationAttempt, UserWithPasswordResponse> {
-        val user = userService.getInsecureUser(authenticationLoginRequest.email) ?: throw AuthenticationCredentialsInvalidError()
+    fun getValidatedUser(email: String, password: String, oneTimePassword: String?, ipAddress: String): Pair<AuthenticationAttempt, UserWithPasswordResponse> {
+        val user = userService.getInsecureUser(email) ?: throw AuthenticationCredentialsInvalidError()
 
         val authenticationAttempt = createAuthenticationAttempt(userId = user.id, ipAddress = ipAddress)
 
-        if (!passwordEncoder.matches(authenticationLoginRequest.password, user.password)) {
+        if (!passwordEncoder.matches(password, user.password)) {
             throw AuthenticationCredentialsInvalidError()
         }
 

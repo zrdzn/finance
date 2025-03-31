@@ -32,11 +32,9 @@ open class AuthenticationSpecification : UserSpecification() {
             )
             .let {
                 authenticationService.authenticate(
-                    authenticationLoginRequest = createAuthenticationLoginRequest(
-                        email = userCreateRequest.email,
-                        password = userCreateRequest.password,
-                        oneTimePassword = null
-                    ),
+                    email = userCreateRequest.email,
+                    password = userCreateRequest.password,
+                    oneTimePassword = null,
                     ipAddress = ipAddress
                 )
             }

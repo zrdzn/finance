@@ -15,7 +15,7 @@ class AuditControllerTest : AuditSpecification() {
         // given
         val token = createUserAndAuthenticate()
         val vault = createVault(token.userId)
-        val audit = createAudit(userId = token.userId, vaultId = vault.id)
+        val audit = createAudit(userId = token.userId, description = "Some audit", vaultId = vault.id)
 
         // when
         val response = Unirest.get("/audits/${vault.id}")

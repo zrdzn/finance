@@ -6,7 +6,9 @@ import dev.zrdzn.finance.backend.category.CategoryService
 import dev.zrdzn.finance.backend.product.ProductMapper.toResponse
 import dev.zrdzn.finance.backend.product.dto.ProductListResponse
 import dev.zrdzn.finance.backend.product.dto.ProductResponse
+import dev.zrdzn.finance.backend.product.error.ProductNameInvalidError
 import dev.zrdzn.finance.backend.product.error.ProductNotFoundError
+import dev.zrdzn.finance.backend.product.error.ProductPriceNegativeError
 import dev.zrdzn.finance.backend.vault.VaultPermission
 import dev.zrdzn.finance.backend.vault.VaultService
 import java.math.BigDecimal
@@ -21,9 +23,17 @@ class ProductService(
     private val auditService: AuditService
 ) {
 
+    companion object {
+        const val MIN_NAME_LENGTH = 3
+        const val MAX_NAME_LENGTH = 100
+    }
+
     @Transactional
     fun createProduct(requesterId: Int, name: String, vaultId: Int, categoryId: Int?, unitAmount: BigDecimal): ProductResponse =
         vaultService.withAuthorization(vaultId, requesterId, VaultPermission.PRODUCT_CREATE) {
+            if (name.length !in MIN_NAME_LENGTH..MAX_NAME_LENGTH) throw ProductNameInvalidError()
+            if (unitAmount < BigDecimal.ZERO) throw ProductPriceNegativeError()
+
             productRepository
                 .save(
                     Product(
@@ -43,7 +53,7 @@ class ProductService(
                     )
                 }
                 .toResponse(
-                    category = categoryId?.let { id -> categoryService.getCategoryById(requesterId, id) }
+                    category = categoryId?.let { id -> categoryService.getCategory(requesterId, id) }
                 )
         }
 
@@ -52,6 +62,8 @@ class ProductService(
         val product = productRepository.findById(productId) ?: throw ProductNotFoundError()
 
         return vaultService.withAuthorization(product.vaultId, requesterId, VaultPermission.PRODUCT_UPDATE) {
+            if (unitAmount < BigDecimal.ZERO) throw ProductPriceNegativeError()
+
             product.categoryId = categoryId
             product.unitAmount = unitAmount
 
@@ -86,7 +98,7 @@ class ProductService(
             .findByVaultId(vaultId)
             .map {
                 it.toResponse(
-                    category = it.categoryId?.let { id -> categoryService.getCategoryById(requesterId, id) }
+                    category = it.categoryId?.let { id -> categoryService.getCategory(requesterId, id) }
                 )
             }
             .toSet()

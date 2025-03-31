@@ -37,7 +37,7 @@ data class Transaction(
     var transactionType: TransactionType,
 
     @Column(name = "description")
-    var description: String?,
+    var description: String,
 
     @Column(name = "total")
     var total: BigDecimal,
