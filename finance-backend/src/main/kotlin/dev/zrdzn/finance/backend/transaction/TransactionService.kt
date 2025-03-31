@@ -155,7 +155,7 @@ class TransactionService(
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").withZone(ZoneId.of("UTC")).format(it.createdAt),
                 it.transactionMethod.toString(),
                 it.transactionType.toString(),
-                it.description ?: "",
+                it.description,
                 it.total.toString(),
                 it.currency
             )
@@ -386,7 +386,7 @@ class TransactionService(
                 vaultId = transaction.vaultId,
                 userId = requesterId,
                 auditAction = AuditAction.TRANSACTION_DELETED,
-                description = transaction.description ?: "Transaction ID $transactionId"
+                description = transaction.description
             )
         }
     }
