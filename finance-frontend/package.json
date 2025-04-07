@@ -23,7 +23,7 @@
     "apexcharts": "^4.5.0",
     "axios": "^1.8.4",
     "currency-codes": "^2.2.0",
-    "framer-motion": "^12.5.0",
+    "framer-motion": "^12.6.3",
     "i18next": "^24.2.3",
     "moment-timezone": "^0.5.47",
     "next": "^14.2.25",
