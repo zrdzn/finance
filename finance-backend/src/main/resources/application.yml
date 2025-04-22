@@ -50,6 +50,8 @@ spring:
     from: ${MAIL_FROM}
 client:
   url: ${CLIENT_URL}
+api:
+  url: ${NEXT_PUBLIC_API_URL}
 storage:
   access-key: ${STORAGE_ACCESS_KEY}
   secret-key: ${STORAGE_SECRET_KEY}

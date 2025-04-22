@@ -10,6 +10,7 @@ fun main(args: Array<String>) {
         ApplicationConfiguration(
             serverPort = System.getenv("SERVER_PORT")?.toInt()!!,
             clientUrl = System.getenv("CLIENT_URL")!!,
+            apiUrl = System.getenv("NEXT_PUBLIC_API_URL")!!,
             databaseUrl = System.getenv("DATABASE_URL")!!,
             databaseUsername = System.getenv("DATABASE_USERNAME")!!,
             databasePassword = System.getenv("DATABASE_PASSWORD")!!,

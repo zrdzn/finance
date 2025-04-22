@@ -1,6 +1,5 @@
 package dev.zrdzn.finance.backend.user
 
-import dev.zrdzn.finance.backend.shared.getBaseUrl
 import dev.zrdzn.finance.backend.user.dto.TwoFactorSetupRequest
 import dev.zrdzn.finance.backend.user.dto.TwoFactorSetupResponse
 import dev.zrdzn.finance.backend.user.dto.TwoFactorVerifyRequest
@@ -34,7 +33,8 @@ import org.springframework.web.multipart.MultipartFile
 @RequestMapping("/v1/users")
 class UserController(
     private val userService: UserService,
-    @Value("\${client.url}") private val clientUrl: String
+    @Value("\${client.url}") private val clientUrl: String,
+    @Value("\${api.url}") private val apiUrl: String,
 ) {
 
     @GetMapping("/update/request")
@@ -42,7 +42,7 @@ class UserController(
 
     @GetMapping("/verify/request")
     fun requestUserVerification(@AuthenticationPrincipal userId: Int, request: HttpServletRequest): Unit =
-        userService.requestUserVerification(userId, "${request.getBaseUrl()}/v1/users/verify")
+        userService.requestUserVerification(userId, "${apiUrl}/v1/users/verify")
 
     @PostMapping("/2fa/setup")
     fun requestUserTwoFactorSetup(

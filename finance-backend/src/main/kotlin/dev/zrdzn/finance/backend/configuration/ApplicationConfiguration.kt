@@ -10,6 +10,7 @@ annotation class Environment(val key: String, val optional: Boolean = false)
 data class ApplicationConfiguration(
     @Environment("SERVER_PORT") val serverPort: Int,
     @Environment("CLIENT_URL") val clientUrl: String,
+    @Environment("NEXT_PUBLIC_API_URL") val apiUrl: String,
     @Environment("DATABASE_URL") val databaseUrl: String,
     @Environment("DATABASE_USERNAME") val databaseUsername: String,
     @Environment("DATABASE_PASSWORD") val databasePassword: String,
