@@ -11,7 +11,7 @@ open class AuditSpecification : ProductSpecification() {
     fun createAudit(
         userId: Int,
         vaultId: Int,
-        description: String = "",
+        description: String,
         auditAction: AuditAction = AuditAction.PRODUCT_CREATED
     ): AuditResponse =
         auditService.createAudit(

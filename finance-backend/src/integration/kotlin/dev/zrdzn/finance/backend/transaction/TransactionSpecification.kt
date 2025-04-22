@@ -1,11 +1,8 @@
 package dev.zrdzn.finance.backend.transaction
 
 import dev.zrdzn.finance.backend.product.ProductSpecification
-import dev.zrdzn.finance.backend.schedule.ScheduleInterval
-import dev.zrdzn.finance.backend.schedule.ScheduleRepository
 import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.transaction.dto.TransactionProductCreateRequest
-import dev.zrdzn.finance.backend.schedule.dto.ScheduleResponse
 import dev.zrdzn.finance.backend.transaction.dto.TransactionProductResponse
 import dev.zrdzn.finance.backend.transaction.dto.TransactionResponse
 import java.math.BigDecimal
@@ -17,7 +14,6 @@ open class TransactionSpecification : ProductSpecification() {
     protected val transactionProductRepository: TransactionProductRepository
         get() = application.getBean(
             TransactionProductRepository::class.java)
-    protected val scheduleRepository: ScheduleRepository get() = application.getBean(ScheduleRepository::class.java)
 
     fun createTransaction(
         requesterId: Int,
@@ -33,6 +29,7 @@ open class TransactionSpecification : ProductSpecification() {
     ): TransactionResponse =
         transactionService.createTransaction(
             requesterId = requesterId,
+            userId = requesterId,
             vaultId = vaultId,
             price = price,
             description = description,
@@ -50,27 +47,13 @@ open class TransactionSpecification : ProductSpecification() {
         quantity: Int
     ): TransactionProductResponse =
         transactionService.createTransactionProduct(
+            userId = requesterId,
             transactionId = transactionId,
             name = name,
             categoryId = categoryId,
             requesterId = requesterId,
             unitAmount = unitAmount,
             quantity = quantity
-        )
-
-    fun createSchedule(
-        requesterId: Int,
-        transactionId: Int,
-        description: String = "Test schedule",
-        interval: ScheduleInterval = ScheduleInterval.DAY,
-        amount: Int = 10
-    ): ScheduleResponse =
-        transactionService.createSchedule(
-            requesterId = requesterId,
-            transactionId = transactionId,
-            description = description,
-            interval = interval,
-            amount = amount,
         )
 
 }

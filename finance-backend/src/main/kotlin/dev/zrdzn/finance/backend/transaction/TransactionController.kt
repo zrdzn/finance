@@ -2,9 +2,6 @@ package dev.zrdzn.finance.backend.transaction
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import dev.zrdzn.finance.backend.schedule.dto.ScheduleCreateRequest
-import dev.zrdzn.finance.backend.schedule.dto.ScheduleListResponse
-import dev.zrdzn.finance.backend.schedule.dto.ScheduleResponse
 import dev.zrdzn.finance.backend.shared.Price
 import dev.zrdzn.finance.backend.transaction.dto.AnalysedTransactionResponse
 import dev.zrdzn.finance.backend.transaction.dto.FlowsChartResponse
@@ -67,7 +64,7 @@ class TransactionController(
             requesterId = userId,
             vaultId = vaultId,
             separator = separator[0],
-            file = file.inputStream,
+            fileData = file.inputStream,
             mappings = mappingsMap,
             applyTransactionMethod = applyTransactionMethod
         )
@@ -104,6 +101,7 @@ class TransactionController(
         transactionService
             .createTransaction(
                 requesterId = userId,
+                userId = userId,
                 vaultId = transactionCreateRequest.vaultId,
                 transactionMethod = transactionCreateRequest.transactionMethod,
                 transactionType = transactionCreateRequest.transactionType,
@@ -123,25 +121,12 @@ class TransactionController(
     ): TransactionProductResponse =
         transactionService.createTransactionProduct(
             requesterId = userId,
+            userId = userId,
             transactionId = transactionId,
             name = transactionProductCreateRequest.name,
             categoryId = transactionProductCreateRequest.categoryId,
             unitAmount = transactionProductCreateRequest.unitAmount,
             quantity = transactionProductCreateRequest.quantity
-        )
-
-    @PostMapping("/{transactionId}/schedules/create")
-    fun createSchedule(
-        @AuthenticationPrincipal userId: Int,
-        @PathVariable transactionId: Int,
-        @RequestBody scheduleCreateRequest: ScheduleCreateRequest
-    ): ScheduleResponse =
-        transactionService.createSchedule(
-            requesterId = userId,
-            transactionId = transactionId,
-            description = scheduleCreateRequest.description,
-            interval = scheduleCreateRequest.interval,
-            amount = scheduleCreateRequest.amount
         )
 
     @PatchMapping("/{transactionId}")
@@ -192,12 +177,6 @@ class TransactionController(
         @PathVariable vaultId: Int
     ): TransactionAmountResponse = transactionService.getTransactionsAmount(userId, vaultId)
 
-    @GetMapping("/schedules/{vaultId}")
-    fun getSchedulesByVaultId(
-        @AuthenticationPrincipal userId: Int,
-        @PathVariable vaultId: Int
-    ): ScheduleListResponse = transactionService.getSchedules(userId, vaultId)
-
     @GetMapping("/{vaultId}/flows")
     fun getFlowsByVaultId(
         @AuthenticationPrincipal userId: Int,
@@ -236,11 +215,5 @@ class TransactionController(
         @PathVariable transactionId: Int,
         @PathVariable productId: Int
     ): Unit = transactionService.deleteTransactionProduct(userId, productId)
-
-    @DeleteMapping("/schedules/{scheduleId}")
-    fun deleteScheduleById(
-        @AuthenticationPrincipal userId: Int,
-        @PathVariable scheduleId: Int
-    ): Unit = transactionService.deleteSchedule(userId, scheduleId)
 
 }

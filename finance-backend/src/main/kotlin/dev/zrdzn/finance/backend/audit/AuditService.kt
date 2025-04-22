@@ -3,6 +3,7 @@ package dev.zrdzn.finance.backend.audit
 import dev.zrdzn.finance.backend.audit.AuditMapper.toResponse
 import dev.zrdzn.finance.backend.audit.dto.AuditListResponse
 import dev.zrdzn.finance.backend.audit.dto.AuditResponse
+import dev.zrdzn.finance.backend.audit.error.AuditDescriptionInvalidError
 import dev.zrdzn.finance.backend.user.UserService
 import dev.zrdzn.finance.backend.vault.VaultPermission
 import dev.zrdzn.finance.backend.vault.VaultService
@@ -18,8 +19,15 @@ class AuditService(
     private val clock: Clock
 ) {
 
-    fun createAudit(vaultId: Int, userId: Int, auditAction: AuditAction, description: String): AuditResponse =
-        auditRepository
+    companion object {
+        const val MIN_DESCRIPTION_LENGTH = 3
+        const val MAX_DESCRIPTION_LENGTH = 255
+    }
+
+    fun createAudit(vaultId: Int, userId: Int, auditAction: AuditAction, description: String): AuditResponse {
+        if (description.length !in MIN_DESCRIPTION_LENGTH..MAX_DESCRIPTION_LENGTH) throw AuditDescriptionInvalidError()
+
+        return auditRepository
             .save(
                 Audit(
                     id = null,
@@ -36,6 +44,7 @@ class AuditService(
                     user = userService.getUser(it.userId)
                 )
             }
+    }
 
     fun getAudits(requesterId: Int, vaultId: Int): AuditListResponse =
         vaultService.withAuthorization(vaultId, requesterId, VaultPermission.AUDIT_READ) {

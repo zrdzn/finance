@@ -14,7 +14,7 @@ data class TransactionResponse(
     val transactionMethod: TransactionMethod,
     val transactionType: TransactionType,
     val products: TransactionProductListResponse,
-    val description: String?,
+    val description: String,
     val totalInVaultCurrency: BigDecimal,
     val total: BigDecimal,
     val currency: String

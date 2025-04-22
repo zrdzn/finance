@@ -7,7 +7,7 @@ import java.math.BigDecimal
 data class TransactionUpdateRequest(
     val transactionMethod: TransactionMethod,
     val transactionType: TransactionType,
-    val description: String?,
+    val description: String,
     val total: BigDecimal,
     val currency: String
 )

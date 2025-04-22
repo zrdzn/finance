@@ -14,10 +14,12 @@ import dev.zrdzn.finance.backend.vault.dto.VaultRoleResponse
 import dev.zrdzn.finance.backend.vault.error.UserNotMemberError
 import dev.zrdzn.finance.backend.vault.error.VaultCannotDeleteMemberError
 import dev.zrdzn.finance.backend.vault.error.VaultCannotUpdateMemberError
+import dev.zrdzn.finance.backend.vault.error.VaultCurrencyInvalidError
 import dev.zrdzn.finance.backend.vault.error.VaultInsufficientPermissionError
 import dev.zrdzn.finance.backend.vault.error.VaultInvitationNotFoundError
 import dev.zrdzn.finance.backend.vault.error.VaultInvitationNotOwnedError
 import dev.zrdzn.finance.backend.vault.error.VaultMemberNotFoundError
+import dev.zrdzn.finance.backend.vault.error.VaultNameInvalidError
 import dev.zrdzn.finance.backend.vault.error.VaultNotFoundByPublicIdError
 import dev.zrdzn.finance.backend.vault.error.VaultNotFoundError
 import java.time.Clock
@@ -34,6 +36,11 @@ class VaultService(
     private val userService: UserService,
     private val clock: Clock
 ) {
+
+    companion object {
+        const val MIN_NAME_LENGTH = 3
+        const val MAX_NAME_LENGTH = 100
+    }
 
     fun <T> withAuthorization(
         vaultId: Int,
@@ -53,8 +60,11 @@ class VaultService(
     }
 
     @Transactional
-    fun createVault(ownerId: Int, name: String, currency: String, defaultTransactionMethod: TransactionMethod): VaultResponse =
-        vaultRepository
+    fun createVault(ownerId: Int, name: String, currency: String, defaultTransactionMethod: TransactionMethod): VaultResponse {
+        if (name.length !in MIN_NAME_LENGTH..MAX_NAME_LENGTH) throw VaultNameInvalidError()
+        if (currency.length != 3) throw VaultCurrencyInvalidError()
+
+        return vaultRepository
             .save(
                 Vault(
                     id = null,
@@ -74,6 +84,7 @@ class VaultService(
                     vaultRole = VaultRole.OWNER
                 )
             }
+    }
 
     @Transactional
     fun createVaultMemberForcefully(vaultId: Int, userId: Int, vaultRole: VaultRole): VaultMemberResponse {
@@ -114,6 +125,9 @@ class VaultService(
     fun updateVault(requesterId: Int, vaultId: Int, name: String, currency: String, transactionMethod: TransactionMethod) =
         withAuthorization(vaultId, requesterId, VaultPermission.SETTINGS_UPDATE) {
             val vault = vaultRepository.findById(vaultId) ?: throw VaultNotFoundError()
+
+            if (name.length !in MIN_NAME_LENGTH..MAX_NAME_LENGTH) throw VaultNameInvalidError()
+            if (currency.length != 3) throw VaultCurrencyInvalidError()
 
             vault.name = name
             vault.currency = currency

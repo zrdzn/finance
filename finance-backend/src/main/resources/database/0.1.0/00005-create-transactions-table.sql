@@ -8,7 +8,7 @@ create table "transactions"
     "vault_id"           int not null,
     "transaction_method" transaction_method not null,
     "transaction_type"   transaction_type not null,
-    "description"        text,
+    "description"        text not null,
     "total"              numeric(10, 2) not null,
     "currency"           varchar(3) not null,
     constraint "pk_transactions" primary key ("id"),
