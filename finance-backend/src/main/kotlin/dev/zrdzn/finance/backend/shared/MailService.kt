@@ -1,5 +1,6 @@
 package dev.zrdzn.finance.backend.shared
 
+import java.util.concurrent.CompletableFuture
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.SimpleMailMessage
@@ -22,14 +23,14 @@ class MailService(
         message.subject = subject
         message.text = content
 
-        try {
-            mailSender.send(message)
-        } catch (e: Exception) {
-            logger.error("Error while sending mail to $userEmail", e)
-            return
+        CompletableFuture.runAsync {
+            try {
+                mailSender.send(message)
+                logger.info("Mail sent to $userEmail")
+            } catch (e: Exception) {
+                logger.error("Error while sending mail to $userEmail", e)
+            }
         }
-
-        logger.info("Mail sent to $userEmail")
     }
 
 }
