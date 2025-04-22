@@ -46,7 +46,7 @@ spring:
           writetimeout: 5000
           auth: ${MAIL_AUTH}
           starttls:
-            enable: false
+            enable: ${MAIL_STARTTLS}
     from: ${MAIL_FROM}
 client:
   url: ${CLIENT_URL}

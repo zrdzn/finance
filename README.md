@@ -113,6 +113,8 @@ You can try out the live demo of **Finance** at: https://finance.zrdzn.dev.
 - `MAIL_USERNAME` - SMTP server username
 - `MAIL_PASSWORD` - SMTP server password
 - `MAIL_FROM` - Email address from which emails will be sent
+- `MAIL_AUTH` - Whether to use SMTP authentication
+- `MAIL_STARTTLS` - Whether to use STARTTLS
 - `STORAGE_ACCESS_KEY` - S3 access key
 - `STORAGE_SECRET_KEY` - S3 secret key
 - `STORAGE_REGION` - S3 region

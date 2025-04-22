@@ -19,6 +19,7 @@ data class ApplicationConfiguration(
     @Environment("MAIL_PASSWORD") val mailPassword: String,
     @Environment("MAIL_FROM") val mailFrom: String,
     @Environment("MAIL_AUTH") val mailAuth: Boolean,
+    @Environment("MAIL_STARTTLS") val mailStarttls: Boolean,
     @Environment("STORAGE_ACCESS_KEY") val storageAccessKey: String,
     @Environment("STORAGE_SECRET_KEY") val storageSecretKey: String,
     @Environment("STORAGE_REGION") val storageRegion: String,

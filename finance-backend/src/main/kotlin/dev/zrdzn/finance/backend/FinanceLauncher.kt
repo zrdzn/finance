@@ -19,6 +19,7 @@ fun main(args: Array<String>) {
             mailPassword = System.getenv("MAIL_PASSWORD")!!,
             mailFrom = System.getenv("MAIL_FROM")!!,
             mailAuth = System.getenv("MAIL_AUTH")?.toBoolean()!!,
+            mailStarttls = System.getenv("MAIL_STARTTLS")?.toBoolean()!!,
             storageAccessKey = System.getenv("STORAGE_ACCESS_KEY")!!,
             storageSecretKey = System.getenv("STORAGE_SECRET_KEY")!!,
             storageRegion = System.getenv("STORAGE_REGION")!!,
