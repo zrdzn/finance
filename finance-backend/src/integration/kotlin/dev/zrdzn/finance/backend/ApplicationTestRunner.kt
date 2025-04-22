@@ -94,6 +94,7 @@ open class ApplicationTestRunner {
                 mailUsername = "",
                 mailPassword = "",
                 mailFrom = "test@financeapp.com",
+                mailAuth = false,
                 storageAccessKey = s3Container.envMap["AWS_ACCESS_KEY_ID"]!!,
                 storageSecretKey = s3Container.envMap["AWS_SECRET_ACCESS_KEY"]!!,
                 storageRegion = s3Container.envMap["DEFAULT_REGION"]!!,
