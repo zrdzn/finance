@@ -86,6 +86,7 @@ open class ApplicationTestRunner {
             ApplicationConfiguration(
                 serverPort = port,
                 clientUrl = "http://localhost:3000",
+                apiUrl = "http://localhost:$port",
                 databaseUrl = postgresContainer.jdbcUrl,
                 databaseUsername = postgresContainer.username,
                 databasePassword = postgresContainer.password,
