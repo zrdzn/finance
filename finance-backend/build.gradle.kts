@@ -46,7 +46,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson")
     implementation("com.konghq:unirest-modules-jackson:4.4.5")
-    implementation("com.konghq:unirest-java-core:4.4.5")
+    implementation("com.konghq:unirest-java-core:4.4.7")
 
     // Database
     implementation("org.postgresql:postgresql:42.7.5")
