@@ -157,7 +157,7 @@ declare namespace Components {
             transactionMethod: "CARD" | "BLIK" | "CASH";
             transactionType: "INCOMING" | "OUTGOING";
             products: TransactionProductListResponse;
-            description?: string;
+            description: string;
             totalInVaultCurrency: number;
             total: number;
             currency: string;
@@ -165,7 +165,7 @@ declare namespace Components {
         export interface TransactionUpdateRequest {
             transactionMethod: "CARD" | "BLIK" | "CASH";
             transactionType: "INCOMING" | "OUTGOING";
-            description?: string;
+            description: string;
             total: number;
             currency: string;
         }
@@ -901,14 +901,6 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.ImportTransactionsFromCsv.Responses.$200>
   /**
-   * createSchedule
-   */
-  'createSchedule'(
-    parameters: Parameters<Paths.CreateSchedule.PathParameters>,
-    data?: Paths.CreateSchedule.RequestBody,
-    config?: AxiosRequestConfig  
-  ): OperationResponse<Paths.CreateSchedule.Responses.$200>
-  /**
    * createTransactionProduct
    */
   'createTransactionProduct'(
@@ -932,6 +924,14 @@ export interface OperationMethods {
     data?: Paths.CreateTransaction.RequestBody,
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.CreateTransaction.Responses.$200>
+  /**
+   * createSchedule
+   */
+  'createSchedule'(
+    parameters: Parameters<Paths.CreateSchedule.PathParameters>,
+    data?: Paths.CreateSchedule.RequestBody,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.CreateSchedule.Responses.$200>
   /**
    * createProduct
    */
@@ -1357,16 +1357,6 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.ImportTransactionsFromCsv.Responses.$200>
   }
-  ['/v1/transactions/{transactionId}/schedules/create']: {
-    /**
-     * createSchedule
-     */
-    'post'(
-      parameters: Parameters<Paths.CreateSchedule.PathParameters>,
-      data?: Paths.CreateSchedule.RequestBody,
-      config?: AxiosRequestConfig  
-    ): OperationResponse<Paths.CreateSchedule.Responses.$200>
-  }
   ['/v1/transactions/{transactionId}/products/create']: {
     /**
      * createTransactionProduct
@@ -1396,6 +1386,16 @@ export interface PathsDictionary {
       data?: Paths.CreateTransaction.RequestBody,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.CreateTransaction.Responses.$200>
+  }
+  ['/v1/schedules/create/{transactionId}']: {
+    /**
+     * createSchedule
+     */
+    'post'(
+      parameters: Parameters<Paths.CreateSchedule.PathParameters>,
+      data?: Paths.CreateSchedule.RequestBody,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.CreateSchedule.Responses.$200>
   }
   ['/v1/products/create']: {
     /**
@@ -1717,7 +1717,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.GetTransactionsAmountByVaultId.Responses.$200>
   }
-  ['/v1/transactions/schedules/{vaultId}']: {
+  ['/v1/schedules/vault/{vaultId}']: {
     /**
      * getSchedulesByVaultId
      */
@@ -1805,7 +1805,7 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.RemoveVaultInvitation.Responses.$200>
   }
-  ['/v1/transactions/schedules/{scheduleId}']: {
+  ['/v1/schedules/{scheduleId}']: {
     /**
      * deleteScheduleById
      */
