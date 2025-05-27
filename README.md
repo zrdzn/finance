@@ -1,4 +1,5 @@
 # Finance
+![img_3.png](img_3.png)
 ## 📖 Overview
 **Finance** is a tool for managing personal and shared finances.
 It allows users to create vaults where they can track payments, 
@@ -125,7 +126,21 @@ You can try out the live demo of **Finance** at: https://finance.zrdzn.dev.
 - `OAUTH_REDIRECT_URI_GOOGLE` - Google OAuth redirect URI
 - `DOCS_SWAGGER_PATH` - Path to Swagger UI
 - `DOCS_OPENAPI_PATH` - Path to OpenAPI specification
-## 🏛️ Architecture
+## 🖼️ Preview
+### Vault List and Invitations
+![img.png](img.png)
+
+### Transactions Management
+![img_2.png](img_2.png)
+
+### Receipt Image Recognition
+![img_1.png](img_1.png)
+
+### User Settings
+![img_4.png](img_4.png)
+
+### 2FA
+![img_5.png](img_5.png)
 
 ## 🚀 Installation
 ### Docker
