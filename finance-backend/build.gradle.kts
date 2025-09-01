@@ -53,7 +53,7 @@ dependencies {
     implementation("org.liquibase:liquibase-core:4.31.1")
 
     // Storage
-    implementation("software.amazon.awssdk:s3:2.31.6")
+    implementation("software.amazon.awssdk:s3:2.33.0")
 
     // Authentication
     implementation("com.auth0:java-jwt:4.5.0")
