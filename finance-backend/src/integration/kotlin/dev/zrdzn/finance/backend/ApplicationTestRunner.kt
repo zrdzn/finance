@@ -104,9 +104,7 @@ open class ApplicationTestRunner {
                 openAiApiKey = "",
                 oauthClientIdGoogle = "",
                 oauthClientSecretGoogle = "",
-                oauthClientRedirectUriGoogle = "",
-                docsSwaggerPath = "/swagger.html",
-                docsOpenApiPath = "/v3/api-docs"
+                oauthClientRedirectUriGoogle = ""
             )
         )
     }
