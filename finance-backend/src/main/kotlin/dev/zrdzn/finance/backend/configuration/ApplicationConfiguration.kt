@@ -29,8 +29,6 @@ data class ApplicationConfiguration(
     @Environment("OAUTH_CLIENT_ID_GOOGLE", optional = true) val oauthClientIdGoogle: String,
     @Environment("OAUTH_CLIENT_SECRET_GOOGLE", optional = true) val oauthClientSecretGoogle: String,
     @Environment("OAUTH_CLIENT_REDIRECT_URI_GOOGLE", optional = true) val oauthClientRedirectUriGoogle: String,
-    @Environment("DOCS_SWAGGER_PATH") val docsSwaggerPath: String,
-    @Environment("DOCS_OPENAPI_PATH") val docsOpenApiPath: String,
 )
 
 inline fun <reified CONFIGURATION : Any> CONFIGURATION.toConfigurationMap(): Map<String, Any?> =

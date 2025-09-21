@@ -28,9 +28,7 @@ fun main(args: Array<String>) {
             openAiApiKey = System.getenv("OPENAI_API_KEY")!!,
             oauthClientIdGoogle = System.getenv("OAUTH_CLIENT_ID_GOOGLE")!!,
             oauthClientSecretGoogle = System.getenv("OAUTH_CLIENT_SECRET_GOOGLE")!!,
-            oauthClientRedirectUriGoogle = System.getenv("OAUTH_CLIENT_REDIRECT_URI_GOOGLE")!!,
-            docsSwaggerPath = System.getenv("DOCS_SWAGGER_PATH")!!,
-            docsOpenApiPath = System.getenv("DOCS_OPENAPI_PATH")!!
+            oauthClientRedirectUriGoogle = System.getenv("OAUTH_CLIENT_REDIRECT_URI_GOOGLE")!!
         )
     )
 }
