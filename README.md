@@ -102,30 +102,6 @@ You can try out the live demo of **Finance** at: https://finance.zrdzn.dev.
 ### Mailing
 - The mail system is used to send emails to users, such as verification emails.
   - **Test client:** [MailHog](https://github.com/mailhog/MailHog)
-## ⚙️ Environment Variables
-- `SERVER_PORT` - Port on which server will be running
-- `CLIENT_URL` - Frontend URL
-- `DATABASE_URL` - Database JDBC URL
-- `DATABASE_USERNAME` - Database username
-- `DATABASE_PASSWORD` - Database password
-- `NEXT_PUBLIC_API_URL` - Backend URL
-- `MAIL_HOST` - SMTP server host
-- `MAIL_PORT` - SMTP server port
-- `MAIL_USERNAME` - SMTP server username
-- `MAIL_PASSWORD` - SMTP server password
-- `MAIL_FROM` - Email address from which emails will be sent
-- `MAIL_AUTH` - Whether to use SMTP authentication
-- `MAIL_STARTTLS` - Whether to use STARTTLS
-- `STORAGE_ACCESS_KEY` - S3 access key
-- `STORAGE_SECRET_KEY` - S3 secret key
-- `STORAGE_REGION` - S3 region
-- `STORAGE_ENDPOINT` - S3 endpoint
-- `OPENAI_API_KEY` - (Optional) OpenAI API key
-- `OAUTH_CLIENT_ID_GOOGLE` - Google OAuth client id
-- `OAUTH_CLIENT_SECRET_GOOGLE` - Google OAuth client secret
-- `OAUTH_REDIRECT_URI_GOOGLE` - Google OAuth redirect URI
-- `DOCS_SWAGGER_PATH` - Path to Swagger UI
-- `DOCS_OPENAPI_PATH` - Path to OpenAPI specification
 ## 🖼️ Preview
 ### Vault List and Invitations
 ![img.png](img.png)
