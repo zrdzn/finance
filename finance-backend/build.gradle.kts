@@ -49,7 +49,7 @@ dependencies {
     implementation("com.konghq:unirest-java-core:4.5.1")
 
     // Database
-    implementation("org.postgresql:postgresql:42.7.5")
+    implementation("org.postgresql:postgresql:42.7.8")
     implementation("org.liquibase:liquibase-core:4.31.1")
 
     // Storage
