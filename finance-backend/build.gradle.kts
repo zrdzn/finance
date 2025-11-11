@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("com.coditory.integration-test") version "2.2.5"
-    id("org.springframework.boot") version "3.5.5"
+    id("org.springframework.boot") version "3.5.7"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.jetbrains.kotlin.plugin.noarg") version "2.1.20"
     id("com.github.johnrengelman.shadow") version "8.1.1"
@@ -50,7 +50,7 @@ dependencies {
 
     // Database
     implementation("org.postgresql:postgresql:42.7.5")
-    implementation("org.liquibase:liquibase-core:4.31.1")
+    implementation("org.liquibase:liquibase-core:5.0.1")
 
     // Storage
     implementation("software.amazon.awssdk:s3:2.33.9")
