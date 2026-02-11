@@ -21,7 +21,7 @@
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@next/env": "^15.2.3",
     "apexcharts": "^4.5.0",
-    "axios": "^1.12.2",
+    "axios": "^1.13.5",
     "currency-codes": "^2.2.0",
     "framer-motion": "^12.7.4",
     "i18next": "^25.5.2",
